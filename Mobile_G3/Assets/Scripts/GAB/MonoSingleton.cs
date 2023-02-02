@@ -4,7 +4,7 @@ public class MonoSingleton<T> : MonoBehaviour where T : Component
 {
     public static T instance;
 
-    private void Awake()
+    public virtual void Awake()
     {
         if (instance != null && instance != this)
         {
@@ -13,5 +13,6 @@ public class MonoSingleton<T> : MonoBehaviour where T : Component
         }
 
         instance = this as T;
+        Debug.Log("New instance");
     }
 }
