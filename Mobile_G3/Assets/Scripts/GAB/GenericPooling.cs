@@ -40,22 +40,28 @@ public class GenericPooling : MonoSingleton<GenericPooling>
                 obj.gameObject.SetActive(false);
                 newQueue.Enqueue(obj);
             }
-            
+
             _poolDict.Add(item.type, newQueue);
         }
     }
-    
-    public T PoolInstantiate<T>(PoolType type, Vector3 position, Quaternion rotation, Transform parent = null) where T : Component
+
+    public T PoolInstantiate<T>(PoolType type, Vector3 position, Quaternion rotation, Transform parent = null)
+        where T : Component
     {
+        if (!(_poolDict[type].Peek() as T))
+        {
+            Debug.LogWarning($"Invalid generic type cast! Can't instantiate the object with type {type}");
+            return null;
+        }
+
         var obj = _poolDict[type].Dequeue();
 
         obj.transform.position = position;
         obj.transform.rotation = rotation;
         obj.gameObject.SetActive(true);
-        
+
         _poolDict[type].Enqueue(obj);
 
         return obj as T;
     }
-
 }
