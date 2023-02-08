@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class Enums { }
 
+public enum Language
+{
+    French, English
+}
+
 public enum PoolType
 {
     ExampleTransform, ExampleRigidbody, ExampleMonoBehaviour
