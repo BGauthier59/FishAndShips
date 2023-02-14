@@ -6,7 +6,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class GenericPooling : MonoSingleton<GenericPooling>
+public class PoolManager : MonoSingleton<PoolManager>
 {
     [Serializable]
     private struct GenericPoolItem

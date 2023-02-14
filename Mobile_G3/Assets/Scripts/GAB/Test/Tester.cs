@@ -12,6 +12,6 @@ public class Tester : MonoBehaviour
 
     private void Update()
     {
-        var rb = GenericPooling.instance.PoolInstantiate<Rigidbody>(PoolType.ExampleRigidbody, Vector3.up * 10, Quaternion.identity);
+        var rb = PoolManager.instance.PoolInstantiate<Rigidbody>(PoolType.ExampleRigidbody, Vector3.up * 10, Quaternion.identity);
     }
 }
