@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using JetBrains.Annotations;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -13,9 +14,11 @@ public class CircularSwipeManager : MonoBehaviour
 
     [SerializeField] private float2 minMaxMagnitude;
 
-
     [SerializeField] private Transform availableZone;
     [SerializeField] private Transform unavailableCenterZone;
+    
+    [SerializeField] private TMP_Text circleCountText;
+    
     private float2 minMaxSqrMagnitude;
 
     private Vector2 startTouch, currentTouch;
@@ -23,6 +26,7 @@ public class CircularSwipeManager : MonoBehaviour
     private bool isDraging;
 
     private float currentAngle;
+
     private int circleCount;
 
     private void OnValidate()
@@ -89,18 +93,16 @@ public class CircularSwipeManager : MonoBehaviour
             
             if (currentAngle > 360)
             {
-                circleCount++;
+                circleCount--;
                 currentAngle -= 360;
             }
-            else if (currentAngle < 0 && circleCount != 0)
+            else if (currentAngle < 0)
             {
-                circleCount--;
+                circleCount++;
                 currentAngle += 360;
             }
-            else if (currentAngle < 0 && circleCount == 0)
-            {
-                currentAngle += 360;
-            }
+
+            circleCountText.text = circleCount.ToString();
 
             startVector = currentVector;
             centralPoint.SetEulerAnglesZ(currentAngle);

@@ -28,6 +28,16 @@ public class InputManager : MonoSingleton<InputManager>
         _inputMaster.Disable();
     }
 
+    public static void EnableInputAction(InputActionMap map)
+    {
+        map.Enable();
+    }
+
+    public static void DisableInputAction(InputActionMap map)
+    {
+        map.Disable();
+    }
+    
     public static void EnableInputAction(InputAction action)
     {
         action.Enable();
