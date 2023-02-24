@@ -14,6 +14,11 @@ public class AudioLoudnessDetector : MonoBehaviour
 
     private void MicrophoneToAudioClip()
     {
+        if (Microphone.devices.Length == 0)
+        {
+            Debug.LogWarning("There's no microphone available!");
+            return;
+        }
         string microphoneName = Microphone.devices[0];
         microphoneClip = Microphone.Start(microphoneName,
             true, 20, AudioSettings.outputSampleRate);
@@ -21,6 +26,7 @@ public class AudioLoudnessDetector : MonoBehaviour
 
     public float GetLoudnessFromMicrophone()
     {
+        if (Microphone.devices.Length == 0) return 0;
         return GetLoudnessFromAudioClip(Microphone.GetPosition(Microphone.devices[0]), microphoneClip);
     }
 
