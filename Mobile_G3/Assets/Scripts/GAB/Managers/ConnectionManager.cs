@@ -11,7 +11,7 @@ using UnityEngine;
 public class ConnectionManager : MonoSingleton<ConnectionManager>
 {
     private string ip;
-    private Dictionary<ulong, PlayerManager> players = new();
+    private Dictionary<ulong, PlayerManager2> players = new();
     private UnityTransport transport;
     [SerializeField] private TMP_Text ipText;
     private string ipToConnect;
@@ -94,7 +94,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
     #endregion
 
-    public void AddPlayerToDictionary(ulong playerId, PlayerManager manager)
+    public void AddPlayerToDictionary(ulong playerId, PlayerManager2 manager)
     {
         if (players.ContainsKey(playerId))
         {
