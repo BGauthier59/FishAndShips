@@ -13,6 +13,5 @@ public class MonoSingleton<T> : MonoBehaviour where T : Component
         }
 
         instance = this as T;
-        Debug.Log("New instance");
     }
 }

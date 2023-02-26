@@ -13,7 +13,6 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
     private string ip;
     private Dictionary<ulong, PlayerManager2> players = new();
     private UnityTransport transport;
-    [SerializeField] private TMP_Text ipText;
     private string ipToConnect;
 
     private void Start()
@@ -29,21 +28,21 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
     }
 
-    public void ConnectAsHost()
+    public string ConnectAsHost()
     {
         if (NetworkManager.Singleton.IsClient)
         {
             Debug.LogWarning("Already client!");
-            return;
+            return "0";
         }
 
         ip = GetIPv4AddressMobile();
-        ipText.text = $"IP: {ip}";
         transport.SetConnectionData(ip, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartHost();
+        return ip;
     }
 
-    public void ConnectAsClient()
+    public void ConnectAsClient(string ip)
     {
         if (NetworkManager.Singleton.IsClient)
         {
@@ -51,13 +50,8 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
             return;
         }
 
-        transport.SetConnectionData(ipToConnect, transport.ConnectionData.Port);
+        transport.SetConnectionData(ip, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartClient();
-    }
-
-    public void SetIP(string ip)
-    {
-        ipToConnect = ip;
     }
 
     string GetIPv4AddressMobile()
@@ -81,6 +75,11 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         var infoText = $"Client with ID {clientId} has been connected!";
         if (NetworkManager.Singleton.IsHost)
             infoText += $", number of client(s): {NetworkManager.Singleton.ConnectedClients.Count} ";
+        else
+        {
+            MainMenuManager.instance.ClientJoinedSuccessfully();
+        }
+
         Debug.Log(infoText);
     }
 
@@ -89,6 +88,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         var infoText = $"Client with ID {clientId} has been disconnected...";
         if (NetworkManager.Singleton.IsHost)
             infoText += $", number of client(s): {NetworkManager.Singleton.ConnectedClients.Count} ";
+
         Debug.Log(infoText);
     }
 
@@ -104,6 +104,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
         players.Add(playerId, manager);
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
+        MainMenuManager.instance.ClientGetConnected(playerId);
     }
 
     public void RemovePlayerFromDictionary(ulong playerId)
