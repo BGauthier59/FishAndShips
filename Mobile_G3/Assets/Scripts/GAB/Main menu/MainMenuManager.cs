@@ -16,7 +16,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     private string ipToConnect;
 
     [SerializeField] private TMP_Text ipText;
-    private string pseudo;
+    public string pseudo;
 
     [SerializeField] private GameObject[] playerIcons;
 
@@ -131,6 +131,11 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         ipToConnect = ip;
     }
+    
+    public void OnSetPseudo(string pseudotext)
+    {
+        pseudo = pseudotext;
+    }
 
     public void OnJoinButton()
     {
@@ -156,10 +161,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         NetworkManager.Singleton.SceneManager.LoadScene("MainScene", LoadSceneMode.Single); 
     }
 
-    public void ClientGetConnected(ulong id)
+    public void ClientGetConnected(ulong id, string pseudo)
     {
         playerIcons[(int) id].SetActive(true);
+        playerIcons[(int) id].transform.GetChild(0).GetComponent<TMP_Text>().text = pseudo;
     }
+    
 
     #endregion
 }

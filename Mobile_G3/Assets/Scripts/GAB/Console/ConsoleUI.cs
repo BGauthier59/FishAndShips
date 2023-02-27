@@ -13,14 +13,7 @@ public class ConsoleUI : MonoBehaviour
     [SerializeField] private int maxLineCount = 10;
     private string myLog;
     private int lineCount;
-
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.A)) Debug.Log(lineCount + " : lineCount", this);
-        if(Input.GetKeyDown(KeyCode.E)) Debug.LogError("Random Error", this);
-        if(Input.GetKeyDown(KeyCode.W)) Debug.LogWarning("Random Warning", this);
-    }
-
+    
     private void OnEnable()
     {
         Application.logMessageReceived += Log;

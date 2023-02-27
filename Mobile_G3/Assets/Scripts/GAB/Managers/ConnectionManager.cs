@@ -11,7 +11,7 @@ using UnityEngine;
 public class ConnectionManager : MonoSingleton<ConnectionManager>
 {
     private string ip;
-    private Dictionary<ulong, PlayerManager2> players = new();
+    public Dictionary<ulong, PlayerManager2> players = new();
     private UnityTransport transport;
     private string ipToConnect;
 
@@ -104,7 +104,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
         players.Add(playerId, manager);
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
-        MainMenuManager.instance.ClientGetConnected(playerId);
+        MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value);
     }
 
     public void RemovePlayerFromDictionary(ulong playerId)
