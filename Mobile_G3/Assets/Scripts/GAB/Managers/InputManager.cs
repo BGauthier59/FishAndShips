@@ -6,44 +6,50 @@ using UnityEngine.InputSystem;
 
 public class InputManager : MonoSingleton<InputManager>
 {
-    private static InputMaster _inputMaster;
-    
-    public static void CreateInputMaster()
+    public InputMaster inputMaster;
+
+    public override void Awake()
     {
-        if (_inputMaster != null)
+        base.Awake();
+        CreateInputMaster();
+    }
+
+    private void CreateInputMaster()
+    {
+        if (inputMaster != null)
         {
             Debug.LogError("Input Master has already been created");
             return;
         }
-        _inputMaster = new InputMaster();
+        inputMaster = new InputMaster();
     }
 
-    public static void EnableInputMaster()
+    public void EnableInputMaster()
     {
-        _inputMaster.Enable();
+        inputMaster.Enable();
     }
 
-    public static void DisableInputMaster()
+    public void DisableInputMaster()
     {
-        _inputMaster.Disable();
+        inputMaster.Disable();
     }
 
-    public static void EnableInputAction(InputActionMap map)
+    public void EnableInputAction(InputActionMap map)
     {
         map.Enable();
     }
 
-    public static void DisableInputAction(InputActionMap map)
+    public void DisableInputAction(InputActionMap map)
     {
         map.Disable();
     }
     
-    public static void EnableInputAction(InputAction action)
+    public void EnableInputAction(InputAction action)
     {
         action.Enable();
     }
 
-    public static void DisableInputAction(InputAction action)
+    public void DisableInputAction(InputAction action)
     {
         action.Disable();
     }

@@ -9,49 +9,32 @@ using UnityEngine.InputSystem;
 
 public class CircularSwipeManager : MonoBehaviour
 {
-    [SerializeField] private Transform centralPoint;
-    [SerializeField] private SpriteRenderer rotatingPointRd;
+    private bool isActive;
 
-    [SerializeField] private float2 minMaxMagnitude;
+    private Transform centralPoint;
+    private SpriteRenderer rotatingPointRd;
+    private Transform availableZone;
+    private Transform unavailableCenterZone;
+    private TMP_Text circleCountText;
+    private TMP_Text timerText;
 
-    [SerializeField] private Transform availableZone;
-    [SerializeField] private Transform unavailableCenterZone;
-    
-    [SerializeField] private TMP_Text circleCountText;
-    
     private float2 minMaxSqrMagnitude;
-
     private Vector2 startTouch, currentTouch;
     private Vector2 startVector, currentVector;
     private bool isDraging;
-
     private float currentAngle;
-
     private int circleCount;
-
-    private void OnValidate()
-    {
-        minMaxSqrMagnitude.x = math.pow(minMaxMagnitude.x, 2);
-        minMaxSqrMagnitude.y = math.pow(minMaxMagnitude.y, 2);
-
-        availableZone.localScale = new Vector3(minMaxMagnitude.y * 2, minMaxMagnitude.y * 2, 1);
-        unavailableCenterZone.localScale = new Vector3(minMaxMagnitude.x * 2, minMaxMagnitude.x * 2, 1);
-    }
-
-    private void Start()
-    {
-        OnValidate();
-    }
 
     [UsedImplicitly]
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
     {
+        if (!isActive) return;
+
         if (ctx.started)
         {
             startTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            startVector = startTouch - (Vector2) centralPoint.position;
+            startVector = startTouch - (Vector2)centralPoint.position;
 
-            Debug.Log(startVector.sqrMagnitude);
             if (startVector.sqrMagnitude < minMaxSqrMagnitude.x ||
                 startVector.sqrMagnitude > minMaxSqrMagnitude.y) return;
 
@@ -62,52 +45,92 @@ public class CircularSwipeManager : MonoBehaviour
         }
         else if (ctx.canceled)
         {
-            isDraging = false;
-            startTouch = currentTouch = startVector = currentVector = Vector2.zero;
-            currentAngle = 0;
-            rotatingPointRd.enabled = false;
+            Reset();
         }
     }
 
-    private void Update()
+    private void Reset()
     {
-        Debug.DrawRay(centralPoint.position, startVector, Color.green);
-        if (isDraging)
+        isDraging = false;
+        startTouch = currentTouch = startVector = currentVector = Vector2.zero;
+        currentAngle = 0;
+        rotatingPointRd.enabled = false;
+    }
+
+    public void Enable(CircularSwipeSetupData data)
+    {
+        centralPoint = data.centralPoint;
+        rotatingPointRd = data.rotatingPointRd;
+        availableZone = data.availableZone;
+        unavailableCenterZone = data.unavailableCenterZone;
+        circleCountText = data.circleCountText;
+
+        minMaxSqrMagnitude.x = math.pow(data.minMaxMagnitude.x, 2);
+        minMaxSqrMagnitude.y = math.pow(data.minMaxMagnitude.y, 2);
+
+        availableZone.localScale = new Vector3(data.minMaxMagnitude.y * 2, data.minMaxMagnitude.y * 2, 1);
+        unavailableCenterZone.localScale = new Vector3(data.minMaxMagnitude.x * 2, data.minMaxMagnitude.x * 2, 1);
+
+        isActive = true;
+
+        circleCount = 0;
+        Reset();
+    }
+    
+    public void Disable()
+    {
+        isActive = false;
+        Reset();
+    }
+
+    public bool CalculateCircularSwipe(int countToWin)
+    {
+        if (!isDraging) return false;
+
+        currentTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        currentVector = currentTouch - (Vector2)centralPoint.position;
+
+        if (currentVector.sqrMagnitude < minMaxSqrMagnitude.x ||
+            currentVector.sqrMagnitude > minMaxSqrMagnitude.y) return false;
+
+        currentVector.Normalize();
+
+        var angleGap = Vector2.Angle(startVector, currentVector);
+
+        var last2float3 = new float3(startVector.x, startVector.y, 0);
+        var current2float3 = new float3(currentVector.x, currentVector.y, 0);
+        var cross = math.cross(last2float3, current2float3);
+
+        if (cross.z > 0) currentAngle += angleGap;
+        else currentAngle -= angleGap;
+
+        if (currentAngle > 360)
         {
-            currentTouch = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            currentVector = currentTouch - (Vector2) centralPoint.position;
-
-            if (currentVector.sqrMagnitude < minMaxSqrMagnitude.x ||
-                currentVector.sqrMagnitude > minMaxSqrMagnitude.y) return;
-
-            currentVector.Normalize();
-
-            var angleGap = Vector2.Angle(startVector, currentVector);
-
-            var last2float3 = new float3(startVector.x, startVector.y, 0);
-            var current2float3 = new float3(currentVector.x, currentVector.y, 0);
-            var cross = math.cross(last2float3, current2float3);
-
-            if (cross.z > 0) currentAngle += angleGap;
-            else currentAngle -= angleGap;
-            
-            if (currentAngle > 360)
-            {
-                circleCount--;
-                currentAngle -= 360;
-            }
-            else if (currentAngle < 0)
-            {
-                circleCount++;
-                currentAngle += 360;
-            }
-
-            circleCountText.text = circleCount.ToString();
-
-            startVector = currentVector;
-            centralPoint.SetEulerAnglesZ(currentAngle);
+            circleCount--;
+            currentAngle -= 360;
+        }
+        else if (currentAngle < 0)
+        {
+            circleCount++;
+            currentAngle += 360;
         }
 
-        Debug.DrawRay(centralPoint.position, currentVector, Color.yellow);
+        circleCountText.text = circleCount.ToString();
+
+        startVector = currentVector;
+        centralPoint.SetEulerAnglesZ(currentAngle);
+
+        return circleCount >= countToWin;
     }
+}
+
+[Serializable]
+public struct CircularSwipeSetupData
+{
+    public Transform centralPoint;
+    public float2 minMaxMagnitude;
+    public SpriteRenderer rotatingPointRd;
+    public Transform availableZone;
+    public Transform unavailableCenterZone;
+    public TMP_Text circleCountText;
 }

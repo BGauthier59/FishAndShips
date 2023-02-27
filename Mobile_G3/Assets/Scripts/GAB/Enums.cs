@@ -13,3 +13,8 @@ public enum PoolType
 {
     ExampleTransform, ExampleRigidbody, ExampleMonoBehaviour
 }
+
+public enum MiniGameType
+{
+    Continuous, Accident, Resolution
+}
