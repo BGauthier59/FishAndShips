@@ -14,6 +14,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
     public Dictionary<ulong, PlayerManager2> players = new();
     private UnityTransport transport;
     private string ipToConnect;
+    public GameState gameState = GameState.Menu;
 
     private void Start()
     {
@@ -118,4 +119,10 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         players.Remove(playerId);
         Debug.Log($"Player with ID {playerId} has been removed from dictionary!");
     }
+}
+
+public enum GameState
+{
+    Menu,
+    Game
 }

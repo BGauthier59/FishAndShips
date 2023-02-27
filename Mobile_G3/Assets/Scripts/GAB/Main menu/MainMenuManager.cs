@@ -158,7 +158,10 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             Debug.LogWarning("The host only can start the game!");
             return;
         }
+
+        ConnectionManager.instance.gameState = GameState.Game;
         NetworkManager.Singleton.SceneManager.LoadScene("MainScene", LoadSceneMode.Single); 
+        
     }
 
     public void ClientGetConnected(ulong id, string pseudo)
