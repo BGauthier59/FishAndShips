@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class MiniGameInput<T> : MonoBehaviour where T : struct
 {
-    private bool isActive;
+    protected bool isActive;
     
     public virtual void Enable(T setupData)
     {

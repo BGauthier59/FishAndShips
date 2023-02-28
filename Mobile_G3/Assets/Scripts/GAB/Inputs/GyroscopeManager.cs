@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Gyroscope = UnityEngine.Gyroscope;
@@ -9,16 +10,27 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
 {
     private Gyroscope gyroscope;
     private Quaternion correctionQuaternion;
-    
+
+    private bool hasConstraint;
+    private float leftConstraint;
+    private float rightConstraint;
+    private float sensibility;
+
     public override void Enable(GyroscopeSetupData data)
     {
-        base.Enable(data);
         if (!SystemInfo.supportsGyroscope)
         {
             Debug.LogWarning("This machine does not support gyroscope");
             Disable();
             return;
         }
+
+        base.Enable(data);
+        hasConstraint = data.hasConstraint;
+        leftConstraint = data.leftConstraint;
+        rightConstraint = data.rightConstraint;
+        sensibility = data.sensibility;
+
         gyroscope = Input.gyro;
         gyroscope.enabled = true;
         correctionQuaternion = Quaternion.Euler(90f, 0, 0);
@@ -26,28 +38,46 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
 
     public Quaternion GetGyroRotation()
     {
+        if (!isActive)
+        {
+            Debug.Log("Can't use gyroscope");
+            return Quaternion.identity;
+        }
+
         var gyroQuaternion = GyroToUnity(gyroscope.attitude);
-        return correctionQuaternion * gyroQuaternion;
+        var calculatedQuaternion = correctionQuaternion * gyroQuaternion;
+
+        if (!hasConstraint) return calculatedQuaternion;
+
+        if (calculatedQuaternion.eulerAngles.z > leftConstraint)
+            return Quaternion.Euler(Vector3.forward * leftConstraint);
+        
+        if (calculatedQuaternion.eulerAngles.z < 360 - math.abs(rightConstraint))
+            return Quaternion.Euler(Vector3.forward * (360 - math.abs(rightConstraint)));
+        
+        return calculatedQuaternion;
     }
 
-    private static Quaternion GyroToUnity(Quaternion q)
+    private Quaternion GyroToUnity(Quaternion q)
     {
-        return new Quaternion(q.x, q.y, -q.z, -q.w);
+        var rotation = new Quaternion(q.x, q.y, -q.z, -q.w);
+        rotation.eulerAngles *= sensibility;
+        return rotation;
     }
-    
+
     public override void Disable()
     {
         base.Disable();
-        gyroscope.enabled = false;
+        if (gyroscope != null) gyroscope.enabled = false;
     }
 }
 
 [Serializable]
 public struct GyroscopeSetupData
 {
+    public Transform rotatingPoint;
     public bool hasConstraint;
-    public Vector3 leftConstraint;
-    public Vector3 rightConstraint;
+    public float leftConstraint;
+    public float rightConstraint;
     public float sensibility;
-    
 }

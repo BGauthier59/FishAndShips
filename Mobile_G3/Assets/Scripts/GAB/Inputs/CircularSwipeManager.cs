@@ -9,8 +9,6 @@ using UnityEngine.InputSystem;
 
 public class CircularSwipeManager : MiniGameInput<CircularSwipeSetupData>
 {
-    private bool isActive;
-
     private Transform centralPoint;
     private SpriteRenderer rotatingPointRd;
     private Transform availableZone;

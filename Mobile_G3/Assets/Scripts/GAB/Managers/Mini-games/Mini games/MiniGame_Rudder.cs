@@ -8,6 +8,7 @@ public class MiniGame_Rudder : MiniGame
     [SerializeField] private GyroscopeSetupData data;
     [SerializeField] private TMP_Text rotationText;
     private Vector3 currentEulerAngles;
+    private Quaternion currentRotation;
     
     public override void StartMiniGame()
     {
@@ -18,8 +19,11 @@ public class MiniGame_Rudder : MiniGame
     
     public override void ExecuteMiniGame()
     {
-        currentEulerAngles = MiniGameManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles;
-        rotationText.text = currentEulerAngles.ToString();
+        currentRotation = MiniGameManager.instance.gyroscopeManager.GetGyroRotation();
+        currentEulerAngles = currentRotation.eulerAngles;
+        currentEulerAngles.x = currentEulerAngles.y = 0;
+        data.rotatingPoint.eulerAngles = currentEulerAngles;
+        rotationText.text = currentEulerAngles.z.ToString("F1");
     }
     
     public override void ExitMiniGame(bool victory)
