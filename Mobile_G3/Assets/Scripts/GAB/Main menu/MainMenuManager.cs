@@ -76,6 +76,22 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         SetCurrentCanvas(CanvasType.Settings);
     }
+    
+    public void OnQualitySettings(int setting)
+    {
+        switch (setting)
+        {
+            case 0:
+                QualitySettings.resolutionScalingFixedDPIFactor = 0.8f;
+                break;
+            case 1:
+                QualitySettings.resolutionScalingFixedDPIFactor = 0.9f;
+                break;
+            case 2:
+                QualitySettings.resolutionScalingFixedDPIFactor = 1f;
+                break;
+        }
+    }
 
     public void OnShopButton()
     {

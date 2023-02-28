@@ -10,7 +10,7 @@ public class TestPerf : MonoBehaviour
     public bool countFPS;
     public TMP_Text counter;
     public Color green, red;
-    void Update()
+    void LateUpdate()
     {
         transform.position = new Vector3(x + Mathf.Sin(Time.time*speed) * 0.5f + 0.5f,
             0.4f + curve.Evaluate(Mathf.Sin(Time.time*speed) * 0.5f + 0.5f), y);

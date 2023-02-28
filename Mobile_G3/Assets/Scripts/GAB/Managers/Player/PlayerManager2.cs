@@ -15,7 +15,7 @@ public class PlayerManager2 : NetworkBehaviour
     public NetworkVariable<int> gridPositionY = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
 
-    private GridEntity _gridEntity;
+    public GridEntity _gridEntity;
     [SerializeField] private MeshRenderer renderer;
     [SerializeField] private Material[] materials;
     [SerializeField] private SwipeManager controls;
@@ -73,12 +73,12 @@ public class PlayerManager2 : NetworkBehaviour
 
     void Controls()
     {
-        if (IsOwner && canMove)
+        if (IsOwner && canMove && GridControlManager.instance)
         {
-            if (controls.SwipeUp) OnInputMove(0);
-            if (controls.SwipeRight) OnInputMove(1);
-            if (controls.SwipeDown) OnInputMove(2);
-            if (controls.SwipeLeft) OnInputMove(3);  
+            if (GridControlManager.instance.upKeyPressed) OnInputMove(0);
+            if (GridControlManager.instance.rightKeyPressed) OnInputMove(1);
+            if (GridControlManager.instance.downKeyPressed) OnInputMove(2);
+            if (GridControlManager.instance.leftKeyPressed) OnInputMove(3);  
             
             if (Input.GetKeyDown(KeyCode.Z))
             {
@@ -101,6 +101,7 @@ public class PlayerManager2 : NetworkBehaviour
 
     void OnInputMove(int direction)
     {
+        GridControlManager.instance.Reset();
         switch (direction)
         {
             case 0:
