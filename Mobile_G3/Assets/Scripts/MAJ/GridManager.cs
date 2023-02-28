@@ -23,25 +23,21 @@ public class GridManager : MonoSingleton<GridManager>
         {
             for (int y = 0; y < ySize; y++)
             {
-                Tile tile = new Tile();
-                tile.name = "Tile " + x + "," + y;
+                Tile tile = new();
+                tile.name = $"Tile {x}, {y}";
                 if (x > 0 && x < xSize - 1 && y > 0 && y < ySize - 1)
                 {
                     tile.type = TileType.Walkable;
-                    tile.obj = Instantiate(tilePrefab, new Vector3(x, 0, y), quaternion.identity,transform);
+                    tile.obj = Instantiate(tilePrefab, new Vector3(x, 0, y), Quaternion.identity, transform);
+                    tile.obj.name = $"Tile {x}, {y}";
                 }
-                else
-                {
-                    tile.type = TileType.Wall;
-                    
-                }
+                else tile.type = TileType.Wall;
                 tiles.Add(tile);
-                
             }
         }
     }
 
-    public TileType CheckForMovement(int posX, int posY,GridEntity entity, out int atelierIndex)
+    public TileType CheckForMovement(int posX, int posY, GridEntity entity, out int atelierIndex)
     {
         atelierIndex = 0;
         int tileIndex = (posX * ySize) + posY;
@@ -49,15 +45,18 @@ public class GridManager : MonoSingleton<GridManager>
         {
             return TileType.Walkable;
         }
+
         if (tiles[tileIndex].type == TileType.Atelier)
         {
             atelierIndex = tiles[tileIndex].atelierIndex;
             return TileType.Atelier;
         }
+
         if (tiles[tileIndex].type == TileType.Stairs)
         {
             return TileType.Stairs;
         }
+
         return TileType.Wall;
     }
 
@@ -66,8 +65,8 @@ public class GridManager : MonoSingleton<GridManager>
         int tileIndex = (posX * ySize) + posY;
         tiles[tileIndex].entity = null;
     }
-    
-    public void AddEntity(int posX, int posY,GridEntity entity)
+
+    public void AddEntity(int posX, int posY, GridEntity entity)
     {
         int tileIndex = (posX * ySize) + posY;
         tiles[tileIndex].entity = entity;

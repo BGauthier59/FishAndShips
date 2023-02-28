@@ -5,15 +5,25 @@ using UnityEngine;
 
 public class MiniGameManager : MonoSingleton<MiniGameManager>
 {
-    [SerializeField] private MiniGame[] passiveMiniGames;
-    //[SerializeField] private MiniGameEvent[] miniGamesEvents;
+    private Workshop currentWorkshop;
     private MiniGame currentMiniGame;
     [SerializeField] private GameObject popUpMiniGame;
 
     [Header("TEMPORARY")]
     public CircularSwipeManager circularSwipeManager;
-
     public GyroscopeManager gyroscopeManager;
+
+    public void StartWorkshopInteraction(Workshop workshop)
+    {
+        currentWorkshop = workshop;
+        
+        // Todo - envoyer en réseau que le workshop est occupé
+        currentWorkshop.isOccupied.Value = true;
+        
+        // Todo - gérer ici les ateliers qui se jouent à plusieurs ?
+        
+        StartMiniGame(currentWorkshop.associatedMiniGame);
+    }
 
     public void StartMiniGame(MiniGame game)
     {
@@ -34,5 +44,15 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
         Debug.Log($"Exited with {victory}");
         popUpMiniGame.SetActive(false);
         currentMiniGame = null;
+        EndWorkshopInteraction();
+    }
+
+    private void EndWorkshopInteraction()
+    {
+        // Todo - Désactive-t-on systématiquement le workshop ?
+        
+        currentWorkshop.isOccupied.Value = false;
+
+        currentWorkshop.Deactivate();
     }
 }

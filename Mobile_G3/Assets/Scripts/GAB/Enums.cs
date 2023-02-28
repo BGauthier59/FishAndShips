@@ -14,7 +14,7 @@ public enum PoolType
     ExampleTransform, ExampleRigidbody, ExampleMonoBehaviour
 }
 
-public enum MiniGameType
+public enum WorkshopType
 {
     Continuous, Accident, Resolution
 }

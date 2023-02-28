@@ -5,7 +5,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerManager2 : NetworkBehaviour
+public class PlayerManager2 : NetworkBehaviour, IGridEntity
 {
     public NetworkVariable<FixedString32Bytes> playerName = new("None", NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
@@ -169,5 +169,17 @@ public class PlayerManager2 : NetworkBehaviour
         previousPos = transform.position;
         canMove = false;
         if(GridManager.instance)GridManager.instance.AddEntity(_gridEntity.posX,_gridEntity.posY,_gridEntity);
+    }
+
+    
+    // A voir plus tard
+    public void SetToGrid(int x, int y)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void OnCollision(IGridEntity other)
+    {
+        throw new NotImplementedException();
     }
 }
