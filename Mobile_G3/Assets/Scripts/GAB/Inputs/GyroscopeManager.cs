@@ -47,14 +47,6 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
         var gyroQuaternion = GyroToUnity(gyroscope.attitude);
         var calculatedQuaternion = correctionQuaternion * gyroQuaternion;
 
-        if (!hasConstraint) return calculatedQuaternion;
-
-        if (calculatedQuaternion.eulerAngles.z > leftConstraint)
-            return Quaternion.Euler(Vector3.forward * leftConstraint);
-        
-        if (calculatedQuaternion.eulerAngles.z < 360 - math.abs(rightConstraint))
-            return Quaternion.Euler(Vector3.forward * (360 - math.abs(rightConstraint)));
-        
         return calculatedQuaternion;
     }
 
