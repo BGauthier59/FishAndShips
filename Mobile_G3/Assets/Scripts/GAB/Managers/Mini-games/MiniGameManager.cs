@@ -13,6 +13,8 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
     [Header("TEMPORARY")]
     public CircularSwipeManager circularSwipeManager;
 
+    public GyroscopeManager gyroscopeManager;
+
     public void StartMiniGame(MiniGame game)
     {
         currentMiniGame = game;
