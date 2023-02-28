@@ -41,17 +41,24 @@ public class GridManager : MonoSingleton<GridManager>
         }
     }
 
-    public bool CheckForMovement(int posX, int posY,GridEntity entity)
+    public TileType CheckForMovement(int posX, int posY,GridEntity entity, out int atelierIndex)
     {
+        atelierIndex = 0;
         int tileIndex = (posX * ySize) + posY;
         if (tiles[tileIndex].entity == null && tiles[tileIndex].type == TileType.Walkable)
         {
-            return true;
+            return TileType.Walkable;
         }
-        else
+        if (tiles[tileIndex].type == TileType.Atelier)
         {
-            return false;
+            atelierIndex = tiles[tileIndex].atelierIndex;
+            return TileType.Atelier;
         }
+        if (tiles[tileIndex].type == TileType.Stairs)
+        {
+            return TileType.Stairs;
+        }
+        return TileType.Wall;
     }
 
     public void RemoveEntity(int posX, int posY)
@@ -74,11 +81,13 @@ public class Tile
     public TileType type;
     public GameObject obj;
     public GridEntity entity;
+    public int atelierIndex;
 }
 
 public enum TileType
 {
     Walkable,
     Wall,
-    Table
+    Atelier,
+    Stairs
 }

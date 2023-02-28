@@ -102,23 +102,31 @@ public class PlayerManager2 : NetworkBehaviour
     void OnInputMove(int direction)
     {
         GridControlManager.instance.Reset();
+        TileType type;
+        int atelierIndex,xpos = gridPositionX.Value,ypos = gridPositionY.Value;
         switch (direction)
         {
             case 0:
-                if(GridManager.instance.CheckForMovement(gridPositionX.Value, gridPositionY.Value+1, _gridEntity))
-                    InitializeMovement(gridPositionX.Value,gridPositionY.Value+1);
+                ypos = gridPositionY.Value + 1;
                 break;
             case 1:
-                if(GridManager.instance.CheckForMovement(gridPositionX.Value+1, gridPositionY.Value, _gridEntity))
-                    InitializeMovement(gridPositionX.Value+1, gridPositionY.Value);
+                xpos = gridPositionX.Value + 1;
                 break;
             case 2:
-                if(GridManager.instance.CheckForMovement(gridPositionX.Value, gridPositionY.Value-1, _gridEntity))
-                    InitializeMovement(gridPositionX.Value, gridPositionY.Value-1);
+                ypos = gridPositionY.Value - 1;
                 break;
             case 3:
-                if(GridManager.instance.CheckForMovement(gridPositionX.Value-1, gridPositionY.Value, _gridEntity))
-                    InitializeMovement(gridPositionX.Value-1, gridPositionY.Value);
+                xpos = gridPositionX.Value - 1;
+                break;
+        }
+        type = GridManager.instance.CheckForMovement(xpos, ypos, _gridEntity, out atelierIndex);
+        switch (type)
+        {
+            case TileType.Walkable:
+                InitializeMovement(xpos,ypos);
+                break;
+            case TileType.Atelier:
+                StartAtelier(atelierIndex);
                 break;
         }
     }
@@ -128,6 +136,11 @@ public class PlayerManager2 : NetworkBehaviour
         if(!IsOwner) return;
         gridPositionX.Value = newPosX;
         gridPositionY.Value = newPosY;
+    }
+
+    void StartAtelier(int atelierIndex)
+    {
+        Debug.Log("L'atelier numero " + atelierIndex + " est utilisé");
     }
 
     void ApplicateMovement()

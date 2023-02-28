@@ -6,7 +6,7 @@ using UnityEngine;
 public class MiniGameManager : MonoSingleton<MiniGameManager>
 {
     [SerializeField] private MiniGame[] passiveMiniGames;
-    [SerializeField] private MiniGameEvent[] miniGamesEvents;
+    //[SerializeField] private MiniGameEvent[] miniGamesEvents;
     private MiniGame currentMiniGame;
     [SerializeField] private GameObject popUpMiniGame;
 
