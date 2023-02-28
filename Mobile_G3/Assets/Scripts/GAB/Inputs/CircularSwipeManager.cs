@@ -7,10 +7,8 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CircularSwipeManager : MonoBehaviour
+public class CircularSwipeManager : MiniGameInput<CircularSwipeSetupData>
 {
-    private bool isActive;
-
     private Transform centralPoint;
     private SpriteRenderer rotatingPointRd;
     private Transform availableZone;
@@ -24,6 +22,7 @@ public class CircularSwipeManager : MonoBehaviour
     private bool isDraging;
     private float currentAngle;
     private int circleCount;
+    private int pointToWin;
 
     [UsedImplicitly]
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
@@ -57,8 +56,9 @@ public class CircularSwipeManager : MonoBehaviour
         rotatingPointRd.enabled = false;
     }
 
-    public void Enable(CircularSwipeSetupData data)
+    public override void Enable(CircularSwipeSetupData data)
     {
+        base.Enable(data);
         centralPoint = data.centralPoint;
         rotatingPointRd = data.rotatingPointRd;
         availableZone = data.availableZone;
@@ -70,20 +70,19 @@ public class CircularSwipeManager : MonoBehaviour
 
         availableZone.localScale = new Vector3(data.minMaxMagnitude.y * 2, data.minMaxMagnitude.y * 2, 1);
         unavailableCenterZone.localScale = new Vector3(data.minMaxMagnitude.x * 2, data.minMaxMagnitude.x * 2, 1);
-
-        isActive = true;
-
+        
         circleCount = 0;
+        pointToWin = data.countToWin;
         Reset();
     }
     
-    public void Disable()
+    public override void Disable()
     {
-        isActive = false;
+        base.Disable();
         Reset();
     }
 
-    public bool CalculateCircularSwipe(int countToWin)
+    public bool CalculateCircularSwipe()
     {
         if (!isDraging) return false;
 
@@ -120,7 +119,7 @@ public class CircularSwipeManager : MonoBehaviour
         startVector = currentVector;
         centralPoint.SetEulerAnglesZ(currentAngle);
 
-        return circleCount >= countToWin;
+        return circleCount >= pointToWin;
     }
 }
 
@@ -133,4 +132,6 @@ public struct CircularSwipeSetupData
     public Transform availableZone;
     public Transform unavailableCenterZone;
     public TMP_Text circleCountText;
+
+    public int countToWin;
 }
