@@ -10,7 +10,6 @@ using UnityEngine.InputSystem;
 public class MiniGame_Circle : MiniGame
 {
     [SerializeField] private CircularSwipeSetupData data;
-    [SerializeField] private int countToWin;
     [SerializeField] private float duration;
     private float timer;
     [SerializeField] private TMP_Text timerText;
@@ -38,7 +37,7 @@ public class MiniGame_Circle : MiniGame
         {
             timer += Time.deltaTime;
 
-            if (MiniGameManager.instance.circularSwipeManager.CalculateCircularSwipe(countToWin))
+            if (MiniGameManager.instance.circularSwipeManager.CalculateCircularSwipe())
             {
                 ExitMiniGame(true);
             }
