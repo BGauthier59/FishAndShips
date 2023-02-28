@@ -10,6 +10,12 @@ public class GridManager : MonoSingleton<GridManager>
     [SerializeField] public List<Tile> tiles = new List<Tile>(0);
     public GameObject tilePrefab;
 
+    public override void Awake()
+    {
+        base.Awake();
+        Application.targetFrameRate = 120;
+    }
+
     public void OnGenerateGrid()
     {
         tiles = new List<Tile>(0);
