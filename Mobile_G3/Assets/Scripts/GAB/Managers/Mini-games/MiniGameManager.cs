@@ -49,6 +49,12 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
 
     private void EndWorkshopInteraction()
     {
+        if (currentWorkshop == null)
+        {
+            Debug.Log("There is not workshop associated with this mini-game!");
+            return;
+        }
+        
         // Todo - Désactive-t-on systématiquement le workshop ?
         
         currentWorkshop.isOccupied.Value = false;

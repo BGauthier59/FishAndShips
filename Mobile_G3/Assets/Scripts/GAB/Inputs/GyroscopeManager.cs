@@ -11,9 +11,6 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
     private Gyroscope gyroscope;
     private Quaternion correctionQuaternion;
 
-    private bool hasConstraint;
-    private float leftConstraint;
-    private float rightConstraint;
     private float sensibility;
 
     public override void Enable(GyroscopeSetupData data)
@@ -26,9 +23,6 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
         }
 
         base.Enable(data);
-        hasConstraint = data.hasConstraint;
-        leftConstraint = data.leftConstraint;
-        rightConstraint = data.rightConstraint;
         sensibility = data.sensibility;
 
         gyroscope = Input.gyro;
