@@ -109,6 +109,7 @@ public class GridEditor : EditorWindow
             }
 
             offsetPreviewPosition = EditorGUILayout.Vector3Field("Offset Preview Position", offsetPreviewPosition);
+            UpdateListTileManage();
         }
         
         EditorGUILayout.Space();
@@ -125,14 +126,11 @@ public class GridEditor : EditorWindow
     
     private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
     {
-        if (!showPreviewAllHandlesButton)
-        {
-            return;
-        }
-        
+        if (!showPreviewAllHandlesButton) return;
+
         Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
-        
+        int i = 0;
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
