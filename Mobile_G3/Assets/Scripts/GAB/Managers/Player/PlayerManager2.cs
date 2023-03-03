@@ -71,7 +71,7 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
     }
 
     #endregion
-    
+
     void Controls()
     {
         if (IsOwner && canMove && GridControlManager.instance)
@@ -156,17 +156,5 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
         if (!IsOwner) return;
         gridPositionX.Value = posX;
         gridPositionY.Value = posY;
-    }
-
-    
-    // A voir plus tard
-    public void SetToGrid(int x, int y)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void OnCollision(IGridEntity other)
-    {
-        throw new NotImplementedException();
     }
 }

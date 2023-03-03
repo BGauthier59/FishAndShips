@@ -49,6 +49,11 @@ public class Workshop : MonoBehaviour, IGridEntity
         MiniGameManager.instance.StartWorkshopInteraction(this);
     }
 
+    public void SetPosition(int posX, int posY)
+    {
+        throw new NotImplementedException();
+    }
+
     public void Activate()
     {
         isActive.Value = true;

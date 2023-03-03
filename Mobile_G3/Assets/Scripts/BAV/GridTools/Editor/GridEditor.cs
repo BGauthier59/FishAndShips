@@ -137,7 +137,7 @@ public class GridEditor : EditorWindow
             for (int col = 0; col < cols; col++)
             {
                 Vector3 position = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
-                Handles.Label(position, _listGridManagerTile[0].type.ToString());
+                Handles.Label(position, _listGridManagerTile[0].floor.ToString());
                 if (row > 0 && row < rows - 1 && col > 0 && col < cols - 1)
                 {
                     // Dessiner un bouton Handles au-dessus de la cellule
@@ -188,7 +188,7 @@ public class GridEditor : EditorWindow
         GameObject gridObject = new GameObject(gridName);
         gridObject.AddComponent<GridManager>();
         _gridManager = gridObject.GetComponent<GridManager>();
-        _gridManager.tiles = new List<Tile>(0);
+        _gridManager.grid = new List<Tile>(0);
         _gridManager.xSize = rows;
         _gridManager.ySize = cols;
         PositionGridObject(gridObject);
@@ -207,21 +207,21 @@ public class GridEditor : EditorWindow
                 tile.name = "Tile " + row + "," + col;
                 if (row > 0 && row < rows - 1 && col > 0 && col < cols - 1)
                 {
-                    tile.type = TileType.Walkable;
+                    //tile.floor = TileType.Walkable;
                     Vector3 position = new Vector3(col, 0, row) * cellSize - center + offset;
 
-                    tile.obj = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                    tile.obj.name = "Tile " + row + "," + col;
-                    tile.obj.transform.position = position;
-                    tile.obj.transform.rotation = randomRotation ?Quaternion.Euler(0,Random.Range(-360,360),0) : Quaternion.identity;
-                    tile.obj.transform.parent = gridObject.transform;
+                    //tile.tile = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                    //tile.obj.name = "Tile " + row + "," + col;
+                    //tile.obj.transform.position = position;
+                    //tile.obj.transform.rotation = randomRotation ?Quaternion.Euler(0,Random.Range(-360,360),0) : Quaternion.identity;
+                    //tile.obj.transform.parent = gridObject.transform;
                 }
                 else
                 {
-                    tile.type = TileType.Wall;
+                    //tile.type = TileType.Wall;
                 }
                 
-                _gridManager.tiles.Add(tile);
+                _gridManager.grid.Add(tile);
             }
         }
     }
@@ -240,7 +240,7 @@ public class GridEditor : EditorWindow
         {
             Transform child = gridObject.transform.GetChild(0);
             DestroyImmediate(child.gameObject);
-            _gridManager.tiles.Clear();
+            _gridManager.grid.Clear();
         }
         _gridManager.xSize = rows;
         _gridManager.ySize = cols;
@@ -251,9 +251,9 @@ public class GridEditor : EditorWindow
     {
         if (_listGridManagerTile.Count < 1)
         {
-            for (int i = 0; i < _gridManager.tiles.Count; i++)
+            for (int i = 0; i < _gridManager.grid.Count; i++)
             {
-                _listGridManagerTile.Add(_gridManager.tiles[i]);
+                _listGridManagerTile.Add(_gridManager.grid[i]);
             }
         }
     }
@@ -317,7 +317,7 @@ public class GridEditor : EditorWindow
         {
             if (obj.name == _selectedObject.name)
             {
-                Handles.Label(buttonPos, obj.type.ToString());
+                Handles.Label(buttonPos, obj.floor.ToString());
             }
         }
     }
