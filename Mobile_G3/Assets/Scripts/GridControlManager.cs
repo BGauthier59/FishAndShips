@@ -42,7 +42,9 @@ public class GridControlManager : MonoSingleton<GridControlManager>
     {
         for (int i = 0; i < 4; i++)
         {
-            if (buttons[i].rect.Contains(position-(Vector2)buttons[i].position))
+            Rect rectTransformed = new Rect(buttons[i].TransformPoint(buttons[i].rect.position),
+                buttons[i].TransformVector(buttons[i].rect.size));
+            if (rectTransformed.Contains(position))
             {
                 OnKeyPressed(i);
                 break;

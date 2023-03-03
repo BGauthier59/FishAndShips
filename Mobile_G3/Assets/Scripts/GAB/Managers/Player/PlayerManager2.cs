@@ -12,19 +12,21 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
 
     public NetworkVariable<int> gridPositionX = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
+
     public NetworkVariable<int> gridPositionY = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
 
-    public GridEntity _gridEntity;
+    public int positionX;
+    public int positionY;
+
     [SerializeField] private MeshRenderer renderer;
     [SerializeField] private Material[] materials;
-    [SerializeField] private SwipeManager controls;
 
-    public float walkDelay, walkTimer;
+    public float bounceDelay, bounceTimer;
     public Vector3 previousPos;
     public bool canMove;
     public AnimationCurve curve;
-
+    public GameObject fxTest;
 
     private void Start()
     {
@@ -33,22 +35,27 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
         gridPositionY.OnValueChanged += OnPositionChanged;
     }
 
+    private void Update()
+    {
+        Controls();
+        Bounce();
+    }
+
     #region Network
 
     public override void OnNetworkSpawn()
     {
         // TODO - Check if can join the room
 
-        _gridEntity = GetComponent<GridEntity>();
         if (IsOwner)
         {
             Debug.LogWarning("You've been connected!");
             playerName.Value = MainMenuManager.instance.pseudo;
-            InitializeMovement(_gridEntity.posX,_gridEntity.posY);
+            SetPosition(positionX, positionY);
         }
+
         renderer.material = materials[OwnerClientId];
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
-        
     }
 
     public override void OnNetworkDespawn()
@@ -57,20 +64,14 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
         ConnectionManager.instance.RemovePlayerFromDictionary(OwnerClientId);
     }
 
-    public void OnNameChanged(FixedString32Bytes previousName, FixedString32Bytes newName)
+    private void OnNameChanged(FixedString32Bytes previousName, FixedString32Bytes newName)
     {
         Debug.Log("Name value has changed");
         MainMenuManager.instance.ClientGetConnected(OwnerClientId, newName.Value);
     }
 
     #endregion
-
-    private void Update()
-    {
-        Controls();
-        ApplicateMovement();
-    }
-
+    
     void Controls()
     {
         if (IsOwner && canMove && GridControlManager.instance)
@@ -78,32 +79,19 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
             if (GridControlManager.instance.upKeyPressed) OnInputMove(0);
             if (GridControlManager.instance.rightKeyPressed) OnInputMove(1);
             if (GridControlManager.instance.downKeyPressed) OnInputMove(2);
-            if (GridControlManager.instance.leftKeyPressed) OnInputMove(3);  
-            
-            if (Input.GetKeyDown(KeyCode.Z))
-            {
-                OnInputMove(0);
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                OnInputMove(1);
-            }
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                OnInputMove(2);
-            }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                OnInputMove(3);
-            }
+            if (GridControlManager.instance.leftKeyPressed) OnInputMove(3);
+
+            if (Input.GetKeyDown(KeyCode.Z)) OnInputMove(0);
+            if (Input.GetKeyDown(KeyCode.D)) OnInputMove(1);
+            if (Input.GetKeyDown(KeyCode.S)) OnInputMove(2);
+            if (Input.GetKeyDown(KeyCode.Q)) OnInputMove(3);
         }
     }
 
     void OnInputMove(int direction)
     {
         GridControlManager.instance.Reset();
-        TileType type;
-        int atelierIndex,xpos = gridPositionX.Value,ypos = gridPositionY.Value;
+        int xpos = gridPositionX.Value, ypos = gridPositionY.Value;
         switch (direction)
         {
             case 0:
@@ -119,56 +107,55 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
                 xpos = gridPositionX.Value - 1;
                 break;
         }
-        type = GridManager.instance.CheckForMovement(xpos, ypos, _gridEntity, out atelierIndex);
-        switch (type)
+
+        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this);
+    }
+
+    private void Bounce()
+    {
+        if (canMove) return;
+        if (bounceTimer > 0)
         {
-            case TileType.Walkable:
-                InitializeMovement(xpos,ypos);
-                break;
-            case TileType.Atelier:
-                StartAtelier(atelierIndex);
-                break;
+            bounceTimer -= Time.deltaTime;
+            transform.position = Vector3.Lerp(previousPos, new Vector3(positionX, 0.4f, positionY),
+                                     1 - (bounceTimer / bounceDelay))
+                                 + Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
+        }
+        else
+        {
+            transform.position = new Vector3(positionX, 0.4f, positionY);
+            if (GridManager.instance) GridManager.instance.GetTile(positionX, positionY).GetFloor().OnLand(this);
+            bounceTimer = bounceDelay;
+            canMove = true;
         }
     }
 
-    void InitializeMovement(int newPosX,int newPosY)
+    private void OnPositionChanged(int previous, int next)
     {
-        if(!IsOwner) return;
-        gridPositionX.Value = newPosX;
-        gridPositionY.Value = newPosY;
-    }
-
-    void StartAtelier(int atelierIndex)
-    {
-        Debug.Log("L'atelier numero " + atelierIndex + " est utilisé");
-    }
-
-    void ApplicateMovement()
-    {
-        if (!canMove)
+        if (GridManager.instance == null)
         {
-            if (walkTimer > 0)
-            {
-                walkTimer -= Time.deltaTime;
-                transform.position = Vector3.Lerp(previousPos,new Vector3(_gridEntity.posX,0.4f,_gridEntity.posY),1-(walkTimer / walkDelay))
-                                     +Vector3.up*curve.Evaluate(1-(walkTimer / walkDelay));
-            }
-            else
-            {
-                transform.position = new Vector3(_gridEntity.posX,0.4f,_gridEntity.posY);
-                walkTimer = walkDelay;
-                canMove = true;
-            }   
+            Debug.LogWarning("No Grid Manager");
+            return;
         }
-    }
-    void OnPositionChanged(int previous,int next)
-    {
-        if(GridManager.instance)GridManager.instance.RemoveEntity(_gridEntity.posX,_gridEntity.posY);
-        _gridEntity.posX = gridPositionX.Value;
-        _gridEntity.posY = gridPositionY.Value;
+
+        GridManager.instance.GetTile(positionX, positionY).SetTile();
+        positionX = gridPositionX.Value;
+        positionY = gridPositionY.Value;
         previousPos = transform.position;
         canMove = false;
-        if(GridManager.instance)GridManager.instance.AddEntity(_gridEntity.posX,_gridEntity.posY,_gridEntity);
+        GridManager.instance.GetTile(positionX, positionY).SetTile(this);
+    }
+
+    public void OnCollision(IGridEntity entity)
+    {
+        // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?
+    }
+
+    public void SetPosition(int posX, int posY)
+    {
+        if (!IsOwner) return;
+        gridPositionX.Value = posX;
+        gridPositionY.Value = posY;
     }
 
     

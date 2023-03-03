@@ -12,6 +12,7 @@ public class GridModifier : MonoBehaviour
     {
         if (generate)
         {
+            
             generate = false;
             gridManager.OnGenerateGrid();
         }

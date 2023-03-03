@@ -3,73 +3,52 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GridManager : MonoSingleton<GridManager>
 {
     public int xSize, ySize;
-    [SerializeField] public List<Tile> tiles = new List<Tile>(0);
+    [SerializeField] private float holdOffset;
+    [SerializeField] public List<Tile> grid = new (0);
     public GameObject tilePrefab;
-
-    public override void Awake()
-    {
-        base.Awake();
-        Application.targetFrameRate = 120;
-    }
-
+    
     public void OnGenerateGrid()
     {
-        tiles = new List<Tile>(0);
-        for (int x = 0; x < xSize; x++)
+        grid = new List<Tile>(0);
+        for (int i = 0; i < 2; i++)
         {
-            for (int y = 0; y < ySize; y++)
+            for (int x = 0; x < xSize; x++)
             {
-                Tile tile = new();
-                tile.name = $"Tile {x}, {y}";
-                if (x > 0 && x < xSize - 1 && y > 0 && y < ySize - 1)
+                for (int y = 0; y < ySize; y++)
                 {
-                    tile.type = TileType.Walkable;
-                    tile.obj = Instantiate(tilePrefab, new Vector3(x, 0, y), Quaternion.identity, transform);
-                    tile.obj.name = $"Tile {x}, {y}";
+                    Tile tile = new Tile
+                    {
+                        name = i == 0 ? $"Deck {x}, {y}" : $"Hold {x}, {y}"
+                    };
+                    if (x > 0 && x < xSize - 1 && y > 0 && y < ySize - 1)
+                    {
+                        tile.transform = Instantiate(tilePrefab, new Vector3(x, 0, i == 0 ? y : y + holdOffset), 
+                            Quaternion.identity,transform).transform;
+                        tile.transform.name = i == 0 ? $"Deck {x}, {y}" : $"Hold {x}, {y}";
+                        tile.floor = tile.transform.GetComponent<GridFloorWalkable>();
+                        tile.GetFloor().SetPosition(x, y);
+                    }
+                    grid.Add(tile);
                 }
-                else tile.type = TileType.Wall;
-                tiles.Add(tile);
-            }
+            }   
         }
     }
-
-    public TileType CheckForMovement(int posX, int posY, GridEntity entity, out int atelierIndex)
+    
+    public Tile GetTile(int x, int y)
     {
-        atelierIndex = 0;
-        int tileIndex = (posX * ySize) + posY;
-        if (tiles[tileIndex].entity == null && tiles[tileIndex].type == TileType.Walkable)
-        {
-            return TileType.Walkable;
-        }
-
-        if (tiles[tileIndex].type == TileType.Atelier)
-        {
-            atelierIndex = tiles[tileIndex].atelierIndex;
-            return TileType.Atelier;
-        }
-
-        if (tiles[tileIndex].type == TileType.Stairs)
-        {
-            return TileType.Stairs;
-        }
-
-        return TileType.Wall;
+        int index = x * ySize + y;
+        return grid[index];
     }
-
-    public void RemoveEntity(int posX, int posY)
+    
+    public Tile GetOppositeTile(int x, int y)
     {
-        int tileIndex = (posX * ySize) + posY;
-        tiles[tileIndex].entity = null;
-    }
-
-    public void AddEntity(int posX, int posY, GridEntity entity)
-    {
-        int tileIndex = (posX * ySize) + posY;
-        tiles[tileIndex].entity = entity;
+        int index = x >= xSize ? (x - xSize) * ySize + y : (x + xSize) * ySize + y;
+        return grid[index];
     }
 }
 
@@ -77,16 +56,31 @@ public class GridManager : MonoSingleton<GridManager>
 public class Tile
 {
     public string name;
-    public TileType type;
-    public GameObject obj;
-    public GridEntity entity;
-    public int atelierIndex;
-}
+    public Transform transform;
+    public Component entity;
+    public Component floor;
 
-public enum TileType
-{
-    Walkable,
-    Wall,
-    Atelier,
-    Stairs
+    public void SetTile(IGridEntity newEntity = null, IGridFloor newFloor = null)
+    {
+        entity = (Component) newEntity;
+        if (newFloor != null) floor = (Component) newFloor;
+    }
+
+    public void OnInteraction(IGridEntity collidingEntity)
+    {
+        if (entity is IGridEntity gridEntity) gridEntity.OnCollision(collidingEntity);
+        else if (floor is IGridFloor gridFloor) gridFloor.OnMove(collidingEntity);
+    }
+
+    public IGridEntity GetEntity()
+    {
+        if(entity is not IGridEntity) Debug.LogWarning("Entity is not IGridEntity");
+        return entity as IGridEntity;
+    }
+    
+    public IGridFloor GetFloor()
+    {
+        if(floor is not IGridFloor) Debug.LogWarning("Floor is not IGridFloor");
+        return floor as IGridFloor;
+    }
 }

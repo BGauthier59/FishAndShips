@@ -85,7 +85,7 @@ public class GridEditor : EditorWindow
         GameObject gridObject = new GameObject("Grid");
         gridObject.AddComponent<GridManager>();
         _gridManager = gridObject.GetComponent<GridManager>();
-        _gridManager.tiles = new List<Tile>(0);
+        _gridManager.grid = new List<Tile>(0);
         _gridManager.xSize = rows;
         _gridManager.ySize = cols;
         
@@ -101,19 +101,19 @@ public class GridEditor : EditorWindow
                 tile.name = "Tile " + row + "," + col;
                 if (row > 0 && row < rows - 1 && col > 0 && row < rows - 1)
                 {
-                    tile.type = TileType.Walkable;
+                    //tile.type = TileType.Walkable;
                     Vector3 position = new Vector3(col, 0, row) * cellSize - center + offset;
 
-                    tile.obj = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                    tile.obj.transform.position = position;
+                    tile.transform = PrefabUtility.InstantiatePrefab(prefab) as Transform;
+                    tile.transform.position = position;
 
-                    tile.obj.transform.parent = gridObject.transform;
+                    tile.transform.parent = gridObject.transform;
                 }
                 else
                 {
-                    tile.type = TileType.Wall; 
+                    //tile.type = TileType.Wall; 
                 }
-                _gridManager.tiles.Add(tile);
+                _gridManager.grid.Add(tile);
             }
         }
     }
