@@ -7,8 +7,7 @@ using UnityEngine;
 
 public class PlayerTestController : MonoBehaviour
 {
-
-    private GridEntity _gridEntity;
+    
     [SerializeField] private MeshRenderer renderer;
     [SerializeField] private Material[] materials;
     [SerializeField] private SwipeManager controls;

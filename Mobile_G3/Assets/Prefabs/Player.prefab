@@ -142,7 +142,6 @@ GameObject:
   - component: {fileID: 7708758623107587738}
   - component: {fileID: 7007508820659071533}
   - component: {fileID: 8033157194108343558}
-  - component: {fileID: 5843297109540091860}
   - component: {fileID: -806603735394151836}
   m_Layer: 0
   m_Name: Player
@@ -281,14 +280,14 @@ MonoBehaviour:
     m_InternalValue: 0
   gridPositionY:
     m_InternalValue: 0
-  _gridEntity: {fileID: 5843297109540091860}
+  positionX: 3
+  positionY: 3
   renderer: {fileID: 3961911831396709542}
   materials:
   - {fileID: 2100000, guid: 8180d85f3ca9f0d40976024b926bbc04, type: 2}
   - {fileID: 2100000, guid: a9975ac1dbb7b7945bdd81c8a99b5145, type: 2}
   - {fileID: 2100000, guid: aa992a9a6f907b7479dc14524f172dab, type: 2}
   - {fileID: 2100000, guid: 07292c2543e07d841802f2eadff740ab, type: 2}
-  controls: {fileID: -806603735394151836}
   walkDelay: 0.2
   walkTimer: 0.2
   previousPos: {x: 0, y: 0, z: 0}
@@ -317,20 +316,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5843297109540091860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7708758623107587736}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d825320865ee37f4dafccc86ef20ac80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  posX: 4
-  posY: 3
+  fxTest: {fileID: 3957684201028600466, guid: f617141c9824d3b4198bbbb288a9e3f8, type: 3}
 --- !u!114 &-806603735394151836
 MonoBehaviour:
   m_ObjectHideFlags: 0
