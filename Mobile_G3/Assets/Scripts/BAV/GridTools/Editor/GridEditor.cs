@@ -122,6 +122,8 @@ public class GridEditor : EditorWindow
                 randomRotation = !randomRotation;
             }    
         }
+
+        UpdateGrid();
     }
     
     private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
@@ -130,16 +132,14 @@ public class GridEditor : EditorWindow
 
         Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
-        int i = 0;
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
             {
                 Vector3 position = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
                 Handles.Label(position, _listGridManagerTile[0].type.ToString());
-                if (row > 0 && row < rows - 1 && col > 0 && row < rows - 1)
+                if (row > 0 && row < rows - 1 && col > 0 && col < cols - 1)
                 {
-
                     // Dessiner un bouton Handles au-dessus de la cellule
                     if (Handles.Button(position, Quaternion.identity, cellSize * 0.5f, cellSize,
                             Handles.RectangleHandleCap))
@@ -205,7 +205,7 @@ public class GridEditor : EditorWindow
             {
                 Tile tile = new Tile();
                 tile.name = "Tile " + row + "," + col;
-                if (row > 0 && row < rows - 1 && col > 0 && row < rows - 1)
+                if (row > 0 && row < rows - 1 && col > 0 && col < cols - 1)
                 {
                     tile.type = TileType.Walkable;
                     Vector3 position = new Vector3(col, 0, row) * cellSize - center + offset;
