@@ -137,7 +137,15 @@ public class GridEditor : EditorWindow
             for (int col = 0; col < cols; col++)
             {
                 Vector3 position = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
-                Handles.Label(position, _listGridManagerTile[0].floor.ToString());
+                if (_listGridManagerTile[0].floor != null)
+                {
+                    Handles.Label(position, _listGridManagerTile[0].floor.ToString());
+                }
+                else
+                {
+                    Handles.Label(position, "Null");
+                }
+
                 if (row > 0 && row < rows - 1 && col > 0 && col < cols - 1)
                 {
                     // Dessiner un bouton Handles au-dessus de la cellule
@@ -210,11 +218,11 @@ public class GridEditor : EditorWindow
                     //tile.floor = TileType.Walkable;
                     Vector3 position = new Vector3(col, 0, row) * cellSize - center + offset;
 
-                    //tile.tile = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                    //tile.obj.name = "Tile " + row + "," + col;
-                    //tile.obj.transform.position = position;
-                    //tile.obj.transform.rotation = randomRotation ?Quaternion.Euler(0,Random.Range(-360,360),0) : Quaternion.identity;
-                    //tile.obj.transform.parent = gridObject.transform;
+                    _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                    _gridManager.tilePrefab.name = "Tile " + row + "," + col;
+                    _gridManager.tilePrefab.transform.position = position;
+                    _gridManager.tilePrefab.transform.rotation = randomRotation ?Quaternion.Euler(0,Random.Range(-360,360),0) : Quaternion.identity;
+                    _gridManager.tilePrefab.transform.parent = gridObject.transform;
                 }
                 else
                 {
