@@ -123,7 +123,7 @@ public class GridEditor : EditorWindow
             }    
         }
 
-        UpdateGrid();
+        UpdateListTileManage();
     }
     
     private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
