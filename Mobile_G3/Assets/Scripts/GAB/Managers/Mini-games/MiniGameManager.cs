@@ -16,13 +16,16 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
     public void StartWorkshopInteraction(Workshop workshop)
     {
         currentWorkshop = workshop;
-        
-        // Todo - envoyer en réseau que le workshop est occupé
         currentWorkshop.isOccupied.Value = true;
         
         // Todo - gérer ici les ateliers qui se jouent à plusieurs ?
-        
-        StartMiniGame(currentWorkshop.associatedMiniGame);
+
+        var seriesWorkshop = workshop as SeriesWorkshop;
+        if (seriesWorkshop)
+        {
+            StartMiniGame(seriesWorkshop.GetCurrentMiniGame());
+        }
+        else StartMiniGame(currentWorkshop.associatedMiniGame);
     }
 
     public void StartMiniGame(MiniGame game)
@@ -44,10 +47,10 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
         Debug.Log($"Exited with {victory}");
         popUpMiniGame.SetActive(false);
         currentMiniGame = null;
-        EndWorkshopInteraction();
+        EndWorkshopInteraction(victory);
     }
 
-    private void EndWorkshopInteraction()
+    private void EndWorkshopInteraction(bool victory)
     {
         if (currentWorkshop == null)
         {
@@ -55,10 +58,7 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
             return;
         }
         
-        // Todo - Désactive-t-on systématiquement le workshop ?
-        
         currentWorkshop.isOccupied.Value = false;
-
-        currentWorkshop.Deactivate();
+        currentWorkshop.Deactivate(victory);
     }
 }
