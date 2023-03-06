@@ -1,16 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SeriesWorkshop : Workshop
 {
     public MiniGame[] nextMiniGames;
     [Tooltip("Index -1 is associatedMiniGame. Otherwise follows list indices")] public int currentMiniGameIndex = -1;
-
-    public override void OnCollision(IGridEntity entity)
-    {
-        base.OnCollision(entity);
-    }
 
     public MiniGame GetCurrentMiniGame()
     {

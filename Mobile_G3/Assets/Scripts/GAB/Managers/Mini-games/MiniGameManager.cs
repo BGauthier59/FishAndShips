@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class MiniGameManager : MonoSingleton<MiniGameManager>
@@ -18,8 +15,6 @@ public class MiniGameManager : MonoSingleton<MiniGameManager>
         currentWorkshop = workshop;
         currentWorkshop.isOccupied.Value = true;
         
-        // Todo - gérer ici les ateliers qui se jouent à plusieurs ?
-
         var seriesWorkshop = workshop as SeriesWorkshop;
         if (seriesWorkshop)
         {

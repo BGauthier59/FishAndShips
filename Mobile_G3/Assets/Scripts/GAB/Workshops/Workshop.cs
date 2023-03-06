@@ -39,7 +39,6 @@ public class Workshop : MonoBehaviour, IGridEntity
         if (isOccupied.Value)
         {
             Debug.LogWarning("This workshop is already used by someone!");
-            // Ce n'est peut-être pas toujours un problème ?
             return;
         }
 
