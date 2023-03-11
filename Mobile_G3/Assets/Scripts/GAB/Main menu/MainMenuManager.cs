@@ -17,6 +17,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     [SerializeField] private TMP_Text ipText;
     public string pseudo;
+    public string scene;
 
     [SerializeField] private GameObject[] playerIcons;
 
@@ -176,7 +177,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         }
 
         ConnectionManager.instance.gameState = GameState.Game;
-        NetworkManager.Singleton.SceneManager.LoadScene("MainScene", LoadSceneMode.Single); 
+        NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single); 
         
     }
 
