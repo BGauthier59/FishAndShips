@@ -30,7 +30,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         entity.SetPosition(positionX >= GridManager.instance.xSize ? positionX - GridManager.instance.xSize : positionX + GridManager.instance.xSize, positionY);
     }
 
-    public void EnterStair(PlayerManager2 player)
+    public void EnterStair(PlayerManager player)
     {
         player.previousPos = player.transform.position;
         player.nextPos = GridManager.instance.GetTile(player.gridPositionX.Value, player.gridPositionY.Value).transform.position +
@@ -41,7 +41,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         }
         else
         {
-            PlayerManager2 localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
+            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
             if (localPlayer.positionX >= GridManager.instance.xSize)
             {
                 if (player.positionX >= GridManager.instance.xSize)player.InitializeBounce();
@@ -67,7 +67,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         }
     }
     
-    public void ExitStair(PlayerManager2 player)
+    public void ExitStair(PlayerManager player)
     {
         player.previousPos = player.transform.position;
         player.nextPos = GridManager.instance.GetTile(player.gridPositionX.Value, player.gridPositionY.Value).transform.position + Vector3.up * 0.4f;
@@ -77,7 +77,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         }
         else
         {
-            PlayerManager2 localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
+            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
             if (localPlayer.positionX >= GridManager.instance.xSize)
             {
                 if (player.positionX >= GridManager.instance.xSize)player.InitializeBounce();

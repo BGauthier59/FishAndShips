@@ -23,7 +23,7 @@ public class GridFloorWalkable : MonoBehaviour, IGridFloor
     // Quand entity a atteint cette tile
     public void OnLand(IGridEntity entity)
     {
-        PlayerManager2 player = entity as PlayerManager2;
+        PlayerManager player = entity as PlayerManager;
         if (player) Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
     }
 }

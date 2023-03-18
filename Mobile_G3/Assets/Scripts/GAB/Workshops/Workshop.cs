@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Workshop : MonoBehaviour, IGridEntity
+public class Workshop : NetworkBehaviour, IGridEntity
 {
     public int positionX, positionY;
     public MiniGame associatedMiniGame;
@@ -15,7 +15,7 @@ public class Workshop : MonoBehaviour, IGridEntity
     [SerializeField] protected NetworkVariable<bool> isActive = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
 
-    private PlayerManager2 playingPlayer;
+    private PlayerManager playingPlayer;
 
     private void Start()
     {
@@ -30,6 +30,10 @@ public class Workshop : MonoBehaviour, IGridEntity
 
     public virtual void OnCollision(IGridEntity entity)
     {
+        Debug.Log(isActive.WritePerm.ToString());
+        isActive.Value = true;
+
+        Debug.Log("On Collision!");
         if (!isActive.Value)
         {
             Debug.LogWarning("This workshop is not active!");
@@ -41,8 +45,9 @@ public class Workshop : MonoBehaviour, IGridEntity
             Debug.LogWarning("This workshop is already used by someone!");
             return;
         }
+        
 
-        playingPlayer = entity as PlayerManager2;
+        playingPlayer = entity as PlayerManager;
         MiniGameManager.instance.StartWorkshopInteraction(this);
     }
 

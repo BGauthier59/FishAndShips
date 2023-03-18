@@ -1,11 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerManager2 : NetworkBehaviour, IGridEntity
+public class PlayerManager : NetworkBehaviour, IGridEntity
 {
     public NetworkVariable<FixedString32Bytes> playerName = new("None", NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
@@ -111,6 +108,7 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
                 break;
         }
 
+        Debug.Log(direction);
         GridManager.instance.GetTile(xpos, ypos).OnInteraction(this);
     }
 
@@ -217,7 +215,7 @@ public class PlayerManager2 : NetworkBehaviour, IGridEntity
         }
         else
         {
-            PlayerManager2 localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
+            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
             if (localPlayer.positionX >= GridManager.instance.xSize)
             {
                 if (positionX >= GridManager.instance.xSize)nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position + Vector3.up * 0.8f;

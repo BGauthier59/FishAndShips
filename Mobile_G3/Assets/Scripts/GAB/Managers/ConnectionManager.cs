@@ -11,7 +11,7 @@ using UnityEngine;
 public class ConnectionManager : MonoSingleton<ConnectionManager>
 {
     private string ip;
-    public Dictionary<ulong, PlayerManager2> players = new();
+    public Dictionary<ulong, PlayerManager> players = new();
     private UnityTransport transport;
     private string ipToConnect;
     public GameState gameState = GameState.Menu;
@@ -95,7 +95,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
     #endregion
 
-    public void AddPlayerToDictionary(ulong playerId, PlayerManager2 manager)
+    public void AddPlayerToDictionary(ulong playerId, PlayerManager manager)
     {
         if (players.ContainsKey(playerId))
         {
