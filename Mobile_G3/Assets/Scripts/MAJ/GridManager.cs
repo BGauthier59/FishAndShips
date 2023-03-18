@@ -31,7 +31,7 @@ public class GridManager : MonoSingleton<GridManager>
                             Quaternion.identity,transform).transform;
                         tile.transform.name = i == 0 ? $"Deck {x}, {y}" : $"Hold {x}, {y}";
                         tile.floor = tile.transform.GetComponent<GridFloorWalkable>();
-                        tile.GetFloor().SetPosition(x, y);
+                        tile.GetFloor().SetPosition(i == 0 ? x : x+xSize, y);
                     }
                     grid.Add(tile);
                 }
