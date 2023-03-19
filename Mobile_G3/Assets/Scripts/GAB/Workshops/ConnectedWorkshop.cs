@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ConnectedWorkshop : Workshop
@@ -14,5 +15,15 @@ public class ConnectedWorkshop : Workshop
     {
         Deactivate(victory);
         other.Deactivate(victory);
+    }
+
+    public bool IsOtherReady()
+    {
+        return other.isOccupied.Value;
+    }
+
+    public ConnectedWorkshop GetOtherWorkshop()
+    {
+        return other;
     }
 }

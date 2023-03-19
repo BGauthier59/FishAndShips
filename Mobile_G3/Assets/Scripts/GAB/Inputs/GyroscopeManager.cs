@@ -34,7 +34,7 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
     {
         if (!isActive)
         {
-            Debug.Log("Can't use gyroscope");
+            //Debug.Log("Can't use gyroscope");
             return Quaternion.identity;
         }
 

@@ -17,8 +17,8 @@ public class SeriesWorkshop : Workshop
         if (currentMiniGameIndex == nextMiniGames.Length)
         {
             currentMiniGameIndex = -1;
-            isActive.Value = false;
-            isOccupied.Value = false;
+            SetActiveServerRpc(false);
+            SetOccupiedServerRpc(false);
             return;
         }
         MiniGameManager.instance.StartWorkshopInteraction(this);

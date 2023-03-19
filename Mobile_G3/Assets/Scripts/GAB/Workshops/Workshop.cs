@@ -10,12 +10,14 @@ public class Workshop : NetworkBehaviour, IGridEntity
     public MiniGame associatedMiniGame;
 
     public NetworkVariable<bool> isOccupied = new(false, NetworkVariableReadPermission.Everyone,
-        NetworkVariableWritePermission.Owner);
+        NetworkVariableWritePermission.Server);
 
-    [SerializeField] protected NetworkVariable<bool> isActive = new(false, NetworkVariableReadPermission.Everyone,
-        NetworkVariableWritePermission.Owner);
+    public NetworkVariable<bool> isActive = new(false, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
     private PlayerManager playingPlayer;
+
+    [SerializeField] private uint workshopId;
 
     private void Start()
     {
@@ -30,10 +32,9 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void OnCollision(IGridEntity entity)
     {
-        Debug.Log(isActive.WritePerm.ToString());
-        isActive.Value = true;
-
         Debug.Log("On Collision!");
+        Activate();
+
         if (!isActive.Value)
         {
             Debug.LogWarning("This workshop is not active!");
@@ -45,7 +46,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
             Debug.LogWarning("This workshop is already used by someone!");
             return;
         }
-        
 
         playingPlayer = entity as PlayerManager;
         MiniGameManager.instance.StartWorkshopInteraction(this);
@@ -57,16 +57,30 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void Activate()
     {
-        isActive.Value = true;
+        SetActiveServerRpc(true);
     }
 
     public virtual void Deactivate(bool victory)
     {
-        isOccupied.Value = false;
-        if (victory) isActive.Value = false;
+        SetOccupiedServerRpc(false);
+        if (victory) SetActiveServerRpc(false);
     }
 
     #region Network
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetOccupiedServerRpc(bool occupied)
+    {
+        Debug.Log("RPC set occupied Sent");
+        isOccupied.Value = occupied;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void SetActiveServerRpc(bool active)
+    {
+        Debug.Log("RPC set active Sent");
+        isActive.Value = active;
+    }
 
     private void OnSetOccupied(bool previous, bool current)
     {
@@ -76,6 +90,11 @@ public class Workshop : NetworkBehaviour, IGridEntity
     private void OnSetActivated(bool previous, bool current)
     {
         Debug.Log($"{name}'s activation state has been set to {current} (was {previous})");
+    }
+
+    public uint GetWorkshopId()
+    {
+        return workshopId;
     }
 
     #endregion
