@@ -14,13 +14,13 @@ public class MiniGame_Rudder : MiniGame
     public override void StartMiniGame()
     {
         base.StartMiniGame();
-        MiniGameManager.instance.gyroscopeManager.Enable(data);
+        WorkshopManager.instance.gyroscopeManager.Enable(data);
         currentEulerAngles = Vector3.zero;
     }
 
     public override void ExecuteMiniGame()
     {
-        currentRotation = MiniGameManager.instance.gyroscopeManager.GetGyroRotation();
+        currentRotation = WorkshopManager.instance.gyroscopeManager.GetGyroRotation();
         currentEulerAngles = currentRotation.eulerAngles;
         currentEulerAngles.x = currentEulerAngles.y = 0;
 
@@ -42,7 +42,7 @@ public class MiniGame_Rudder : MiniGame
 
     public override void ExitMiniGame(bool victory)
     {
-        MiniGameManager.instance.gyroscopeManager.Disable();
+        WorkshopManager.instance.gyroscopeManager.Disable();
         base.ExitMiniGame(victory);
     }
 }

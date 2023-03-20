@@ -14,7 +14,7 @@ public enum PoolType
     ExampleTransform, ExampleRigidbody, ExampleMonoBehaviour
 }
 
-public enum WorkshopType
+public enum CanvasType
 {
-    Continuous, Accident, Resolution
+    None, WorkshopCanvas, ControlCanvas
 }

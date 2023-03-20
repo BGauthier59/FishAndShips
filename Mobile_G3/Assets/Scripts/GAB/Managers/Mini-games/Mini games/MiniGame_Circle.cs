@@ -23,7 +23,7 @@ public class MiniGame_Circle : MiniGame
     public override void StartMiniGame()
     {
         base.StartMiniGame();
-        MiniGameManager.instance.circularSwipeManager.Enable(data);
+        WorkshopManager.instance.circularSwipeManager.Enable(data);
         timerText.text = duration.ToString("F0");
     }
 
@@ -37,7 +37,7 @@ public class MiniGame_Circle : MiniGame
         {
             timer += Time.deltaTime;
 
-            if (MiniGameManager.instance.circularSwipeManager.CalculateCircularSwipe())
+            if (WorkshopManager.instance.circularSwipeManager.CalculateCircularSwipe())
             {
                 ExitMiniGame(true);
             }
@@ -48,7 +48,7 @@ public class MiniGame_Circle : MiniGame
 
     public override void ExitMiniGame(bool victory)
     {
-        MiniGameManager.instance.circularSwipeManager.Disable();
+        WorkshopManager.instance.circularSwipeManager.Disable();
         timer = 0;
         base.ExitMiniGame(victory);
     }

@@ -18,7 +18,7 @@ public abstract class MiniGame : MonoBehaviour
 
     public virtual void ExitMiniGame(bool victory)
     {
-        MiniGameManager.instance.ExitMiniGame(victory);
+        WorkshopManager.instance.ExitMiniGame(victory);
         miniGameObject.SetActive(false);
     }
 }

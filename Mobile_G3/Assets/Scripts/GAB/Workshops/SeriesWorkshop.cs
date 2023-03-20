@@ -21,6 +21,6 @@ public class SeriesWorkshop : Workshop
             SetOccupiedServerRpc(false);
             return;
         }
-        MiniGameManager.instance.StartWorkshopInteraction(this);
+        WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 }

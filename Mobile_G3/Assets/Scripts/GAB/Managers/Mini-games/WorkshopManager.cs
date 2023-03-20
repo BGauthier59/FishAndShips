@@ -1,9 +1,9 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class MiniGameManager : NetworkBehaviour
+public class WorkshopManager : NetworkBehaviour
 {
-    public static MiniGameManager instance;
+    public static WorkshopManager instance;
 
     private Workshop currentWorkshop;
     private MiniGame currentMiniGame;
@@ -27,7 +27,6 @@ public class MiniGameManager : NetworkBehaviour
     {
         currentWorkshop = workshop;
         currentWorkshop.SetOccupiedServerRpc(true);
-        //currentWorkshop.isOccupied.Value = true;
 
         var seriesWorkshop = workshop as SeriesWorkshop;
         var connectedWorkshop = workshop as ConnectedWorkshop;
@@ -46,7 +45,7 @@ public class MiniGameManager : NetworkBehaviour
     private void StartMiniGame(MiniGame game)
     {
         currentMiniGame = game;
-        //Debug.Log($"Started game {game}");
+        CanvasManager.instance.DisplayCanvas(CanvasType.None);
         popUpMiniGame.SetActive(true);
         currentMiniGame.StartMiniGame();
     }
@@ -67,6 +66,7 @@ public class MiniGameManager : NetworkBehaviour
         else
         {
             Debug.Log($"Waiting for other connected workshop from {connectedWorkshop.name}...");
+            CanvasManager.instance.DisplayCanvas(CanvasType.WorkshopCanvas);
             // Feedbacks d'attente
         }
     }
@@ -84,18 +84,14 @@ public class MiniGameManager : NetworkBehaviour
         // Checks if client has a current workshop linked
         if (!currentWorkshop) return;
         
-        Debug.Log("1 ok");
         // Checks if client's current workshop is a connected workshop
         var connectedWorkshop = currentWorkshop as ConnectedWorkshop;
         if (!connectedWorkshop) return;
         
-        Debug.Log("2 ok");
         // Checks if client's connected workshop has the right id
         var id = connectedWorkshop.GetWorkshopId();
         if (id != otherConnectedWorkshopId) return;
         
-        Debug.Log("3 ok ! should start");
-
         // Must be the right client, then starts their mini-game
         StartMiniGame(connectedWorkshop.associatedMiniGame);
     }
@@ -122,6 +118,7 @@ public class MiniGameManager : NetworkBehaviour
             return;
         }
 
+        CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas);
         currentWorkshop.Deactivate(victory);
     }
 }

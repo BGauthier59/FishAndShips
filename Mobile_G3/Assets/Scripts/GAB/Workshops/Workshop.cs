@@ -48,7 +48,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         playingPlayer = entity as PlayerManager;
-        MiniGameManager.instance.StartWorkshopInteraction(this);
+        WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
     public void SetPosition(int posX, int posY)
