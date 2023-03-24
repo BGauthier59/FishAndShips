@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridFloorWalkable : MonoBehaviour, IGridFloor
+public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
 {
     public int positionX;
     public int positionY;
+    public GridBarrier[] barriers;
 
     
     public void SetPosition(int posX, int posY)
@@ -25,5 +26,10 @@ public class GridFloorWalkable : MonoBehaviour, IGridFloor
     {
         PlayerManager player = entity as PlayerManager;
         if (player) Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
+
+        foreach (var barrier in barriers)
+        {
+            barrier.isClosed = !barrier.isClosed;
+        }
     }
 }

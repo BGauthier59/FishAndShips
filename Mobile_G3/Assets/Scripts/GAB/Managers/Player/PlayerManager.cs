@@ -109,7 +109,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
 
         Debug.Log(direction);
-        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this);
+        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this,direction);
     }
 
     private void Bounce()
@@ -124,9 +124,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         else
         {
             transform.position = nextPos;
+            canMove = true;
             if (GridManager.instance) GridManager.instance.GetTile(positionX, positionY).GetFloor().OnLand(this);
             bounceTimer = bounceDelay;
-            canMove = true;
         }
     }
     
@@ -317,7 +317,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     
     
 
-    public void OnCollision(IGridEntity entity)
+    public void OnCollision(IGridEntity entity,int direction)
     {
         // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?
     }

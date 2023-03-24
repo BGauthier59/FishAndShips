@@ -66,10 +66,10 @@ public class Tile
         if (newFloor != null) floor = (Component) newFloor;
     }
 
-    public void OnInteraction(IGridEntity collidingEntity)
+    public void OnInteraction(IGridEntity collidingEntity, int direction)
     {
-        if (entity is IGridEntity gridEntity) gridEntity.OnCollision(collidingEntity);
-        else if (floor is IGridFloor gridFloor) gridFloor.OnMove(collidingEntity);
+        if (entity is IGridEntity gridEntity) gridEntity.OnCollision(collidingEntity,direction);
+        else if (floor is IGridFloor gridFloor) gridFloor.OnMove(collidingEntity,direction);
     }
 
     public IGridEntity GetEntity()

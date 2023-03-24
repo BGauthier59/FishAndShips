@@ -30,7 +30,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
     }
 
-    public virtual void OnCollision(IGridEntity entity)
+    public virtual void OnCollision(IGridEntity entity,int direction)
     {
         Debug.Log("On Collision!");
         Activate();
