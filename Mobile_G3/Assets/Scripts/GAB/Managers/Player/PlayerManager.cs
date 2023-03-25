@@ -21,7 +21,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public float bounceDelay, bounceTimer;
     public Vector3 previousPos,nextPos;
-    public bool canMove;
+    public bool canMove,isGliding;
     public bool exitScreen,enterScreen;
     public AnimationCurve curve;
     public GameObject fxTest;
@@ -117,9 +117,16 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         if (bounceTimer > 0)
         {
             bounceTimer -= Time.deltaTime;
-            transform.position = Vector3.Lerp(previousPos, nextPos,
-                                     1 - (bounceTimer / bounceDelay))
-                                 + Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
+            if (!isGliding)
+            {
+                transform.position = Vector3.Lerp(previousPos, nextPos,
+                                         1 - (bounceTimer / bounceDelay))
+                                     + Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));   
+            }
+            else
+            {
+                transform.position = Vector3.Lerp(previousPos, nextPos, 1 - (bounceTimer / bounceDelay));  
+            }
         }
         else
         {

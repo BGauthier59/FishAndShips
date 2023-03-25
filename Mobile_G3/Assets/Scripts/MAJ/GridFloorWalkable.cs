@@ -24,6 +24,10 @@ public class GridFloorWalkable : MonoBehaviour, IGridFloor
     public void OnLand(IGridEntity entity)
     {
         PlayerManager player = entity as PlayerManager;
-        if (player) Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
+        if (player)
+        {
+            Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
+            player.isGliding = false;
+        }
     }
 }

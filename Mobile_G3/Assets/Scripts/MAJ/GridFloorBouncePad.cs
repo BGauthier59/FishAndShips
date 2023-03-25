@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
+public class GridFloorBouncePad : MonoBehaviour, IGridFloor
 {
     public int positionX;
     public int positionY;
-    public GridBarrier[] barriers;
+
+    public int bounceDirection;
 
     
     public void SetPosition(int posX, int posY)
@@ -30,10 +31,20 @@ public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
             Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
             player.isGliding = false;
         }
-
-        foreach (var barrier in barriers)
+        switch (bounceDirection)
         {
-            barrier.isClosed = !barrier.isClosed;
+            case 0:
+                GridManager.instance.GetTile(positionX, positionY+1).OnInteraction(entity,bounceDirection);
+                break;
+            case 1:
+                GridManager.instance.GetTile(positionX+1, positionY).OnInteraction(entity,bounceDirection);
+                break;
+            case 2:
+                GridManager.instance.GetTile(positionX, positionY-1).OnInteraction(entity,bounceDirection);
+                break;
+            case 3:
+                GridManager.instance.GetTile(positionX-1, positionY).OnInteraction(entity,bounceDirection);
+                break;
         }
     }
 }
