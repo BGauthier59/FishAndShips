@@ -16,7 +16,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
     }
 
     // Quand entity fais l'input vers cette tile
-    public void OnMove(IGridEntity entity)
+    public void OnMove(IGridEntity entity,int direction)
     {
         if (GridManager.instance.GetOppositeTile(positionX, positionY).entity == null)
         {

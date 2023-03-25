@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IGridFloor
 {
     void SetPosition(int posX, int posY);
-    void OnMove(IGridEntity entity);
+    void OnMove(IGridEntity entity,int direction);
     void OnLand(IGridEntity entity);
 }
