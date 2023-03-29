@@ -1,14 +1,12 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
 public abstract class MiniGame : MonoBehaviour
 {
     [SerializeField] private string miniGameName;
     public GameObject miniGameObject;
-    
+    [SerializeField] protected Vector3 miniGameCameraPosition;
+    [SerializeField] protected Vector3 miniGameCameraEulerAngles;
+
     public virtual void StartMiniGame()
     {
         miniGameObject.SetActive(true);
@@ -20,5 +18,10 @@ public abstract class MiniGame : MonoBehaviour
     {
         WorkshopManager.instance.ExitMiniGame(victory);
         miniGameObject.SetActive(false);
+    }
+
+    public (Vector3 pos, Vector3 euler) GetCameraPositionRotation()
+    {
+        return (miniGameCameraPosition, miniGameCameraEulerAngles);
     }
 }

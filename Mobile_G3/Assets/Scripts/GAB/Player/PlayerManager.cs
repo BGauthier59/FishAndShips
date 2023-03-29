@@ -108,7 +108,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
                 break;
         }
 
-        Debug.Log(direction);
         GridManager.instance.GetTile(xpos, ypos).OnInteraction(this,direction);
     }
 

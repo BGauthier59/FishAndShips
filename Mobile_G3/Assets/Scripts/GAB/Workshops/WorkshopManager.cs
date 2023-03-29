@@ -7,7 +7,10 @@ public class WorkshopManager : NetworkBehaviour
 
     private Workshop currentWorkshop;
     private MiniGame currentMiniGame;
-    [SerializeField] private GameObject popUpMiniGame;
+    
+    [SerializeField] private GameObject miniGameRenderingObject;
+    [SerializeField] private Transform miniGameEnvironmentCamera;
+    [SerializeField] private GameObject miniGameRenderingCamera;
 
     [Header("TEMPORARY")] public CircularSwipeManager circularSwipeManager;
     public GyroscopeManager gyroscopeManager;
@@ -45,30 +48,40 @@ public class WorkshopManager : NetworkBehaviour
     private void StartMiniGame(MiniGame game)
     {
         currentMiniGame = game;
-        CanvasManager.instance.DisplayCanvas(CanvasType.None);
-        popUpMiniGame.SetActive(true);
+        
+        miniGameRenderingObject.SetActive(true);
+
+        var (pos, euler) = currentMiniGame.GetCameraPositionRotation();
+        miniGameEnvironmentCamera.position = pos;
+        miniGameEnvironmentCamera.eulerAngles = euler;
+        miniGameEnvironmentCamera.gameObject.SetActive(true);
+        miniGameRenderingCamera.SetActive(true);
+        
         currentMiniGame.StartMiniGame();
     }
-
-
+    
     private void WaitForOtherPlayerInConnectedWorkshop(ConnectedWorkshop connectedWorkshop)
     {
         if (connectedWorkshop.IsOtherReady())
         {
-            Debug.LogError($"Connected workshop {connectedWorkshop.name} is ready!");
-            
+            Debug.Log($"Connected workshop {connectedWorkshop.name} is ready!");
             // Start mini-game on this client and on other client
-            StartMiniGame(connectedWorkshop.associatedMiniGame);
-            
-            Debug.LogError("Send RPC...");
+            StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);
             InitializeConnectedMiniGameServerRpc(connectedWorkshop.GetOtherWorkshop().GetWorkshopId());
         }
         else
         {
             Debug.Log($"Waiting for other connected workshop from {connectedWorkshop.name}...");
             CanvasManager.instance.DisplayCanvas(CanvasType.WorkshopCanvas);
-            // Feedbacks d'attente
+            WorkshopCanvasManager.instance.DisplayWaitingMessage(connectedWorkshop.GetWaitingMessage());
         }
+    }
+
+    private void StartConnectedMiniGame(MiniGame miniGame)
+    {
+        CanvasManager.instance.DisplayCanvas(CanvasType.None);
+        WorkshopCanvasManager.instance.HideWaitingMessage();
+        StartMiniGame(miniGame);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -93,7 +106,7 @@ public class WorkshopManager : NetworkBehaviour
         if (id != otherConnectedWorkshopId) return;
         
         // Must be the right client, then starts their mini-game
-        StartMiniGame(connectedWorkshop.associatedMiniGame);
+        StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);
     }
 
     private void Update()
@@ -105,12 +118,14 @@ public class WorkshopManager : NetworkBehaviour
     public void ExitMiniGame(bool victory)
     {
         Debug.Log($"Exited with {victory}");
-        popUpMiniGame.SetActive(false);
+        miniGameRenderingObject.SetActive(false);
+        miniGameEnvironmentCamera.gameObject.SetActive(false);
+        miniGameRenderingCamera.SetActive(true);
         currentMiniGame = null;
         EndWorkshopInteraction(victory);
     }
 
-    private void EndWorkshopInteraction(bool victory)
+    public void EndWorkshopInteraction(bool victory)
     {
         if (currentWorkshop == null)
         {
@@ -120,5 +135,6 @@ public class WorkshopManager : NetworkBehaviour
 
         CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas);
         currentWorkshop.Deactivate(victory);
+        currentWorkshop = null;
     }
 }

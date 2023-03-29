@@ -4,6 +4,7 @@ using UnityEngine;
 public class ConnectedWorkshop : Workshop
 {
     [SerializeField] private ConnectedWorkshop other;
+    [SerializeField] [TextArea(4, 4)] private string waitingMessage;
     
     public void InitializeActivation()
     {
@@ -25,5 +26,10 @@ public class ConnectedWorkshop : Workshop
     public ConnectedWorkshop GetOtherWorkshop()
     {
         return other;
+    }
+
+    public string GetWaitingMessage()
+    {
+        return waitingMessage;
     }
 }
