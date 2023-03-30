@@ -9,10 +9,10 @@ public class WorkshopManager : NetworkBehaviour
     private MiniGame currentMiniGame;
     
     [SerializeField] private GameObject miniGameRenderingObject;
-    [SerializeField] private Transform miniGameEnvironmentCamera;
+    public Transform miniGameEnvironmentCamera;
     [SerializeField] private GameObject miniGameRenderingCamera;
 
-    [Header("TEMPORARY")] public CircularSwipeManager circularSwipeManager;
+    [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public GyroscopeManager gyroscopeManager;
 
     public void Awake()
@@ -56,7 +56,8 @@ public class WorkshopManager : NetworkBehaviour
         miniGameEnvironmentCamera.eulerAngles = euler;
         miniGameEnvironmentCamera.gameObject.SetActive(true);
         miniGameRenderingCamera.SetActive(true);
-        
+        CanvasManager.instance.DisplayCanvas(CanvasType.None);
+
         currentMiniGame.StartMiniGame();
     }
     
@@ -79,7 +80,6 @@ public class WorkshopManager : NetworkBehaviour
 
     private void StartConnectedMiniGame(MiniGame miniGame)
     {
-        CanvasManager.instance.DisplayCanvas(CanvasType.None);
         WorkshopCanvasManager.instance.HideWaitingMessage();
         StartMiniGame(miniGame);
     }

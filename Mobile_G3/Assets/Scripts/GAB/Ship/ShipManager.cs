@@ -8,20 +8,23 @@ using Random = UnityEngine.Random;
 
 public class ShipManager : MonoSingleton<ShipManager>
 {
+    [Header("Map Data")]
     public Transform realMap;
     [SerializeField] private Transform boatTransformOnMap;
     [SerializeField] private Vector3 mapPosition;
     [SerializeField] private float4 leftRightBottomTopBorder;
-    [SerializeField] private float rotationAngle;
-    [SerializeField] private float referenceRotationSensitivity;
-    [SerializeField] private float referenceMapSpeed;
 
     [SerializeField] private Transform[] previewPoints;
-    [SerializeField] private float distanceBetweenPreviewPoints;
     [SerializeField] private Transform previewPointsCalculatedParent;
     [SerializeField] private Transform previewPointsCalculatingParent;
-    [SerializeField] private Vector3 previewPointsLocalScale = new Vector3(.1f, .1f, 1);
-    [SerializeField] private Vector3 previewPointsEulerAngles = new Vector3(90, 0, 0);
+
+    [Header("Boat Parameters"), SerializeField]
+    private float rotationInDegreesPerSecond;
+
+    [SerializeField] private float referenceBoatSpeed;
+    [SerializeField] private float distanceBetweenPreviewPoints;
+    [SerializeField] private Vector3 previewPointsLocalScale = new(.1f, .1f, 1);
+    [SerializeField] private Vector3 previewPointsEulerAngles = new(90, 0, 0);
 
     private void Update()
     {
@@ -29,14 +32,9 @@ public class ShipManager : MonoSingleton<ShipManager>
         RotateOnMap();
     }
 
-    private void OnValidate()
-    {
-        SetRotation(rotationAngle);
-    }
-
     private void MoveOnMap()
     {
-        boatTransformOnMap.localPosition += boatTransformOnMap.forward * (referenceMapSpeed * Time.deltaTime);
+        boatTransformOnMap.localPosition += boatTransformOnMap.forward * (referenceBoatSpeed * Time.deltaTime);
 
         if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x) // Left border
         {
@@ -61,7 +59,8 @@ public class ShipManager : MonoSingleton<ShipManager>
 
     private void RotateOnMap()
     {
-        boatTransformOnMap.eulerAngles += Vector3.up * (rotationAngle * Time.deltaTime * referenceRotationSensitivity);
+        //boatTransformOnMap.eulerAngles += Vector3.up * (rotationAngle * Time.deltaTime * referenceRotationSensitivity);
+        boatTransformOnMap.eulerAngles += Vector3.up * (rotationInDegreesPerSecond * Time.deltaTime);
     }
 
     [ContextMenu("Test rotation")]
@@ -70,11 +69,11 @@ public class ShipManager : MonoSingleton<ShipManager>
         SetRotation(Random.Range(-90f, 90f));
     }
 
-    private void SetRotation(float angle)
+    public void SetRotation(float angle)
     {
         // Todo - should apply on every client!!!
-        
-        rotationAngle = angle;
+
+        rotationInDegreesPerSecond = angle;
 
         previewPointsCalculatingParent.localEulerAngles = Vector3.zero;
         for (int i = 0; i < previewPoints.Length; i++)
@@ -82,10 +81,10 @@ public class ShipManager : MonoSingleton<ShipManager>
             previewPoints[i].SetParent(previewPointsCalculatingParent);
             //previewPoints[i].localPosition = Vector3.forward * (distanceBetweenPreviewPoints * (i + 1));
             previewPoints[i].localPosition = Vector3.forward *
-                                             (distanceBetweenPreviewPoints * (i + 1) * referenceMapSpeed);
-            
+                                             (distanceBetweenPreviewPoints * (i + 1) * referenceBoatSpeed);
+
             previewPointsCalculatingParent.localEulerAngles += Vector3.up *
-                                                               (rotationAngle * referenceRotationSensitivity *
+                                                               (rotationInDegreesPerSecond *
                                                                 distanceBetweenPreviewPoints);
             previewPoints[i].SetParent(previewPointsCalculatedParent);
             previewPoints[i].localScale = previewPointsLocalScale;

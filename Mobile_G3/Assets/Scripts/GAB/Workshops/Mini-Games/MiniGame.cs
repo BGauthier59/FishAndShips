@@ -7,6 +7,8 @@ public abstract class MiniGame : MonoBehaviour
     [SerializeField] protected Vector3 miniGameCameraPosition;
     [SerializeField] protected Vector3 miniGameCameraEulerAngles;
 
+    public WorkshopManager debugWorkshop;
+
     public virtual void StartMiniGame()
     {
         miniGameObject.SetActive(true);
@@ -23,5 +25,13 @@ public abstract class MiniGame : MonoBehaviour
     public (Vector3 pos, Vector3 euler) GetCameraPositionRotation()
     {
         return (miniGameCameraPosition, miniGameCameraEulerAngles);
+    }
+
+    [ContextMenu("Set Camera to correct pos")]
+    private void SetCameraDebug()
+    {
+        var (pos, euler) = GetCameraPositionRotation();
+        debugWorkshop.miniGameEnvironmentCamera.position = pos;
+        debugWorkshop.miniGameEnvironmentCamera.eulerAngles = euler;
     }
 }
