@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using TMPro;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -44,8 +43,9 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
     private void Reset()
     {
         isDraging = false;
+        canBeClamped = true;
         startTouch = currentTouch = startVector = currentVector = Vector3.zero;
-        calculatedAngle = 0;
+        calculatedAngle = calculatedAngleAfterClamping = 0;
     }
 
     public override void Enable(RudderCircularSwipeSetupData data)
@@ -67,8 +67,11 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
     }
 
     private float calculatedAngle;
+    private float calculatedAngleAfterClamping;
+    private bool clampedToZero;
+    private bool canBeClamped;
 
-    public float? CalculateCircularSwipe()
+    public (float eulerAngles, float degrees)? CalculateCircularSwipe()
     {
         if (!isDraging) return null;
 
@@ -82,51 +85,69 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
         currentVector.Normalize();
 
         var angleGap = Vector3.Angle(startVector, currentVector);
-        //var zeroAngle = Vector3.Angle(Vector3.forward, currentVector);
-        Debug.DrawRay(data.centralPoint.position, Vector3.forward, Color.red);
-        Debug.DrawRay(data.centralPoint.position, currentVector, Color.blue);
 
         var crossGap = Vector3.Cross(startVector, currentVector);
-        
+
         startVector = currentVector;
-        
+
         var leftSideVector = data.leftSide.position - data.rudder.position;
-        var leftSideCross = Vector3.Cross(Vector3.up, leftSideVector);
-        var degrees = Vector3.Angle(Vector3.up, leftSideVector);
+        var dot = Vector3.Dot(Vector3.up, leftSideVector);
+        var degreesWithLeftSide = Vector3.Angle(Vector3.left, leftSideVector);
         
-        // Todo - clamp à 0
-        
-        /*
-        if (zeroAngle < data.clampToZeroAngleGap)
-        {
-            Debug.LogWarning("Clamped to zero!");
-            data.rudder.rotation = Quaternion.identity;
-            return null;
-        }
-        */
-        
-        if (leftSideCross.z > 0) degrees = -degrees;
+        if (dot < 0) degreesWithLeftSide = -degreesWithLeftSide;
         
         if (crossGap.y > 0) angleGap = -angleGap;
         calculatedAngle += angleGap;
+
+        #region Useless
+
+        /*
+                if (math.abs(degreesWithLeftSide - 90) < data.clampToZeroAngleGap && canBeClamped)
+                {
+                    if (clampedToZero)
+                    {
+                        calculatedAngleAfterClamping += angleGap;
+                        Debug.LogWarning("Clamped, angle : " + calculatedAngleAfterClamping);
+                        if (calculatedAngleAfterClamping > data.clampToZeroAngleGap)
+                        {
+                            canBeClamped = false;
+                            clampedToZero = false;
+                        }
+                        else return null;
+                    }
+                    else
+                    {
+                        clampedToZero = true;
+                        calculatedAngleAfterClamping = 0;
+                        Debug.LogWarning("Clamped to zero!");
+                        data.rudder.rotation = Quaternion.identity;
+                        return null;
+                    }
+                }
+                
+                
         
-        // Todo - rendre le clamp propre
-        
-        if (crossGap.y < 0 && angleGap > 0 && leftSideCross.z < 0 && degrees < 90 + data.maxRotationDegree)
+                canBeClamped = true;
+                */
+
+        //if (leftSideCross.z > 0) degreesWithLeftSide = -degreesWithLeftSide;
+
+        #endregion
+
+        if (data.rudder.eulerAngles.z > data.maxRotationDegree &&
+            data.rudder.eulerAngles.z < 360 - data.maxRotationDegree)
         {
-            data.rudder.rotation = Quaternion.Euler(Vector3.forward * (data.maxRotationDegree));
-            Reset();
+            if (data.rudder.eulerAngles.z > 180)
+            {
+                data.rudder.eulerAngles = Vector3.forward * (360 - data.maxRotationDegree);
+                return null;
+            }
+
+            data.rudder.eulerAngles = Vector3.forward * data.maxRotationDegree;
             return null;
         }
 
-        if (crossGap.y > 0 && angleGap < 0 && leftSideCross.z < 0 && degrees > 90 - data.maxRotationDegree)
-        {
-            data.rudder.rotation = Quaternion.Euler(Vector3.forward * (360 - data.maxRotationDegree));
-            Reset();
-            return null;
-        }
-        
-        if (math.abs(calculatedAngle) > data.minimumAngleToRotate) return angleGap;
+        if (math.abs(calculatedAngle) > data.minimumAngleToRotate) return (angleGap, degreesWithLeftSide);
         return null;
     }
 }

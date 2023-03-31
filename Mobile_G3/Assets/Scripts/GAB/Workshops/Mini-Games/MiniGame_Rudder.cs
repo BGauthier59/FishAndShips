@@ -23,16 +23,22 @@ public class MiniGame_Rudder : MiniGame
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
     }
 
+    private Vector3 nextValue;
+
     public override void ExecuteMiniGame()
     {
         var angle = WorkshopManager.instance.rudderCircularSwipeManager.CalculateCircularSwipe();
         if (angle.HasValue)
         {
-            data.rudder.eulerAngles += Vector3.forward * angle.Value;
-            
-            // Todo - Check ça en dessous c'est placeholder
-            
-            currentRotationPerSecond = math.lerp(minMaxRotationPerSecond.x, minMaxRotationPerSecond.y, data.rudder.eulerAngles.z / 180);
+            nextValue = data.rudder.eulerAngles + Vector3.forward * angle.Value.eulerAngles;
+            data.rudder.eulerAngles = nextValue;
+
+            var ratio = angle.Value.degrees > 0
+                ? math.lerp(.5, 1, angle.Value.degrees / data.maxRotationDegree)
+                : math.lerp(0.5, 0, math.abs(angle.Value.degrees) / data.maxRotationDegree);
+
+            currentRotationPerSecond = math.lerp(minMaxRotationPerSecond.x, minMaxRotationPerSecond.y, (float) ratio);
+            Debug.Log(currentRotationPerSecond);
             ShipManager.instance.SetRotation(currentRotationPerSecond);
         }
     }
