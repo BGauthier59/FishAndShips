@@ -21,6 +21,6 @@ public class MiniGame_Map : MiniGame
         shipPosition.y = posY;
         ship.transform.localPosition = shipPosition;
         
-        ship.transform.rotation = ShipManager.instance.GetShipRotation();
+        ship.transform.localRotation = ShipManager.instance.GetShipRotation();
     }
 }

@@ -1,10 +1,8 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class WorkshopManager : NetworkBehaviour
+public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 {
-    public static WorkshopManager instance;
-
     private Workshop currentWorkshop;
     private MiniGame currentMiniGame;
     
@@ -14,17 +12,6 @@ public class WorkshopManager : NetworkBehaviour
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public GyroscopeManager gyroscopeManager;
-
-    public void Awake()
-    {
-        if (instance != null && instance != this)
-        {
-            DestroyImmediate(gameObject);
-            return;
-        }
-
-        instance = this;
-    }
 
     public void StartWorkshopInteraction(Workshop workshop)
     {

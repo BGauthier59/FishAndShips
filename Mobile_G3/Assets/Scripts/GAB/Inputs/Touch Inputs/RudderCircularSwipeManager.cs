@@ -25,7 +25,6 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
         {
             startTouch = inputCamera.ScreenToWorldPoint(Input.mousePosition);
             startTouch.y = data.centralPoint.position.y;
-            Debug.Log(startTouch.ToString());
             startVector = startTouch - data.centralPoint.position;
 
             if (startVector.sqrMagnitude < minMaxSqrMagnitude.x ||
@@ -99,41 +98,6 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
         if (crossGap.y > 0) angleGap = -angleGap;
         calculatedAngle += angleGap;
 
-        #region Useless
-
-        /*
-                if (math.abs(degreesWithLeftSide - 90) < data.clampToZeroAngleGap && canBeClamped)
-                {
-                    if (clampedToZero)
-                    {
-                        calculatedAngleAfterClamping += angleGap;
-                        Debug.LogWarning("Clamped, angle : " + calculatedAngleAfterClamping);
-                        if (calculatedAngleAfterClamping > data.clampToZeroAngleGap)
-                        {
-                            canBeClamped = false;
-                            clampedToZero = false;
-                        }
-                        else return null;
-                    }
-                    else
-                    {
-                        clampedToZero = true;
-                        calculatedAngleAfterClamping = 0;
-                        Debug.LogWarning("Clamped to zero!");
-                        data.rudder.rotation = Quaternion.identity;
-                        return null;
-                    }
-                }
-                
-                
-        
-                canBeClamped = true;
-                */
-
-        //if (leftSideCross.z > 0) degreesWithLeftSide = -degreesWithLeftSide;
-
-        #endregion
-
         if (data.rudder.eulerAngles.z > data.maxRotationDegree &&
             data.rudder.eulerAngles.z < 360 - data.maxRotationDegree)
         {
@@ -167,6 +131,5 @@ public struct RudderCircularSwipeSetupData
 
     public float minimumAngleToRotate;
 
-    public float clampToZeroAngleGap;
-    //public int countToWin;
+    //public float clampToZeroAngleGap;
 }

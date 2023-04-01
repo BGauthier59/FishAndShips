@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class ShipManager : MonoSingleton<ShipManager>
+public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
-    [Header("Map Data")]
-    public Transform realMap;
+    [Header("Map Data")] public Transform realMap;
     [SerializeField] private Transform boatTransformOnMap;
     [SerializeField] private Vector3 mapPosition;
     [SerializeField] private float4 leftRightBottomTopBorder;
@@ -19,7 +19,8 @@ public class ShipManager : MonoSingleton<ShipManager>
     [SerializeField] private Transform previewPointsCalculatingParent;
 
     [Header("Boat Parameters"), SerializeField]
-    private float rotationInDegreesPerSecond;
+    private NetworkVariable<float> rotationInDegreesPerSecond = new(0, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
     [SerializeField] private float referenceBoatSpeed;
     [SerializeField] private float distanceBetweenPreviewPoints;
@@ -36,55 +37,45 @@ public class ShipManager : MonoSingleton<ShipManager>
     {
         boatTransformOnMap.localPosition += boatTransformOnMap.forward * (referenceBoatSpeed * Time.deltaTime);
 
-        if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x) // Left border
-        {
+        if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
             boatTransformOnMap.localPosition += Vector3.right * math.abs(leftRightBottomTopBorder.x * 2);
-        }
-        else if (boatTransformOnMap.localPosition.x > leftRightBottomTopBorder.y) // Right border
-        {
+        else if (boatTransformOnMap.localPosition.x > leftRightBottomTopBorder.y)
             boatTransformOnMap.localPosition += Vector3.left * math.abs(leftRightBottomTopBorder.y * 2);
-        }
-
-        if (boatTransformOnMap.localPosition.z < leftRightBottomTopBorder.z) // Bottom border
-        {
+        
+        if (boatTransformOnMap.localPosition.z < leftRightBottomTopBorder.z)
             boatTransformOnMap.localPosition += Vector3.forward * math.abs(leftRightBottomTopBorder.z * 2);
-        }
-        else if (boatTransformOnMap.localPosition.z > leftRightBottomTopBorder.w) // Top border
-        {
+        else if (boatTransformOnMap.localPosition.z > leftRightBottomTopBorder.w)
             boatTransformOnMap.localPosition += Vector3.back * math.abs(leftRightBottomTopBorder.w * 2);
-        }
-
+        
         mapPosition = boatTransformOnMap.localPosition;
     }
 
     private void RotateOnMap()
     {
-        //boatTransformOnMap.eulerAngles += Vector3.up * (rotationAngle * Time.deltaTime * referenceRotationSensitivity);
-        boatTransformOnMap.eulerAngles += Vector3.up * (rotationInDegreesPerSecond * Time.deltaTime);
-    }
-
-    [ContextMenu("Test rotation")]
-    private void RotateTest()
-    {
-        SetRotation(Random.Range(-90f, 90f));
+        boatTransformOnMap.eulerAngles += Vector3.up * (rotationInDegreesPerSecond.Value * Time.deltaTime);
     }
 
     public void SetRotation(float angle)
     {
-        // Todo - should apply on every client!!!
+        SetRotationServerRpc(angle);
+    }
 
-        rotationInDegreesPerSecond = angle;
+    private int i;
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetRotationServerRpc(float angle)
+    {
+        rotationInDegreesPerSecond.Value = angle;
 
         previewPointsCalculatingParent.localEulerAngles = Vector3.zero;
-        for (int i = 0; i < previewPoints.Length; i++)
+        for (i = 0; i < previewPoints.Length; i++)
         {
             previewPoints[i].SetParent(previewPointsCalculatingParent);
-            //previewPoints[i].localPosition = Vector3.forward * (distanceBetweenPreviewPoints * (i + 1));
             previewPoints[i].localPosition = Vector3.forward *
                                              (distanceBetweenPreviewPoints * (i + 1) * referenceBoatSpeed);
 
             previewPointsCalculatingParent.localEulerAngles += Vector3.up *
-                                                               (rotationInDegreesPerSecond *
+                                                               (rotationInDegreesPerSecond.Value *
                                                                 distanceBetweenPreviewPoints);
             previewPoints[i].SetParent(previewPointsCalculatedParent);
             previewPoints[i].localScale = previewPointsLocalScale;
