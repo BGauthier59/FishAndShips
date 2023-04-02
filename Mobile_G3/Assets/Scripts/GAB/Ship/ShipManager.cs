@@ -27,6 +27,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Vector3 previewPointsLocalScale = new(.1f, .1f, 1);
     [SerializeField] private Vector3 previewPointsEulerAngles = new(90, 0, 0);
 
+    #region Ship Behaviour
+
     private void Update()
     {
         MoveOnMap();
@@ -41,12 +43,12 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             boatTransformOnMap.localPosition += Vector3.right * math.abs(leftRightBottomTopBorder.x * 2);
         else if (boatTransformOnMap.localPosition.x > leftRightBottomTopBorder.y)
             boatTransformOnMap.localPosition += Vector3.left * math.abs(leftRightBottomTopBorder.y * 2);
-        
+
         if (boatTransformOnMap.localPosition.z < leftRightBottomTopBorder.z)
             boatTransformOnMap.localPosition += Vector3.forward * math.abs(leftRightBottomTopBorder.z * 2);
         else if (boatTransformOnMap.localPosition.z > leftRightBottomTopBorder.w)
             boatTransformOnMap.localPosition += Vector3.back * math.abs(leftRightBottomTopBorder.w * 2);
-        
+
         mapPosition = boatTransformOnMap.localPosition;
     }
 
@@ -55,10 +57,39 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         boatTransformOnMap.eulerAngles += Vector3.up * (rotationInDegreesPerSecond.Value * Time.deltaTime);
     }
 
+    private void CheckCollisions()
+    {
+        // Check distance with obstacles
+    }
+
+    private void EnterDangerZone()
+    {
+        // When gets too much close to an obstacle, enters danger zone
+        
+        // Feedbacks with UnityEvent ?
+    }
+
+    private void Collide()
+    {
+        // When hits an obstacle, direction changes according to surface normal
+        
+        // Starts a reparation workshop
+        
+        // Feedbacks with UnityEvent ?
+    }
+
+    #endregion
+
+    #region Data Setter
+
     public void SetRotation(float angle)
     {
         SetRotationServerRpc(angle);
     }
+
+    #endregion
+
+    #region Network
 
     private int i;
 
@@ -83,6 +114,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         }
     }
 
+    #endregion
+
+    #region Data Getter
+
     public Vector3 GetShipPositionOnMap()
     {
         return mapPosition;
@@ -92,4 +127,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         return boatTransformOnMap.rotation;
     }
+
+    #endregion
 }
