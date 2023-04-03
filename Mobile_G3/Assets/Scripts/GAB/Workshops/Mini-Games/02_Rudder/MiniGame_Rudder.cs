@@ -37,8 +37,7 @@ public class MiniGame_Rudder : MiniGame
                 ? math.lerp(.5, 1, angle.Value.degrees / data.maxRotationDegree)
                 : math.lerp(0.5, 0, math.abs(angle.Value.degrees) / data.maxRotationDegree);
 
-            currentRotationPerSecond = math.lerp(minMaxRotationPerSecond.x, minMaxRotationPerSecond.y, (float) ratio);
-            //Debug.Log(currentRotationPerSecond);
+            currentRotationPerSecond = math.lerp(minMaxRotationPerSecond.y, minMaxRotationPerSecond.x, (float) ratio);
             ShipManager.instance.SetRotation(currentRotationPerSecond);
         }
     }

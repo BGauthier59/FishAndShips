@@ -18,6 +18,20 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Transform previewPointsCalculatedParent;
     [SerializeField] private Transform previewPointsCalculatingParent;
 
+    [SerializeField] private Obstacle[] obstacles;
+    [SerializeField] private Transform[] stars;
+
+    [SerializeField] private float dangerDistance;
+
+    [SerializeField] private MiniGame_Map mapMiniGame;
+
+    [Serializable]
+    private struct Obstacle
+    {
+        public Transform transform;
+        public float collisionSize;
+    }
+
     [Header("Boat Parameters"), SerializeField]
     private NetworkVariable<float> rotationInDegreesPerSecond = new(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
@@ -27,18 +41,44 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Vector3 previewPointsLocalScale = new(.1f, .1f, 1);
     [SerializeField] private Vector3 previewPointsEulerAngles = new(90, 0, 0);
 
+    [SerializeField] private float rotationGapToWritePointOnLine = 8;
+
+    private void OnDrawGizmos()
+    {
+        Vector3 pos;
+        foreach (var obstacle in obstacles)
+        {
+            pos = obstacle.transform.position;
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(pos, obstacle.collisionSize);
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(pos, dangerDistance);
+        }
+    }
+
     #region Ship Behaviour
+
+    private void Start()
+    {
+        mapPosition = boatTransformOnMap.localPosition;
+        previous = boatTransformOnMap.eulerAngles.y;
+        mapMiniGame.Initialize();
+        SetRotation(0);
+    }
 
     private void Update()
     {
+        mapMiniGame.Refresh();
         MoveOnMap();
         RotateOnMap();
+        CheckCollisions();
     }
 
     private void MoveOnMap()
     {
-        boatTransformOnMap.localPosition += boatTransformOnMap.forward * (referenceBoatSpeed * Time.deltaTime);
+        boatTransformOnMap.localPosition += boatTransformOnMap.right * (referenceBoatSpeed * Time.deltaTime);
 
+        /*
         if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
             boatTransformOnMap.localPosition += Vector3.right * math.abs(leftRightBottomTopBorder.x * 2);
         else if (boatTransformOnMap.localPosition.x > leftRightBottomTopBorder.y)
@@ -48,33 +88,94 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             boatTransformOnMap.localPosition += Vector3.forward * math.abs(leftRightBottomTopBorder.z * 2);
         else if (boatTransformOnMap.localPosition.z > leftRightBottomTopBorder.w)
             boatTransformOnMap.localPosition += Vector3.back * math.abs(leftRightBottomTopBorder.w * 2);
+            */
+        Vector3 pos;
+        
+        if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
+        {
+            pos = boatTransformOnMap.localPosition;
+            pos.x = leftRightBottomTopBorder.x;
+            boatTransformOnMap.localPosition = pos;
+        }
 
+        else if (boatTransformOnMap.localPosition.x > leftRightBottomTopBorder.y)
+        {
+            pos = boatTransformOnMap.localPosition;
+            pos.x = leftRightBottomTopBorder.y;
+            boatTransformOnMap.localPosition = pos;
+        }
+
+        if (boatTransformOnMap.localPosition.y < leftRightBottomTopBorder.z)
+        {
+            pos = boatTransformOnMap.localPosition;
+            pos.y = leftRightBottomTopBorder.z;
+            boatTransformOnMap.localPosition = pos;
+        }
+
+        else if (boatTransformOnMap.localPosition.y > leftRightBottomTopBorder.w)
+        {
+            pos = boatTransformOnMap.localPosition;
+            pos.y = leftRightBottomTopBorder.w;
+            boatTransformOnMap.localPosition = pos;
+        }
+        
         mapPosition = boatTransformOnMap.localPosition;
     }
 
+    private float previous;
+
     private void RotateOnMap()
     {
-        boatTransformOnMap.eulerAngles += Vector3.up * (rotationInDegreesPerSecond.Value * Time.deltaTime);
+        boatTransformOnMap.eulerAngles += Vector3.forward * (rotationInDegreesPerSecond.Value * Time.deltaTime);
+        if (math.abs(boatTransformOnMap.eulerAngles.z - previous) > rotationGapToWritePointOnLine)
+        {
+            previous = boatTransformOnMap.eulerAngles.z;
+            MiniGame_Map.OnShipRotationChange?.Invoke();
+        }
     }
+
+    private float distance;
 
     private void CheckCollisions()
     {
+        return;
+
         // Check distance with obstacles
+        foreach (var obstacle in obstacles)
+        {
+            distance = Vector3.Distance(boatTransformOnMap.position, obstacle.transform.position);
+            if (distance < dangerDistance)
+            {
+                EnterDangerZone(obstacle);
+                return;
+            }
+
+            if (distance >= obstacle.collisionSize) continue;
+            Collide();
+            return;
+        }
     }
 
-    private void EnterDangerZone()
+    private void EnterDangerZone(Obstacle obstacle)
     {
+        Debug.Log("Entered danger zone!");
         // When gets too much close to an obstacle, enters danger zone
-        
+
         // Feedbacks with UnityEvent ?
+    }
+
+    private void ExitDangerZone()
+    {
     }
 
     private void Collide()
     {
+        Debug.Log("Collided!");
+
         // When hits an obstacle, direction changes according to surface normal
-        
+
         // Starts a reparation workshop
-        
+
         // Feedbacks with UnityEvent ?
     }
 
@@ -102,10 +203,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         for (i = 0; i < previewPoints.Length; i++)
         {
             previewPoints[i].SetParent(previewPointsCalculatingParent);
-            previewPoints[i].localPosition = Vector3.forward *
-                                             (distanceBetweenPreviewPoints * (i + 1) * referenceBoatSpeed);
+            previewPoints[i].localPosition = Vector3.right *
+                                             (distanceBetweenPreviewPoints * (i) * referenceBoatSpeed);
 
-            previewPointsCalculatingParent.localEulerAngles += Vector3.up *
+            previewPointsCalculatingParent.localEulerAngles += -Vector3.up *
                                                                (rotationInDegreesPerSecond.Value *
                                                                 distanceBetweenPreviewPoints);
             previewPoints[i].SetParent(previewPointsCalculatedParent);
@@ -125,7 +226,12 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public Quaternion GetShipRotation()
     {
-        return boatTransformOnMap.rotation;
+        return Quaternion.Euler(Vector3.up * boatTransformOnMap.eulerAngles.z);
+    }
+
+    public float GetShipAngle()
+    {
+        return -boatTransformOnMap.eulerAngles.z;
     }
 
     #endregion
