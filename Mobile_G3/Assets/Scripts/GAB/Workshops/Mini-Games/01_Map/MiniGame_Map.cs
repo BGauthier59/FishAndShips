@@ -47,7 +47,6 @@ public class MiniGame_Map : MiniGame
     private void SetShipPosition()
     {
         shipPosition = ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
-        Debug.Log(shipPosition);
         shipPosition.z = shipPosition.y;
         shipPosition.y = posY;
         ship.transform.localPosition = shipPosition;
