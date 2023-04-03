@@ -223,12 +223,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         return mapPosition;
     }
-
-    public Quaternion GetShipRotation()
-    {
-        return Quaternion.Euler(Vector3.up * boatTransformOnMap.eulerAngles.z);
-    }
-
+    
     public float GetShipAngle()
     {
         return -boatTransformOnMap.eulerAngles.z;
