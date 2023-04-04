@@ -12,6 +12,6 @@ public class CompassBehaviour : MonoBehaviour
 
     private void Update()
     {
-        rotatingPart.localEulerAngles = ship.GetShipAngle() * Vector3.up;
+        rotatingPart.localEulerAngles = (ship.GetShipAngle() + 90) * Vector3.up;
     }
 }
