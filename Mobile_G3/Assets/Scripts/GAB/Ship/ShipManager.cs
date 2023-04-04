@@ -1,11 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using DG.Tweening;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
@@ -43,19 +39,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     [SerializeField] private float rotationGapToWritePointOnLine = 8;
 
-    private void OnDrawGizmos()
-    {
-        Vector3 pos;
-        foreach (var obstacle in obstacles)
-        {
-            pos = obstacle.transform.position;
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(pos, obstacle.collisionSize);
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(pos, dangerDistance);
-        }
-    }
-
     #region Ship Behaviour
 
     private void Start()
@@ -90,7 +73,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             boatTransformOnMap.localPosition += Vector3.back * math.abs(leftRightBottomTopBorder.w * 2);
             */
         Vector3 pos;
-        
+
         if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
         {
             pos = boatTransformOnMap.localPosition;
@@ -118,7 +101,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             pos.y = leftRightBottomTopBorder.w;
             boatTransformOnMap.localPosition = pos;
         }
-        
+
         mapPosition = boatTransformOnMap.localPosition;
     }
 
@@ -149,10 +132,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
                 EnterDangerZone(obstacle);
                 return;
             }
-
-            if (distance >= obstacle.collisionSize) continue;
-            Collide();
-            return;
         }
     }
 
@@ -168,9 +147,18 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
     }
 
-    private void Collide()
+    public void Collide()
     {
-        Debug.Log("Collided!");
+        if (rotationInDegreesPerSecond.Value > 0)
+        {
+            Debug.Log("+120");
+            boatTransformOnMap.eulerAngles += Vector3.forward * 120;
+        }
+        else
+        {
+            Debug.Log("-120");
+            boatTransformOnMap.eulerAngles -= Vector3.forward * 120;
+        }
 
         // When hits an obstacle, direction changes according to surface normal
 
@@ -223,7 +211,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         return mapPosition;
     }
-    
+
     public float GetShipAngle()
     {
         return -boatTransformOnMap.eulerAngles.z;
