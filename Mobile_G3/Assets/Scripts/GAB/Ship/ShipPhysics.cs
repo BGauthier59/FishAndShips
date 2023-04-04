@@ -6,6 +6,10 @@ public class ShipPhysics : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (!other.gameObject.CompareTag("Obstacle")) return;
+        
+        // Todo - find correct angle
+
+        //var angle = Vector2.Angle(Vector2.up, transform.)
         ShipManager.instance.Collide();
     }
 
