@@ -2795,6 +2795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1523396917073132492}
   - component: {fileID: 1523396917073132493}
+  - component: {fileID: -6728317592596252111}
   m_Layer: 0
   m_Name: Workshop_01_Map
   m_TagString: Untagged
@@ -2841,6 +2842,22 @@ MonoBehaviour:
   ship: {fileID: 1523396918019305819}
   shipPath: {fileID: 4803676528227999239}
   stars: []
+--- !u!114 &-6728317592596252111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1523396917073132495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1523396917139638039
 GameObject:
   m_ObjectHideFlags: 0

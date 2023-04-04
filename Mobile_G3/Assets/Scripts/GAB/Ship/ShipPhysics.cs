@@ -9,7 +9,8 @@ public class ShipPhysics : MonoBehaviour
         
         // Todo - find correct angle
 
-        //var angle = Vector2.Angle(Vector2.up, transform.)
+        var angle = Vector2.Angle(transform.right, other.contacts[0].normal);
+        Debug.Log(angle);
         ShipManager.instance.Collide();
     }
 

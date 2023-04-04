@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public abstract class MiniGame : MonoBehaviour
+public abstract class MiniGame : NetworkBehaviour
 {
     [SerializeField] private string miniGameName;
     public GameObject miniGameObject;
