@@ -11,6 +11,8 @@ public class MiniGame_Map : MiniGame
 
     [SerializeField] private LineRenderer shipPath;
 
+    [SerializeField] private SpriteRenderer[] stars;
+
     public override void StartMiniGame()
     {
         base.StartMiniGame();
@@ -20,7 +22,6 @@ public class MiniGame_Map : MiniGame
     {
     }
 
-    public static Action OnShipRotationChange;
 
     public void Initialize()
     {
@@ -33,6 +34,7 @@ public class MiniGame_Map : MiniGame
         shipPath.SetPosition(0, ship.transform.position);
 
         OnShipRotationChange += AddPointOnPath;
+        OnGetStar += GetStar;
     }
 
     public void Refresh()
@@ -52,10 +54,23 @@ public class MiniGame_Map : MiniGame
         ship.transform.localPosition = shipPosition;
     }
 
+    #region Callbacks
+
+    public static Action OnShipRotationChange;
+    public static Action<byte> OnGetStar;
+
     private void AddPointOnPath()
     {
         shipPath.SetPosition(shipPath.positionCount - 1, ship.transform.position);
         shipPath.positionCount++;
         shipPath.SetPosition(shipPath.positionCount - 1, ship.transform.position);
     }
+
+    private void GetStar(byte index)
+    {
+        // Feedback get star
+        stars[index].color = Color.red;
+    }
+
+    #endregion
 }

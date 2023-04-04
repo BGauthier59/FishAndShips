@@ -13,20 +13,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Transform[] previewPoints;
     [SerializeField] private Transform previewPointsCalculatedParent;
     [SerializeField] private Transform previewPointsCalculatingParent;
-
-    [SerializeField] private Obstacle[] obstacles;
-    [SerializeField] private Transform[] stars;
-
+    
     [SerializeField] private float dangerDistance;
 
     [SerializeField] private MiniGame_Map mapMiniGame;
-
-    [Serializable]
-    private struct Obstacle
-    {
-        public Transform transform;
-        public float collisionSize;
-    }
+    private int starCount;
 
     [Header("Boat Parameters"), SerializeField]
     private NetworkVariable<float> rotationInDegreesPerSecond = new(0, NetworkVariableReadPermission.Everyone,
@@ -57,22 +48,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         CheckCollisions();
     }
 
+    Vector3 pos;
     private void MoveOnMap()
     {
         boatTransformOnMap.localPosition += boatTransformOnMap.right * (referenceBoatSpeed * Time.deltaTime);
-
-        /*
-        if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
-            boatTransformOnMap.localPosition += Vector3.right * math.abs(leftRightBottomTopBorder.x * 2);
-        else if (boatTransformOnMap.localPosition.x > leftRightBottomTopBorder.y)
-            boatTransformOnMap.localPosition += Vector3.left * math.abs(leftRightBottomTopBorder.y * 2);
-
-        if (boatTransformOnMap.localPosition.z < leftRightBottomTopBorder.z)
-            boatTransformOnMap.localPosition += Vector3.forward * math.abs(leftRightBottomTopBorder.z * 2);
-        else if (boatTransformOnMap.localPosition.z > leftRightBottomTopBorder.w)
-            boatTransformOnMap.localPosition += Vector3.back * math.abs(leftRightBottomTopBorder.w * 2);
-            */
-        Vector3 pos;
 
         if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
         {
@@ -123,19 +102,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         return;
 
-        // Check distance with obstacles
-        foreach (var obstacle in obstacles)
-        {
-            distance = Vector3.Distance(boatTransformOnMap.position, obstacle.transform.position);
-            if (distance < dangerDistance)
-            {
-                EnterDangerZone(obstacle);
-                return;
-            }
-        }
+        // Raycast2D
     }
 
-    private void EnterDangerZone(Obstacle obstacle)
+    private void EnterDangerZone()
     {
         Debug.Log("Entered danger zone!");
         // When gets too much close to an obstacle, enters danger zone
@@ -149,22 +119,23 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void Collide()
     {
-        if (rotationInDegreesPerSecond.Value > 0)
-        {
-            Debug.Log("+120");
-            boatTransformOnMap.eulerAngles += Vector3.forward * 120;
-        }
-        else
-        {
-            Debug.Log("-120");
-            boatTransformOnMap.eulerAngles -= Vector3.forward * 120;
-        }
+        if (rotationInDegreesPerSecond.Value > 0) boatTransformOnMap.eulerAngles += Vector3.forward * 120;
+        else boatTransformOnMap.eulerAngles -= Vector3.forward * 120;
+
 
         // When hits an obstacle, direction changes according to surface normal
 
         // Starts a reparation workshop
 
         // Feedbacks with UnityEvent ?
+    }
+
+    public void GetStar(byte index)
+    {
+        Debug.Log("You got a star!");
+
+        MiniGame_Map.OnGetStar?.Invoke(index);
+        starCount++;
     }
 
     #endregion
