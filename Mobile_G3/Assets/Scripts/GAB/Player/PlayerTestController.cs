@@ -10,7 +10,7 @@ public class PlayerTestController : MonoBehaviour
     
     [SerializeField] private MeshRenderer renderer;
     [SerializeField] private Material[] materials;
-    [SerializeField] private SwipeManager controls;
+    [SerializeField] private CannonSwipeManager controls;
 
     public float walkDelay, walkTimer;
     public Vector3 previousPos;

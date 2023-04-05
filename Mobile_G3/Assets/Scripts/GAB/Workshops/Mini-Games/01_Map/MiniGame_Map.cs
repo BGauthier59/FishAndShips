@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
 public class MiniGame_Map : MiniGame
@@ -67,6 +68,16 @@ public class MiniGame_Map : MiniGame
     }
 
     private void GetStar(byte index)
+    {
+        GetStarServerRpc(index);
+    }
+
+    #endregion
+
+    #region Network
+
+    [ServerRpc]
+    private void GetStarServerRpc(byte index)
     {
         // Feedback get star
         stars[index].color = Color.red;

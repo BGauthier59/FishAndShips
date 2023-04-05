@@ -13,11 +13,16 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Transform[] previewPoints;
     [SerializeField] private Transform previewPointsCalculatedParent;
     [SerializeField] private Transform previewPointsCalculatingParent;
-    
+
     [SerializeField] private MiniGame_Map mapMiniGame;
-    private int starCount;
+
+    private NetworkVariable<int> starCount = new(0, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
+
     [SerializeField] private Transform boatCollisionRayOrigin;
+
     [SerializeField] private LayerMask boatCollisionLayerMask;
+
     //private bool isInDangerousArea;
     private NetworkVariable<bool> isInDangerousArea = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
@@ -33,6 +38,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     [SerializeField] private float rotationGapToWritePointOnLine = 8;
     [SerializeField] private float collisionDetectionRayLength;
+
+    [Header("Feedbacks")] [SerializeField] private Animation collisionWarningAnim;
 
     #region Ship Behaviour
 
@@ -55,6 +62,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     Vector3 pos;
+
     private void MoveOnMap()
     {
         boatTransformOnMap.localPosition += boatTransformOnMap.right * (referenceBoatSpeed * Time.deltaTime);
@@ -103,15 +111,18 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     private RaycastHit2D hit;
+
     private void CheckCollisions()
     {
         if (!IsHost) return;
-        
-        Debug.DrawRay(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right * collisionDetectionRayLength, Color.green);
 
-        hit = Physics2D.Raycast(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right, collisionDetectionRayLength,
+        Debug.DrawRay(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right * collisionDetectionRayLength,
+            Color.green);
+
+        hit = Physics2D.Raycast(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right,
+            collisionDetectionRayLength,
             boatCollisionLayerMask);
-        if (!hit)
+        if (!hit || hit.collider.gameObject.CompareTag("Star"))
         {
             if (isInDangerousArea.Value) ExitDangerZone();
             return;
@@ -119,7 +130,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
         if (isInDangerousArea.Value) return;
         EnterDangerZone();
-
     }
 
     private void EnterDangerZone()
@@ -141,7 +151,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void Collide(float angle)
     {
         SetEulerAnglesServerRpc(angle);
-        
+
         // When hits an obstacle, direction changes according to surface normal
 
         // Starts a reparation workshop
@@ -154,7 +164,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         Debug.Log("You got a star!");
 
         MiniGame_Map.OnGetStar?.Invoke(index);
-        starCount++;
+        starCount.Value++;
     }
 
     #endregion
@@ -204,10 +214,14 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         if (current)
         {
             // Feedback warning
+            collisionWarningAnim.gameObject.SetActive(true);
+            collisionWarningAnim.Play(collisionWarningAnim.clip.name);
         }
         else
         {
             // Cancel feedback
+            collisionWarningAnim.gameObject.SetActive(false);
+            collisionWarningAnim.Stop();
         }
     }
 

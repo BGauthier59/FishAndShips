@@ -12,6 +12,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public GyroscopeManager gyroscopeManager;
+    public CannonSwipeManager cannonCannonSwipeManager;
+    public CannonDragAndDropManager cannonDragAndDropManager;
 
     public void StartWorkshopInteraction(Workshop workshop)
     {
