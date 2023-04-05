@@ -1,8 +1,12 @@
+using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class WoodPlate : MonoBehaviour
 {
     public bool useSwipeMode = false;
+    public bool hasBeenMoved = false;
+    public LayerMask layerWood;
     private Vector2 touchStartPos;
     private Vector2 touchEndPos;
     private float swipeDistanceThreshold = 50f;
@@ -17,6 +21,15 @@ public class WoodPlate : MonoBehaviour
     private Vector2 initialTouch1Pos;
     private Vector2 initialTouch2Pos;
     private Vector3 initialScale;
+    
+    private Collider col;
+    private Material mat;
+    
+    private void Start()
+    {
+        col = GetComponent<Collider>();
+        AndroidUtils.CreateCurrentActivity();
+    }
 
     void Update()
     {
@@ -56,12 +69,12 @@ public class WoodPlate : MonoBehaviour
                 Touch touch = Input.GetTouch(0);
 
                 // Check for touch began
-                if (touch.phase == TouchPhase.Began)
+                if (touch.phase == TouchPhase.Began || Input.GetMouseButton(0))
                 {
                     // Check if touch is inside object bounds
                     Ray ray = Camera.main.ScreenPointToRay(touch.position);
                     RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit) && hit.transform == transform)
+                    if (Physics.Raycast(ray, out hit, 10f, layerWood) && hit.transform == transform)
                     {
                         isDragging = true;
                         lastDragPos = touch.position;
@@ -76,14 +89,17 @@ public class WoodPlate : MonoBehaviour
                     Vector3 newPos = transform.position + new Vector3(dragDelta.x, dragDelta.y, 0) * 0.02f;
                     transform.position = newPos;
                     lastDragPos = touch.position;
+                    hasBeenMoved = true;   
                 }
 
                 // Check for touch ended
                 if (touch.phase == TouchPhase.Ended)
                 {
                     isDragging = false;
+                    if (!hasBeenMoved) {
+                        col.enabled = false;
+                    }
                 }
-
                 break;
             }
             // Check for two finger touch
@@ -127,7 +143,7 @@ public class WoodPlate : MonoBehaviour
                         angleDelta = -angleDelta;
                     }
 
-                    transform.Rotate(0, angleDelta, 0);
+                    transform.Rotate(0, 0, angleDelta);
                 }
 
                 // Scale object

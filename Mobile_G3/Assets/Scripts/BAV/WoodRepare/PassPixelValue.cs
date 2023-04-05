@@ -18,7 +18,7 @@ public class PassPixelValue : MonoBehaviour
         pixelValuesToPass = TextureUtils.ReadTexturePixelChannelArray(tex, 16);
         if (pixelValuesToPass.Length != 0)
         {
-            mat.SetFloatArray("_PixelValues", pixelValuesToPass);
+            //mat.SetFloatArray("_PixelValues", pixelValuesToPass);
         }
     }
 }

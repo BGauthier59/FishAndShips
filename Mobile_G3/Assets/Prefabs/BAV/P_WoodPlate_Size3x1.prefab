@@ -9,8 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5939772591202201754}
-  - component: {fileID: 594650791151582263}
-  m_Layer: 0
+  - component: {fileID: 4435981312356445740}
+  - component: {fileID: 3326243792152782223}
+  m_Layer: 31
   m_Name: P_WoodPlate_Size3x1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33,7 +34,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &594650791151582263
+--- !u!65 &4435981312356445740
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 192896968798132371}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 3, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3326243792152782223
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,10 +56,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 192896968798132371}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfa9107749649304494a43e1c2a5dbbd, type: 3}
+  m_Script: {fileID: 11500000, guid: a4bfece7b178da64a960aa005254a85e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  useSwipeMode: 0
+  canBeMoving: 0
+  canBeCountAsValid: 0
 --- !u!1 &8756931850458477180
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,8 +72,7 @@ GameObject:
   - component: {fileID: 887899090385990452}
   - component: {fileID: 8748309171763090388}
   - component: {fileID: 5182100574456716830}
-  - component: {fileID: 171439252507460924}
-  m_Layer: 0
+  m_Layer: 31
   m_Name: SM_WoodPlate_Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -130,16 +144,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &171439252507460924
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8756931850458477180}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
