@@ -60,23 +60,22 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  - {fileID: 0}
   previewPointsCalculatedParent: {fileID: 0}
   previewPointsCalculatingParent: {fileID: 0}
-  obstacles:
-  - transform: {fileID: 0}
-    collisionSize: 1
-  - transform: {fileID: 0}
-    collisionSize: 1
-  stars: []
-  dangerDistance: 3
   mapMiniGame: {fileID: 0}
+  boatCollisionRayOrigin: {fileID: 0}
+  boatCollisionLayerMask:
+    serializedVersion: 2
+    m_Bits: 256
   rotationInDegreesPerSecond:
     m_InternalValue: 0
-  referenceBoatSpeed: 0.5
+  referenceBoatSpeed: 0.2
   distanceBetweenPreviewPoints: 1
   previewPointsLocalScale: {x: 0.1, y: 0.1, z: 1}
   previewPointsEulerAngles: {x: 90, y: 0, z: 0}
-  rotationGapToWritePointOnLine: 8
+  rotationGapToWritePointOnLine: 10
+  collisionDetectionRayLength: 0
 --- !u!114 &391967020182770581
 MonoBehaviour:
   m_ObjectHideFlags: 0
