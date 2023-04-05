@@ -13,7 +13,7 @@ public class WPMoveObjectManager : MonoBehaviour
     public bool isMovingAnObject;
     public Camera cam;
     [SerializeField] private LayerMask woodLayer;
-    public TouchControls _touch;
+    public float distanceRaycast = 10f;
     public TextMeshPro debugPos1;
 
     [UsedImplicitly]
@@ -41,8 +41,7 @@ public class WPMoveObjectManager : MonoBehaviour
     {
         secondInputPos = ctx.ReadValue<Vector2>();
     }
-
-
+    
     public void Awake()
     {
         AndroidUtils.CreateCurrentActivity();
@@ -55,7 +54,7 @@ public class WPMoveObjectManager : MonoBehaviour
         {
             Ray ray = cam.ScreenPointToRay(firstInputPos);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, woodLayer))
+            if (Physics.Raycast(ray, out hit, distanceRaycast,woodLayer))
             {
                 hit.transform.gameObject.transform.localPosition = new Vector3(hit.point.x, hit.point.y,0);
             }
