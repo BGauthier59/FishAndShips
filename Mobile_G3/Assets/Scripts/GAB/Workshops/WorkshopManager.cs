@@ -4,13 +4,14 @@ using UnityEngine;
 public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 {
     private Workshop currentWorkshop;
-    private MiniGame currentMiniGame;
+    public MiniGame currentMiniGame;
     
     [SerializeField] private GameObject miniGameRenderingObject;
     public Transform miniGameEnvironmentCamera;
     [SerializeField] private GameObject miniGameRenderingCamera;
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
+    public ShrimpSwipeManager shrimpSwipeManager;
     public GyroscopeManager gyroscopeManager;
 
     public void StartWorkshopInteraction(Workshop workshop)
