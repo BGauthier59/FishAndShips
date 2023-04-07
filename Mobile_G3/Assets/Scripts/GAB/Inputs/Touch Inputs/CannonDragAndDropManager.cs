@@ -66,6 +66,11 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
 
         data.bullet.position = Vector3.Lerp(data.bullet.position, currentTouch, Time.deltaTime * data.lerpSpeed);
     }
+
+    public void CalculateMatchStickPosition()
+    {
+        // Calculer la vitesse ici
+    }
 }
 
 [Serializable]
@@ -76,7 +81,10 @@ public struct CannonDragAndDropData
 
     public Transform endPoint;
     public float endPointRadius;
-
+    
+    [Header("Load")]
     public Transform bullet;
     public float lerpSpeed;
+
+    [Header("Shoot")] public float maxSpeed;
 }

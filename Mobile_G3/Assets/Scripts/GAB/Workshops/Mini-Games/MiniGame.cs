@@ -35,4 +35,9 @@ public abstract class MiniGame : NetworkBehaviour
         debugWorkshop.miniGameEnvironmentCamera.position = pos;
         debugWorkshop.miniGameEnvironmentCamera.eulerAngles = euler;
     }
+
+    public virtual void Reset() // Must be used to reset mini-game at initial state when exited
+    {
+        
+    }
 }

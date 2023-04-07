@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -15,7 +12,6 @@ public class MiniGame_Cannon_Load : MiniGame
     [SerializeField] private CannonSwipeData step1data;
     [SerializeField] private CannonDragAndDropData step2data;
     [SerializeField] private CannonSwipeData step3data;
-    
     
     private enum CannonState
     {
