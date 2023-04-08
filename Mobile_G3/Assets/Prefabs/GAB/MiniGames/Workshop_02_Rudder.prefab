@@ -2937,7 +2937,7 @@ Transform:
   m_GameObject: {fileID: 5646876395994158146}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 1.25}
-  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_LocalScale: {x: 14, y: 14, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5646876395131289612}
@@ -3599,6 +3599,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5646876396301825845}
   - component: {fileID: 5646876396301825844}
+  - component: {fileID: -6231133515431406982}
   m_Layer: 0
   m_Name: Workshop_02_Rudder
   m_TagString: Untagged
@@ -3644,7 +3645,7 @@ MonoBehaviour:
     centralPoint: {fileID: 5646876394287829293}
     minMaxMagnitude:
       x: 1
-      y: 5
+      y: 7
     availableZone: {fileID: 5646876395994158149}
     unavailableCenterZone: {fileID: 5646876394909800627}
     rudder: {fileID: 5646876395388003236}
@@ -3654,6 +3655,22 @@ MonoBehaviour:
   minMaxRotationPerSecond:
     x: -15
     y: 15
+--- !u!114 &-6231133515431406982
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5646876396301825843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &7595260485892450938
 GameObject:
   m_ObjectHideFlags: 0

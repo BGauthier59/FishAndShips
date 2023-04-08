@@ -1,5 +1,6 @@
 using TMPro;
 using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 
 public class MiniGame_Rudder : MiniGame
@@ -21,6 +22,7 @@ public class MiniGame_Rudder : MiniGame
     {
         base.StartMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
+        StartExecutingMiniGame();
     }
 
     private Vector3 nextValue;
@@ -44,7 +46,15 @@ public class MiniGame_Rudder : MiniGame
 
     public override void ExitMiniGame(bool victory)
     {
+        StopExecutingMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Disable();
+        SetRudderRotationServerRpc(data.rudder.eulerAngles.z);
         base.ExitMiniGame(victory);
+    }
+    
+    [ServerRpc(RequireOwnership = false)]
+    private void SetRudderRotationServerRpc(float angle)
+    {
+        data.rudder.eulerAngles = Vector3.forward * angle;
     }
 }

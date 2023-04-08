@@ -13,11 +13,19 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Transform[] previewPoints;
     [SerializeField] private Transform previewPointsCalculatedParent;
     [SerializeField] private Transform previewPointsCalculatingParent;
-    
-    [SerializeField] private float dangerDistance;
 
     [SerializeField] private MiniGame_Map mapMiniGame;
-    private int starCount;
+
+    private NetworkVariable<int> starCount = new(0, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
+
+    [SerializeField] private Transform boatCollisionRayOrigin;
+
+    [SerializeField] private LayerMask boatCollisionLayerMask;
+
+    //private bool isInDangerousArea;
+    private NetworkVariable<bool> isInDangerousArea = new(false, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
     [Header("Boat Parameters"), SerializeField]
     private NetworkVariable<float> rotationInDegreesPerSecond = new(0, NetworkVariableReadPermission.Everyone,
@@ -29,6 +37,9 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private Vector3 previewPointsEulerAngles = new(90, 0, 0);
 
     [SerializeField] private float rotationGapToWritePointOnLine = 8;
+    [SerializeField] private float collisionDetectionRayLength;
+
+    [Header("Feedbacks")] [SerializeField] private Animation collisionWarningAnim;
 
     #region Ship Behaviour
 
@@ -38,6 +49,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         previous = boatTransformOnMap.eulerAngles.y;
         mapMiniGame.Initialize();
         SetRotation(0);
+
+        isInDangerousArea.OnValueChanged += OnDangerousAreaStateChange;
     }
 
     private void Update()
@@ -49,6 +62,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     Vector3 pos;
+
     private void MoveOnMap()
     {
         boatTransformOnMap.localPosition += boatTransformOnMap.right * (referenceBoatSpeed * Time.deltaTime);
@@ -96,17 +110,31 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         }
     }
 
-    private float distance;
+    private RaycastHit2D hit;
 
     private void CheckCollisions()
     {
-        return;
+        if (!IsHost) return;
 
-        // Raycast2D
+        Debug.DrawRay(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right * collisionDetectionRayLength,
+            Color.green);
+
+        hit = Physics2D.Raycast(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right,
+            collisionDetectionRayLength,
+            boatCollisionLayerMask);
+        if (!hit || hit.collider.gameObject.CompareTag("Star"))
+        {
+            if (isInDangerousArea.Value) ExitDangerZone();
+            return;
+        }
+
+        if (isInDangerousArea.Value) return;
+        EnterDangerZone();
     }
 
     private void EnterDangerZone()
     {
+        isInDangerousArea.Value = true;
         Debug.Log("Entered danger zone!");
         // When gets too much close to an obstacle, enters danger zone
 
@@ -115,13 +143,14 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     private void ExitDangerZone()
     {
+        Debug.Log("Exited danger zone!");
+
+        isInDangerousArea.Value = false;
     }
 
-    public void Collide()
+    public void Collide(float angle)
     {
-        if (rotationInDegreesPerSecond.Value > 0) boatTransformOnMap.eulerAngles += Vector3.forward * 120;
-        else boatTransformOnMap.eulerAngles -= Vector3.forward * 120;
-
+        SetEulerAnglesServerRpc(angle);
 
         // When hits an obstacle, direction changes according to surface normal
 
@@ -135,7 +164,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         Debug.Log("You got a star!");
 
         MiniGame_Map.OnGetStar?.Invoke(index);
-        starCount++;
+        starCount.Value++;
     }
 
     #endregion
@@ -171,6 +200,28 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             previewPoints[i].SetParent(previewPointsCalculatedParent);
             previewPoints[i].localScale = previewPointsLocalScale;
             previewPoints[i].eulerAngles = previewPointsEulerAngles;
+        }
+    }
+
+    [ServerRpc]
+    private void SetEulerAnglesServerRpc(float angle)
+    {
+        boatTransformOnMap.eulerAngles = Vector3.forward * angle;
+    }
+
+    private void OnDangerousAreaStateChange(bool previous, bool current)
+    {
+        if (current)
+        {
+            // Feedback warning
+            collisionWarningAnim.gameObject.SetActive(true);
+            collisionWarningAnim.Play(collisionWarningAnim.clip.name);
+        }
+        else
+        {
+            // Cancel feedback
+            collisionWarningAnim.gameObject.SetActive(false);
+            collisionWarningAnim.Stop();
         }
     }
 
