@@ -22,6 +22,7 @@ public class MiniGame_Rudder : MiniGame
     {
         base.StartMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
+        StartExecutingMiniGame();
     }
 
     private Vector3 nextValue;
@@ -45,6 +46,7 @@ public class MiniGame_Rudder : MiniGame
 
     public override void ExitMiniGame(bool victory)
     {
+        StopExecutingMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Disable();
         SetRudderRotationServerRpc(data.rudder.eulerAngles.z);
         base.ExitMiniGame(victory);

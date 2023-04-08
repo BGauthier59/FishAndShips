@@ -4,6 +4,7 @@ using UnityEngine;
 public abstract class MiniGame : NetworkBehaviour
 {
     [SerializeField] private string miniGameName;
+    public bool isRunning;
     public GameObject miniGameObject;
     [SerializeField] protected Vector3 miniGameCameraPosition;
     [SerializeField] protected Vector3 miniGameCameraEulerAngles;
@@ -16,6 +17,16 @@ public abstract class MiniGame : NetworkBehaviour
     }
 
     public abstract void ExecuteMiniGame();
+
+    protected void StartExecutingMiniGame()
+    {
+        isRunning = true;
+    }
+
+    protected void StopExecutingMiniGame()
+    {
+        isRunning = false;
+    }
 
     public virtual void ExitMiniGame(bool victory)
     {

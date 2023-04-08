@@ -18,7 +18,7 @@ public class MiniGame_Cannon_Load : MiniGame
         Step1, Step2, Step3, Transition
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
         Gizmos.DrawRay(step1data.centralPoint.position, step1data.rightDirection);
@@ -67,6 +67,7 @@ public class MiniGame_Cannon_Load : MiniGame
         {
             case CannonState.Step1:
                 WorkshopManager.instance.cannonCannonSwipeManager.Enable(step1data);
+                StartExecutingMiniGame();
                 break;
             
             case CannonState.Step2:
@@ -94,6 +95,7 @@ public class MiniGame_Cannon_Load : MiniGame
     
     public override async void ExitMiniGame(bool victory)
     {
+        StopExecutingMiniGame();
         WorkshopManager.instance.cannonCannonSwipeManager.Disable();
         cannonAnim.Play(cannonIsReady.name);
         await Task.Delay(1000);

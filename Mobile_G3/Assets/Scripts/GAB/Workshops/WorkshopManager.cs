@@ -100,7 +100,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     private void Update()
     {
-        if (!currentMiniGame) return;
+        if (!currentMiniGame || !currentMiniGame.isRunning) return;
         currentMiniGame.ExecuteMiniGame();
     }
 
@@ -118,12 +118,14 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     {
         if (currentWorkshop == null)
         {
-            Debug.Log("There is not workshop associated with this mini-game!");
+            Debug.LogError("There is not workshop associated with this mini-game!");
             return;
         }
 
         CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas);
-        currentWorkshop.Deactivate(victory);
+        var workshopToDeactivate = currentWorkshop; // Must set currentWorkshop to null for series workshop before deactivation
         currentWorkshop = null;
+        workshopToDeactivate.Deactivate(victory);
+
     }
 }

@@ -1615,6 +1615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniGameName: 04
+  isRunning: 0
   miniGameObject: {fileID: 7003109990335852311}
   miniGameCameraPosition: {x: 50, y: 3, z: -5}
   miniGameCameraEulerAngles: {x: 25, y: 0, z: 0}
@@ -1624,19 +1625,22 @@ MonoBehaviour:
   cannonIsReady: {fileID: 7400000, guid: ed19bd408e4f28940ba7b6e52a1e2d6d, type: 2}
   step1data:
     centralPoint: {fileID: 7003109990754775256}
-    centralPointRadius: 3
+    centralPointRadius: 1.5
     rightDirection: {x: -1, y: 0}
     minimumCollinearFactor: 0.75
   step2data:
     startPoint: {fileID: 7003109991486918063}
-    startPointRadius: 5
+    startPointRadius: 2.5
     endPoint: {fileID: 7003109990970612793}
-    endPointRadius: 3
-    bullet: {fileID: 7003109990587837229}
+    endPointRadius: 1.5
+    draggableItem: {fileID: 7003109990587837229}
     lerpSpeed: 10
+    type: 1
+    maxSpeed: 0
+    matchstickDuration: 0
   step3data:
     centralPoint: {fileID: 7003109991146519812}
-    centralPointRadius: 3
+    centralPointRadius: 1.5
     rightDirection: {x: 1, y: 0}
     minimumCollinearFactor: 0.75
 --- !u!114 &7003109990772616727
