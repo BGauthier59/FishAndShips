@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CannonSwipeManager : MiniGameInput<CannonSwipeData>
+public class CannonSwipeManager : MiniGameInput<SwipeData>
 {
     [SerializeField] private Camera inputCamera;
 
@@ -63,7 +63,7 @@ public class CannonSwipeManager : MiniGameInput<CannonSwipeData>
 }
 
 [Serializable]
-public struct CannonSwipeData
+public struct SwipeData
 {
     public Transform centralPoint;
     public float centralPointRadius;
