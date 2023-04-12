@@ -3,13 +3,13 @@ using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class CannonSwipeManager : MiniGameInput<SwipeData>
+public class SwipeManager : MiniGameInput<SwipeData>
 {
     [SerializeField] private Camera inputCamera;
 
     private bool isDraging = false;
     private Vector3 startTouch, swipeDelta;
-    
+
     public bool CalculateSwipe()
     {
         // Calculate distance
@@ -67,6 +67,6 @@ public struct SwipeData
 {
     public Transform centralPoint;
     public float centralPointRadius;
-    public Vector2 rightDirection;
+    public Vector3 rightDirection;
     [Range(0, 1)] public float minimumCollinearFactor;
 }

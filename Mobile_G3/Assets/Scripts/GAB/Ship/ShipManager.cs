@@ -206,6 +206,12 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [ServerRpc]
     private void SetEulerAnglesServerRpc(float angle)
     {
+        SetEulerAnglesClientRpc(angle);
+    }
+
+    [ClientRpc]
+    private void SetEulerAnglesClientRpc(float angle)
+    {
         boatTransformOnMap.eulerAngles = Vector3.forward * angle;
     }
 

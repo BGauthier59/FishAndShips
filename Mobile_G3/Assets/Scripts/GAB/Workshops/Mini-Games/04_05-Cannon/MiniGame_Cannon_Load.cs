@@ -38,7 +38,7 @@ public class MiniGame_Cannon_Load : MiniGame
         {
             case CannonState.Step1:
                 // Swipe
-                if (WorkshopManager.instance.cannonCannonSwipeManager.CalculateSwipe())
+                if (WorkshopManager.instance.swipeManager.CalculateSwipe())
                 {
                     SwitchState(CannonState.Step2);
                 }
@@ -49,7 +49,7 @@ public class MiniGame_Cannon_Load : MiniGame
                 break;
             case CannonState.Step3:
                 // Swipe
-                if (WorkshopManager.instance.cannonCannonSwipeManager.CalculateSwipe())
+                if (WorkshopManager.instance.swipeManager.CalculateSwipe())
                 {
                     ExitMiniGame(true);
                 }
@@ -66,12 +66,12 @@ public class MiniGame_Cannon_Load : MiniGame
         switch (state)
         {
             case CannonState.Step1:
-                WorkshopManager.instance.cannonCannonSwipeManager.Enable(step1data);
+                WorkshopManager.instance.swipeManager.Enable(step1data);
                 StartExecutingMiniGame();
                 break;
             
             case CannonState.Step2:
-                WorkshopManager.instance.cannonCannonSwipeManager.Disable();
+                WorkshopManager.instance.swipeManager.Disable();
                 cannonAnim.Play(cannonIsComing.name);
                 await Task.Delay(1000);
                 WorkshopManager.instance.cannonDragAndDropManager.Enable(step2data);
@@ -80,7 +80,7 @@ public class MiniGame_Cannon_Load : MiniGame
             
             case CannonState.Step3:
                 WorkshopManager.instance.cannonDragAndDropManager.Disable();
-                WorkshopManager.instance.cannonCannonSwipeManager.Enable(step3data);
+                WorkshopManager.instance.swipeManager.Enable(step3data);
                 break;
         }
 
@@ -96,7 +96,7 @@ public class MiniGame_Cannon_Load : MiniGame
     public override async void ExitMiniGame(bool victory)
     {
         StopExecutingMiniGame();
-        WorkshopManager.instance.cannonCannonSwipeManager.Disable();
+        WorkshopManager.instance.swipeManager.Disable();
         cannonAnim.Play(cannonIsReady.name);
         await Task.Delay(1000);
         base.ExitMiniGame(victory);
