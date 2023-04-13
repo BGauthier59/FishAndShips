@@ -12,6 +12,8 @@ public class SwipeManager : MiniGameInput<SwipeData>
 
     public bool CalculateSwipe()
     {
+        if (!isActive) return false;
+        
         // Calculate distance
         swipeDelta = Vector3.zero;
         if (isDraging)

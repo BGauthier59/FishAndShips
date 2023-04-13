@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,9 +13,16 @@ public class MiniGame_Sails : MiniGame
     [SerializeField] private GameObject rightRope;
     private GameObject currentRope;
 
-    private bool isCooldown;
+    //private bool isCooldown;
+    private NetworkVariable<bool> isCooldown = new NetworkVariable<bool>();
     [SerializeField] private float cooldown;
     private float timer;
+
+    [SerializeField] private byte stepNumber;
+    private byte currentStep;
+
+    public TMP_Text myStep;
+    public TMP_Text cooldownTimer;
 
     private void OnDrawGizmosSelected()
     {
@@ -24,13 +32,22 @@ public class MiniGame_Sails : MiniGame
         Gizmos.DrawRay(secondPlayerData.centralPoint.position, secondPlayerData.rightDirection);
     }
 
+    // Chaque joueur a une corde
+    // Chaque joueur a une valeur de step (de 0 à 3)
+    // Quand le joueur swipe, il monte d'une step, il envoie à l'autre joueur sa valeur de step, et si les deux valeurs sont différentes, alors un timer est enclenché
+    // Si les deux valeurs de step sont les mêmes, le timer est reset et stoppé
+    // Si le timer dépasse X secondes, les deux joueurs voient leur step revenir à 0
+    // Si les deux joueurs ont leur step à 3, ils ont gagné
+
+    // Le timer se lance sur le joueur 1 ?
+
     public override void StartMiniGame()
     {
         base.StartMiniGame();
         var connectedWorkshop = WorkshopManager.instance.GetCurrentWorkshop() as ConnectedWorkshop;
         if (connectedWorkshop == null)
         {
-            Debug.LogWarning("Sails mini-game must be started as a connected worshop!");
+            Debug.LogWarning("Sails mini-game must be started as a connected workshop!");
             return;
         }
 
@@ -39,12 +56,16 @@ public class MiniGame_Sails : MiniGame
             currentData = firstPlayerData;
             currentRope = leftRope;
             rightRope.SetActive(false);
+            // Timer is only checked on first player
+            isCooldown.OnValueChanged += OnCooldownValueChanged;
+            Debug.Log("You're player 1");
         }
         else
         {
             currentData = secondPlayerData;
             currentRope = rightRope;
             leftRope.SetActive(false);
+            Debug.Log("You're player 2");
         }
 
         WorkshopManager.instance.swipeManager.Enable(currentData);
@@ -56,24 +77,24 @@ public class MiniGame_Sails : MiniGame
         if (WorkshopManager.instance.swipeManager.CalculateSwipe())
         {
             Debug.Log("Swipe is okay!");
-            WorkshopManager.instance.swipeManager.Disable();
-
-            // Check if other is good by sending an RPC to this specific client
-            SetSailStateServerRpc(GetOtherPlayerId());
-            isCooldown = true;
+           //WorkshopManager.instance.swipeManager.Disable();
+            currentStep++;
+            
+            myStep.text = currentStep.ToString();
+            
+            SetSailStateServerRpc(GetOtherPlayerId(), currentStep);
         }
 
-        if (isCooldown) CheckTimer();
+        if (IsFirstPlayer() && isCooldown.Value) CheckTimer();
     }
 
     private void CheckTimer()
     {
+        cooldownTimer.text = timer.ToString("F1");
         if (timer >= cooldown)
         {
-            Debug.Log("Too late");
-            isCooldown = false;
-            timer = 0;
-            WorkshopManager.instance.swipeManager.Enable(currentData);
+            Debug.LogWarning("Too late!");
+            ResetSailServerRpc(NetworkManager.LocalClientId, GetOtherPlayerId());
         }
         else
         {
@@ -84,13 +105,12 @@ public class MiniGame_Sails : MiniGame
     private async void SailIsRaised()
     {
         StopExecutingMiniGame();
-        isCooldown = false;
         WorkshopManager.instance.swipeManager.Disable();
         await Task.Delay(1000);
         ExitMiniGame(true);
     }
 
-    protected override async void ExitMiniGame(bool victory)
+    protected override void ExitMiniGame(bool victory)
     {
         // Todo - Should disconnect other player too
         base.ExitMiniGame(victory);
@@ -98,7 +118,10 @@ public class MiniGame_Sails : MiniGame
 
     public override void Reset()
     {
-        isCooldown = false;
+        if (IsFirstPlayer()) isCooldown.OnValueChanged -= OnCooldownValueChanged;
+        SetCooldownServerRpc(false);
+        timer = 0;
+        currentStep = 0;
     }
 
     public override void OnLeaveMiniGame()
@@ -112,7 +135,7 @@ public class MiniGame_Sails : MiniGame
     #region Network
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetSailStateServerRpc(ulong id)
+    private void SetSailStateServerRpc(ulong id, byte step)
     {
         var parameters = new ClientRpcParams
         {
@@ -121,16 +144,27 @@ public class MiniGame_Sails : MiniGame
                 TargetClientIds = new ulong[] {id}
             }
         };
-        SetSailStateClientRpc(parameters);
+        SetSailStateClientRpc(step, parameters);
     }
 
     [ClientRpc]
-    private void SetSailStateClientRpc(ClientRpcParams parameters)
+    private void SetSailStateClientRpc(byte step, ClientRpcParams parameters)
     {
-        if (isCooldown)
+        Debug.Log($"Other is at step {step}. You're at step {currentStep}");
+        myStep.text = currentStep.ToString();
+        
+        if (step == currentStep)
         {
-            SailIsRaised();
-            ReceiveExitOrderServerRpc(GetOtherPlayerId());
+            SetCooldownServerRpc(false);
+            if (step == stepNumber)
+            {
+                SailIsRaised();
+                ReceiveExitOrderServerRpc(GetOtherPlayerId());
+            }
+        }
+        else
+        {
+            SetCooldownServerRpc(true);
         }
     }
 
@@ -151,6 +185,48 @@ public class MiniGame_Sails : MiniGame
     private void ReceiveExitOrderClientRpc(ClientRpcParams parameters)
     {
         SailIsRaised();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetCooldownServerRpc(bool active)
+    {
+        Debug.Log($"Set cooldown value to {active}");
+        isCooldown.Value = active;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ResetSailServerRpc(ulong id, ulong otherPlayerId)
+    {
+        SetCooldownServerRpc(false);
+
+        var parameters = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] {id, otherPlayerId}
+            }
+        };
+        ResetSailClientRpc(parameters);
+    }
+
+    [ClientRpc]
+    private void ResetSailClientRpc(ClientRpcParams parameters)
+    {
+        // Both players see their sail reset
+        Debug.Log("I've been reset to 0");
+        currentStep = 0;
+
+        myStep.text = currentStep.ToString();
+    }
+
+    private void OnCooldownValueChanged(bool previous, bool current)
+    {
+        if (!current)
+        {
+            Debug.LogWarning("Timer has been reset! Steps are the same");
+            timer = 0;
+            cooldownTimer.text = timer.ToString("F1");
+        }
     }
 
     private ulong GetOtherPlayerId()
