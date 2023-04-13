@@ -43,7 +43,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     #region Ship Behaviour
 
-    private void Start()
+    public void StartGameLoop()
     {
         mapPosition = boatTransformOnMap.localPosition;
         previous = boatTransformOnMap.eulerAngles.y;
@@ -52,8 +52,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
         isInDangerousArea.OnValueChanged += OnDangerousAreaStateChange;
     }
-
-    private void Update()
+    
+    public void UpdateGameLoop()
     {
         mapMiniGame.Refresh();
         MoveOnMap();

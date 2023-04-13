@@ -92,34 +92,13 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     [ClientRpc]
     private void StartConnectedMiniGameClientRpc(uint otherConnectedWorkshopId, ClientRpcParams parameters)
     {
-        Debug.Log("Rpc must be sent to right client!");
-        
-        /*
-        // Checks if client has a current workshop linked
-        if (!currentWorkshop) return;
-
-        // Checks if client's current workshop is a connected workshop
-        var connectedWorkshop = currentWorkshop as ConnectedWorkshop;
-        if (!connectedWorkshop) return;
-
-        // Checks if client's connected workshop has the right id
-        var id = connectedWorkshop.GetWorkshopId();
-        if (id != otherConnectedWorkshopId) return;
-
-        // Must be the right client, then starts their mini-game
-        */
         var connectedWorkshop = currentWorkshop as ConnectedWorkshop;
 
         Debug.Log(NetworkManager.Singleton.LocalClient.ClientId);
         StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void GivePlayersIdToOtherServerRpc(ulong otherPlayerId)
-    {
-    }
-
-    private void Update()
+    
+    public void UpdateGameLoop()
     {
         if (!currentMiniGame || !currentMiniGame.isRunning) return;
         currentMiniGame.ExecuteMiniGame();
