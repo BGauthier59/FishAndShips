@@ -44,14 +44,24 @@ public class MiniGame_Rudder : MiniGame
         }
     }
 
-    public override void ExitMiniGame(bool victory)
+    protected override void ExitMiniGame(bool victory)
     {
         StopExecutingMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Disable();
         SetRudderRotationServerRpc(data.rudder.eulerAngles.z);
         base.ExitMiniGame(victory);
     }
-    
+
+    public override void Reset()
+    {
+        // Should not be reset
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        ExitMiniGame(false);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void SetRudderRotationServerRpc(float angle)
     {

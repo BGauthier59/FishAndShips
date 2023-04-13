@@ -81,13 +81,32 @@ public class MiniGame_Sails : MiniGame
         }
     }
 
-    public override async void ExitMiniGame(bool victory)
+    private async void SailIsRaised()
     {
         StopExecutingMiniGame();
         isCooldown = false;
         WorkshopManager.instance.swipeManager.Disable();
         await Task.Delay(1000);
+        ExitMiniGame(true);
+    }
+
+    protected override async void ExitMiniGame(bool victory)
+    {
+        // Todo - Should disconnect other player too
         base.ExitMiniGame(victory);
+    }
+
+    public override void Reset()
+    {
+        isCooldown = false;
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        if (!isRunning) return;
+        StopExecutingMiniGame();
+        WorkshopManager.instance.swipeManager.Disable();
+        ExitMiniGame(false);
     }
 
     #region Network
@@ -110,7 +129,7 @@ public class MiniGame_Sails : MiniGame
     {
         if (isCooldown)
         {
-            ExitMiniGame(true);
+            SailIsRaised();
             ReceiveExitOrderServerRpc(GetOtherPlayerId());
         }
     }
@@ -131,7 +150,7 @@ public class MiniGame_Sails : MiniGame
     [ClientRpc]
     private void ReceiveExitOrderClientRpc(ClientRpcParams parameters)
     {
-        ExitMiniGame(true);
+        SailIsRaised();
     }
 
     private ulong GetOtherPlayerId()

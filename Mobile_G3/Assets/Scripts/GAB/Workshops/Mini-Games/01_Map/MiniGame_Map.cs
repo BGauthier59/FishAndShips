@@ -23,6 +23,16 @@ public class MiniGame_Map : MiniGame
     {
     }
 
+    public override void Reset()
+    {
+        // Should not be reset
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        ExitMiniGame(false);
+    }
+
 
     public void Initialize()
     {

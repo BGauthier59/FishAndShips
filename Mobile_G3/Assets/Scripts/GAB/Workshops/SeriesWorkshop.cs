@@ -13,7 +13,11 @@ public class SeriesWorkshop : Workshop
 
     public override void Deactivate(bool victory)
     {
-        if (!victory) return;
+        if (!victory)
+        {
+            SetOccupiedServerRpc(false);
+            return;
+        }
         SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
         if (currentMiniGameIndex.Value == nextMiniGames.Length)
         {

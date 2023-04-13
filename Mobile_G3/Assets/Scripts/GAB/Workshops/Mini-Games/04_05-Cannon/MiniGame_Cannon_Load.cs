@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -12,6 +13,10 @@ public class MiniGame_Cannon_Load : MiniGame
     [SerializeField] private SwipeData step1data;
     [SerializeField] private CannonDragAndDropData step2data;
     [SerializeField] private SwipeData step3data;
+
+    [Header("Environment Data")]
+    [SerializeField] private Transform rotatingPart, cannon, muzzle;
+    private Vector3 rotatingPartEulerAngles, cannonEulerAngles, cannonPos, muzzleEulerAngles;
     
     private enum CannonState
     {
@@ -26,6 +31,14 @@ public class MiniGame_Cannon_Load : MiniGame
         Gizmos.DrawRay(step3data.centralPoint.position, step3data.rightDirection);
     }
 
+    public override void OnNetworkSpawn()
+    {
+        rotatingPartEulerAngles = rotatingPart.eulerAngles;
+        cannonEulerAngles = cannon.eulerAngles;
+        cannonPos = cannon.position;
+        muzzleEulerAngles = muzzle.eulerAngles;
+    }
+
     public override void StartMiniGame()
     {
         base.StartMiniGame();
@@ -37,23 +50,17 @@ public class MiniGame_Cannon_Load : MiniGame
         switch (currentState)
         {
             case CannonState.Step1:
-                // Swipe
-                if (WorkshopManager.instance.swipeManager.CalculateSwipe())
-                {
-                    SwitchState(CannonState.Step2);
-                }
+                if (WorkshopManager.instance.swipeManager.CalculateSwipe()) SwitchState(CannonState.Step2);
                 break;
+            
             case CannonState.Step2:
-                // Drag'n'drop
                 WorkshopManager.instance.cannonDragAndDropManager.CalculateBulletPosition();
                 break;
+            
             case CannonState.Step3:
-                // Swipe
-                if (WorkshopManager.instance.swipeManager.CalculateSwipe())
-                {
-                    ExitMiniGame(true);
-                }
+                if (WorkshopManager.instance.swipeManager.CalculateSwipe()) ExitLastStep();
                 break;
+            
             case CannonState.Transition:
                 break;
         }
@@ -92,13 +99,34 @@ public class MiniGame_Cannon_Load : MiniGame
         WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint -= OnBulletWellPlaced;
         SwitchState(CannonState.Step3);
     }
-    
-    public override async void ExitMiniGame(bool victory)
+
+    private async void ExitLastStep()
     {
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
         cannonAnim.Play(cannonIsReady.name);
         await Task.Delay(1000);
+        ExitMiniGame(true);
+    }
+    
+    protected override void ExitMiniGame(bool victory)
+    {
         base.ExitMiniGame(victory);
+    }
+
+    public override void Reset()
+    {
+        rotatingPart.eulerAngles = rotatingPartEulerAngles;
+        cannon.eulerAngles = cannonEulerAngles;
+        cannon.position = cannonPos;
+        muzzle.eulerAngles = muzzleEulerAngles;
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        if (!isRunning) return;
+        StopExecutingMiniGame();
+        WorkshopManager.instance.swipeManager.Disable();
+        ExitMiniGame(false);
     }
 }

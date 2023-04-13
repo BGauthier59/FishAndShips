@@ -28,8 +28,9 @@ public abstract class MiniGame : NetworkBehaviour
         isRunning = false;
     }
 
-    public virtual void ExitMiniGame(bool victory)
+    protected virtual void ExitMiniGame(bool victory)
     {
+        Reset();
         WorkshopManager.instance.ExitMiniGame(victory);
         miniGameObject.SetActive(false);
     }
@@ -47,8 +48,7 @@ public abstract class MiniGame : NetworkBehaviour
         debugWorkshop.miniGameEnvironmentCamera.eulerAngles = euler;
     }
 
-    public virtual void Reset() // Must be used to reset mini-game at initial state when exited
-    {
-        
-    }
+    public abstract void Reset(); // Must be used to reset mini-game at initial state when exited
+
+    public abstract void OnLeaveMiniGame(); // Must be called when leave button is clicked
 }

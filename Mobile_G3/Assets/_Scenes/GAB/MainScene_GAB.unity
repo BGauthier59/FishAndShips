@@ -6852,8 +6852,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1181555264}
         m_TargetAssemblyTypeName: MiniGame_Sails, Assembly-CSharp
-        m_MethodName: ExitMiniGame
-        m_Mode: 6
+        m_MethodName: OnLeaveMiniGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -18180,6 +18180,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2054993824}
     m_Modifications:
+    - target: {fileID: 7003109990335852311, guid: 6facb221cbb301c42b43b84bfd0fad7d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7003109990772616724, guid: 6facb221cbb301c42b43b84bfd0fad7d,
         type: 3}
       propertyPath: m_RootOrder

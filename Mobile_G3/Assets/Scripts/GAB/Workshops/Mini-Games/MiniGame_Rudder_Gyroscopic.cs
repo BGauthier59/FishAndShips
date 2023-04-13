@@ -41,9 +41,19 @@ public class MiniGame_Rudder_Gyroscopic : MiniGame
         ShipManager.instance.SetRotation(currentEulerAngles.z);
     }
 
-    public override void ExitMiniGame(bool victory)
+    protected override void ExitMiniGame(bool victory)
     {
         WorkshopManager.instance.gyroscopeManager.Disable();
         base.ExitMiniGame(victory);
+    }
+
+    public override void Reset()
+    {
+        
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        
     }
 }

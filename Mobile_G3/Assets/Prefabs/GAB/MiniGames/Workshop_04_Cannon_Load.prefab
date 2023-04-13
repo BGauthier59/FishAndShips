@@ -259,7 +259,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7003109990039227340}
   m_Layer: 7
-  m_Name: RotatingPart
+  m_Name: MuzzleRotatingPart
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -280,7 +280,7 @@ Transform:
   - {fileID: 7003109990344723961}
   m_Father: {fileID: 7003109991421143444}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -17.241482, y: 0, z: 0}
 --- !u!1 &7003109990045478663
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,7 +415,7 @@ Transform:
   - {fileID: 7003109991421143444}
   m_Father: {fileID: 7003109991595071310}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 77.58667, z: 0}
 --- !u!1 &7003109990080309519
 GameObject:
   m_ObjectHideFlags: 0
@@ -1711,7 +1711,7 @@ MonoBehaviour:
   step1data:
     centralPoint: {fileID: 7003109990754775256}
     centralPointRadius: 1.5
-    rightDirection: {x: -1, y: 0}
+    rightDirection: {x: -1, y: 0, z: 0}
     minimumCollinearFactor: 0.75
   step2data:
     startPoint: {fileID: 7003109991486918063}
@@ -1726,8 +1726,11 @@ MonoBehaviour:
   step3data:
     centralPoint: {fileID: 7003109991146519812}
     centralPointRadius: 1.5
-    rightDirection: {x: 1, y: 0}
+    rightDirection: {x: 1, y: 0, z: 0}
     minimumCollinearFactor: 0.75
+  rotatingPart: {fileID: 7003109990067174088}
+  cannon: {fileID: 7003109991421143444}
+  muzzle: {fileID: 7003109990039227340}
 --- !u!114 &7003109990772616727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3260,8 +3263,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7003109990772616726}
         m_TargetAssemblyTypeName: MiniGame_Cannon_Load, Assembly-CSharp
-        m_MethodName: ExitMiniGame
-        m_Mode: 6
+        m_MethodName: OnLeaveMiniGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

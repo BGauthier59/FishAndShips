@@ -18,15 +18,36 @@ public class MiniGame_Cannon_Shoot : MiniGame
     {
         if (WorkshopManager.instance.cannonDragAndDropManager.CalculateMatchStickPosition())
         {
-            ExitMiniGame(true);
+            Fire();
         }
     }
 
-    public override async void ExitMiniGame(bool victory)
+    private async void Fire()
     {
         StopExecutingMiniGame();
-        await Task.Delay(1000);
         WorkshopManager.instance.cannonDragAndDropManager.Disable();
+        
+        // Todo - Feedback
+        
+        await Task.Delay(1000);
+        ExitMiniGame(true);
+    }
+
+    protected override void ExitMiniGame(bool victory)
+    {
         base.ExitMiniGame(victory);
+    }
+
+    public override void Reset()
+    {
+        
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        if (!isRunning) return;
+        StopExecutingMiniGame();
+        WorkshopManager.instance.cannonDragAndDropManager.Disable();
+        ExitMiniGame(false);
     }
 }

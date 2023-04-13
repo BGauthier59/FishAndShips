@@ -157,9 +157,19 @@ public class MiniGame_Shrimp : MiniGame
         return false;
     }
     
-    public override void ExitMiniGame(bool victory)
+    protected override void ExitMiniGame(bool victory)
     {
         WorkshopManager.instance.shrimpSwipeManager.Disable();
         base.ExitMiniGame(victory);
+    }
+
+    public override void Reset()
+    {
+        // Todo - reset mini-game ?
+    }
+
+    public override void OnLeaveMiniGame()
+    {
+        ExitMiniGame(false);
     }
 }
