@@ -17,10 +17,31 @@ public class ShrimpShipAttackEvent : RandomEvent
     public override void ExecuteEvent()
     {
         // Instantie workshop : crevettes
+        
     }
 
     public override void EndEvent()
     {
         // Destroyed by 3 cannon bullets
+    }
+
+    private void GetHit()
+    {
+        
+    }
+
+    private void CheckShrimpSpawnTimer()
+    {
+        
+    }
+
+    private void SpawnShrimpWorkshop()
+    {
+        
+    }
+
+    private bool IsTileAvailableForShrimpWorkshop()
+    {
+        return false;
     }
 }

@@ -21,7 +21,10 @@ public class GameManager : MonoSingleton<GameManager>
     [Header("Instances")] private EventsManager eventsManager;
     private WorkshopManager workshopManager;
     private ShipManager shipManager;
-    private PlayerManager playerManager; // Comment faire ? On stocke tous les joueurs de la partie ?
+    
+    // Comment faire ? On stocke tous les joueurs de la partie ?
+    // A chaque spawn d'un player, il est stocké dans une liste de player
+    private List<PlayerManager> players = new List<PlayerManager>();
 
     private void Start()
     {
@@ -37,6 +40,11 @@ public class GameManager : MonoSingleton<GameManager>
         shipManager.StartGameLoop();
         eventsManager.StartGameLoop();
 
+        foreach (var player in players)
+        {
+            // Start Game Loop
+        }
+
         isRunning = true;
     }
 
@@ -51,5 +59,10 @@ public class GameManager : MonoSingleton<GameManager>
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
         eventsManager.UpdateGameLoop();
+
+        foreach (var player in players)
+        {
+            // Update Player
+        }
     }
 }

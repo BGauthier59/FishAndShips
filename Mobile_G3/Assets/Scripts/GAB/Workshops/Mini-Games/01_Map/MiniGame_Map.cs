@@ -7,8 +7,11 @@ public class MiniGame_Map : MiniGame
     public float sizeRatio;
     [SerializeField] private Transform map;
     [SerializeField] private Transform ship;
+    [SerializeField] private Transform miniGameMap;
     private Vector3 shipPosition;
+    private Vector3 miniGameMapPosition;
     private float posY;
+    private Vector3 initMapPos;
 
     [SerializeField] private LineRenderer shipPath;
 
@@ -36,33 +39,35 @@ public class MiniGame_Map : MiniGame
 
     public void Initialize()
     {
+        initMapPos = miniGameMap.position;
         sizeRatio = map.localScale.x / ShipManager.instance.realMap.localScale.x;
-        posY = ship.transform.localPosition.y;
-
-        SetShipPosition();
-
+        posY = initMapPos.y;
+        SetRelativeMapPosition();
+        
+        /*
         shipPath.positionCount = 2;
         shipPath.SetPosition(0, ship.transform.position);
 
         OnShipRotationChange += AddPointOnPath;
         OnGetStar += GetStar;
+        */
     }
 
     public void Refresh()
     {
-        SetShipPosition();
-
+        SetRelativeMapPosition();
         ship.eulerAngles = ShipManager.instance.GetShipAngle() * Vector3.up;
-
-        shipPath.SetPosition(shipPath.positionCount - 1, ship.transform.position);
     }
 
-    private void SetShipPosition()
+    private void SetRelativeMapPosition()
     {
-        shipPosition = ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
-        shipPosition.z = shipPosition.y;
-        shipPosition.y = posY;
-        ship.transform.localPosition = shipPosition;
+        miniGameMapPosition = -ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
+        miniGameMapPosition.z = miniGameMapPosition.y;
+        miniGameMapPosition.y = posY;
+
+        miniGameMap.localPosition = miniGameMapPosition;
+
+        // Todo - Set map position instead of boat position
     }
 
     #region Callbacks
@@ -88,6 +93,12 @@ public class MiniGame_Map : MiniGame
 
     [ServerRpc]
     private void GetStarServerRpc(byte index)
+    {
+        GetStarClientRpc(index);
+    }
+
+    [ClientRpc]
+    private void GetStarClientRpc(byte index)
     {
         // Feedback get star
         stars[index].color = Color.red;
