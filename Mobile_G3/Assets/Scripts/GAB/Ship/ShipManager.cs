@@ -46,7 +46,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void StartGameLoop()
     {
-        if(IsHost) SetCurrentSpeedRpc(1);
+        if(IsHost) SetCurrentSpeedServerRpc(1);
         mapPosition = boatTransformOnMap.localPosition;
         previous = boatTransformOnMap.eulerAngles.y;
         mapMiniGame.Initialize();
@@ -180,7 +180,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void SetSpeed(float factor)
     {
-        SetCurrentSpeedRpc(factor);
+        SetCurrentSpeedServerRpc(factor);
     }
 
     #endregion
@@ -188,7 +188,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     #region Network
 
     [ServerRpc(RequireOwnership = true)]
-    private void SetCurrentSpeedRpc(float factor)
+    private void SetCurrentSpeedServerRpc(float factor)
     {
         currentBoatSpeed.Value = referenceBoatSpeed * factor;
     }

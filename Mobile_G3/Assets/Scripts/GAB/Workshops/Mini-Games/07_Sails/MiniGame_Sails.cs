@@ -35,8 +35,12 @@ public class MiniGame_Sails : MiniGame
 
     public override void AssociatedWorkshopGetActivated()
     {
-        // Todo - Set speed multiplier to boat (on every client)
         if(IsHost) ShipManager.instance.SetSpeed(boatSpeedFactor);
+    }
+
+    public override void AssociatedWorkshopGetDeactivated()
+    {
+        if(IsHost) ShipManager.instance.SetSpeed(1);
     }
 
     public override void StartMiniGame()
