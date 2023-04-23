@@ -4,7 +4,9 @@ using UnityEngine;
 public class SeriesWorkshop : Workshop
 {
     public MiniGame[] nextMiniGames;
-    [Tooltip("Index -1 is associatedMiniGame. Otherwise follows list indices")] public NetworkVariable<int> currentMiniGameIndex = new (-1);
+
+    [Tooltip("Index -1 is associatedMiniGame. Otherwise follows list indices")]
+    public NetworkVariable<int> currentMiniGameIndex = new(-1);
 
     public MiniGame GetCurrentMiniGame()
     {
@@ -13,11 +15,14 @@ public class SeriesWorkshop : Workshop
 
     public override void Deactivate(bool victory)
     {
+        associatedMiniGame.AssociatedWorkshopGetDeactivated();
+
         if (!victory)
         {
             SetOccupiedServerRpc(false);
             return;
         }
+
         SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
         if (currentMiniGameIndex.Value == nextMiniGames.Length)
         {
@@ -26,6 +31,7 @@ public class SeriesWorkshop : Workshop
             SetOccupiedServerRpc(false);
             return;
         }
+
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 

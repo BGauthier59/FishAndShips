@@ -56,4 +56,8 @@ public abstract class MiniGame : NetworkBehaviour
     public virtual void AssociatedWorkshopGetActivated()
     {
     }
+
+    public virtual void AssociatedWorkshopGetDeactivated()
+    {
+    }
 }

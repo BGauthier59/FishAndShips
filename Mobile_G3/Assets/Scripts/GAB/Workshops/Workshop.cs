@@ -57,11 +57,13 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void Activate()
     {
+        associatedMiniGame.AssociatedWorkshopGetActivated();
         SetActiveServerRpc(true);
     }
 
     public virtual void Deactivate(bool victory)
     {
+        associatedMiniGame.AssociatedWorkshopGetDeactivated();
         SetOccupiedServerRpc(false);
         if (victory) SetActiveServerRpc(false);
     }

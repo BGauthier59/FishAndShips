@@ -31,6 +31,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private NetworkVariable<float> rotationInDegreesPerSecond = new(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
+    [SerializeField] private NetworkVariable<float> currentBoatSpeed = new NetworkVariable<float>();
     [SerializeField] private float referenceBoatSpeed;
     [SerializeField] private float distanceBetweenPreviewPoints;
     [SerializeField] private Vector3 previewPointsLocalScale = new(.1f, .1f, 1);
@@ -45,6 +46,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void StartGameLoop()
     {
+        if(IsHost) SetCurrentSpeedRpc(1);
         mapPosition = boatTransformOnMap.localPosition;
         previous = boatTransformOnMap.eulerAngles.y;
         mapMiniGame.Initialize();
@@ -65,7 +67,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     private void MoveOnMap()
     {
-        boatTransformOnMap.localPosition += boatTransformOnMap.right * (referenceBoatSpeed * Time.deltaTime);
+        boatTransformOnMap.localPosition += boatTransformOnMap.right * (currentBoatSpeed.Value * Time.deltaTime);
 
         if (boatTransformOnMap.localPosition.x < leftRightBottomTopBorder.x)
         {
@@ -176,9 +178,20 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         SetRotationServerRpc(angle);
     }
 
+    public void SetSpeed(float factor)
+    {
+        SetCurrentSpeedRpc(factor);
+    }
+
     #endregion
 
     #region Network
+
+    [ServerRpc(RequireOwnership = true)]
+    private void SetCurrentSpeedRpc(float factor)
+    {
+        currentBoatSpeed.Value = referenceBoatSpeed * factor;
+    }
 
     private int i;
 
@@ -192,7 +205,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         {
             previewPoints[i].SetParent(previewPointsCalculatingParent);
             previewPoints[i].localPosition = Vector3.right *
-                                             (distanceBetweenPreviewPoints * (i) * referenceBoatSpeed);
+                                             (distanceBetweenPreviewPoints * (i) * currentBoatSpeed.Value);
 
             previewPointsCalculatingParent.localEulerAngles += -Vector3.up *
                                                                (rotationInDegreesPerSecond.Value *
