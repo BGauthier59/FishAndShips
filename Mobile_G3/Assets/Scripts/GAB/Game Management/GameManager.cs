@@ -1,44 +1,38 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
-
-    // Gère les updates de toutes les grosses instances
-
-    // Liste des scripts concernés :
-
-    // ShipManager
-    // WorkshopManager
-    // EventsManager
-    // Players - ???
-    // Camera
-
     public bool isRunning;
 
     [Header("Instances")] private EventsManager eventsManager;
     private WorkshopManager workshopManager;
     private ShipManager shipManager;
+    private CanvasManager canvasManager;
+    private TimerManager timerManager;
     
-    // Comment faire ? On stocke tous les joueurs de la partie ?
-    // A chaque spawn d'un player, il est stocké dans une liste de player
     private List<PlayerManager> players = new List<PlayerManager>();
+    public static Action<bool> onGameEnds;
 
     private void Start()
     {
+        onGameEnds += GameEnds;
         StartGameLoop();
     }
 
-    public void StartGameLoop()
+    private async void StartGameLoop()
     {
-        eventsManager = EventsManager.instance;
-        workshopManager = WorkshopManager.instance;
-        shipManager = ShipManager.instance;
+        LinkInstance();
 
+        await CinematicCanvasManager.instance.IntroductionCinematic();
+
+        Debug.Log("Start game loop!");
         shipManager.StartGameLoop();
         eventsManager.StartGameLoop();
+        timerManager.StartGameLoop();
 
         foreach (var player in players)
         {
@@ -48,13 +42,22 @@ public class GameManager : MonoSingleton<GameManager>
         isRunning = true;
     }
 
+    private void LinkInstance()
+    {
+        eventsManager = EventsManager.instance;
+        workshopManager = WorkshopManager.instance;
+        shipManager = ShipManager.instance;
+        canvasManager = CanvasManager.instance;
+        timerManager = TimerManager.instance;
+    }
+
     public void Update()
     {
         if (!isRunning) return;
         UpdateGameLoop();
     }
 
-    public void UpdateGameLoop()
+    private void UpdateGameLoop()
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
@@ -64,5 +67,16 @@ public class GameManager : MonoSingleton<GameManager>
         {
             // Update Player
         }
+
+        timerManager.UpdateGameLoop();
+    }
+
+    private async void GameEnds(bool victory)
+    {
+        isRunning = false;
+        
+        Debug.Log("End of game!");
+        await CinematicCanvasManager.instance.EndCinematic();
+
     }
 }

@@ -10,9 +10,7 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
 {
     private Gyroscope gyroscope;
     private Quaternion correctionQuaternion;
-
-    private float sensibility;
-
+    
     public override void Enable(GyroscopeSetupData data)
     {
         if (!SystemInfo.supportsGyroscope)
@@ -23,7 +21,6 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
         }
 
         base.Enable(data);
-        sensibility = data.sensibility;
 
         gyroscope = Input.gyro;
         gyroscope.enabled = true;
@@ -47,7 +44,6 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
     private Quaternion GyroToUnity(Quaternion q)
     {
         var rotation = new Quaternion(q.x, q.y, -q.z, -q.w);
-        rotation.eulerAngles *= sensibility;
         return rotation;
     }
 
@@ -61,9 +57,5 @@ public class GyroscopeManager : MiniGameInput<GyroscopeSetupData>
 [Serializable]
 public struct GyroscopeSetupData
 {
-    public Transform rotatingPoint;
-    public bool hasConstraint;
-    public float leftConstraint;
-    public float rightConstraint;
-    public float sensibility;
+    
 }

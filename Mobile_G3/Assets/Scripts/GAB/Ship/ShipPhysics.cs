@@ -8,7 +8,7 @@ public class ShipPhysics : MonoBehaviour
     {
         if (!NetworkManager.Singleton.IsHost) return;
         if (!other.gameObject.CompareTag("Obstacle")) return;
-        
+
         var reflect = Vector2.Reflect(transform.right, other.contacts[0].normal);
         var angle = Vector2.SignedAngle(Vector2.right, reflect);
 
@@ -18,15 +18,21 @@ public class ShipPhysics : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!NetworkManager.Singleton.IsHost) return;
-        if (!other.gameObject.CompareTag("Star")) return;
-        
-        var star = other.GetComponent<Star>();
-        if (star.IsTaken())
+        if (other.CompareTag("Star"))
         {
-            Debug.LogWarning("This star is already taken!");
-            return;
+            var star = other.GetComponent<Star>();
+            if (star.IsTaken())
+            {
+                Debug.LogWarning("This star is already taken!");
+                return;
+            }
+
+            star.TakeStar();
+            ShipManager.instance.GetStar(star.GetIndex());
         }
-        star.TakeStar();
-        ShipManager.instance.GetStar(star.GetIndex());
+        else if (other.CompareTag("Goal"))
+        {
+            GameManager.onGameEnds?.Invoke(true);
+        }
     }
 }

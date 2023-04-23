@@ -13,7 +13,6 @@ public class MiniGame_Sails : MiniGame
     [SerializeField] private GameObject rightRope;
     private GameObject currentRope;
 
-    //private bool isCooldown;
     private NetworkVariable<bool> isCooldown = new NetworkVariable<bool>();
     [SerializeField] private float cooldown;
     private float timer;
@@ -24,6 +23,8 @@ public class MiniGame_Sails : MiniGame
     public TMP_Text myStep;
     public TMP_Text cooldownTimer;
 
+    [SerializeField] private float boatSpeedFactor;
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.green;
@@ -32,14 +33,10 @@ public class MiniGame_Sails : MiniGame
         Gizmos.DrawRay(secondPlayerData.centralPoint.position, secondPlayerData.rightDirection);
     }
 
-    // Chaque joueur a une corde
-    // Chaque joueur a une valeur de step (de 0 à 3)
-    // Quand le joueur swipe, il monte d'une step, il envoie à l'autre joueur sa valeur de step, et si les deux valeurs sont différentes, alors un timer est enclenché
-    // Si les deux valeurs de step sont les mêmes, le timer est reset et stoppé
-    // Si le timer dépasse X secondes, les deux joueurs voient leur step revenir à 0
-    // Si les deux joueurs ont leur step à 3, ils ont gagné
-
-    // Le timer se lance sur le joueur 1 ?
+    public override void AssociatedWorkshopGetActivated()
+    {
+        // Todo - Set speed multiplier to boat (on every client)
+    }
 
     public override void StartMiniGame()
     {
@@ -58,14 +55,12 @@ public class MiniGame_Sails : MiniGame
             rightRope.SetActive(false);
             // Timer is only checked on first player
             isCooldown.OnValueChanged += OnCooldownValueChanged;
-            Debug.Log("You're player 1");
         }
         else
         {
             currentData = secondPlayerData;
             currentRope = rightRope;
             leftRope.SetActive(false);
-            Debug.Log("You're player 2");
         }
 
         WorkshopManager.instance.swipeManager.Enable(currentData);
@@ -76,12 +71,8 @@ public class MiniGame_Sails : MiniGame
     {
         if (WorkshopManager.instance.swipeManager.CalculateSwipe())
         {
-            Debug.Log("Swipe is okay!");
-           //WorkshopManager.instance.swipeManager.Disable();
             currentStep++;
-            
             myStep.text = currentStep.ToString();
-            
             SetSailStateServerRpc(GetOtherPlayerId(), currentStep);
         }
 
@@ -93,7 +84,6 @@ public class MiniGame_Sails : MiniGame
         cooldownTimer.text = timer.ToString("F1");
         if (timer >= cooldown)
         {
-            Debug.LogWarning("Too late!");
             ResetSailServerRpc(NetworkManager.LocalClientId, GetOtherPlayerId());
         }
         else

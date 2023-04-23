@@ -16,6 +16,18 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public SwipeManager swipeManager;
     public CannonDragAndDropManager cannonDragAndDropManager;
 
+    #region Game Loop
+
+    public void UpdateGameLoop()
+    {
+        if (!currentMiniGame || !currentMiniGame.isRunning) return;
+        currentMiniGame.ExecuteMiniGame();
+    }
+
+    #endregion
+
+    #region Main methods
+
     public void StartWorkshopInteraction(Workshop workshop)
     {
         currentWorkshop = workshop;
@@ -52,6 +64,44 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         currentMiniGame.StartMiniGame();
     }
 
+    public void ExitMiniGame(bool victory)
+    {
+        Debug.Log($"Exited with {victory}");
+        miniGameRenderingObject.SetActive(false);
+        miniGameEnvironmentCamera.gameObject.SetActive(false);
+        miniGameRenderingCamera.SetActive(true);
+        currentMiniGame = null;
+        EndWorkshopInteraction(victory);
+    }
+
+    public void EndWorkshopInteraction(bool victory)
+    {
+        if (currentWorkshop == null)
+        {
+            Debug.LogError("There is not workshop associated with this mini-game!");
+            return;
+        }
+
+        CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas, CanvasType.TimerCanvas);
+        var workshopToDeactivate =
+            currentWorkshop; // Must set currentWorkshop to null for series workshop before deactivation
+        currentWorkshop = null;
+        workshopToDeactivate.Deactivate(victory);
+    }
+
+    #endregion
+
+    #region Utilities
+
+    public Workshop GetCurrentWorkshop()
+    {
+        return currentWorkshop;
+    }
+
+    #endregion
+
+    #region Connected Workshops
+
     private void WaitForOtherPlayerInConnectedWorkshop(ConnectedWorkshop connectedWorkshop)
     {
         if (connectedWorkshop.IsOtherReady())
@@ -76,6 +126,10 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         StartMiniGame(miniGame);
     }
 
+    #endregion
+
+    #region Network
+
     [ServerRpc(RequireOwnership = false)]
     private void InitializeConnectedMiniGameServerRpc(uint otherConnectedWorkshopId, ulong otherPlayerId)
     {
@@ -93,44 +147,9 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     private void StartConnectedMiniGameClientRpc(uint otherConnectedWorkshopId, ClientRpcParams parameters)
     {
         var connectedWorkshop = currentWorkshop as ConnectedWorkshop;
-
-        Debug.Log(NetworkManager.Singleton.LocalClient.ClientId);
-        StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);
-    }
-    
-    public void UpdateGameLoop()
-    {
-        if (!currentMiniGame || !currentMiniGame.isRunning) return;
-        currentMiniGame.ExecuteMiniGame();
+        if (connectedWorkshop) StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);
+        else Debug.LogError("Safe cast did not work!");
     }
 
-    public void ExitMiniGame(bool victory)
-    {
-        Debug.Log($"Exited with {victory}");
-        miniGameRenderingObject.SetActive(false);
-        miniGameEnvironmentCamera.gameObject.SetActive(false);
-        miniGameRenderingCamera.SetActive(true);
-        currentMiniGame = null;
-        EndWorkshopInteraction(victory);
-    }
-
-    public void EndWorkshopInteraction(bool victory)
-    {
-        if (currentWorkshop == null)
-        {
-            Debug.LogError("There is not workshop associated with this mini-game!");
-            return;
-        }
-
-        CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas);
-        var workshopToDeactivate =
-            currentWorkshop; // Must set currentWorkshop to null for series workshop before deactivation
-        currentWorkshop = null;
-        workshopToDeactivate.Deactivate(victory);
-    }
-
-    public Workshop GetCurrentWorkshop()
-    {
-        return currentWorkshop;
-    }
+    #endregion
 }

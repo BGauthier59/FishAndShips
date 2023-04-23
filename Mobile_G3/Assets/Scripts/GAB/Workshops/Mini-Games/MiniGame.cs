@@ -52,4 +52,8 @@ public abstract class MiniGame : NetworkBehaviour
     public abstract void Reset(); // Must be used to reset mini-game at initial state when exited
 
     public abstract void OnLeaveMiniGame(); // Must be called when leave button is clicked
+
+    public virtual void AssociatedWorkshopGetActivated()
+    {
+    }
 }

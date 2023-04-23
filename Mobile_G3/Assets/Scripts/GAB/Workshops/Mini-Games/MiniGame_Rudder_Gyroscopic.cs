@@ -23,20 +23,6 @@ public class MiniGame_Rudder_Gyroscopic : MiniGame
         currentRotation = WorkshopManager.instance.gyroscopeManager.GetGyroRotation();
         currentEulerAngles = currentRotation.eulerAngles;
         currentEulerAngles.x = currentEulerAngles.y = 0;
-
-        if (data.hasConstraint)
-        {
-            if (currentEulerAngles.z > data.leftConstraint &&
-                currentEulerAngles.z < data.rightConstraint)
-            {
-                if (currentEulerAngles.z > (data.leftConstraint + data.rightConstraint) / 2)
-                    currentEulerAngles.z = data.rightConstraint;
-                else currentEulerAngles.z = data.leftConstraint;
-            }
-        }
-
-        data.rotatingPoint.eulerAngles = currentEulerAngles;
-
         rotationText.text = currentEulerAngles.z.ToString("F1");
         ShipManager.instance.SetRotation(currentEulerAngles.z);
     }

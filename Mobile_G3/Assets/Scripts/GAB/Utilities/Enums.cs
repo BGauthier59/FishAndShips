@@ -16,5 +16,5 @@ public enum PoolType
 
 public enum CanvasType
 {
-    None, WorkshopCanvas, ControlCanvas
+    None, IntroductionCinematicCanvas, WorkshopCanvas, ControlCanvas, TimerCanvas, EndCinematicCanvas
 }
