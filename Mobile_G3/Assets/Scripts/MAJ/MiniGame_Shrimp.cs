@@ -43,7 +43,7 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void ExecuteMiniGame()
     {
-        if (WorkshopManager.instance.shrimpSwipeManager.isDraging)
+        if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
         {
             if (validSwipe)
             {

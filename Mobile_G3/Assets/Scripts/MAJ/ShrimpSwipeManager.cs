@@ -10,23 +10,22 @@ using UnityEngine.InputSystem;
 public class ShrimpSwipeManager : MiniGameInput<ShrimpSwipeSetupData>
 {
     public Vector3 startTouch;
-    public bool isDraging;
+    public bool isDragging;
     
 
     [UsedImplicitly]
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
     {
-        //if (!isActive) return;
+        if (!isActive) return;
 
         if (ctx.started)
         {
             startTouch = Input.mousePosition;
-            Debug.Log("SwipeStarted at " + startTouch);
-            isDraging = true;
+            isDragging = true;
         }
         else if (ctx.canceled)
         {
-            isDraging = false;
+            isDragging = false;
         }
     }
 
