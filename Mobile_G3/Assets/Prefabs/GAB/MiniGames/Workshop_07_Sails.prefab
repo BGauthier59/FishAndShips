@@ -911,12 +911,12 @@ MonoBehaviour:
   firstPlayerData:
     centralPoint: {fileID: 7871366339798432727}
     centralPointRadius: 3
-    rightDirection: {x: 0, y: 0, z: -1}
+    rightDirection: {x: 0, y: -1, z: 0}
     minimumCollinearFactor: 0.75
   secondPlayerData:
     centralPoint: {fileID: 7871366340028830872}
     centralPointRadius: 3
-    rightDirection: {x: 0, y: 0, z: -1}
+    rightDirection: {x: 0, y: -1, z: 0}
     minimumCollinearFactor: 0.75
   leftRope: {fileID: 7871366340361338595}
   rightRope: {fileID: 7871366338656218626}
@@ -924,6 +924,7 @@ MonoBehaviour:
   stepNumber: 3
   myStep: {fileID: 7871366338954200766}
   cooldownTimer: {fileID: 7871366339706923784}
+  boatSpeedFactor: 0
 --- !u!114 &7871366339262262980
 MonoBehaviour:
   m_ObjectHideFlags: 0

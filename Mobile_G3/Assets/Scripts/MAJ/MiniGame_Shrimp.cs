@@ -18,7 +18,7 @@ public class MiniGame_Shrimp : MiniGame
     public int missingSwordNb,lifePoints,baseLifePoints;
     public GameObject[] swords;
     [SerializeField] private Camera inputCamera;
-    public Plane plane;
+    private Plane plane;
     public Animation animation;
 
     private void OnValidate()
