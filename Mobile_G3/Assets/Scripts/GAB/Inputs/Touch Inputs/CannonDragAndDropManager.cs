@@ -30,7 +30,6 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         if (ctx.started)
         {
             startTouch = Input.mousePosition;
-            //   startTouch.y = data.startPoint.position.y;
             currentTouch = startTouch;
 
             if (Vector3.Distance(startTouch, data.startPoint.position) <= data.startPointRadius)
