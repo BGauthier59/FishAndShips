@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,6 +18,7 @@ public class MiniGame_Shrimp : MiniGame
     public GameObject[] swords;
     [SerializeField] private Camera inputCamera;
     public Plane plane;
+    public Animation animation;
 
     private void OnValidate()
     {
@@ -74,9 +76,6 @@ public class MiniGame_Shrimp : MiniGame
                         // Sword Touched
                     }
                 }
-                
-                Debug.DrawRay(shrimpCollision.position,(Input.mousePosition - shrimpCollision.position).normalized*swordCollisionSize,Color.green);
-                Debug.DrawRay(shrimpCollision.position,(Input.mousePosition - shrimpCollision.position).normalized*shrimpCollisionSize,Color.red);
             }
 
             Ray ray = inputCamera.ScreenPointToRay(Input.mousePosition);
@@ -96,19 +95,22 @@ public class MiniGame_Shrimp : MiniGame
     void DamageDealt()
     {
         lifePoints--;
-        Debug.Log(lifePoints);
+        animation.Play("ANIM_Shrimp_ChangeSword");
         if (lifePoints <= 0) ExitMiniGame(true);
-        SwitchSwords();
+        StartCoroutine(SwitchSwords());
     }
 
-    void SwitchSwords()
+    IEnumerator SwitchSwords()
     {
+        yield return new WaitForSeconds(0.16f);
         missingSwordNb = Random.Range(0, 6);
         for (int i = 0; i < 6; i++)
         {
             if(i == missingSwordNb) swords[i].SetActive(false);
             else  swords[i].SetActive(true);
         }
+        yield return new WaitForSeconds(0.16f);
+        animation.Play("ANIM_Shrimp_Idle" + Random.Range(1,4));
     }
     
     bool CompareSwipeAngle()
@@ -117,43 +119,42 @@ public class MiniGame_Shrimp : MiniGame
         switch (missingSwordNb)
         {
             case 0:
-                if (angle < 0 && angle > -topAngleCheck && posAngle < 0 && posAngle > -topAngleCheck)
+                if (/*(angle < 0 && angle > -topAngleCheck &&)*/ posAngle < 0 && posAngle > -topAngleCheck)
                 {
                     return true;
                 }
                 break;
             case 1:
-                if (angle < -topAngleCheck && angle > -botAngleCheck && posAngle < -topAngleCheck && posAngle > -botAngleCheck)
+                if (/*(angle < -topAngleCheck && angle > -botAngleCheck &&)*/ posAngle < -topAngleCheck && posAngle > -botAngleCheck)
                 {
                     return true;
                 }
                 break;
             case 2:
-                if (angle < -botAngleCheck && angle > -180 && posAngle < -botAngleCheck && posAngle > -180)
+                if (/*(angle < -botAngleCheck && angle > -180 &&)*/ posAngle < -botAngleCheck && posAngle > -180)
                 {
                     return true;
                 }
                 break;
             case 3:
-                if (angle > 0 && angle < topAngleCheck && posAngle > 0 && posAngle < topAngleCheck)
+                if (/*(angle > 0 && angle < topAngleCheck &&)*/ posAngle > 0 && posAngle < topAngleCheck)
                 {
                     return true;
                 }
                 break;
             case 4:
-                if (angle > topAngleCheck && angle < botAngleCheck && posAngle > topAngleCheck && posAngle < botAngleCheck)
+                if (/*(angle > topAngleCheck && angle < botAngleCheck &&)*/ posAngle > topAngleCheck && posAngle < botAngleCheck)
                 {
                     return true;
                 }
                 break;
             case 5:
-                if (angle > botAngleCheck && angle < 180 && posAngle > botAngleCheck && posAngle < 180)
+                if (/*(angle > botAngleCheck && angle < 180 &&)*/ posAngle > botAngleCheck && posAngle < 180)
                 {
                     return true;
                 }
                 break;
         }
-        Debug.Log("Not Valid at Sword = " + missingSwordNb + " and angle = " + angle + " / " + posAngle);
         return false;
     }
     
