@@ -6,9 +6,9 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     private Workshop currentWorkshop;
     public MiniGame currentMiniGame;
 
-    [SerializeField] private GameObject miniGameRenderingObject;
+   // [SerializeField] private GameObject miniGameRenderingObject;
     public Transform miniGameEnvironmentCamera;
-    [SerializeField] private GameObject miniGameRenderingCamera;
+   // [SerializeField] private GameObject miniGameRenderingCamera;
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public ShrimpSwipeManager shrimpSwipeManager;
@@ -52,13 +52,13 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     {
         currentMiniGame = game;
 
-        miniGameRenderingObject.SetActive(true);
+    //    miniGameRenderingObject.SetActive(true);
 
         var (pos, euler) = currentMiniGame.GetCameraPositionRotation();
         miniGameEnvironmentCamera.position = pos;
         miniGameEnvironmentCamera.eulerAngles = euler;
         miniGameEnvironmentCamera.gameObject.SetActive(true);
-        miniGameRenderingCamera.SetActive(true);
+      //  miniGameRenderingCamera.SetActive(true);
         CanvasManager.instance.DisplayCanvas(CanvasType.None);
 
         currentMiniGame.StartMiniGame();
@@ -67,9 +67,9 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public void ExitMiniGame(bool victory)
     {
         Debug.Log($"Exited with {victory}");
-        miniGameRenderingObject.SetActive(false);
+    //    miniGameRenderingObject.SetActive(false);
         miniGameEnvironmentCamera.gameObject.SetActive(false);
-        miniGameRenderingCamera.SetActive(true);
+      //  miniGameRenderingCamera.SetActive(true);
         currentMiniGame = null;
         EndWorkshopInteraction(victory);
     }
@@ -109,8 +109,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
             Debug.Log($"Connected workshop {connectedWorkshop.name} is ready!");
             // Start mini-game on this client and on other client
             StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);
-            InitializeConnectedMiniGameServerRpc(connectedWorkshop.GetOtherWorkshop().GetWorkshopId(),
-                connectedWorkshop.GetOtherPlayerId());
+            InitializeConnectedMiniGameServerRpc(connectedWorkshop.GetOtherPlayerId());
         }
         else
         {
@@ -131,7 +130,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     #region Network
 
     [ServerRpc(RequireOwnership = false)]
-    private void InitializeConnectedMiniGameServerRpc(uint otherConnectedWorkshopId, ulong otherPlayerId)
+    private void InitializeConnectedMiniGameServerRpc(ulong otherPlayerId)
     {
         ClientRpcParams clientRpcParams = new ClientRpcParams
         {
@@ -140,11 +139,11 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
                 TargetClientIds = new ulong[] {otherPlayerId}
             }
         };
-        StartConnectedMiniGameClientRpc(otherConnectedWorkshopId, clientRpcParams);
+        StartConnectedMiniGameClientRpc(clientRpcParams);
     }
 
     [ClientRpc]
-    private void StartConnectedMiniGameClientRpc(uint otherConnectedWorkshopId, ClientRpcParams parameters)
+    private void StartConnectedMiniGameClientRpc(ClientRpcParams parameters)
     {
         var connectedWorkshop = currentWorkshop as ConnectedWorkshop;
         if (connectedWorkshop) StartConnectedMiniGame(connectedWorkshop.associatedMiniGame);

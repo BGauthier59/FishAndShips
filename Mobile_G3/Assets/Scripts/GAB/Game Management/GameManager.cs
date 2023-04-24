@@ -36,7 +36,7 @@ public class GameManager : MonoSingleton<GameManager>
 
         foreach (var player in players)
         {
-            // Start Game Loop
+            player.StartGameLoop();
         }
 
         isRunning = true;
@@ -49,6 +49,11 @@ public class GameManager : MonoSingleton<GameManager>
         shipManager = ShipManager.instance;
         canvasManager = CanvasManager.instance;
         timerManager = TimerManager.instance;
+
+        foreach (var kvp in ConnectionManager.instance.players)
+        {
+            players.Add(kvp.Value);
+        }
     }
 
     public void Update()
@@ -65,7 +70,7 @@ public class GameManager : MonoSingleton<GameManager>
 
         foreach (var player in players)
         {
-            // Update Player
+            player.UpdateGameLoop();
         }
 
         timerManager.UpdateGameLoop();

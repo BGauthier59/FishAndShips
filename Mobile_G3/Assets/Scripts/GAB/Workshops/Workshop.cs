@@ -14,11 +14,9 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public NetworkVariable<bool> isActive = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
-
-    private PlayerManager playingPlayer;
-
-    [SerializeField] private uint workshopId;
-
+    
+    [SerializeField] private bool isActiveByDefault;
+    
     private void Start()
     {
         isOccupied.OnValueChanged += OnSetOccupied;
@@ -28,12 +26,12 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     protected virtual void InitializeWorkshop()
     {
+        if(isActiveByDefault) Activate();
     }
 
     public virtual void OnCollision(IGridEntity entity,int direction)
     {
         Debug.Log("On Collision!");
-        Activate();
 
         if (!isActive.Value)
         {
@@ -47,7 +45,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
             return;
         }
 
-        playingPlayer = entity as PlayerManager;
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
@@ -93,11 +90,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         Debug.Log($"{name}'s activation state has been set to {current} (was {previous})");
     }
-
-    public uint GetWorkshopId()
-    {
-        return workshopId;
-    }
-
+    
     #endregion
 }
