@@ -50,10 +50,10 @@ MonoBehaviour:
   boatTransformOnMap: {fileID: 0}
   mapPosition: {x: 0, y: 0, z: 0}
   leftRightBottomTopBorder:
-    x: -10
-    y: 10
-    z: -10
-    w: 10
+    x: -16
+    y: 16
+    z: -9
+    w: 9
   previewPoints:
   - {fileID: 0}
   - {fileID: 0}
@@ -70,6 +70,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   rotationInDegreesPerSecond:
+    m_InternalValue: 0
+  currentBoatSpeed:
     m_InternalValue: 0
   referenceBoatSpeed: 0.2
   distanceBetweenPreviewPoints: 1
