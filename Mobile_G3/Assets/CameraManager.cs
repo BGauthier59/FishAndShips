@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class CameraManager : MonoSingleton<CameraManager>
 {
-    public Transform camera;
+    public Transform camera,holdTransform,deckTransform;
 
     public void MoveCamToDeck()
     {
-        camera.transform.position = new Vector3(4.5f, 10.3f, -3.22f);
+        camera.transform.position = deckTransform.position;
     }
     
     public void MoveCamToHold()
     {
-        camera.transform.position = new Vector3(4.5f, 10.3f, 21.78f);
+        camera.transform.position = holdTransform.position;
     }
 }
