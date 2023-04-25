@@ -26,6 +26,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public AnimationCurve curve;
     public GameObject fxTest;
 
+    public InventoryObject inventoryObject;
+
     private void Start()
     {
         playerName.OnValueChanged += OnNameChanged;
@@ -202,6 +204,15 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         canMove = false;
     }
 
+    public void ChangeInventoryObject(InventoryObject filling)
+    {
+        inventoryObject = filling;
+        if (IsOwner)
+        {
+            // TODO : Changer l'inventaire UI
+        }
+    }
+    
     public void ChangeTileInfos()
     {
         GridManager.instance.GetTile(positionX, positionY).SetTile();
@@ -343,4 +354,11 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         gridPositionX.Value = posX;
         gridPositionY.Value = posY;
     }
+}
+
+public enum InventoryObject
+{
+    None,
+    CanonBall,
+    Planks
 }
