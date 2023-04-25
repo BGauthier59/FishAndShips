@@ -21,7 +21,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_MapRender
-  m_Shader: {fileID: -6465566751694194690, guid: 6edc090cec233f54db435c4294a62fe0,
+  m_Shader: {fileID: -6465566751694194690, guid: d688e01a1ed065545aa92716ec59c117,
     type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -35,7 +35,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Texture2D:
-        m_Texture: {fileID: 2800000, guid: 820627d28144f594390ed7a42deff0d4, type: 3}
+        m_Texture: {fileID: 2800000, guid: 805c4c6d0bbb71f4c8afb0c64599a5d5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -59,9 +59,12 @@ Material:
     - _BorderZ_Down: -0.9
     - _BorderZ_Up: 0.9
     - _Metallic: 0
+    - _NoiseDistance: 0.2
+    - _NoiseSpeed: 0.2
+    - _NoiseStrenght: 20
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 1
     m_Colors:
-    - _Color: {r: 0.21693665, g: 0.5328634, b: 0.6132076, a: 1}
+    - _Color: {r: 0.6065326, g: 0.77343184, b: 0.8867924, a: 1}
   m_BuildTextureStacks: []

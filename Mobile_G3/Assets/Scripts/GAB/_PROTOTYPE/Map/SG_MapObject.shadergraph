@@ -413,6 +413,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "15efa6669d0b455eb89da8be052ed6a2",
+    "m_Id": 1475357807,
+    "m_DisplayName": "NoiseStrenght",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_NoiseStrenght",
+    "m_StageCapability": 3,
+    "m_Value": 20.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
     "m_ObjectId": "187eb87b59aa487c88172674c5ccecdb",
     "m_Group": {
@@ -609,6 +624,21 @@
         "m_Guid": ""
     },
     "m_DefaultType": 0
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "46e444edcc9f41289a30ebe136291fbf",
+    "m_Id": -569754122,
+    "m_DisplayName": "NoiseSpeed",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_NoiseSpeed",
+    "m_StageCapability": 3,
+    "m_Value": 0.10000000149011612,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {
@@ -824,6 +854,21 @@
         "m_SerializableColors": []
     },
     "m_SerializedDescriptor": "VertexDescription.Tangent"
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "56d4f092e2e8466aa770d6ca2c2c6e85",
+    "m_Id": 945564175,
+    "m_DisplayName": "NoiseDistance",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_NoiseDistance",
+    "m_StageCapability": 3,
+    "m_Value": 0.10000000149011612,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {
@@ -1854,6 +1899,15 @@
             "m_Id": "2676bc9f283e44f6b6f077ad940d2cd8"
         },
         {
+            "m_Id": "15efa6669d0b455eb89da8be052ed6a2"
+        },
+        {
+            "m_Id": "46e444edcc9f41289a30ebe136291fbf"
+        },
+        {
+            "m_Id": "56d4f092e2e8466aa770d6ca2c2c6e85"
+        },
+        {
             "m_Id": "307414387d3941f3ba685a52a09ea38f"
         }
     ],
@@ -1869,13 +1923,19 @@
         "8d79c92d-cd4e-47d0-b391-4228b32112a2",
         "d11d15cd-730d-4583-b4f9-7b3fc8ba5c83",
         "26f9d064-12f1-4a46-9bba-242f0e436857",
-        "8b210b82-9e14-4d65-98c7-45456499ee97"
+        "8b210b82-9e14-4d65-98c7-45456499ee97",
+        "24abca7d-ab8f-4b25-a72c-45873a613bbf",
+        "fdbc3137-be3d-42fd-bf98-c21f432a897e",
+        "b687c29b-b64a-46c6-a7bc-c79979e2da51"
     ],
     "m_PropertyIds": [
         1090106467,
         683222460,
         351484672,
-        351259498
+        351259498,
+        1475357807,
+        -569754122,
+        945564175
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []
