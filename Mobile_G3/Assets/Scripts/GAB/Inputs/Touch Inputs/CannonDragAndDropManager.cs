@@ -18,6 +18,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
     public override void Enable(CannonDragAndDropData setupData)
     {
         base.Enable(setupData);
+        plane = new Plane(-WorkshopManager.instance.miniGameEnvironmentCamera.forward, data.planeOrigin.position);
         data.draggableItem.gameObject.SetActive(false);
     }
 
@@ -28,8 +29,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
 
         if (ctx.started)
         {
-            startTouch = inputCamera.ScreenToWorldPoint(Input.mousePosition);
-            startTouch.y = data.startPoint.position.y;
+            startTouch = Input.mousePosition;
             currentTouch = startTouch;
 
             if (Vector3.Distance(startTouch, data.startPoint.position) <= data.startPointRadius)
@@ -37,6 +37,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
                 isDraging = true;
                 data.draggableItem.position = startTouch;
                 data.draggableItem.gameObject.SetActive(true);
+                if(data.type == CannonDragAndDropData.MiniGameType.Shoot) data.matchstickOnTable.SetActive(false);
             }
             else Reset();
         }
@@ -52,23 +53,35 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         isDraging = false;
         timer = 0;
         data.draggableItem.gameObject.SetActive(false);
+        
+        if(data.type == CannonDragAndDropData.MiniGameType.Shoot) data.matchstickOnTable.SetActive(true);
 
         if (data.type == CannonDragAndDropData.MiniGameType.Load &&
-            Vector3.Distance(data.draggableItem.position, data.endPoint.position) < data.endPointRadius)
+            Vector3.Distance(currentBulletPosScreenSpace, data.endPoint.position) < data.endPointRadius)
         {
             OnBulletOnTargetPoint?.Invoke();
         }
     }
 
+    private Vector3 currentBulletPosScreenSpace;
+    private Plane plane;
+
     public void CalculateBulletPosition()
     {
         if (!isDraging) return;
+        
+        lastTouch = currentTouch;
+        currentTouch = Input.mousePosition;
 
-        currentTouch = inputCamera.ScreenToWorldPoint(Input.mousePosition);
-        currentTouch.y = data.startPoint.position.y;
-
-        data.draggableItem.position =
-            Vector3.Lerp(data.draggableItem.position, currentTouch, Time.deltaTime * data.lerpSpeed);
+        currentBulletPosScreenSpace = Vector3.Lerp(lastTouch, currentTouch, Time.deltaTime * data.lerpSpeed);
+        
+        data.draggableItem.position = inputCamera.ScreenToWorldPoint(currentBulletPosScreenSpace);
+        
+        Ray ray = inputCamera.ScreenPointToRay(Input.mousePosition);
+        if (plane.Raycast(ray, out float enter))
+        {
+            data.draggableItem.position = ray.GetPoint(enter);
+        }
     }
 
 
@@ -76,24 +89,26 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
     private float speed;
     private Vector3 lastTouch;
     private float currentSpeed;
+
     public bool CalculateMatchStickPosition()
     {
-        // Calculer la vitesse ici
-
         if (!isDraging) return false;
 
         lastTouch = currentTouch;
-        currentTouch = inputCamera.ScreenToWorldPoint(Input.mousePosition);
-        currentTouch.y = data.startPoint.position.y;
+        currentTouch = Input.mousePosition;
 
-        data.draggableItem.position =
-            Vector3.Lerp(data.draggableItem.position, currentTouch, Time.deltaTime * data.lerpSpeed);
+        var currentPos = Vector3.Lerp(lastTouch, currentTouch, Time.deltaTime * data.lerpSpeed);
+        
+        Ray ray = inputCamera.ScreenPointToRay(Input.mousePosition);
+        if (plane.Raycast(ray, out float enter))
+        {
+            data.draggableItem.position = ray.GetPoint(enter);
+        }
 
         currentSpeed = Vector3.Distance(lastTouch, currentTouch) / Time.deltaTime;
-        Debug.Log(currentSpeed);
-
-        timer += Time.deltaTime;
         
+        timer += Time.deltaTime;
+
         // Check conditions
         if (timer >= data.matchstickDuration)
         {
@@ -109,7 +124,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
             return false;
         }
 
-        return Vector3.Distance(data.draggableItem.position, data.endPoint.position) < data.endPointRadius;
+        return Vector3.Distance(currentPos, data.endPoint.position) < data.endPointRadius;
     }
 }
 
@@ -118,6 +133,7 @@ public struct CannonDragAndDropData
 {
     public Transform startPoint;
     public float startPointRadius;
+    public Transform planeOrigin;
 
     public Transform endPoint;
     public float endPointRadius;
@@ -127,6 +143,7 @@ public struct CannonDragAndDropData
 
     [Header("Shoot")] public float maxSpeed;
     public float matchstickDuration;
+    public GameObject matchstickOnTable;
 
     public enum MiniGameType
     {

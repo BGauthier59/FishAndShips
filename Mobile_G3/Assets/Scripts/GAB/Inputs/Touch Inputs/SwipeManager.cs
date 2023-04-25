@@ -18,14 +18,14 @@ public class SwipeManager : MiniGameInput<SwipeData>
         swipeDelta = Vector3.zero;
         if (isDraging)
         {
-            swipeDelta = inputCamera.ScreenToWorldPoint(Input.mousePosition) - startTouch;
-            swipeDelta.y = data.centralPoint.position.y;
+            swipeDelta = Input.mousePosition - startTouch;
+            //swipeDelta.y = data.centralPoint.position.y;
 
             Debug.DrawRay(startTouch, swipeDelta, Color.green);
         }
 
         // Check deadzone
-        if (swipeDelta.magnitude < 2) return false;
+        if (swipeDelta.magnitude < 125) return false;
 
         // Check direction
         var dot = Vector3.Dot(swipeDelta.normalized, data.rightDirection);
@@ -40,10 +40,10 @@ public class SwipeManager : MiniGameInput<SwipeData>
         
         if (ctx.started)
         {
-            startTouch = inputCamera.ScreenToWorldPoint(Input.mousePosition);
-            startTouch.y = data.centralPoint.position.y;
+            startTouch = Input.mousePosition;
+           // startTouch.y = data.centralPoint.position.y;
 
-            Debug.Log(startTouch);
+            Debug.Log(Vector3.Distance(startTouch, data.centralPoint.position));
 
             if (Vector3.Distance(startTouch, data.centralPoint.position) <= data.centralPointRadius)
             {

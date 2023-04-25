@@ -9,15 +9,7 @@ public class MiniGame_Rudder : MiniGame
 
     private float currentRotationPerSecond;
     [SerializeField] private float2 minMaxRotationPerSecond;
-
-    private void OnValidate()
-    {
-        data.availableZone.position = data.centralPoint.position;
-        data.availableZone.localScale = new Vector3(data.minMaxMagnitude.y * 2, data.minMaxMagnitude.y * 2, 1);
-        data.unavailableCenterZone.position = data.centralPoint.position;
-        data.unavailableCenterZone.localScale = new Vector3(data.minMaxMagnitude.x * 2, data.minMaxMagnitude.x * 2, 1);
-    }
-
+    
     public override void StartMiniGame()
     {
         base.StartMiniGame();

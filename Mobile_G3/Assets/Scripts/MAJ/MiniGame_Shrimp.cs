@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class MiniGame_Shrimp : MiniGame
     public int missingSwordNb,lifePoints,baseLifePoints;
     public GameObject[] swords;
     [SerializeField] private Camera inputCamera;
-    public Plane plane;
+    private Plane plane;
     public Animation animation;
 
     private void OnValidate()
@@ -30,17 +31,19 @@ public class MiniGame_Shrimp : MiniGame
         plane = new Plane(miniGameCameraPosition - planeOrigin.position, planeOrigin.position);
     }
 
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
+        await Task.Delay(1000);
         WorkshopManager.instance.shrimpSwipeManager.Enable(data);
+        StartExecutingMiniGame();
         SwitchSwords();
         lifePoints = baseLifePoints;
     }
 
     public override void ExecuteMiniGame()
     {
-        if (WorkshopManager.instance.shrimpSwipeManager.isDraging)
+        if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
         {
             if (validSwipe)
             {
@@ -97,19 +100,19 @@ public class MiniGame_Shrimp : MiniGame
         lifePoints--;
         animation.Play("ANIM_Shrimp_ChangeSword");
         if (lifePoints <= 0) ExitMiniGame(true);
-        StartCoroutine(SwitchSwords());
+        SwitchSwords();
     }
 
-    IEnumerator SwitchSwords()
+    async void SwitchSwords()
     {
-        yield return new WaitForSeconds(0.16f);
+        await Task.Delay(160);
         missingSwordNb = Random.Range(0, 6);
         for (int i = 0; i < 6; i++)
         {
             if(i == missingSwordNb) swords[i].SetActive(false);
             else  swords[i].SetActive(true);
         }
-        yield return new WaitForSeconds(0.16f);
+        await Task.Delay(160);
         animation.Play("ANIM_Shrimp_Idle" + Random.Range(1,4));
     }
     
@@ -160,6 +163,7 @@ public class MiniGame_Shrimp : MiniGame
     
     protected override void ExitMiniGame(bool victory)
     {
+        StopExecutingMiniGame();
         WorkshopManager.instance.shrimpSwipeManager.Disable();
         base.ExitMiniGame(victory);
     }

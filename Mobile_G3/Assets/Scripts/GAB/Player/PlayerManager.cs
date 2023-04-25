@@ -33,7 +33,13 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         gridPositionY.OnValueChanged += OnPositionChanged;
     }
 
-    private void Update()
+    public void StartGameLoop()
+    {
+        OnInputMove(1); // Init move (right)
+        Bounce();
+    }
+
+    public void UpdateGameLoop()
     {
         Controls();
         if(!canMove) Bounce();
@@ -105,6 +111,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
                 break;
             case 3:
                 xpos = gridPositionX.Value - 1;
+                break;
+            default:
+                Debug.LogWarning($"Input move direction didn't move the player. It might be an error. Direction was {direction}");
                 break;
         }
 
