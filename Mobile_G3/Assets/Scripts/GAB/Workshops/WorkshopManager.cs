@@ -15,6 +15,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public GyroscopeManager gyroscopeManager;
     public SwipeManager swipeManager;
     public CannonDragAndDropManager cannonDragAndDropManager;
+    public MapSwipeManager mapSwipeManager;
 
     #region Game Loop
 
@@ -31,7 +32,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public void StartWorkshopInteraction(Workshop workshop)
     {
         currentWorkshop = workshop;
-        currentWorkshop.SetOccupiedServerRpc(true);
+        if(!workshop.IsMultiUsingEnabled()) currentWorkshop.SetOccupiedServerRpc(true);
 
         var seriesWorkshop = workshop as SeriesWorkshop;
         var connectedWorkshop = workshop as ConnectedWorkshop;

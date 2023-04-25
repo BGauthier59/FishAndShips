@@ -25,14 +25,6 @@ public class MiniGame_Sails : MiniGame
 
     [SerializeField] private float boatSpeedFactor;
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.green;
-        Gizmos.DrawRay(firstPlayerData.centralPoint.position, firstPlayerData.rightDirection);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(secondPlayerData.centralPoint.position, secondPlayerData.rightDirection);
-    }
-
     public override void AssociatedWorkshopGetActivated()
     {
         if(IsHost) ShipManager.instance.SetSpeed(boatSpeedFactor);

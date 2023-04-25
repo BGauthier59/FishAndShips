@@ -16,6 +16,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         NetworkVariableWritePermission.Server);
     
     [SerializeField] private bool isActiveByDefault;
+    [SerializeField] [Tooltip("WARNING! Might cause unexpected effects!")] private bool enableMultiUsing;
     
     private void Start()
     {
@@ -90,4 +91,9 @@ public class Workshop : NetworkBehaviour, IGridEntity
     }
     
     #endregion
+
+    public bool IsMultiUsingEnabled()
+    {
+        return enableMultiUsing;
+    }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MiniGame_Map : MiniGame
 {
+    [SerializeField] private MapSwipeData data;
     public float sizeRatio;
     [SerializeField] private Transform map;
     [SerializeField] private Transform ship;
@@ -17,13 +18,30 @@ public class MiniGame_Map : MiniGame
 
     [SerializeField] private SpriteRenderer[] stars;
 
+    [SerializeField] private Vector4 leftRightBottomTopBorders;
+
     public override void StartMiniGame()
     {
         base.StartMiniGame();
+        SetRelativeMapPosition();
+        
+        // Enable input
+        WorkshopManager.instance.mapSwipeManager.Enable(data);
+        StartExecutingMiniGame();
     }
 
     public override void ExecuteMiniGame()
     {
+        // Can move the map
+        miniGameMapPosition += WorkshopManager.instance.mapSwipeManager.CalculateMoveDelta();
+
+        if (miniGameMapPosition.x < leftRightBottomTopBorders.x) miniGameMapPosition.x = leftRightBottomTopBorders.x;
+        else if (miniGameMapPosition.x > leftRightBottomTopBorders.y) miniGameMapPosition.x = leftRightBottomTopBorders.y;
+
+        if (miniGameMapPosition.z < leftRightBottomTopBorders.z) miniGameMapPosition.z = leftRightBottomTopBorders.z;
+        else if (miniGameMapPosition.z > leftRightBottomTopBorders.w) miniGameMapPosition.z = leftRightBottomTopBorders.w;
+
+        miniGameMap.localPosition = miniGameMapPosition;
     }
 
     public override void Reset()
@@ -36,6 +54,12 @@ public class MiniGame_Map : MiniGame
         ExitMiniGame(false);
     }
 
+    protected override void ExitMiniGame(bool victory)
+    {
+        WorkshopManager.instance.mapSwipeManager.Disable();
+        StopExecutingMiniGame();
+        base.ExitMiniGame(victory);
+    }
 
     public void Initialize()
     {
@@ -44,18 +68,20 @@ public class MiniGame_Map : MiniGame
         posY = initMapPos.y;
         SetRelativeMapPosition();
         
+        OnGetStar += GetStar;
+
         /*
         shipPath.positionCount = 2;
         shipPath.SetPosition(0, ship.transform.position);
 
         OnShipRotationChange += AddPointOnPath;
-        OnGetStar += GetStar;
         */
     }
 
     public void Refresh()
     {
-        SetRelativeMapPosition();
+        //SetRelativeMapPosition();
+        SetRelativeBoatPosition();
         ship.eulerAngles = ShipManager.instance.GetShipAngle() * Vector3.up;
     }
 
@@ -66,8 +92,15 @@ public class MiniGame_Map : MiniGame
         miniGameMapPosition.y = posY;
 
         miniGameMap.localPosition = miniGameMapPosition;
+    }
 
-        // Todo - Set map position instead of boat position
+    private void SetRelativeBoatPosition()
+    {
+        shipPosition = ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
+        shipPosition.z = shipPosition.y;
+        shipPosition.y = 0.1f;
+
+        ship.localPosition = shipPosition;
     }
 
     #region Callbacks

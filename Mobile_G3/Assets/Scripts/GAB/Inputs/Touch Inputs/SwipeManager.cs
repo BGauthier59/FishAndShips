@@ -19,9 +19,6 @@ public class SwipeManager : MiniGameInput<SwipeData>
         if (isDraging)
         {
             swipeDelta = Input.mousePosition - startTouch;
-            //swipeDelta.y = data.centralPoint.position.y;
-
-            Debug.DrawRay(startTouch, swipeDelta, Color.green);
         }
 
         // Check deadzone
@@ -41,10 +38,7 @@ public class SwipeManager : MiniGameInput<SwipeData>
         if (ctx.started)
         {
             startTouch = Input.mousePosition;
-           // startTouch.y = data.centralPoint.position.y;
-
-            Debug.Log(Vector3.Distance(startTouch, data.centralPoint.position));
-
+            
             if (Vector3.Distance(startTouch, data.centralPoint.position) <= data.centralPointRadius)
             {
                 isDraging = true;
