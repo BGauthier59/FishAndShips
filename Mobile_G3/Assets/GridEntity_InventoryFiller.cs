@@ -12,7 +12,7 @@ public class GridEntity_InventoryFiller : MonoBehaviour, IGridEntity
         PlayerManager player = entity as PlayerManager;
         if (player)
         {
-            player.ChangeInventoryObject(filling);
+            player.SetInventoryObject(filling);
         }
     }
 

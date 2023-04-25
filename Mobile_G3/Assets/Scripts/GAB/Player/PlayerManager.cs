@@ -26,7 +26,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public AnimationCurve curve;
     public GameObject fxTest;
 
-    public InventoryObject inventoryObject;
+    private InventoryObject inventoryObject;
 
     private void Start()
     {
@@ -204,13 +204,20 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         canMove = false;
     }
 
-    public void ChangeInventoryObject(InventoryObject filling)
+    public void SetInventoryObject(InventoryObject filling)
     {
+        // Warning: might be set as None
+        
         inventoryObject = filling;
         if (IsOwner)
         {
             // TODO : Changer l'inventaire UI
         }
+    }
+
+    public InventoryObject GetInventoryObject()
+    {
+        return inventoryObject;
     }
     
     public void ChangeTileInfos()
@@ -341,8 +348,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
     }*/
     
-    
-
     public void OnCollision(IGridEntity entity,int direction)
     {
         // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?
@@ -354,11 +359,4 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         gridPositionX.Value = posX;
         gridPositionY.Value = posY;
     }
-}
-
-public enum InventoryObject
-{
-    None,
-    CanonBall,
-    Planks
 }

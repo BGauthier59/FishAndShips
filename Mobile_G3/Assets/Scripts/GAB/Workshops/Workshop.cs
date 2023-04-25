@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,10 +11,17 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public NetworkVariable<bool> isActive = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
-    
+
     [SerializeField] private bool isActiveByDefault;
-    [SerializeField] [Tooltip("WARNING! Might cause unexpected effects!")] private bool enableMultiUsing;
-    
+
+    [SerializeField] [Tooltip("WARNING! Might cause unexpected effects!")]
+    private bool enableMultiUsing;
+
+    [SerializeField] protected bool occupationRequireItem;
+    [SerializeField] protected InventoryObject requiredItem;
+
+    private PlayerManager playingPlayer;
+
     private void Start()
     {
         isOccupied.OnValueChanged += OnSetOccupied;
@@ -27,10 +31,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     protected virtual void InitializeWorkshop()
     {
-        if(isActiveByDefault) Activate();
+        if (isActiveByDefault) Activate();
     }
 
-    public virtual void OnCollision(IGridEntity entity,int direction)
+    public virtual void OnCollision(IGridEntity entity, int direction)
     {
         if (!isActive.Value)
         {
@@ -43,6 +47,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
             Debug.LogWarning("This workshop is already used by someone!");
             return;
         }
+
+        playingPlayer = (PlayerManager) entity;
 
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
@@ -89,11 +95,22 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         Debug.Log($"{name}'s activation state has been set to {current} (was {previous})");
     }
-    
+
     #endregion
 
     public bool IsMultiUsingEnabled()
     {
         return enableMultiUsing;
+    }
+
+    public virtual InventoryObject? TryGetWorkshopRequireItem()
+    {
+        if (!occupationRequireItem) return null;
+        return requiredItem;
+    }
+
+    public PlayerManager GetCurrentPlayer()
+    {
+        return playingPlayer;
     }
 }

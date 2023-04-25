@@ -7,12 +7,15 @@ public class SeriesWorkshop : Workshop
 
     [Tooltip("Index -1 is associatedMiniGame. Otherwise follows list indices")]
     public NetworkVariable<int> currentMiniGameIndex = new(-1);
-
+    
+    [Tooltip("For next mini-games only")]
+    [SerializeField] private InventoryObject[] requiredItems;
+    
     public MiniGame GetCurrentMiniGame()
     {
         return currentMiniGameIndex.Value == -1 ? associatedMiniGame : nextMiniGames[currentMiniGameIndex.Value];
     }
-
+    
     public override void Deactivate(bool victory)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivated();
@@ -39,5 +42,17 @@ public class SeriesWorkshop : Workshop
     private void SetMiniGameIndexServerRpc(int index)
     {
         currentMiniGameIndex.Value = index;
+    }
+
+    public override InventoryObject? TryGetWorkshopRequireItem()
+    {
+        if (!occupationRequireItem) return null;
+        if (currentMiniGameIndex.Value == -1) return requiredItem;
+        if (requiredItems.Length == 0)
+        {
+            Debug.LogWarning("No item in required items list!");
+            return null;
+        }
+        return requiredItems[currentMiniGameIndex.Value];
     }
 }
