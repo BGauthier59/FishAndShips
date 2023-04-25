@@ -182,6 +182,7 @@ public class GridEditor : EditorWindow
         }
     }
 
+    private int idTileList;
     public void ShowHandlesButtonForSelectedObject(SceneView sceneView)
     {
         if (!Selection.activeGameObject) return;
@@ -190,16 +191,18 @@ public class GridEditor : EditorWindow
         UpdateListTileManage();
         _selectedObject = Selection.activeGameObject;
         bool isSelectedObjectInList = false;
-        foreach (Tile obj in _listGridManagerTile)
+        idTileList = 0;
+        
+        for (int i = 0; i < _listGridManagerTile.Count; i++)
         {
-
-            if (obj.name == _selectedObject.name)
+            if (_listGridManagerTile[i].name == _selectedObject.name)
             {
+                idTileList = i;
                 isSelectedObjectInList = true;
                 break;
             }
         }
-
+        
         // Calculate position and rotation of button
         Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPreviewPosition.x,
             offsetPreviewPosition.y, _selectedObject.transform.position.z + offsetPreviewPosition.z);
@@ -211,7 +214,7 @@ public class GridEditor : EditorWindow
                 cellSize * 0.5f, cellSize, Handles.RectangleHandleCap))
         {
             currentType = (TileFloorType)(((int)currentType + 1) % Enum.GetNames(typeof(TileFloorType)).Length);
-            SwitchComponent(_selectedObject, currentType);
+            SwitchComponent(_selectedObject, currentType, idTileList);
         }
     }
 
@@ -255,13 +258,13 @@ public class GridEditor : EditorWindow
                     //Set the transform
                     _gridManager.grid.Add(tile);
                     tile.transform = _gridManager.tilePrefab.GetComponent<Transform>();
-                    tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>();
 
                     if (row > 0 + borders && row < rows - borders
                                           && col > 0 && col < cols - borders)
                     {
                         //Add Grid Walkable Component
                         _gridManager.tilePrefab.AddComponent<GridFloorWalkable>();
+                        tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>(); 
                         _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
                     }
 
@@ -388,7 +391,7 @@ public class GridEditor : EditorWindow
 
     }
 
-    void SwitchComponent(GameObject tileSelected, TileFloorType type)
+    void SwitchComponent(GameObject tileSelected, TileFloorType type, int id)
     {
         var positionTile = tileSelected.transform.position;
         switch (type)
@@ -397,31 +400,37 @@ public class GridEditor : EditorWindow
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBarrier>();
                 tileSelected.GetComponent<GridFloorBarrier>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorBarrier>();
                 break;
             case TileFloorType.GridFloorBouncePad:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBouncePad>();
                 tileSelected.GetComponent<GridFloorBouncePad>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorBouncePad>();
                 break;
             case TileFloorType.GridFloorIce:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorIce>();
                 tileSelected.GetComponent<GridFloorIce>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorIce>();
                 break;
             case TileFloorType.GridFloorPressurePlate:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorPressurePlate>();
                 tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
                 break;
             case TileFloorType.GridFloorStair:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorStair>();
                 tileSelected.GetComponent<GridFloorStair>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorStair>();
                 break;
             case TileFloorType.GridFloorWalkable:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorWalkable>();
                 tileSelected.GetComponent<GridFloorWalkable>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
                 break;
         }
     }
@@ -444,7 +453,7 @@ public class GridEditor : EditorWindow
                 DestroyImmediate(component);
             }
         }
-    }
+    } 
 }
 
 [System.Serializable]
