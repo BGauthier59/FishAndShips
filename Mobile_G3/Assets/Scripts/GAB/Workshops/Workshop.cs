@@ -31,8 +31,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void OnCollision(IGridEntity entity,int direction)
     {
-        Debug.Log("On Collision!");
-
         if (!isActive.Value)
         {
             Debug.LogWarning("This workshop is not active!");
