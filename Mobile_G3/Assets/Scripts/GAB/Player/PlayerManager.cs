@@ -38,6 +38,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public void StartGameLoop()
     {
         OnInputMove(1); // Init move (right)
+        SetInventoryObject(InventoryObject.None);
         Bounce();
     }
 
@@ -212,6 +213,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         if (IsOwner)
         {
             // TODO : Changer l'inventaire UI
+            MainCanvasManager.instance.SetItemOnDisplay(filling);
         }
     }
 

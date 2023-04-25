@@ -1,16 +1,11 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using JetBrains.Annotations;
-using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetupData>
 {
-    [SerializeField] private Camera inputCamera;
-
     private float2 minMaxSqrMagnitude;
     private Vector3 startTouch, currentTouch;
     private Vector3 startVector, currentVector;
@@ -24,9 +19,7 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
         if (ctx.started)
         {
             startTouch = Input.mousePosition;
-            //startTouch.y = data.centralPoint.position.y;
             startVector = startTouch - data.centralPoint.position;
-            Debug.Log(startVector.magnitude);
             if (startVector.sqrMagnitude < minMaxSqrMagnitude.x ||
                 startVector.sqrMagnitude > minMaxSqrMagnitude.y) return;
 
@@ -53,9 +46,6 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
 
         minMaxSqrMagnitude.x = math.pow(data.minMaxMagnitude.x, 2);
         minMaxSqrMagnitude.y = math.pow(data.minMaxMagnitude.y, 2);
-
-        //data.availableZone.localScale = new Vector3(data.minMaxMagnitude.y * 2, data.minMaxMagnitude.y * 2, 1);
-        //data.unavailableCenterZone.localScale = new Vector3(data.minMaxMagnitude.x * 2, data.minMaxMagnitude.x * 2, 1);
         Reset();
     }
 
@@ -75,7 +65,6 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
         if (!isDraging) return null;
 
         currentTouch = Input.mousePosition;
-        //currentTouch.y = data.centralPoint.position.y;
         currentVector = currentTouch - data.centralPoint.position;
 
         if (currentVector.sqrMagnitude < minMaxSqrMagnitude.x ||
@@ -120,8 +109,6 @@ public struct RudderCircularSwipeSetupData
 {
     public Transform centralPoint;
     public float2 minMaxMagnitude;
-    public Transform availableZone;
-    public Transform unavailableCenterZone;
 
     public Transform rudder;
     public Transform leftSide;
@@ -129,6 +116,4 @@ public struct RudderCircularSwipeSetupData
     public float maxRotationDegree;
 
     public float minimumAngleToRotate;
-
-    //public float clampToZeroAngleGap;
 }

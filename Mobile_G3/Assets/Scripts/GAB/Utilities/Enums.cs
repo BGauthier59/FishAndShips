@@ -22,6 +22,6 @@ public enum CanvasType
 public enum InventoryObject
 {
     None,
-    CanonBall,
-    Planks
+    CannonBall,
+    Plank
 }

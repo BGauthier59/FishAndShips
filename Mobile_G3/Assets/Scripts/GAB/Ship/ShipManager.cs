@@ -27,13 +27,15 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private NetworkVariable<bool> isInDangerousArea = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
-    [Header("Boat Parameters"), SerializeField]
-    private NetworkVariable<float> rotationInDegreesPerSecond = new(0, NetworkVariableReadPermission.Everyone,
+    [Header("Boat Parameters")] private NetworkVariable<float> rotationInDegreesPerSecond = new(0,
+        NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
-    [SerializeField] private NetworkVariable<float> currentBoatSpeed = new NetworkVariable<float>();
+    private NetworkVariable<float> currentBoatSpeed = new NetworkVariable<float>();
+    private NetworkVariable<int> currentBoatLife = new NetworkVariable<int>();
     [SerializeField] private float referenceBoatSpeed;
     [SerializeField] private float distanceBetweenPreviewPoints;
+    [SerializeField] private int maxLife;
     [SerializeField] private Vector3 previewPointsLocalScale = new(.1f, .1f, 1);
     [SerializeField] private Vector3 previewPointsEulerAngles = new(90, 0, 0);
 
@@ -46,7 +48,13 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void StartGameLoop()
     {
-        if(IsHost) SetCurrentSpeedServerRpc(1);
+        if (IsHost)
+        {
+            SetCurrentLifeServerRpc(maxLife);
+            SetCurrentSpeedServerRpc(1);
+            SetStarCountClientRpc(0);
+        }
+
         mapPosition = boatTransformOnMap.localPosition;
         previous = boatTransformOnMap.eulerAngles.y;
         mapMiniGame.Initialize();
@@ -54,7 +62,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
         isInDangerousArea.OnValueChanged += OnDangerousAreaStateChange;
     }
-    
+
     public void UpdateGameLoop()
     {
         mapMiniGame.Refresh();
@@ -163,10 +171,13 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void GetStar(byte index)
     {
+        // Only called on Host as Physics is only checked on Host
+        
         Debug.Log("You got a star!");
 
         MiniGame_Map.OnGetStar?.Invoke(index);
         starCount.Value++;
+        SetStarCountClientRpc(starCount.Value);
     }
 
     #endregion
@@ -191,6 +202,26 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private void SetCurrentSpeedServerRpc(float factor)
     {
         currentBoatSpeed.Value = referenceBoatSpeed * factor;
+    }
+
+    [ServerRpc(RequireOwnership = true)]
+    private void SetCurrentLifeServerRpc(int life)
+    {
+        if (life > maxLife) currentBoatSpeed.Value = maxLife;
+        else currentBoatLife.Value = life;
+        SetCurrentLifeClientRpc(currentBoatLife.Value);
+    }
+
+    [ClientRpc]
+    private void SetCurrentLifeClientRpc(int life)
+    {
+        MainCanvasManager.instance.SetLifeOnDisplay(life, maxLife);
+    }
+
+    [ClientRpc]
+    private void SetStarCountClientRpc(int count)
+    {
+        MainCanvasManager.instance.SetStarOnDisplay(count);
     }
 
     private int i;

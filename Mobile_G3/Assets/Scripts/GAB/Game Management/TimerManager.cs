@@ -9,7 +9,7 @@ public class TimerManager : MonoSingleton<TimerManager>
     public void StartGameLoop()
     {
         currentDuration = gameDuration;
-        TimerCanvasManager.instance.SetTimerOnDisplay(currentDuration);
+        MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
     }
 
     public void UpdateGameLoop()
@@ -21,7 +21,7 @@ public class TimerManager : MonoSingleton<TimerManager>
             currentDuration -= 1;
 
             if (currentDuration <= -1) GameManager.onGameEnds?.Invoke(false);
-            else TimerCanvasManager.instance.SetTimerOnDisplay(currentDuration);
+            else MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
         }
     }
 }
