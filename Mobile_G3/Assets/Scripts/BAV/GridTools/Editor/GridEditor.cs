@@ -241,7 +241,6 @@ public class GridEditor : EditorWindow
                     //Place in an empty folder
                     _gridManager.tilePrefab.transform.parent = gridObject.transform;
                 }
-                
             }
             // Reset the offset for the next row
             offset = Vector3.forward * (row + 1) * offsetObjectPositionZ;
@@ -308,8 +307,10 @@ public class GridEditor : EditorWindow
             offsetPreviewPosition.y, _selectedObject.transform.position.z + offsetPreviewPosition.z);
         Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
 
+        DetectComponentOnSelectionObject(_selectedObject);
+        
         if (!isSelectedObjectInList) return;
-
+        
         SwitchColorBaseOnComponent(currentType);
         if (Handles.Button(buttonPos, buttonRot,
                 cellSize * 0.5f, cellSize, Handles.RectangleHandleCap))
@@ -444,10 +445,10 @@ public class GridEditor : EditorWindow
         }
 
         if (!isSelectedObjectInList) return;
+        
         // Calculate position and rotation of button
         Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPreviewPosition.x,
             offsetPreviewPosition.y, _selectedObject.transform.position.z + offsetPreviewPosition.z);
-
         foreach (Tile obj in _listGridManagerTile)
         {
             if (obj.name == _selectedObject.name)
@@ -553,6 +554,23 @@ public class GridEditor : EditorWindow
             }
         }
     }
+
+    private void DetectComponentOnSelectionObject(GameObject tileSelectedInScene)
+    {
+        Component[] components = {
+            tileSelectedInScene.GetComponent<GridFloorBarrier>(),
+            tileSelectedInScene.GetComponent<GridFloorBouncePad>(),
+            tileSelectedInScene.GetComponent<GridFloorIce>(),
+            tileSelectedInScene.GetComponent<GridFloorPressurePlate>(),
+            tileSelectedInScene.GetComponent<GridFloorStair>(),
+            tileSelectedInScene.GetComponent<GridFloorWalkable>()
+        };
+
+        foreach (Component component in components)
+        {
+            DetectComponent(component);
+        }
+    }
     
     public void DetectComponent(Component component)
     {
@@ -597,7 +615,6 @@ public class GridEditor : EditorWindow
             SwitchColorBaseOnComponent(TileFloorType.GridFloorWalkable);
             return;
         }
-
         SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
     }
 }
