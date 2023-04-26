@@ -10,12 +10,16 @@ public class EventsManager : MonoSingleton<EventsManager>
     
     // Il va check les events qu'il peut créer (avec check de CheckConditions) et les stocker dans une liste, puis en choisir un aléatoirement
 
+    [SerializeField] private RandomEvent currentEvent;
+
     public void StartGameLoop()
     {
-        
+        if (currentEvent == null) return;
+        currentEvent.StartEvent();
     }
     public void UpdateGameLoop()
     {
-        
+        if (currentEvent == null) return;
+        currentEvent.ExecuteEvent();
     }
 }

@@ -13772,7 +13772,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1415371598}
-  m_LocalRotation: {x: 0.5150381, y: -0, z: -0, w: 0.85716736}
+  m_LocalRotation: {x: 0.5150381, y: 0, z: 0, w: 0.85716736}
   m_LocalPosition: {x: 4.5, y: 12, z: -3.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -22098,11 +22098,11 @@ MonoBehaviour:
   posText: {fileID: 2101676212}
   rotText: {fileID: 639785133}
   boatUp:
-    pos: {x: 4.5, y: 12.5, z: -4.25}
-    rot: {x: 56, y: 0, z: 0}
+    pos: {x: 4.5, y: 14, z: -7}
+    rot: {x: 49, y: 0, z: 0}
   boatDown:
-    pos: {x: 4.5, y: 16, z: -5.5}
-    rot: {x: 68, y: 0, z: 0}
+    pos: {x: 4.5, y: 15, z: -9.5}
+    rot: {x: 57, y: 0, z: 0}
 --- !u!1001 &1002195510200907480
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22760,6 +22760,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: EventsManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6126979554570275309, guid: 9632be668abba9d4cb0bcb8a639af3fa,
+        type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 107317949
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9632be668abba9d4cb0bcb8a639af3fa, type: 3}
