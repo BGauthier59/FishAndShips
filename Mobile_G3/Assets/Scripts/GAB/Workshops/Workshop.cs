@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Workshop : NetworkBehaviour, IGridEntity
 {
@@ -21,6 +22,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [SerializeField] protected InventoryObject requiredItem;
 
     private PlayerManager playingPlayer;
+    
+    [Header("Feedbacks")]
+    [SerializeField] protected UnityEvent activationEvent;
+    [SerializeField] protected UnityEvent deactivationEvent;
 
     private void Start()
     {
@@ -61,13 +66,18 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         associatedMiniGame.AssociatedWorkshopGetActivated();
         SetActiveServerRpc(true);
+        activationEvent?.Invoke();
     }
 
     public virtual void Deactivate(bool victory)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivated();
         SetOccupiedServerRpc(false);
-        if (victory) SetActiveServerRpc(false);
+        if (victory)
+        {
+            SetActiveServerRpc(false);
+            deactivationEvent?.Invoke();
+        }
     }
 
     #region Network

@@ -7,15 +7,15 @@ public class SeriesWorkshop : Workshop
 
     [Tooltip("Index -1 is associatedMiniGame. Otherwise follows list indices")]
     public NetworkVariable<int> currentMiniGameIndex = new(-1);
-    
-    [Tooltip("For next mini-games only")]
-    [SerializeField] private InventoryObject[] requiredItems;
-    
+
+    [Tooltip("For next mini-games only")] [SerializeField]
+    private InventoryObject[] requiredItems;
+
     public MiniGame GetCurrentMiniGame()
     {
         return currentMiniGameIndex.Value == -1 ? associatedMiniGame : nextMiniGames[currentMiniGameIndex.Value];
     }
-    
+
     public override void Deactivate(bool victory)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivated();
@@ -25,16 +25,19 @@ public class SeriesWorkshop : Workshop
             SetOccupiedServerRpc(false);
             return;
         }
-
+        deactivationEvent?.Invoke();
+        
         SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
         if (currentMiniGameIndex.Value == nextMiniGames.Length)
         {
             SetMiniGameIndexServerRpc(-1);
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
+            Activate();
             return;
         }
 
+        Activate();
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
@@ -53,6 +56,7 @@ public class SeriesWorkshop : Workshop
             Debug.LogWarning("No item in required items list!");
             return null;
         }
+
         return requiredItems[currentMiniGameIndex.Value];
     }
 }
