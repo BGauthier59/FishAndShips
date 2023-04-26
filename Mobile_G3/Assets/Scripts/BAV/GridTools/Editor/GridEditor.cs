@@ -10,11 +10,13 @@ public class GridEditor : EditorWindow
 {
     public string gridName = "Grid Manager";
     public GameObject prefab;
+    public float offsetObjectPositionX = 1f;
+    public float offsetObjectPositionZ = 1f;
     public float cellSize = 1f;
     public int rows = 7;
     public int cols = 10;
-    public int borders = 1;
-    public Vector3 offset = new Vector3(0f, 0f, 0f);
+    public int borders = 0;
+    public Vector3 offsetGridPosition = new Vector3(0f, 0f, 0f);
     public Vector3 centerPosition = Vector3.zero;
     public Vector3 offsetPreviewPosition = new Vector3(0f, 0f, 0f);
     public bool useCenterOffset = false;
@@ -22,6 +24,7 @@ public class GridEditor : EditorWindow
     public bool randomRotation = false;
     public bool showPreviewAllHandlesButton = false;
     public bool showPreviewGridPivotHandles = false;
+    public bool showPreviewAllTileTypeHandles = false;
     public bool showPreviewTileType = false;
 
     //Foldout Boolean
@@ -39,6 +42,15 @@ public class GridEditor : EditorWindow
     private TileFloorType tyleFloorType;
     private TileFloorType currentType = TileFloorType.GridFloorBarrier;
     private Component comp;
+    
+    //Private Vector
+    Vector3 offsetObjectPos = Vector3.zero;
+    Vector3 positionGridSize_Handles = Vector3.zero;
+    Vector3 positionAllButton_Handles = Vector3.zero;
+    
+    //Color for the component
+    private bool showColorForTyle;
+    [SerializeField] ColorGridElement _colorGridElement = new ColorGridElement();
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -61,17 +73,19 @@ public class GridEditor : EditorWindow
             EditorGUILayout.LabelField("Grid found!");
         }
 
-
+        //Properties 
         gridName = EditorGUILayout.TextField("Grid Manager", gridName);
         prefab = (GameObject)EditorGUILayout.ObjectField("Prefab", prefab, typeof(GameObject), false);
-        showGenerateGridParameter = EditorUtils.Foldout("Show Grid Parameter", showGenerateGridParameter);
+        offsetObjectPositionX = EditorGUILayout.FloatField("Offset Object Position X", offsetObjectPositionX);
+        offsetObjectPositionZ = EditorGUILayout.FloatField("Offset Object Position Z", offsetObjectPositionZ);
+        showGenerateGridParameter = EditorUtils.FoldoutShurikenStyle("Show Grid Parameter", showGenerateGridParameter);
         if (showGenerateGridParameter)
         {
             cellSize = EditorGUILayout.FloatField("Cell Size", cellSize);
             rows = EditorGUILayout.IntField("Rows", rows);
             cols = EditorGUILayout.IntField("Columns", cols);
             borders = EditorGUILayout.IntField("Border", borders);
-            offset = EditorGUILayout.Vector3Field("Offset", offset);
+            offsetGridPosition = EditorGUILayout.Vector3Field("Offset Grid Position", offsetGridPosition);
             useCenterOffset = EditorGUILayout.Toggle("Center the grid", useCenterOffset);
             centerPosition = EditorGUILayout.Vector3Field("Center Position", centerPosition);
             if (GUILayout.Button("Create Grid"))
@@ -87,18 +101,27 @@ public class GridEditor : EditorWindow
 
         EditorGUILayout.Space();
 
-        showPreviewEditorSelect = EditorUtils.Foldout("Show Preview Editor Parameter", showPreviewEditorSelect);
+        showPreviewEditorSelect = EditorUtils.FoldoutShurikenStyle("Show Preview Editor Parameter", showPreviewEditorSelect);
         if (showPreviewEditorSelect)
         {
-            showPreviewGridPivotHandles =
-                EditorGUILayout.Toggle("Preview Position for the Grid", showPreviewGridPivotHandles);
+            showPreviewGridPivotHandles = EditorGUILayout.Toggle("Preview Grid Size", showPreviewGridPivotHandles);
             if (showPreviewGridPivotHandles)
             {
-                SceneView.duringSceneGui += PreviewGridPivot;
+                SceneView.duringSceneGui += PreviewGridPivotHandles;
             }
             else
             {
-                SceneView.duringSceneGui -= PreviewGridPivot;
+                SceneView.duringSceneGui -= PreviewGridPivotHandles;
+            }
+            
+            showPreviewAllTileTypeHandles = EditorGUILayout.Toggle("Preview All Type Tile", showPreviewAllTileTypeHandles);
+            if (showPreviewAllTileTypeHandles)
+            {
+                SceneView.duringSceneGui += PreviewAllTileTypeHandles;
+            }
+            else
+            {
+                SceneView.duringSceneGui -= PreviewAllTileTypeHandles;
             }
 
             showPreviewTileType = EditorGUILayout.Toggle("Tile Type", showPreviewTileType);
@@ -137,7 +160,7 @@ public class GridEditor : EditorWindow
 
         EditorGUILayout.Space();
 
-        showOthersParameter = EditorUtils.Foldout("Show Other Parameter that Affect the Grid", showOthersParameter);
+        showOthersParameter = EditorUtils.FoldoutShurikenStyle("Show Other Parameter that Affect the Grid", showOthersParameter);
         if (showOthersParameter)
         {
             if (GUILayout.Button("Random Rotation Object"))
@@ -145,8 +168,84 @@ public class GridEditor : EditorWindow
                 randomRotation = !randomRotation;
             }
         }
+        
+        showColorForTyle = EditorUtils.FoldoutShurikenStyle("Show Tyle Color Editor", showColorForTyle);
+        if (showColorForTyle)
+        {
+            _colorGridElement.colorGridFloorBarrier = EditorGUILayout.ColorField("Color GridFloor Barrier", _colorGridElement.colorGridFloorBarrier);
+            _colorGridElement.GridFloorBouncePad = EditorGUILayout.ColorField("Color GridFloor Bounce Pad", _colorGridElement.GridFloorBouncePad);
+            _colorGridElement.GridFloorIce = EditorGUILayout.ColorField("Color GridFloor Ice", _colorGridElement.GridFloorIce);
+            _colorGridElement.GridFloorPressurePlate = EditorGUILayout.ColorField("Color GridFloor Pressure Plate", _colorGridElement.GridFloorPressurePlate);
+            _colorGridElement.GridFloorStair = EditorGUILayout.ColorField("Color GridFloor Stair", _colorGridElement.GridFloorStair);
+            _colorGridElement.GridFloorWalkable = EditorGUILayout.ColorField("Color GridFloor Floor Walkable", _colorGridElement.GridFloorWalkable);
+        }
 
         UpdateListTileManage();
+    }
+
+    // Fonction pour créer la grille
+    private void CreateGrid()
+    {
+        GameObject gridObject = new GameObject(gridName);
+        gridObject.AddComponent<GridManager>();
+        _gridManager = gridObject.GetComponent<GridManager>();
+        _gridManager.grid = new List<Tile>(0);
+        _gridManager.xSize = rows;
+        _gridManager.ySize = cols;
+        PositionGridObject(gridObject);
+        EditorUtility.SetDirty(gridObject);
+    }
+
+    private void PositionGridObject(GameObject gridObject)
+    {
+        Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
+        Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
+        Vector3 offset = Vector3.zero;
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                //Create a tile
+                Tile tile = new Tile();
+                tile.name = "Tile " + row + "," + col;
+                Vector3 positionGridObject = new Vector3(col, 0, row) * cellSize - center + offset + offsetGridPosition;
+
+                //Instantiate Prefab
+                _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                if (_gridManager.tilePrefab != null)
+                {
+                    _gridManager.tilePrefab.name = "Tile " + row + "," + col;
+                    _gridManager.tilePrefab.transform.position = positionGridObject;
+                    _gridManager.tilePrefab.transform.rotation = randomRotation
+                        ? Quaternion.Euler(0, Random.Range(-360, 360), 0)
+                        : Quaternion.identity;
+
+                    //Set the transform
+                    _gridManager.grid.Add(tile);
+                    tile.transform = _gridManager.tilePrefab.GetComponent<Transform>();
+
+                    // Increment the offset by the spacing factor
+                    offset += Vector3.right * offsetObjectPositionX;
+                    if (row > borders - 1 && row < rows - borders 
+                        && col > borders - 1 && col < cols - borders)
+                    {
+                        {
+                            //Add Grid Walkable Component
+                            _gridManager.tilePrefab.AddComponent<GridFloorWalkable>();
+                            tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>(); 
+                            _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
+                        }
+                    }
+
+                    //Place in an empty folder
+                    _gridManager.tilePrefab.transform.parent = gridObject.transform;
+                }
+                
+            }
+            // Reset the offset for the next row
+            offset = Vector3.forward * (row + 1) * offsetObjectPositionZ;
+        }
     }
 
     private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
@@ -155,24 +254,25 @@ public class GridEditor : EditorWindow
 
         Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
+
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
             {
-                Vector3 position = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
+                Vector3 positionAllButton_Handles = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
                 if (_listGridManagerTile[0].floor != null)
                 {
-                    Handles.Label(position, _listGridManagerTile[0].floor.ToString());
+                    Handles.Label(positionAllButton_Handles, _listGridManagerTile[0].floor.ToString());
                 }
                 else
                 {
-                    Handles.Label(position, "Null");
+                    Handles.Label(positionAllButton_Handles, "Null");
                 }
 
                 if (row > 0 + borders && row < rows - borders && col > 0 + borders && col < cols - borders)
                 {
                     // Dessiner un bouton Handles au-dessus de la cellule
-                    if (Handles.Button(position, Quaternion.identity, cellSize * 0.5f, cellSize,
+                    if (Handles.Button(positionAllButton_Handles, Quaternion.identity, cellSize * 0.5f, cellSize,
                             Handles.RectangleHandleCap))
                     {
                         Debug.Log("Button clicked at position " + position);
@@ -210,6 +310,7 @@ public class GridEditor : EditorWindow
 
         if (!isSelectedObjectInList) return;
 
+        SwitchColorBaseOnComponent(currentType);
         if (Handles.Button(buttonPos, buttonRot,
                 cellSize * 0.5f, cellSize, Handles.RectangleHandleCap))
         {
@@ -217,65 +318,7 @@ public class GridEditor : EditorWindow
             SwitchComponent(_selectedObject, currentType, idTileList);
         }
     }
-
-    // Fonction pour créer la grille
-    private void CreateGrid()
-    {
-        GameObject gridObject = new GameObject(gridName);
-        gridObject.AddComponent<GridManager>();
-        _gridManager = gridObject.GetComponent<GridManager>();
-        _gridManager.grid = new List<Tile>(0);
-        _gridManager.xSize = rows;
-        _gridManager.ySize = cols;
-        PositionGridObject(gridObject);
-        EditorUtility.SetDirty(gridObject);
-    }
-
-    private void PositionGridObject(GameObject gridObject)
-    {
-        Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
-        Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
-
-        for (int row = 0; row < rows; row++)
-        {
-            for (int col = 0; col < cols; col++)
-            {
-                //Create a tile
-                Tile tile = new Tile();
-                tile.name = "Tile " + row + "," + col;
-                Vector3 position = new Vector3(col, 0, row) * cellSize - center + offset;
-
-                //Instantiate Prefab
-                _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-                if (_gridManager.tilePrefab != null)
-                {
-                    _gridManager.tilePrefab.name = "Tile " + row + "," + col;
-                    _gridManager.tilePrefab.transform.position = position;
-                    _gridManager.tilePrefab.transform.rotation = randomRotation
-                        ? Quaternion.Euler(0, Random.Range(-360, 360), 0)
-                        : Quaternion.identity;
-
-                    //Set the transform
-                    _gridManager.grid.Add(tile);
-                    tile.transform = _gridManager.tilePrefab.GetComponent<Transform>();
-
-                    if (row > 0 + borders && row < rows - borders
-                                          && col > 0 && col < cols - borders)
-                    {
-                        //Add Grid Walkable Component
-                        _gridManager.tilePrefab.AddComponent<GridFloorWalkable>();
-                        tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>(); 
-                        _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
-                    }
-
-                    //Place in an empty folder
-                    _gridManager.tilePrefab.transform.parent = gridObject.transform;
-                }
-            }
-        }
-    }
-
-
+    
     private void UpdateGrid()
     {
         GameObject gridObject = GameObject.Find(gridName);
@@ -318,28 +361,29 @@ public class GridEditor : EditorWindow
         }
     }
 
-    private void PreviewGridPivot(SceneView sceneView)
+    private void PreviewGridPivotHandles(SceneView sceneView)
     {
         GetCameraScene(sceneView);
         if (!showPreviewGridPivotHandles) return;
         Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
+        Vector3 offset = Vector3.zero;
 
         for (int row = 0; row < rows; row++)
         {
             for (int col = 0; col < cols; col++)
             {
-                Vector3 position = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
-                if (row > borders && row < rows - (borders + 1)
-                                  && col > borders && col < cols - (borders + 1))
+                positionGridSize_Handles = new Vector3(col, 0, row) * cellSize - center + offset + offsetPreviewPosition;
+                offset += Vector3.right * offsetObjectPositionX;
+                if (row > borders -1 && row < rows - borders 
+                                     && col > borders -1 && col < cols - borders)
                 {
                     Handles.color = Color.green;
                     Handles.CubeHandleCap(
                         0,
-                        position,
-                        //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
+                        positionGridSize_Handles,
                         Quaternion.identity,
-                        HandleUtility.GetHandleSize(position) * 0.2f,
+                        HandleUtility.GetHandleSize(positionGridSize_Handles) * 0.2f,
                         EventType.Repaint
                     );
                 }
@@ -348,14 +392,37 @@ public class GridEditor : EditorWindow
                     Handles.color = Color.red;
                     Handles.CubeHandleCap(
                         0,
-                        position,
+                        positionGridSize_Handles,
                         //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
                         Quaternion.identity,
-                        HandleUtility.GetHandleSize(position) * 0.2f,
+                        HandleUtility.GetHandleSize(positionGridSize_Handles) * 0.2f,
                         EventType.Repaint
                     );
                 }
             }
+            offset = Vector3.forward * (row + 1) * offsetObjectPositionZ;
+        }
+    }
+    
+    private void PreviewAllTileTypeHandles(SceneView sceneView)
+    {
+        GetCameraScene(sceneView);
+        if (!showPreviewAllTileTypeHandles) return;
+        Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
+        Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
+
+        for (int i = 0; i < _gridManager.grid.Count; i++)
+        {
+            Vector3 position = new Vector3(_gridManager.grid[i].transform.position.x, 0, _gridManager.grid[i].transform.position.z) * cellSize - center  + offsetPreviewPosition;
+            DetectComponent(_gridManager.grid[i].floor);
+            Handles.CubeHandleCap(
+                0,
+                position,
+                //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
+                Quaternion.identity,
+                HandleUtility.GetHandleSize(position) * 0.2f,
+                EventType.Repaint
+            );
         }
     }
 
@@ -432,6 +499,38 @@ public class GridEditor : EditorWindow
                 tileSelected.GetComponent<GridFloorWalkable>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
                 break;
+            case TileFloorType.GridFloorNonWalkable :
+                DestroyComponentForObject(tileSelected);
+                _gridManager.grid[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                break;
+        }
+    }
+
+    void SwitchColorBaseOnComponent(TileFloorType type)
+    {
+        switch (type)
+        {
+            case TileFloorType.GridFloorBarrier:
+                Handles.color = _colorGridElement.colorGridFloorBarrier;
+                break;
+            case TileFloorType.GridFloorBouncePad:
+                Handles.color = _colorGridElement.GridFloorBouncePad;
+                break;
+            case TileFloorType.GridFloorIce:
+                Handles.color = _colorGridElement.GridFloorIce;
+                break;
+            case TileFloorType.GridFloorPressurePlate:
+                Handles.color = _colorGridElement.GridFloorPressurePlate;
+                break;
+            case TileFloorType.GridFloorStair:
+                Handles.color = _colorGridElement.GridFloorStair;
+                break;
+            case TileFloorType.GridFloorWalkable:
+                Handles.color = _colorGridElement.GridFloorWalkable;
+                break; 
+            case TileFloorType.GridFloorNonWalkable:
+                Handles.color = _colorGridElement.GridFloorNonWalkable;
+                break;
         }
     }
     
@@ -453,16 +552,52 @@ public class GridEditor : EditorWindow
                 DestroyImmediate(component);
             }
         }
-    } 
-}
+    }
+    
+    public void DetectComponent(Component component)
+    {
+        if (component == null)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
+            return;
+        }
 
-[System.Serializable]
-enum TileFloorType
-{
-    GridFloorBarrier,
-    GridFloorBouncePad,
-    GridFloorIce,
-    GridFloorPressurePlate,
-    GridFloorStair,
-    GridFloorWalkable,
+        if (component is GridFloorBarrier)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorBarrier);
+            return;
+        }
+
+        if (component is GridFloorBouncePad)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorBouncePad);
+            return;
+        }
+
+        if (component is GridFloorIce)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorIce);
+            return;
+        }
+
+        if (component is GridFloorPressurePlate)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorPressurePlate);
+            return;
+        }
+    
+        if (component is GridFloorStair)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorStair);
+            return;
+        }
+        
+        if (component is GridFloorWalkable)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorWalkable);
+            return;
+        }
+
+        SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
+    }
 }
