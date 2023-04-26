@@ -60,4 +60,9 @@ public abstract class MiniGame : NetworkBehaviour
     public virtual void AssociatedWorkshopGetDeactivated()
     {
     }
+
+    public virtual void TransferDataFromWorkshopWhenMiniGameStarts(Workshop workshop)
+    {
+        
+    }
 }

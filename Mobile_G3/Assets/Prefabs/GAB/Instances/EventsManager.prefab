@@ -88,9 +88,18 @@ MonoBehaviour:
   point1: {fileID: 8955791385892517462}
   point2: {fileID: 9167295011956919625}
   shrimpShip: {fileID: 5536992926080439780}
+  baseFireCooldownDuration: 10
+  randomFireCooldownDurationGap: 5
+  fireAnimationDuration: 2
+  cannonOrigin: {fileID: 8127708719542402802}
+  bullet: {fileID: 2281775896909392543}
+  controlPoint1Height: 2
+  controlPoint2Height: 8
   cameraPos:
     pos: {x: 4.5, y: 14, z: -7}
     rot: {x: 49, y: 0, z: 0}
+  totalLife: 3
+  DEBUG_ShipLife: {fileID: 5681155279109986987}
 --- !u!114 &6126979554570275309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,9 +325,33 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8007cd2174cd5ae4189056c94920e92d, type: 3}
+--- !u!4 &2281775896909392543 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6810666201153194643, guid: 8007cd2174cd5ae4189056c94920e92d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4696735190925172748}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5536992926080439780 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1006975077529155048, guid: 8007cd2174cd5ae4189056c94920e92d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4696735190925172748}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5681155279109986987 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1151130837279079079, guid: 8007cd2174cd5ae4189056c94920e92d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4696735190925172748}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &8127708719542402802 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3595363169977016062, guid: 8007cd2174cd5ae4189056c94920e92d,
     type: 3}
   m_PrefabInstance: {fileID: 4696735190925172748}
   m_PrefabAsset: {fileID: 0}

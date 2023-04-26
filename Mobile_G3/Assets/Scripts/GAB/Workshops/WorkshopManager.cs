@@ -67,6 +67,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         miniGameEnvironmentCamera.gameObject.SetActive(true);
         CanvasManager.instance.DisplayCanvas(CanvasType.None);
 
+        currentMiniGame.TransferDataFromWorkshopWhenMiniGameStarts(currentWorkshop);
         currentMiniGame.StartMiniGame();
     }
 

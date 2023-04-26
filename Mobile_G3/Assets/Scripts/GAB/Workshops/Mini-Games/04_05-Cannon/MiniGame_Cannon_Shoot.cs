@@ -6,7 +6,8 @@ using UnityEngine;
 public class MiniGame_Cannon_Shoot : MiniGame
 {
     [SerializeField] private CannonDragAndDropData data;
-
+    private byte index;
+    
     public override void StartMiniGame()
     {
         base.StartMiniGame();
@@ -22,12 +23,19 @@ public class MiniGame_Cannon_Shoot : MiniGame
         }
     }
 
+    public override void TransferDataFromWorkshopWhenMiniGameStarts(Workshop workshop)
+    {
+        index = ((SeriesWorkshop) workshop).GetCannonIndex();
+    }
+
     private async void Fire()
     {
         StopExecutingMiniGame();
         WorkshopManager.instance.cannonDragAndDropManager.Disable();
-        
+
         // Todo - Feedback
+
+        ShipManager.instance.FireServerRpc(index);
         
         await Task.Delay(1000);
         ExitMiniGame(true);
@@ -35,12 +43,12 @@ public class MiniGame_Cannon_Shoot : MiniGame
 
     protected override void ExitMiniGame(bool victory)
     {
+        
         base.ExitMiniGame(victory);
     }
 
     public override void Reset()
     {
-        
     }
 
     public override void OnLeaveMiniGame()

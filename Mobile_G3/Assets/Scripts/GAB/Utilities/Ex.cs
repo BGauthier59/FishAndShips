@@ -55,4 +55,18 @@ public static class Ex
     }
 
     #endregion
+
+    private static Vector3 QuadraticBezierCurve(Vector3 p1, Vector3 p2, Vector3 p3, float t)
+    {
+        var pos1 = Vector3.Lerp(p1, p2, t);
+        var pos2 = Vector3.Lerp(p2, p3, t);
+        return Vector3.Lerp(pos1, pos2, t);
+    }
+
+    public static Vector3 CubicBezierCurve(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, float t)
+    {
+        var pos1 = QuadraticBezierCurve(p1, p2, p3, t);
+        var pos2 = QuadraticBezierCurve(p2, p3, p4, t);
+        return Vector3.Lerp(pos1, pos2, t);
+    }
 }

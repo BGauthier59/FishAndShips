@@ -74,8 +74,12 @@ public class Tile
 
     public IGridEntity GetEntity()
     {
-        if(entity is not IGridEntity) Debug.LogWarning("Entity is not IGridEntity");
-        return entity as IGridEntity;
+        if (entity is not IGridEntity gridEntity)
+        {
+            Debug.LogWarning("Entity is not IGridEntity");
+            return null;
+        }
+        return gridEntity;
     }
     
     public IGridFloor GetFloor()

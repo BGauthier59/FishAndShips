@@ -10,6 +10,9 @@ public class SeriesWorkshop : Workshop
 
     [Tooltip("For next mini-games only")] [SerializeField]
     private InventoryObject[] requiredItems;
+    
+    [SerializeField] [Range(0, 3)] [Tooltip("0 is top left, 1 is top right, 2 is bottom left, 3 is bottom right")]
+    private byte cannonIndex;
 
     public MiniGame GetCurrentMiniGame()
     {
@@ -58,5 +61,10 @@ public class SeriesWorkshop : Workshop
         }
 
         return requiredItems[currentMiniGameIndex.Value];
+    }
+
+    public byte GetCannonIndex()
+    {
+        return cannonIndex;
     }
 }
