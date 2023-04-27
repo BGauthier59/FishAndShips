@@ -49,13 +49,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRunning: 0
-  baseMoveSpeed: 2
-  moveSpeedLook:
+  moveDuration: 1.5
+  moveLook:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -64,7 +64,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 0.5
-      value: 1.5
+      value: 0.5
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -73,12 +73,12 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.5
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.09012765
+      inWeight: 0.2251854
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -196,13 +196,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRunning: 0
-  baseMoveSpeed: 2
-  moveSpeedLook:
+  moveDuration: 1.5
+  moveLook:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.5
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
       outWeight: 0
     - serializedVersion: 3
       time: 0.5
-      value: 1.5
+      value: 0.5
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -220,12 +220,12 @@ MonoBehaviour:
       outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
-      value: 0.5
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.09012765
+      inWeight: 0.2251854
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   durationBetweenRandomEventGenerationTry: 3
-  shrimpShipAttackActivationDuration: 5
+  shrimpShipAttackActivationDuration: 2
   durationBetweenShrimpShipAttacks: 10
   allEvents:
   - {fileID: 4505960945226804444}

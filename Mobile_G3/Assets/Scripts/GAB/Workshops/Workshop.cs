@@ -36,6 +36,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     protected virtual void InitializeWorkshop()
     {
+        // For host only
+        if (!NetworkManager.Singleton.IsHost) return;
         if (isActiveByDefault) Activate();
     }
 

@@ -10,9 +10,11 @@ public class ShrimpShipAttackEvent : RandomEvent
 {
     #region Variables
 
-    private NetworkVariable<Vector3> shipPosition = new NetworkVariable<Vector3>();
-    [SerializeField] private float baseMoveSpeed;
-    [SerializeField] private AnimationCurve moveSpeedLook;
+    [SerializeField] private float moveDuration;
+
+    [SerializeField] [Tooltip("WARNING! Don't edit this curve alone please.")]
+    private AnimationCurve moveLook;
+
     [SerializeField] private float baseStationaryDuration;
     private float currentStationaryDuration;
     private float stationaryTimer;
@@ -65,7 +67,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     private void Start()
     {
-        shipPosition.OnValueChanged += SyncCurrentShipPos;
+        //shipPosition.OnValueChanged += SyncCurrentShipPos;
     }
 
     public override void StartEvent()
@@ -76,8 +78,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         // Logic for Host
         base.StartEvent();
         ShipManager.instance.SetUnderAttack(true);
-        SetYPos();
-        shipPosition.Value = point1.position;
+        //shipPosition.Value = point1.position;
         currentPoint = point1;
         currentLife = totalLife;
         SetNewStationaryDuration();
@@ -90,6 +91,8 @@ public class ShrimpShipAttackEvent : RandomEvent
     [ClientRpc]
     private void StartEventFeedbackClientRpc()
     {
+        SetYPos();
+        shrimpShip.position = point1.position;
         shrimpShip.gameObject.SetActive(true);
 
         CameraManager.instance.SetCurrentDeckCameraPosRot(cameraPos.pos, cameraPos.rot);
@@ -175,38 +178,37 @@ public class ShrimpShipAttackEvent : RandomEvent
         isMovingToNextPoint = true;
 
         var nextPoint = currentPoint == point1 ? point2 : point1;
-        var globalDistance = Vector3.Distance(shipPosition.Value, nextPoint.position);
-        var currentDistance = globalDistance;
-        var ratio = 1f;
-        var dir = -(currentPoint.position - nextPoint.position).normalized;
 
-        while (!HasReachedNextPoint(nextPoint))
-        {
-            await Task.Yield();
+        MoveToOtherPointClientRpc(currentPoint.position, nextPoint.position);
 
-            currentDistance = Vector3.Distance(shipPosition.Value, nextPoint.position);
-            ratio = currentDistance / globalDistance;
-
-            shipPosition.Value += dir * (baseMoveSpeed * Time.deltaTime * moveSpeedLook.Evaluate(ratio));
-        }
-
-        shipPosition.Value = nextPoint.position;
+        await Task.Delay((int) (moveDuration * 1000));
         currentPoint = nextPoint;
 
         SetNewStationaryDuration();
     }
 
-    private void SyncCurrentShipPos(Vector3 previous, Vector3 current)
+    [ClientRpc]
+    private void MoveToOtherPointClientRpc(Vector3 startPoint, Vector3 endPoint)
     {
-        shrimpShip.position = current;
+        Move(startPoint, endPoint);
     }
 
-    private bool HasReachedNextPoint(Transform point)
+    private async void Move(Vector3 start, Vector3 end)
     {
-        var xPos = point.position.x;
-        if (point == point1 && shipPosition.Value.x < xPos) return true;
-        if (point == point2 && shipPosition.Value.x > xPos) return true;
-        return false;
+        var timer = 0f;
+        float ratio;
+        Vector3 nextPos;
+        while (timer < moveDuration)
+        {
+            await Task.Yield();
+            timer += Time.deltaTime;
+            ratio = timer / moveDuration;
+            nextPos = Vector3.Lerp(start, end, ratio);
+            //nextPos.x *= moveLook.Evaluate(ratio);
+            shrimpShip.position = nextPos;
+        }
+
+        shrimpShip.position = end;
     }
 
     #endregion

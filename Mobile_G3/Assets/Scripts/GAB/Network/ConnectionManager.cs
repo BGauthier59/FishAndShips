@@ -8,9 +8,9 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
-public class ConnectionManager : MonoSingleton<ConnectionManager>
+public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
 {
-    private string ip;
+    private string hostIp;
     public Dictionary<ulong, PlayerManager> players = new();
     private UnityTransport transport;
     private string ipToConnect;
@@ -25,6 +25,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
     private void Start()
     {
         transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport;
+        SetConnectionCallback();
     }
 
     public string ConnectAsHost()
@@ -35,11 +36,10 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
             return "0";
         }
 
-        SetConnectionCallback();
-        ip = GetIPv4AddressMobile();
-        transport.SetConnectionData(ip, transport.ConnectionData.Port);
+        hostIp = GetIPv4AddressMobile();
+        transport.SetConnectionData(hostIp, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartHost();
-        return ip;
+        return hostIp;
     }
 
     public void ConnectAsClient(string ip)
@@ -50,13 +50,14 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
             return;
         }
 
-        SetConnectionCallback();
+        Debug.Log(ip);
         transport.SetConnectionData(ip, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartClient();
     }
 
     private void SetConnectionCallback()
     {
+        Debug.Log("Set connection callback");
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
     }
