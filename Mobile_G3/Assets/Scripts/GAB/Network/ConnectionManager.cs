@@ -16,17 +16,15 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
     private string ipToConnect;
     public GameState gameState = GameState.Menu;
 
+    public override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(gameObject);
+    }
+
     private void Start()
     {
         transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport;
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
-    }
-
-    private void OnDestroy()
-    {
-        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
     }
 
     public string ConnectAsHost()
@@ -37,6 +35,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
             return "0";
         }
 
+        SetConnectionCallback();
         ip = GetIPv4AddressMobile();
         transport.SetConnectionData(ip, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartHost();
@@ -51,8 +50,15 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
             return;
         }
 
+        SetConnectionCallback();
         transport.SetConnectionData(ip, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartClient();
+    }
+
+    private void SetConnectionCallback()
+    {
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
     }
 
     string GetIPv4AddressMobile()
@@ -91,6 +97,9 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
             infoText += $", number of client(s): {NetworkManager.Singleton.ConnectedClients.Count} ";
 
         Debug.Log(infoText);
+        
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
     }
 
     #endregion
@@ -119,10 +128,15 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         players.Remove(playerId);
         Debug.Log($"Player with ID {playerId} has been removed from dictionary!");
     }
+
+    public PlayerManager GetClientPlayer()
+    {
+        foreach (var kvp in players)
+        {
+            if (kvp.Value.IsOwner) return kvp.Value;
+        }
+        Debug.LogWarning("Didn't find your player. This should not happen");
+        return null;
+    }
 }
 
-public enum GameState
-{
-    Menu,
-    Game
-}

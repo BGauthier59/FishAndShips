@@ -25,3 +25,14 @@ public enum InventoryObject
     CannonBall,
     Plank
 }
+
+public enum GameState
+{
+    Menu,
+    Game
+}
+
+public enum BoatSide
+{
+    Deck, Hold
+}

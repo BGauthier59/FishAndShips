@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e13f88d342186947bdd4c98e3e8227a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 0
+  isRunning: 0
   baseMoveSpeed: 2
   moveSpeedLook:
     serializedVersion: 2
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e13f88d342186947bdd4c98e3e8227a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isActive: 0
+  isRunning: 0
   baseMoveSpeed: 2
   moveSpeedLook:
     serializedVersion: 2
@@ -371,7 +371,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b03e6d5db62019447b8a90cff8586152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentEvent: {fileID: 4505960945226804444}
+  durationBetweenRandomEventGenerationTry: 3
+  shrimpShipAttackActivationDuration: 5
+  durationBetweenShrimpShipAttacks: 10
+  allEvents:
+  - {fileID: 4505960945226804444}
+  - {fileID: 913933736702132406}
+  currentEvent: []
+  DEBUG_selectedEvent: {fileID: 4505960945226804444}
 --- !u!1 &6160094568212708374
 GameObject:
   m_ObjectHideFlags: 0

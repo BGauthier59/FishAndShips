@@ -27,12 +27,14 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public GameObject fxTest;
 
     private InventoryObject inventoryObject;
+    private BoatSide currentSide;
 
     private void Start()
     {
         playerName.OnValueChanged += OnNameChanged;
         gridPositionX.OnValueChanged += OnPositionChanged;
         gridPositionY.OnValueChanged += OnPositionChanged;
+        SetBoatSide(BoatSide.Deck);
     }
 
     public void StartGameLoop()
@@ -239,12 +241,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             if (positionX >= GridManager.instance.xSize)
             {
                 nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position + Vector3.up * 0.8f;
-                CameraManager.instance.MoveCamToHold();
+                CameraManager.instance.MoveCamToHold(this);
             }
             else
             {
                 nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position;
-                CameraManager.instance.MoveCamToDeck();
+                CameraManager.instance.MoveCamToDeck(this);
             }
             transform.position = nextPos;
         }
@@ -263,6 +265,16 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             }
             transform.position = nextPos;
         }
+    }
+
+    public void SetBoatSide(BoatSide side)
+    {
+        currentSide = side;
+    }
+    
+    public BoatSide GetBoatSide()
+    {
+        return currentSide;
     }
     
     /*public void ExitStair()

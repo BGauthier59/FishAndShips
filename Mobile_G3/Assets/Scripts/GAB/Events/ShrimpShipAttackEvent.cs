@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,6 +10,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 {
     #region Variables
 
+    private NetworkVariable<Vector3> shipPosition = new NetworkVariable<Vector3>();
     [SerializeField] private float baseMoveSpeed;
     [SerializeField] private AnimationCurve moveSpeedLook;
     [SerializeField] private float baseStationaryDuration;
@@ -36,7 +38,6 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private float controlPoint1Height, controlPoint2Height;
 
     [SerializeField] private PosRot cameraPos;
-    private PosRot cameraInitPos;
 
     [SerializeField] private int totalLife;
     private int currentLife;
@@ -44,50 +45,91 @@ public class ShrimpShipAttackEvent : RandomEvent
     public TMP_Text DEBUG_ShipLife;
 
     #endregion
-    
+
     #region Main Methods
 
     public override bool CheckConditions()
     {
-        return false;
+        Debug.Log(ShipManager.instance.IsUnderAttack());
+        Debug.Log(EventsManager.instance.IsShrimpShipCooldownOver());
+        // Can't run if ship is under attack
+        if (ShipManager.instance.IsUnderAttack()) return false;
+
+        // Is cooldown over
+        if (!EventsManager.instance.IsShrimpShipCooldownOver()) return false;
+
+        // Todo - Check distance between attacks
+
+        return true;
+    }
+
+    private void Start()
+    {
+        shipPosition.OnValueChanged += SyncCurrentShipPos;
     }
 
     public override void StartEvent()
     {
-        // Feedback, camera movement, début de l'event
+        // Todo - Play feedback to every client, but do logic on host only!
+        StartEventFeedbackClientRpc();
+
+        // Logic for Host
+        base.StartEvent();
+        ShipManager.instance.SetUnderAttack(true);
         SetYPos();
-
+        shipPosition.Value = point1.position;
+        currentPoint = point1;
         currentLife = totalLife;
-        cameraInitPos.pos = Camera.main.transform.position;
-        cameraInitPos.rot = Camera.main.transform.eulerAngles;
-
-        Camera.main.transform.DOMove(cameraPos.pos, 1);
-        Camera.main.transform.DORotate(cameraPos.rot, 1);
+        SetNewStationaryDuration();
+        SetNewFireCooldownDuration();
 
         // for test only
         DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
-        shrimpShip.position = point1.position;
-        currentPoint = point1;
-        stationaryTimer = 0;
-        isMovingToNextPoint = false;
+    }
+
+    [ClientRpc]
+    private void StartEventFeedbackClientRpc()
+    {
+        shrimpShip.gameObject.SetActive(true);
+
+        CameraManager.instance.SetCurrentDeckCameraPosRot(cameraPos.pos, cameraPos.rot);
+        CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
     }
 
     public override void ExecuteEvent()
     {
-        if (!Unity.Netcode.NetworkManager.Singleton.IsHost) return;
-        
+        if (!NetworkManager.Singleton.IsHost) return;
+
         // Instantie workshop : crevettes
         CheckStationaryTimer();
         CheckShrimpSpawnTimer();
         CheckFireTimer();
     }
 
-    public override void EndEvent()
+    protected override void EndEvent()
     {
-        // Destroyed by 3 cannon bullets
+        // Todo - Play feedback to every client, but do logic on host only!
+        base.EndEvent();
+        EndEventFeedbackClientRpc();
+        EventsManager.instance.StartShrimpShipCooldown();
+        ShipManager.instance.SetUnderAttack(false);
+    }
 
-        Camera.main.transform.DOMove(cameraInitPos.pos, 1);
-        Camera.main.transform.DORotate(cameraInitPos.rot, 1);
+    [ClientRpc]
+    private void EndEventFeedbackClientRpc()
+    {
+        EndEventFeedback();
+    }
+
+    private async void EndEventFeedback()
+    {
+        // Todo - Implement destruction animation
+
+        await Task.Delay(1000);
+
+        shrimpShip.gameObject.SetActive(false);
+        CameraManager.instance.ResetDeckPosRot();
+        CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
     }
 
     #endregion
@@ -112,6 +154,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         currentStationaryDuration = baseStationaryDuration +
                                     Random.Range(-randomStationaryDurationGap, randomStationaryDurationGap);
+        stationaryTimer = 0;
         isMovingToNextPoint = false;
     }
 
@@ -132,7 +175,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         isMovingToNextPoint = true;
 
         var nextPoint = currentPoint == point1 ? point2 : point1;
-        var globalDistance = Vector3.Distance(shrimpShip.position, nextPoint.position);
+        var globalDistance = Vector3.Distance(shipPosition.Value, nextPoint.position);
         var currentDistance = globalDistance;
         var ratio = 1f;
         var dir = -(currentPoint.position - nextPoint.position).normalized;
@@ -141,23 +184,28 @@ public class ShrimpShipAttackEvent : RandomEvent
         {
             await Task.Yield();
 
-            currentDistance = Vector3.Distance(shrimpShip.position, nextPoint.position);
+            currentDistance = Vector3.Distance(shipPosition.Value, nextPoint.position);
             ratio = currentDistance / globalDistance;
 
-            shrimpShip.position += dir * (baseMoveSpeed * Time.deltaTime * moveSpeedLook.Evaluate(ratio));
+            shipPosition.Value += dir * (baseMoveSpeed * Time.deltaTime * moveSpeedLook.Evaluate(ratio));
         }
 
-        shrimpShip.position = nextPoint.position;
+        shipPosition.Value = nextPoint.position;
         currentPoint = nextPoint;
 
         SetNewStationaryDuration();
     }
 
+    private void SyncCurrentShipPos(Vector3 previous, Vector3 current)
+    {
+        shrimpShip.position = current;
+    }
+
     private bool HasReachedNextPoint(Transform point)
     {
         var xPos = point.position.x;
-        if (point == point1 && shrimpShip.position.x < xPos) return true;
-        if (point == point2 && shrimpShip.position.x > xPos) return true;
+        if (point == point1 && shipPosition.Value.x < xPos) return true;
+        if (point == point2 && shipPosition.Value.x > xPos) return true;
         return false;
     }
 
@@ -169,6 +217,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         currentFireCooldownDuration = baseFireCooldownDuration +
                                       Random.Range(-randomFireCooldownDurationGap, randomFireCooldownDurationGap);
+        fireCooldownTimer = 0;
         isFiring = false;
     }
 
@@ -179,7 +228,6 @@ public class ShrimpShipAttackEvent : RandomEvent
         if (fireCooldownTimer > currentFireCooldownDuration)
         {
             isFiring = true;
-            fireCooldownTimer = 0;
             Fire();
         }
         else fireCooldownTimer += Time.deltaTime;
@@ -193,17 +241,32 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         if (targetedTile == null)
         {
-            isFiring = false;
+            SetNewFireCooldownDuration();
             return;
         }
-
-        Debug.Log($"Targeted the tile {targetedTile.name}");
 
         Vector3 p1, p2, p3, p4;
         p1 = cannonOrigin.position;
         p2 = p1 + Vector3.up * controlPoint1Height;
         p4 = targetedTile.transform.position;
         p3 = p4 + Vector3.up * controlPoint2Height;
+
+        FireFeedbackClientRpc(p1, p2, p3, p4);
+
+        await Task.Delay((int) (fireAnimationDuration * 1000));
+
+        SetNewFireCooldownDuration();
+    }
+
+    [ClientRpc]
+    private void FireFeedbackClientRpc(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+    {
+        CannonBulletAnimation(p1, p2, p3, p4);
+    }
+
+    private async void CannonBulletAnimation(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+    {
+        // Todo - Implement VFX, screen shake...
 
         bullet.position = p1;
         bullet.gameObject.SetActive(true);
@@ -217,15 +280,6 @@ public class ShrimpShipAttackEvent : RandomEvent
         }
 
         bullet.gameObject.SetActive(false);
-        Debug.Log($"Hit the tile {targetedTile.name}");
-
-        SetNewFireCooldownDuration();
-
-        // If no tile found, we give up
-
-        // Placer les points de la bezier curve : les pts doivent être immobiles
-
-        // Animation
     }
 
     #endregion
@@ -268,14 +322,15 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #region Life Management
 
+    [ContextMenu("Get hit")]
     public void GetHit()
     {
         currentLife--;
         DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
 
-        if (currentLife < 0)
+        if (currentLife <= 0)
         {
-            // Todo - If 0, is killed
+            EndEvent();
         }
         else
         {
@@ -284,11 +339,4 @@ public class ShrimpShipAttackEvent : RandomEvent
     }
 
     #endregion
-
-    [Serializable]
-    public struct PosRot
-    {
-        public Vector3 pos;
-        public Vector3 rot;
-    }
 }

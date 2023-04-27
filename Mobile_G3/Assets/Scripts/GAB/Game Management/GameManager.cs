@@ -13,6 +13,7 @@ public class GameManager : MonoSingleton<GameManager>
     private ShipManager shipManager;
     private CanvasManager canvasManager;
     private TimerManager timerManager;
+    private CameraManager cameraManager;
     
     private List<PlayerManager> players = new List<PlayerManager>();
     public static Action<bool> onGameEnds;
@@ -26,6 +27,7 @@ public class GameManager : MonoSingleton<GameManager>
     private async void StartGameLoop()
     {
         LinkInstance();
+        cameraManager.StartGameLoop();
 
         await CinematicCanvasManager.instance.IntroductionCinematic();
 
@@ -49,6 +51,7 @@ public class GameManager : MonoSingleton<GameManager>
         shipManager = ShipManager.instance;
         canvasManager = CanvasManager.instance;
         timerManager = TimerManager.instance;
+        cameraManager = CameraManager.instance;
 
         foreach (var kvp in ConnectionManager.instance.players)
         {
