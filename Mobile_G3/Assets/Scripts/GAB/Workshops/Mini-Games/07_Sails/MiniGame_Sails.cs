@@ -66,7 +66,7 @@ public class MiniGame_Sails : MiniGame
 
     public override void ExecuteMiniGame()
     {
-        if (WorkshopManager.instance.swipeManager.CalculateSwipe())
+        if (WorkshopManager.instance.swipeManager.CalculateSwipe() && currentStep < stepNumber)
         {
             currentStep++;
             myStep.text = currentStep.ToString();

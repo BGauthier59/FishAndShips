@@ -47,7 +47,6 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
         if (seriesWorkshop)
         {
-            Debug.Log($"Get safe : {seriesWorkshop.GetCurrentMiniGameSafe().name}");
             StartMiniGame(seriesWorkshop.GetCurrentMiniGameSafe());
         }
         else if (connectedWorkshop)

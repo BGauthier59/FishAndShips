@@ -44,6 +44,10 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private int totalLife;
     private int currentLife;
 
+    [SerializeField] private int maxShrimpInstantiatedCount;
+    private int currentShrimpInstantiatedCount;
+    // Todo - stocker les crevettes instantiées (Workshop) pour ne pas dépasser max count
+
     public TMP_Text DEBUG_ShipLife;
 
     #endregion
@@ -81,6 +85,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         //shipPosition.Value = point1.position;
         currentPoint = point1;
         currentLife = totalLife;
+        currentShrimpInstantiatedCount = 0;
         SetNewStationaryDuration();
         SetNewFireCooldownDuration();
 

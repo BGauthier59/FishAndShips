@@ -52,7 +52,6 @@ public class SeriesWorkshop : Workshop
         
         SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
         currentMiniGameIndexSafe++;
-        Debug.Log(currentMiniGameIndexSafe + " : INDEX SAFE");
         if (currentMiniGameIndexSafe == nextMiniGames.Length)
         {
             SetMiniGameIndexServerRpc(-1);
