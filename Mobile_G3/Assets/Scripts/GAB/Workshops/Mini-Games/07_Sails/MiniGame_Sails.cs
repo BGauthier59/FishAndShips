@@ -27,12 +27,12 @@ public class MiniGame_Sails : MiniGame
 
     public override void AssociatedWorkshopGetActivated()
     {
-        if(IsHost) ShipManager.instance.SetSpeed(boatSpeedFactor);
+        if(NetworkManager.Singleton.IsHost) ShipManager.instance.SetSpeed(boatSpeedFactor);
     }
 
     public override void AssociatedWorkshopGetDeactivated()
     {
-        if(IsHost) ShipManager.instance.SetSpeed(1);
+        if(NetworkManager.Singleton.IsHost) ShipManager.instance.SetSpeed(1);
     }
 
     public override void StartMiniGame()

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
@@ -9,6 +7,8 @@ using Random = UnityEngine.Random;
 
 public class ShrimpShipAttackEvent : RandomEvent
 {
+    #region Variables
+
     [SerializeField] private float baseMoveSpeed;
     [SerializeField] private AnimationCurve moveSpeedLook;
     [SerializeField] private float baseStationaryDuration;
@@ -35,13 +35,6 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private Transform bullet;
     [SerializeField] private float controlPoint1Height, controlPoint2Height;
 
-    [Serializable]
-    public struct PosRot
-    {
-        public Vector3 pos;
-        public Vector3 rot;
-    }
-
     [SerializeField] private PosRot cameraPos;
     private PosRot cameraInitPos;
 
@@ -49,6 +42,10 @@ public class ShrimpShipAttackEvent : RandomEvent
     private int currentLife;
 
     public TMP_Text DEBUG_ShipLife;
+
+    #endregion
+    
+    #region Main Methods
 
     public override bool CheckConditions()
     {
@@ -75,20 +72,10 @@ public class ShrimpShipAttackEvent : RandomEvent
         isMovingToNextPoint = false;
     }
 
-    private void SetYPos()
-    {
-        var pos1 = point1.position;
-        var pos2 = point2.position;
-
-        pos1.y = pos2.y = shrimpShip.position.y;
-        point1.position = pos1;
-        point2.position = pos2;
-    }
-
     public override void ExecuteEvent()
     {
-        if (!IsHost) return;
-
+        if (!Unity.Netcode.NetworkManager.Singleton.IsHost) return;
+        
         // Instantie workshop : crevettes
         CheckStationaryTimer();
         CheckShrimpSpawnTimer();
@@ -103,20 +90,23 @@ public class ShrimpShipAttackEvent : RandomEvent
         Camera.main.transform.DORotate(cameraInitPos.rot, 1);
     }
 
-    public void GetHit()
-    {
-        currentLife--;
-        DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
+    #endregion
 
-        if (currentLife < 0)
-        {
-            // Todo - If 0, is killed
-        }
-        else
-        {
-            if(!isMovingToNextPoint) MoveToOtherPoint();
-        }
+    #region Initialization
+
+    private void SetYPos()
+    {
+        var pos1 = point1.position;
+        var pos2 = point2.position;
+
+        pos1.y = pos2.y = shrimpShip.position.y;
+        point1.position = pos1;
+        point2.position = pos2;
     }
+
+    #endregion
+
+    #region Displacement
 
     private void SetNewStationaryDuration()
     {
@@ -171,6 +161,10 @@ public class ShrimpShipAttackEvent : RandomEvent
         return false;
     }
 
+    #endregion
+
+    #region Fire
+
     private void SetNewFireCooldownDuration()
     {
         currentFireCooldownDuration = baseFireCooldownDuration +
@@ -195,25 +189,13 @@ public class ShrimpShipAttackEvent : RandomEvent
     private async void Fire()
     {
         // Select a tile that is alright
-        Tile targetedTile;
-        int randomX, randomY;
-        int securityCount = 0;
+        Tile targetedTile = GetAvailableTile();
 
-        do
+        if (targetedTile == null)
         {
-            randomX = Random.Range(0, GridManager.instance.xSize);
-            randomY = Random.Range(0, GridManager.instance.ySize);
-            targetedTile = GridManager.instance.GetTile(randomX, randomY);
-
-            securityCount++;
-            if (securityCount == 100)
-            {
-                Debug.LogWarning("Didn't find any tile after trying 100 times.");
-                isFiring = false;
-                return;
-            }
-        } while (targetedTile == null || targetedTile.GetEntity() != null ||
-                 targetedTile.GetFloor() is not GridFloorWalkable);
+            isFiring = false;
+            return;
+        }
 
         Debug.Log($"Targeted the tile {targetedTile.name}");
 
@@ -246,6 +228,10 @@ public class ShrimpShipAttackEvent : RandomEvent
         // Animation
     }
 
+    #endregion
+
+    #region InstantiateShrimp
+
     private void CheckShrimpSpawnTimer()
     {
     }
@@ -254,8 +240,55 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
     }
 
-    private bool IsTileAvailableForShrimpWorkshop()
+    private Tile GetAvailableTile()
     {
-        return false;
+        Tile targetedTile;
+        int randomX, randomY;
+        int securityCount = 0;
+
+        do
+        {
+            randomX = Random.Range(0, GridManager.instance.xSize);
+            randomY = Random.Range(0, GridManager.instance.ySize);
+            targetedTile = GridManager.instance.GetTile(randomX, randomY);
+
+            securityCount++;
+            if (securityCount == 100)
+            {
+                Debug.LogWarning("Didn't find any tile after trying 100 times. Returns null.");
+                return null;
+            }
+        } while (targetedTile == null || targetedTile.GetEntity() != null ||
+                 targetedTile.GetFloor() is not GridFloorWalkable);
+
+        return targetedTile;
+    }
+
+    #endregion
+
+    #region Life Management
+
+    public void GetHit()
+    {
+        currentLife--;
+        DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
+
+        if (currentLife < 0)
+        {
+            // Todo - If 0, is killed
+        }
+        else
+        {
+            if (!isMovingToNextPoint) MoveToOtherPoint();
+        }
+    }
+
+    #endregion
+
+    [Serializable]
+    public struct PosRot
+    {
+        public Vector3 pos;
+        public Vector3 rot;
     }
 }

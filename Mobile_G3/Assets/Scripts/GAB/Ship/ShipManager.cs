@@ -53,7 +53,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void StartGameLoop()
     {
-        if (IsHost)
+        if (NetworkManager.Singleton.IsHost)
         {
             SetCurrentLifeServerRpc(maxLife);
             SetCurrentSpeedServerRpc(1);
@@ -129,7 +129,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     private void CheckCollisions()
     {
-        if (!IsHost) return;
+        if (!NetworkManager.Singleton.IsHost) return;
 
         Debug.DrawRay(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right * collisionDetectionRayLength,
             Color.green);
@@ -201,7 +201,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void SetUnderAttack(bool underAttack)
     {
-        if (!IsHost)
+        if (!NetworkManager.Singleton.IsHost)
         {
             Debug.LogWarning("Only host should manage shrimp shrimp attack!");
             return;
