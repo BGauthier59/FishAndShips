@@ -27,7 +27,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
 
-    private void Start()
+    public virtual void Start()
     {
         isOccupied.OnValueChanged += OnSetOccupied;
         isActive.OnValueChanged += OnSetActivated;

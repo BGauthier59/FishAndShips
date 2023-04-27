@@ -47,7 +47,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
         if (seriesWorkshop)
         {
-            StartMiniGame(seriesWorkshop.GetCurrentMiniGame());
+            Debug.Log($"Get safe : {seriesWorkshop.GetCurrentMiniGameSafe().name}");
+            StartMiniGame(seriesWorkshop.GetCurrentMiniGameSafe());
         }
         else if (connectedWorkshop)
         {
@@ -92,7 +93,9 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
             Debug.Log("You consumed your item!");
             currentWorkshop.GetCurrentPlayer().SetInventoryObject(InventoryObject.None);
         }
+
         CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas, CanvasType.TimerCanvas);
+
         var workshopToDeactivate =
             currentWorkshop; // Must set currentWorkshop to null for series workshop before deactivation
         currentWorkshop = null;

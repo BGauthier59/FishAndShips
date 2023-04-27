@@ -8,7 +8,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
-public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
+public class ConnectionManager : MonoSingleton<ConnectionManager>
 {
     private string hostIp;
     public Dictionary<ulong, PlayerManager> players = new();
