@@ -60,7 +60,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
-    public void SetPosition(int posX, int posY)
+    public virtual void SetPosition(int posX, int posY)
     {
     }
 
