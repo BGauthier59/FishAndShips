@@ -12,7 +12,7 @@ public class SeriesWorkshop : Workshop
 
     [Tooltip("For next mini-games only")] [SerializeField]
     private InventoryObject[] requiredItems;
-    
+
     [SerializeField] [Range(0, 3)] [Tooltip("0 is top left, 1 is top right, 2 is bottom left, 3 is bottom right")]
     private byte cannonIndex;
 
@@ -37,7 +37,7 @@ public class SeriesWorkshop : Workshop
     {
         currentMiniGameIndexSafe = currentMiniGameIndex.Value;
     }
-    
+
     public override void Deactivate(bool victory)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivated();
@@ -47,15 +47,15 @@ public class SeriesWorkshop : Workshop
             SetOccupiedServerRpc(false);
             return;
         }
-        
+
         deactivationEvent?.Invoke();
-        
-        SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
+
         currentMiniGameIndexSafe++;
+        SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
         if (currentMiniGameIndexSafe == nextMiniGames.Length)
         {
-            SetMiniGameIndexServerRpc(-1);
             currentMiniGameIndexSafe = -1;
+            SetMiniGameIndexServerRpc(-1);
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
             Activate();

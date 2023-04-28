@@ -44,7 +44,13 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private int totalLife;
     private int currentLife;
 
+    [SerializeField] private float baseShrimpSpawnCooldownDuration;
+    [SerializeField] private float randomShrimpSpawnCooldownDurationGap;
+    private float currentShrimpSpawnCooldownDuration;
+    private float currentShrimpSpawnCooldownTimer;
+    private bool isSpawningShrimp;
     [SerializeField] private int maxShrimpInstantiatedCount;
+
     private int currentShrimpInstantiatedCount;
     // Todo - stocker les crevettes instantiées (Workshop) pour ne pas dépasser max count
 
@@ -234,7 +240,6 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         if (fireCooldownTimer > currentFireCooldownDuration)
         {
-            isFiring = true;
             Fire();
         }
         else fireCooldownTimer += Time.deltaTime;
@@ -243,6 +248,8 @@ public class ShrimpShipAttackEvent : RandomEvent
     [ContextMenu("Fire")]
     private async void Fire()
     {
+        isFiring = true;
+
         // Select a tile that is alright
         Tile targetedTile = GetAvailableTile();
 
@@ -293,12 +300,43 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #region InstantiateShrimp
 
-    private void CheckShrimpSpawnTimer()
+    private void SetNewShrimpSpawnCooldownDuration()
     {
+        currentShrimpSpawnCooldownDuration = baseShrimpSpawnCooldownDuration +
+                                             Random.Range(-randomShrimpSpawnCooldownDurationGap,
+                                                 randomShrimpSpawnCooldownDurationGap);
+        currentShrimpSpawnCooldownTimer = 0;
+        isSpawningShrimp = false;
     }
 
-    private void SpawnShrimpWorkshop()
+    private void CheckShrimpSpawnTimer()
     {
+        if (isSpawningShrimp) return;
+        
+        if (currentShrimpSpawnCooldownTimer > currentShrimpSpawnCooldownDuration)
+        {
+            TrySpawnShrimpWorkshop();
+        }
+        else currentShrimpSpawnCooldownTimer += Time.deltaTime;
+    }
+
+    private void TrySpawnShrimpWorkshop()
+    {
+        isSpawningShrimp = true;
+        
+        // Todo - Check conditions
+
+        if (currentShrimpInstantiatedCount >= maxShrimpInstantiatedCount)
+        {
+            Debug.Log("Can't instantiate more shrimps.");
+            return;
+        }
+        
+        // Get available tile
+        
+        // Setup animation
+        
+        // Instantiate on every client + feedbacks!
     }
 
     private Tile GetAvailableTile()
