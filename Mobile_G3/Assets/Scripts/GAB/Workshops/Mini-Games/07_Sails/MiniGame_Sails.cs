@@ -25,14 +25,16 @@ public class MiniGame_Sails : MiniGame
 
     [SerializeField] private float boatSpeedFactor;
 
-    public override void AssociatedWorkshopGetActivated()
+    public override void AssociatedWorkshopGetActivatedHostSide()
     {
-        if(NetworkManager.Singleton.IsHost) ShipManager.instance.SetSpeed(boatSpeedFactor);
+        base.AssociatedWorkshopGetActivatedHostSide();
+        ShipManager.instance.SetSpeed(boatSpeedFactor);
     }
 
-    public override void AssociatedWorkshopGetDeactivated()
+    public override void AssociatedWorkshopGetDeactivatedHostSide()
     {
-        if(NetworkManager.Singleton.IsHost) ShipManager.instance.SetSpeed(1);
+        base.AssociatedWorkshopGetDeactivatedHostSide();
+        ShipManager.instance.SetSpeed(1);
     }
 
     public override void StartMiniGame()
@@ -41,7 +43,7 @@ public class MiniGame_Sails : MiniGame
         var connectedWorkshop = WorkshopManager.instance.GetCurrentWorkshop() as ConnectedWorkshop;
         if (connectedWorkshop == null)
         {
-            Debug.LogWarning("Sails mini-game must be started as a connected workshop!");
+            Debug.LogError("Sails mini-game must be started as a connected workshop!");
             return;
         }
 

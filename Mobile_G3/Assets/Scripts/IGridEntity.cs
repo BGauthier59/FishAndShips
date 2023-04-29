@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IGridEntity
 {
-    void OnCollision(IGridEntity entity,int direction);
-    
-    void SetPosition(int posX,int posY);
+    void OnCollision(IGridEntity entity, int direction);
+
+    void SetPosition(int posX, int posY);
 }

@@ -12,15 +12,25 @@ public class EventsManager : MonoSingleton<EventsManager>
 
     // Il va check les events qu'il peut créer (avec check de CheckConditions) et les stocker dans une liste, puis en choisir un aléatoirement
 
+    #region Shrimp ships main variables
+
     [SerializeField] private float durationBetweenRandomEventGenerationTry;
     private float timerBetweenRandomEventGenerationTry;
-    
+
     [SerializeField] private float shrimpShipAttackActivationDuration;
     [SerializeField] private float durationBetweenShrimpShipAttacks;
     private bool isShrimpShipCooldownOver;
 
     private float timerBetweenShrimpShipAttacks;
     private float currentDistanceBetweenShrimpShipAttacks;
+    
+    [SerializeField] private int maxShrimpInstantiatedCount;
+    private int currentShrimpCount;
+
+    [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
+    
+    #endregion
+
 
     [SerializeField] private RandomEvent[] allEvents;
     [SerializeField] private List<RandomEvent> currentEvent = new List<RandomEvent>();
@@ -100,8 +110,41 @@ public class EventsManager : MonoSingleton<EventsManager>
         return isShrimpShipCooldownOver;
     }
 
+    public bool CanInstantiateShrimpWorkshop()
+    {
+        return currentShrimpCount < maxShrimpInstantiatedCount;
+    }
+
+    public void AddShrimp()
+    {
+        currentShrimpCount++;
+    }
+
+    public void RemoveShrimp()
+    {
+        currentShrimpCount--;
+    }
+
+    public int? GetShrimpWorkshopIndex()
+    {
+        for (int i = 0; i < shrimpWorkshops.Length; i++)
+        {
+            if (shrimpWorkshops[i].isActive.Value) continue;
+            return i;
+        }
+
+        return null;
+    }
+
+    public ShrimpWorkshop GetShrimpWorkshop(int index)
+    {
+        // WARNING! The index must be the one sent by Host as currentShrimpCount is not modified on clients
+        
+        return shrimpWorkshops[index];
+    }
+
     #endregion
-    
+
     private RandomEvent tempEvent;
 
     private void TryGenerateNewRandomEvent()

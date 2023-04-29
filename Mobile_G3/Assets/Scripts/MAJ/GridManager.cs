@@ -27,18 +27,19 @@ public class GridManager : MonoSingleton<GridManager>
                     };
                     if (x > 0 && x < xSize - 1 && y > 0 && y < ySize - 1)
                     {
-                        tile.transform = Instantiate(tilePrefab, new Vector3(x, 0, i == 0 ? y : y + holdOffset), 
-                            Quaternion.identity,transform).transform;
+                        tile.transform = Instantiate(tilePrefab, new Vector3(x, 0, i == 0 ? y : y + holdOffset), Quaternion.identity,transform).transform;
                         tile.transform.name = i == 0 ? $"Deck {x}, {y}" : $"Hold {x}, {y}";
                         tile.floor = tile.transform.GetComponent<GridFloorWalkable>();
                         tile.GetFloor().SetPosition(i == 0 ? x : x+xSize, y);
+                        
+                        tile.SetCoordinates(x, y);
                     }
                     grid.Add(tile);
                 }
             }   
         }
     }
-    
+
     public Tile GetTile(int x, int y)
     {
         int index = x * ySize + y;
@@ -59,7 +60,18 @@ public class Tile
     public Transform transform;
     public Component entity;
     public Component floor;
+    public int2 coordinates;
 
+    public void SetCoordinates(int x, int y)
+    {
+        coordinates = new int2(x, y);
+    }
+    
+    public int2 GetTilePos()
+    {
+        return coordinates;
+    }
+    
     public void SetTile(IGridEntity newEntity = null, IGridFloor newFloor = null)
     {
         entity = (Component) newEntity;

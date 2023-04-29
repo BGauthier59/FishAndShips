@@ -4,7 +4,10 @@ using UnityEngine.Events;
 
 public class Workshop : NetworkBehaviour, IGridEntity
 {
+    [SerializeField] private WorkshopType type;
+    private Tile currentTile;
     public int positionX, positionY;
+    [SerializeField] private Transform workshopObject;
     public MiniGame associatedMiniGame;
 
     public NetworkVariable<bool> isOccupied = new(false, NetworkVariableReadPermission.Everyone,
@@ -22,16 +25,17 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [SerializeField] protected InventoryObject requiredItem;
 
     private PlayerManager playingPlayer;
-    
-    [Header("Feedbacks")]
-    [SerializeField] protected UnityEvent activationEvent;
+
+    [Header("Feedbacks")] [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
-    
+    [SerializeField] private Vector3 workshopObjectOffset;
+
     public virtual void Start()
     {
         isOccupied.OnValueChanged += OnSetOccupied;
         isActive.OnValueChanged += OnSetActivated;
         InitializeWorkshop();
+        SetPosition(positionX, positionY);
     }
 
     protected virtual void InitializeWorkshop()
@@ -60,26 +64,92 @@ public class Workshop : NetworkBehaviour, IGridEntity
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
-    public virtual void SetPosition(int posX, int posY)
+    public GridManager DEBUG_GridManager;
+
+    [ContextMenu("Set to right Position")]
+    public void DEBUG_SetToRightPosition()
     {
+        SetPosition(positionX, positionY);
     }
 
-    public virtual void Activate()
+    public virtual void SetPosition(int posX, int posY)
     {
-        associatedMiniGame.AssociatedWorkshopGetActivated();
+        positionX = posX;
+        positionY = posY;
+        
+        if (posX == -1 && posY == -1)
+        {
+            Debug.Log("You removed this workshop from grid!");
+            workshopObject.position = Vector3.up * 100; // Pas propre mais pour l'instant c'est ok
+            currentTile = null;
+            return;
+        }
+
+        currentTile = DEBUG_GridManager.GetTile(posX, posY);
+        if (currentTile.transform == null)
+        {
+            Debug.LogWarning(
+                $"The workshop {name} is attached to a tile without any Transform. That might cause an error.");
+            return;
+        }
+
+        workshopObject.position = currentTile.transform.position + workshopObjectOffset;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ActivateServerRpc()
+    {
+        Activate();
+    }
+
+    protected virtual void Activate()
+    {
+        if (!NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogError("This should not be called on client!");
+        }
+
         SetActiveServerRpc(true);
+        associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
+        GetActivatedClientRpc();
+    }
+
+    [ClientRpc]
+    private void GetActivatedClientRpc()
+    {
         activationEvent?.Invoke();
     }
 
-    public virtual void Deactivate(bool victory)
+    [ServerRpc(RequireOwnership = false)]
+    public void DeactivateServerRpc(bool victory)
     {
-        associatedMiniGame.AssociatedWorkshopGetDeactivated();
+        Deactivate(victory);
+    }
+
+    protected virtual void Deactivate(bool victory)
+    {
+        if (!NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogError("This should not be called on client!");
+        }
+
+        associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
         SetOccupiedServerRpc(false);
         if (victory)
         {
             SetActiveServerRpc(false);
-            deactivationEvent?.Invoke();
+            GetDeactivatedClientRpc();
+            if (type == WorkshopType.Temporary)
+            {
+                RemoveWorkshopFromGridClientRpc();
+            }
         }
+    }
+
+    [ClientRpc]
+    private void GetDeactivatedClientRpc()
+    {
+        deactivationEvent?.Invoke(); // Todo - this is not sync on network! Must be fixed
     }
 
     #region Network
@@ -94,6 +164,18 @@ public class Workshop : NetworkBehaviour, IGridEntity
     protected void SetActiveServerRpc(bool active)
     {
         isActive.Value = active;
+    }
+
+    [ClientRpc]
+    private void RemoveWorkshopFromGridClientRpc()
+    {
+        RemoveWorkshopFromGrid();
+    }
+
+    protected virtual void RemoveWorkshopFromGrid()
+    {
+        currentTile.SetTile(null, currentTile.GetFloor());
+        SetPosition(-1, -1);
     }
 
     private void OnSetOccupied(bool previous, bool current)

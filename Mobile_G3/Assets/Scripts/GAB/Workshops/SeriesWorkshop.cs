@@ -47,16 +47,16 @@ public class SeriesWorkshop : Workshop
         currentMiniGameIndexSafe = currentMiniGameIndex.Value;
     }
 
-    public override void Activate()
+    protected override void Activate()
     {
         base.Activate();
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
         activationEvents[index]?.Invoke();
     }
 
-    public override void Deactivate(bool victory)
+    protected override void Deactivate(bool victory)
     {
-        associatedMiniGame.AssociatedWorkshopGetDeactivated();
+        associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
 
         if (!victory)
         {

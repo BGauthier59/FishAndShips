@@ -53,16 +53,17 @@ public abstract class MiniGame : NetworkBehaviour
 
     public abstract void OnLeaveMiniGame(); // Must be called when leave button is clicked
 
-    public virtual void AssociatedWorkshopGetActivated()
+    public virtual void AssociatedWorkshopGetActivatedHostSide()
     {
+        if (!NetworkManager.Singleton.IsHost) Debug.LogError("Host only should call this method!");
     }
 
-    public virtual void AssociatedWorkshopGetDeactivated()
+    public virtual void AssociatedWorkshopGetDeactivatedHostSide()
     {
+        if (!NetworkManager.Singleton.IsHost) Debug.LogError("Host only should call this method!");
     }
 
     public virtual void TransferDataFromWorkshopWhenMiniGameStarts(Workshop workshop)
     {
-        
     }
 }

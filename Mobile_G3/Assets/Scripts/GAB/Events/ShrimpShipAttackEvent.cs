@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,6 +10,16 @@ using Random = UnityEngine.Random;
 public class ShrimpShipAttackEvent : RandomEvent
 {
     #region Variables
+
+    #region Ship Behaviour
+
+    [SerializeField] private PosRot cameraPos;
+    [SerializeField] private int totalLife;
+    private int currentLife;
+
+    #endregion
+
+    #region Ship Displacement
 
     [SerializeField] private float moveDuration;
 
@@ -28,6 +39,10 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     [SerializeField] private Transform shrimpShip;
 
+    #endregion
+
+    #region Fire Management
+
     [SerializeField] private float baseFireCooldownDuration;
     [SerializeField] private float randomFireCooldownDurationGap;
     private float fireCooldownTimer;
@@ -39,20 +54,22 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private Transform bullet;
     [SerializeField] private float controlPoint1Height, controlPoint2Height;
 
-    [SerializeField] private PosRot cameraPos;
+    #endregion
 
-    [SerializeField] private int totalLife;
-    private int currentLife;
+    #region Shrimps Management
 
     [SerializeField] private float baseShrimpSpawnCooldownDuration;
     [SerializeField] private float randomShrimpSpawnCooldownDurationGap;
     private float currentShrimpSpawnCooldownDuration;
     private float currentShrimpSpawnCooldownTimer;
     private bool isSpawningShrimp;
-    [SerializeField] private int maxShrimpInstantiatedCount;
 
-    private int currentShrimpInstantiatedCount;
-    // Todo - stocker les crevettes instantiées (Workshop) pour ne pas dépasser max count
+    [SerializeField] private Transform spawnShrimpOrigin;
+    [SerializeField] private float spawnDuration;
+    [SerializeField] private Transform spawningShrimp;
+    [SerializeField] private Transform initShrimpParent;
+    
+    #endregion
 
     public TMP_Text DEBUG_ShipLife;
 
@@ -62,8 +79,6 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     public override bool CheckConditions()
     {
-        Debug.Log(ShipManager.instance.IsUnderAttack());
-        Debug.Log(EventsManager.instance.IsShrimpShipCooldownOver());
         // Can't run if ship is under attack
         if (ShipManager.instance.IsUnderAttack()) return false;
 
@@ -91,9 +106,9 @@ public class ShrimpShipAttackEvent : RandomEvent
         //shipPosition.Value = point1.position;
         currentPoint = point1;
         currentLife = totalLife;
-        currentShrimpInstantiatedCount = 0;
         SetNewStationaryDuration();
         SetNewFireCooldownDuration();
+        SetNewShrimpSpawnCooldownDuration();
 
         // for test only
         DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
@@ -245,7 +260,6 @@ public class ShrimpShipAttackEvent : RandomEvent
         else fireCooldownTimer += Time.deltaTime;
     }
 
-    [ContextMenu("Fire")]
     private async void Fire()
     {
         isFiring = true;
@@ -268,6 +282,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         FireFeedbackClientRpc(p1, p2, p3, p4);
 
         await Task.Delay((int) (fireAnimationDuration * 1000));
+
+        // Todo - Spawn workshop here
 
         SetNewFireCooldownDuration();
     }
@@ -312,7 +328,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     private void CheckShrimpSpawnTimer()
     {
         if (isSpawningShrimp) return;
-        
+
         if (currentShrimpSpawnCooldownTimer > currentShrimpSpawnCooldownDuration)
         {
             TrySpawnShrimpWorkshop();
@@ -320,23 +336,76 @@ public class ShrimpShipAttackEvent : RandomEvent
         else currentShrimpSpawnCooldownTimer += Time.deltaTime;
     }
 
-    private void TrySpawnShrimpWorkshop()
+    private async void TrySpawnShrimpWorkshop()
     {
-        isSpawningShrimp = true;
-        
-        // Todo - Check conditions
-
-        if (currentShrimpInstantiatedCount >= maxShrimpInstantiatedCount)
+        if (!EventsManager.instance.CanInstantiateShrimpWorkshop())
         {
             Debug.Log("Can't instantiate more shrimps.");
+            SetNewShrimpSpawnCooldownDuration();
+            return;
+        }
+
+        Tile targetedTile = GetAvailableTile();
+        if (targetedTile == null)
+        {
+            Debug.Log("Couldn't spawn shrimp");
+            SetNewShrimpSpawnCooldownDuration();
             return;
         }
         
-        // Get available tile
+        EventsManager.instance.AddShrimp();
+        int? index = EventsManager.instance.GetShrimpWorkshopIndex();
+        if (!index.HasValue)
+        {
+            Debug.LogError("Should not happen. There's no workshop available but still tried to instantiate one.");
+            return;
+        }
+        Debug.Log($"index is {index}");
+        isSpawningShrimp = true;
+
+        Vector3 p1, p2, p3, p4;
+        p1 = spawnShrimpOrigin.position;
+        p2 = p1 + Vector3.up * 1;
+        p4 = targetedTile.transform.position;
+        p3 = p4 + Vector3.up * 1;
+
+        int2 coord = targetedTile.GetTilePos();
+        SpawnShrimpClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
+
+        await Task.Delay((int) (spawnDuration * 1000));
         
-        // Setup animation
-        
-        // Instantiate on every client + feedbacks!
+        SetNewShrimpSpawnCooldownDuration();
+    }
+
+    [ClientRpc]
+    private void SpawnShrimpClientRpc(Vector3 p1, Vector3 p2, Vector3 p3, Vector4 p4, int coordX, int coordY, int index)
+    {
+        SpawnShrimp(p1, p2, p3, p4, coordX, coordY, index);
+    }
+
+    private async void SpawnShrimp(Vector3 p1, Vector3 p2, Vector3 p3, Vector4 p4, int coordX, int coordY, int index)
+    {
+        spawningShrimp.position = p1;
+        spawningShrimp.SetParent(null);
+        spawningShrimp.gameObject.SetActive(true);
+
+        var timer = 0f;
+        while (timer < spawnDuration)
+        {
+            await Task.Yield();
+            timer += Time.deltaTime;
+            spawningShrimp.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / spawnDuration);
+        }
+
+        spawningShrimp.gameObject.SetActive(false);
+        spawningShrimp.SetParent(initShrimpParent);
+
+        Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
+
+        ShrimpWorkshop shrimpWorkshop = EventsManager.instance.GetShrimpWorkshop(index);
+        targetedTile.SetTile(shrimpWorkshop, targetedTile.GetFloor());
+        shrimpWorkshop.SetPosition(coordX, coordY);
+        if (Unity.Netcode.NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
     }
 
     private Tile GetAvailableTile()

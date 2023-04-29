@@ -24,8 +24,9 @@ public class MiniGame_Fire : MiniGame
         StartExecutingMiniGame();
     }
     
-    public override void AssociatedWorkshopGetActivated()
+    public override void AssociatedWorkshopGetActivatedHostSide()
     {
+        base.AssociatedWorkshopGetActivatedHostSide();
         // Todo - Boat takes damages
     }
     

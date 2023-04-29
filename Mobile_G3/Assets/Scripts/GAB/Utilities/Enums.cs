@@ -36,3 +36,8 @@ public enum BoatSide
 {
     Deck, Hold
 }
+
+public enum WorkshopType
+{
+    Permanent, Temporary
+}
