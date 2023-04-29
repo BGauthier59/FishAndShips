@@ -121,12 +121,12 @@ public class Workshop : NetworkBehaviour, IGridEntity
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void DeactivateServerRpc(bool victory)
+    public void DeactivateServerRpc(bool victory, ulong playerId = 5)
     {
-        Deactivate(victory);
+        Deactivate(victory, playerId);
     }
 
-    protected virtual void Deactivate(bool victory)
+    protected virtual void Deactivate(bool victory, ulong playerId = 5)
     {
         if (!NetworkManager.Singleton.IsHost)
         {

@@ -97,7 +97,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         var workshopToDeactivate =
             currentWorkshop; // Must set currentWorkshop to null for series workshop before deactivation
         currentWorkshop = null;
-        workshopToDeactivate.DeactivateServerRpc(victory);
+        workshopToDeactivate.DeactivateServerRpc(victory, NetworkManager.Singleton.LocalClientId);
     }
 
     #endregion

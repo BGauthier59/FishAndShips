@@ -54,7 +54,7 @@ public class SeriesWorkshop : Workshop
         activationEvents[index]?.Invoke();
     }
 
-    protected override void Deactivate(bool victory)
+    protected override void Deactivate(bool victory, ulong playerId = 5)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
 
@@ -68,12 +68,10 @@ public class SeriesWorkshop : Workshop
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
         deactivationEvents[index]?.Invoke();
 
-        currentMiniGameIndexSafe++;
-        SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
+        currentMiniGameIndex.Value++;
         if (currentMiniGameIndexSafe == nextMiniGames.Length)
         {
-            currentMiniGameIndexSafe = -1;
-            SetMiniGameIndexServerRpc(-1);
+            currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
             Activate();
@@ -81,13 +79,21 @@ public class SeriesWorkshop : Workshop
         }
 
         Activate();
-        WorkshopManager.instance.StartWorkshopInteraction(this);
+        ClientRpcParams parameters = new ClientRpcParams()
+        {
+            Send = new ClientRpcSendParams()
+            {
+                TargetClientIds = new ulong[] {playerId}
+            }
+        };
+        InitiateWorkshopInteractionClientRpc(currentMiniGameIndex.Value, parameters);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetMiniGameIndexServerRpc(int index)
+    [ClientRpc]
+    private void InitiateWorkshopInteractionClientRpc(int newMiniGameIndex, ClientRpcParams parameters)
     {
-        currentMiniGameIndex.Value = index;
+        currentMiniGameIndexSafe++;
+        WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
     public override InventoryObject? TryGetWorkshopRequireItem()
