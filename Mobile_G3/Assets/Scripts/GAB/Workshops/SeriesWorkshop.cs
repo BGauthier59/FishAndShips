@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SeriesWorkshop : Workshop
 {
@@ -15,6 +16,14 @@ public class SeriesWorkshop : Workshop
 
     [SerializeField] [Range(0, 3)] [Tooltip("0 is top left, 1 is top right, 2 is bottom left, 3 is bottom right")]
     private byte cannonIndex;
+
+    [Tooltip(
+        "WARNING! Index 0 is associatedMiniGame. Otherwise follows list indices. Activation events is for every mini-games")]
+    [SerializeField]
+    private UnityEvent[] activationEvents;
+
+    [Tooltip("Same as for activation events tooltip")] [SerializeField]
+    private UnityEvent[] deactivationEvents;
 
     public override void Start()
     {
@@ -38,6 +47,13 @@ public class SeriesWorkshop : Workshop
         currentMiniGameIndexSafe = currentMiniGameIndex.Value;
     }
 
+    public override void Activate()
+    {
+        base.Activate();
+        var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
+        activationEvents[index]?.Invoke();
+    }
+
     public override void Deactivate(bool victory)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivated();
@@ -49,6 +65,8 @@ public class SeriesWorkshop : Workshop
         }
 
         deactivationEvent?.Invoke();
+        var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
+        deactivationEvents[index]?.Invoke();
 
         currentMiniGameIndexSafe++;
         SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
@@ -76,11 +94,7 @@ public class SeriesWorkshop : Workshop
     {
         if (!occupationRequireItem) return null;
         if (currentMiniGameIndexSafe == -1) return requiredItem;
-        if (requiredItems.Length == 0)
-        {
-            Debug.LogWarning("No item in required items list!");
-            return null;
-        }
+        if (requiredItems.Length == 0) return null;
 
         return requiredItems[currentMiniGameIndexSafe];
     }

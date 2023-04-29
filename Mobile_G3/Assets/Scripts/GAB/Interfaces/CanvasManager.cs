@@ -19,7 +19,6 @@ public class CanvasManager : MonoSingleton<CanvasManager>
 
     public void DisplayCanvas(params CanvasType[] canvasTypes)
     {
-        Debug.Log("display new canvas");
         var datas = new List<CanvasData?>();
 
         CanvasData? data;

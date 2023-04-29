@@ -26,7 +26,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [Header("Feedbacks")]
     [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
-
+    
     public virtual void Start()
     {
         isOccupied.OnValueChanged += OnSetOccupied;
@@ -87,25 +87,23 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [ServerRpc(RequireOwnership = false)]
     public void SetOccupiedServerRpc(bool occupied)
     {
-        Debug.Log("RPC set occupied Sent");
         isOccupied.Value = occupied;
     }
 
     [ServerRpc(RequireOwnership = false)]
     protected void SetActiveServerRpc(bool active)
     {
-        Debug.Log("RPC set active Sent");
         isActive.Value = active;
     }
 
     private void OnSetOccupied(bool previous, bool current)
     {
-        Debug.Log($"{name}'s occupation state has been set to {current} (was {previous})");
+        //Debug.Log($"{name}'s occupation state has been set to {current} (was {previous})");
     }
 
     private void OnSetActivated(bool previous, bool current)
     {
-        Debug.Log($"{name}'s activation state has been set to {current} (was {previous})");
+        //Debug.Log($"{name}'s activation state has been set to {current} (was {previous})");
     }
 
     #endregion

@@ -11,7 +11,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     [SerializeField] private Slider boatLifeSlider;
     [SerializeField] private TMP_Text starText;
     [SerializeField] private Image itemImage;
-    [SerializeField] private Sprite planckIcon, bulletIcon;
+    [SerializeField] private Sprite plankIcon, bulletIcon;
     [SerializeField] private TMP_Text debugItemText;
     private (string minutes, string seconds) currentTimer;
     
@@ -52,7 +52,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
         itemImage.sprite = item switch
         {
             InventoryObject.None => null,
-            InventoryObject.Plank => planckIcon,
+            InventoryObject.Plank => plankIcon,
             InventoryObject.CannonBall => bulletIcon,
             _ => null
         };

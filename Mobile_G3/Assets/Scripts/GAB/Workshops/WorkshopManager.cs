@@ -73,7 +73,6 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public void ExitMiniGame(bool victory)
     {
-        Debug.Log($"Exited with {victory}");
         miniGameEnvironmentCamera.gameObject.SetActive(false);
         currentMiniGame = null;
         EndWorkshopInteraction(victory);
