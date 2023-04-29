@@ -7,11 +7,12 @@ public class StormEvent : RandomEvent
     public override void StartEvent()
     {
         base.StartEvent();
+        Debug.Log("You entered a stormy area!");
     }
     
     public override bool CheckConditions()
     {
-
+        // This is not fully random, then no need to check any condition
         return true;
     }
 
@@ -20,8 +21,9 @@ public class StormEvent : RandomEvent
         
     }
     
-    protected override void EndEvent()
+    public override void EndEvent()
     {
         base.EndEvent();
+        Debug.Log("You exited a stormy area!");
     }
 }

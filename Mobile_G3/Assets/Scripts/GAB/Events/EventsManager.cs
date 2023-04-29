@@ -1,46 +1,52 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EventsManager : MonoSingleton<EventsManager>
 {
-    // La gestion des events est gérée par le Host
-
-    // EventsManager va régulièrement check s'il peut créer un nouvel event, et le faire si besoin
-
-    // Il va check les events qu'il peut créer (avec check de CheckConditions) et les stocker dans une liste, puis en choisir un aléatoirement
-
-    #region Shrimp ships main variables
-
     [SerializeField] private float durationBetweenRandomEventGenerationTry;
     private float timerBetweenRandomEventGenerationTry;
+
+    #region Shrimp ships main variables
 
     [SerializeField] private float shrimpShipAttackActivationDuration;
     [SerializeField] private float durationBetweenShrimpShipAttacks;
     private bool isShrimpShipCooldownOver;
 
     private float timerBetweenShrimpShipAttacks;
-    private float currentDistanceBetweenShrimpShipAttacks;
-    
+
+    [SerializeField] private float minDistanceBetweenShrimpShipAttacks;
+    private float minSqrDistanceBetweenShrimpShipAttacks;
+    private float currentSqrDistanceBetweenShrimpShipAttacks;
+
     [SerializeField] private int maxShrimpInstantiatedCount;
     private int currentShrimpCount;
 
     [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
+
+    #endregion
+
+    #region Storms
+
+    public static Action<StormEvent> OnEnterStorm;
     
     #endregion
 
-
-    [SerializeField] private RandomEvent[] allEvents;
+    [SerializeField] private RandomEvent[] allRandomEvents;
+    [SerializeField] private StormEvent[] stormEvents;
     [SerializeField] private List<RandomEvent> currentEvent = new List<RandomEvent>();
     private bool isRunning;
-
-    public RandomEvent DEBUG_selectedEvent;
-
+    
     public void StartGameLoop()
     {
         if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
+        minSqrDistanceBetweenShrimpShipAttacks =
+            minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
+        OnEnterStorm = StartNewEvent;
         InitiateEventsManager();
     }
 
@@ -60,31 +66,6 @@ public class EventsManager : MonoSingleton<EventsManager>
     public void EndEvent(RandomEvent randomEvent)
     {
         currentEvent.Remove(randomEvent);
-    }
-
-    [ContextMenu("Start current event")]
-    public void DEBUG_StartEvent()
-    {
-        if (currentEvent == null) return;
-
-        if (DEBUG_selectedEvent.CheckConditions())
-        {
-            isRunning = true;
-            StartNewEvent(DEBUG_selectedEvent);
-        }
-        else Debug.LogWarning("Couldn't start selected event.");
-    }
-
-    [ContextMenu("Start Running")]
-    public void DEBUG_StartRunning()
-    {
-        isRunning = true;
-    }
-
-    [ContextMenu("Stop Running")]
-    public void DEBUG_StopRunning()
-    {
-        isRunning = false;
     }
 
     public void UpdateGameLoop()
@@ -125,6 +106,21 @@ public class EventsManager : MonoSingleton<EventsManager>
         currentShrimpCount--;
     }
 
+    public void UpdateDistanceFromLastAttack(float sqrDelta)
+    {
+        currentSqrDistanceBetweenShrimpShipAttacks += sqrDelta;
+    }
+
+    public void ResetDistanceFromLastAttack()
+    {
+        currentSqrDistanceBetweenShrimpShipAttacks = 0;
+    }
+
+    public bool IsFarEnoughFromLastAttack()
+    {
+        return currentSqrDistanceBetweenShrimpShipAttacks > minSqrDistanceBetweenShrimpShipAttacks;
+    }
+
     public int? GetShrimpWorkshopIndex()
     {
         for (int i = 0; i < shrimpWorkshops.Length; i++)
@@ -139,8 +135,17 @@ public class EventsManager : MonoSingleton<EventsManager>
     public ShrimpWorkshop GetShrimpWorkshop(int index)
     {
         // WARNING! The index must be the one sent by Host as currentShrimpCount is not modified on clients
-        
+
         return shrimpWorkshops[index];
+    }
+
+    #endregion
+
+    #region Storm Macro-Management
+
+    public StormEvent GetStormEvent(byte index)
+    {
+        return stormEvents[index];
     }
 
     #endregion
@@ -152,7 +157,7 @@ public class EventsManager : MonoSingleton<EventsManager>
         if (timerBetweenRandomEventGenerationTry > durationBetweenRandomEventGenerationTry)
         {
             timerBetweenRandomEventGenerationTry = 0;
-            tempEvent = allEvents[Random.Range(0, allEvents.Length)];
+            tempEvent = allRandomEvents[Random.Range(0, allRandomEvents.Length)];
             if (tempEvent.CheckConditions()) StartNewEvent(tempEvent);
         }
         else timerBetweenRandomEventGenerationTry += Time.deltaTime;

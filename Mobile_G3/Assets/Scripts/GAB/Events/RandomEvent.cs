@@ -13,7 +13,7 @@ public abstract class RandomEvent : NetworkBehaviour
 
     public abstract void ExecuteEvent();
 
-    protected virtual void EndEvent()
+    public virtual void EndEvent()
     {
         isRunning = false;
         EventsManager.instance.EndEvent(this);

@@ -23,7 +23,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     [SerializeField] private LayerMask boatCollisionLayerMask;
 
-    //private bool isInDangerousArea;
     private NetworkVariable<bool> isInDangerousArea = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
@@ -44,9 +43,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     [SerializeField]
     private Transform leftTopCannonOrigin, rightTopCannonOrigin, leftBottomCannonOrigin, rightBottomCannonOrigin;
+
     [SerializeField] private LayerMask shrimpShipLayer;
     private NetworkVariable<bool> underAttack = new NetworkVariable<bool>();
-    
+
     [Header("Feedbacks")] [SerializeField] private Animation collisionWarningAnim;
 
     #region Ship Behaviour
@@ -77,6 +77,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     Vector3 pos;
+    private Vector3 previousPos;
 
     private void MoveOnMap()
     {
@@ -110,7 +111,9 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             boatTransformOnMap.localPosition = pos;
         }
 
+        previousPos = mapPosition;
         mapPosition = boatTransformOnMap.localPosition;
+        EventsManager.instance.UpdateDistanceFromLastAttack((previousPos - mapPosition).sqrMagnitude);
     }
 
     private float previous;
@@ -177,7 +180,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void GetStar(byte index)
     {
         // Only called on Host as Physics is only checked on Host
-        
+
         Debug.Log("You got a star!");
 
         MiniGame_Map.OnGetStar?.Invoke(index);
@@ -206,6 +209,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             Debug.LogWarning("Only host should manage shrimp shrimp attack!");
             return;
         }
+
         this.underAttack.Value = underAttack;
     }
 
@@ -317,7 +321,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void FireServerRpc(byte index)
     {
         Vector3 origin = index switch
-
         {
             0 => leftTopCannonOrigin.position,
             1 => rightTopCannonOrigin.position,
@@ -325,7 +328,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             3 => rightBottomCannonOrigin.position,
             _ => throw new ArgumentOutOfRangeException(nameof(index), index, null)
         };
-        
+
         FireClientRpc(origin);
 
         Vector3 direction = index switch
@@ -340,9 +343,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             var shrimpShipEvent = hit.transform.parent.parent.GetComponent<ShrimpShipAttackEvent>();
             if (!shrimpShipEvent)
             {
-                Debug.LogWarning("Shrimp ship event script was not found. Searched on parent's parent of collision box.");
+                Debug.LogError(
+                    "Shrimp ship event script was not found. Searched on parent's parent of collision box.");
                 return;
             }
+
             shrimpShipEvent.GetHit();
         }
     }
@@ -351,8 +356,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private void FireClientRpc(Vector3 feedbackPos)
     {
         // Todo - shoot feedback
-        
     }
-    
+
     #endregion
 }

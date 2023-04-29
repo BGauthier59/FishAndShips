@@ -68,7 +68,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private float spawnDuration;
     [SerializeField] private Transform spawningShrimp;
     [SerializeField] private Transform initShrimpParent;
-    
+
     #endregion
 
     public TMP_Text DEBUG_ShipLife;
@@ -79,25 +79,15 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     public override bool CheckConditions()
     {
-        // Can't run if ship is under attack
-        if (ShipManager.instance.IsUnderAttack()) return false;
-
-        // Is cooldown over
-        if (!EventsManager.instance.IsShrimpShipCooldownOver()) return false;
-
-        // Todo - Check distance between attacks
+        if (ShipManager.instance.IsUnderAttack() ||
+            !EventsManager.instance.IsShrimpShipCooldownOver() ||
+            !EventsManager.instance.IsFarEnoughFromLastAttack()) return false;
 
         return true;
     }
 
-    private void Start()
-    {
-        //shipPosition.OnValueChanged += SyncCurrentShipPos;
-    }
-
     public override void StartEvent()
     {
-        // Todo - Play feedback to every client, but do logic on host only!
         StartEventFeedbackClientRpc();
 
         // Logic for Host
@@ -129,19 +119,19 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         if (!NetworkManager.Singleton.IsHost) return;
 
-        // Instantie workshop : crevettes
         CheckStationaryTimer();
         CheckShrimpSpawnTimer();
         CheckFireTimer();
     }
 
-    protected override void EndEvent()
+    public override void EndEvent()
     {
-        // Todo - Play feedback to every client, but do logic on host only!
-        base.EndEvent();
         EndEventFeedbackClientRpc();
+        base.EndEvent();
+
         EventsManager.instance.StartShrimpShipCooldown();
         ShipManager.instance.SetUnderAttack(false);
+        EventsManager.instance.ResetDistanceFromLastAttack();
     }
 
     [ClientRpc]
@@ -340,7 +330,6 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         if (!EventsManager.instance.CanInstantiateShrimpWorkshop())
         {
-            Debug.Log("Can't instantiate more shrimps.");
             SetNewShrimpSpawnCooldownDuration();
             return;
         }
@@ -352,7 +341,7 @@ public class ShrimpShipAttackEvent : RandomEvent
             SetNewShrimpSpawnCooldownDuration();
             return;
         }
-        
+
         EventsManager.instance.AddShrimp();
         int? index = EventsManager.instance.GetShrimpWorkshopIndex();
         if (!index.HasValue)
@@ -360,7 +349,7 @@ public class ShrimpShipAttackEvent : RandomEvent
             Debug.LogError("Should not happen. There's no workshop available but still tried to instantiate one.");
             return;
         }
-        Debug.Log($"index is {index}");
+
         isSpawningShrimp = true;
 
         Vector3 p1, p2, p3, p4;
@@ -373,7 +362,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         SpawnShrimpClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
 
         await Task.Delay((int) (spawnDuration * 1000));
-        
+
         SetNewShrimpSpawnCooldownDuration();
     }
 
@@ -440,6 +429,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     public void GetHit()
     {
         currentLife--;
+        GetHitFeedbackClientRpc();
         DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
 
         if (currentLife <= 0)
@@ -450,6 +440,12 @@ public class ShrimpShipAttackEvent : RandomEvent
         {
             if (!isMovingToNextPoint) MoveToOtherPoint();
         }
+    }
+
+    [ClientRpc]
+    private void GetHitFeedbackClientRpc()
+    {
+        // Todo - Implement feedback
     }
 
     #endregion

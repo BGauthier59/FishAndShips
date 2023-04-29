@@ -34,5 +34,19 @@ public class ShipPhysics : MonoBehaviour
         {
             GameManager.onGameEnds?.Invoke(true);
         }
+        else if (other.CompareTag("Storm"))
+        {
+            var storm = other.GetComponent<Storm>();
+            EventsManager.OnEnterStorm?.Invoke(EventsManager.instance.GetStormEvent(storm.GetIndex()));
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Storm"))
+        {
+            var storm = other.GetComponent<Storm>();
+            EventsManager.instance.GetStormEvent(storm.GetIndex()).EndEvent();
+        }
     }
 }

@@ -101,12 +101,10 @@ MonoBehaviour:
   controlPoint2Height: 8
   baseShrimpSpawnCooldownDuration: 10
   randomShrimpSpawnCooldownDurationGap: 2
-  maxShrimpInstantiatedCount: 1
   spawnShrimpOrigin: {fileID: 3973478969836654109}
   spawnDuration: 1
   spawningShrimp: {fileID: 6281048961962942027}
   initShrimpParent: {fileID: 5536992924798748208}
-  shrimpWorkshop: {fileID: 0}
   DEBUG_ShipLife: {fileID: 5681155279109986987}
 --- !u!114 &6126979554570275309
 MonoBehaviour:
@@ -256,12 +254,10 @@ MonoBehaviour:
   controlPoint2Height: 8
   baseShrimpSpawnCooldownDuration: 10
   randomShrimpSpawnCooldownDurationGap: 2
-  maxShrimpInstantiatedCount: 1
   spawnShrimpOrigin: {fileID: 7980542952446021323}
   spawnDuration: 1
   spawningShrimp: {fileID: 1067057733472132765}
   initShrimpParent: {fileID: 1527685785860998886}
-  shrimpWorkshop: {fileID: 0}
   DEBUG_ShipLife: {fileID: 1671876948675795581}
 --- !u!114 &4688909802771003816
 MonoBehaviour:
@@ -372,6 +368,7 @@ Transform:
   m_Children:
   - {fileID: 4853892707592759009}
   - {fileID: 4348833082144485700}
+  - {fileID: 2444935952667838359}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -390,9 +387,17 @@ MonoBehaviour:
   durationBetweenRandomEventGenerationTry: 3
   shrimpShipAttackActivationDuration: 2
   durationBetweenShrimpShipAttacks: 10
-  allEvents:
+  minDistanceBetweenShrimpShipAttacks: 0
+  maxShrimpInstantiatedCount: 3
+  shrimpWorkshops:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  allRandomEvents:
   - {fileID: 4505960945226804444}
   - {fileID: 913933736702132406}
+  stormEvents:
+  - {fileID: 1062869571861247694}
   currentEvent: []
   DEBUG_selectedEvent: {fileID: 4505960945226804444}
 --- !u!1 &6160094568212708374
@@ -426,6 +431,51 @@ Transform:
   m_Father: {fileID: 4853892707592759009}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8101551989934907078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2444935952667838359}
+  - component: {fileID: 1062869571861247694}
+  m_Layer: 0
+  m_Name: StormEvent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2444935952667838359
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8101551989934907078}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5536992925130778777}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1062869571861247694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8101551989934907078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fba3c8929fbc5148bbc5f1ba197583b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isRunning: 0
 --- !u!1001 &1786258206037139674
 PrefabInstance:
   m_ObjectHideFlags: 0
