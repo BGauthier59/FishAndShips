@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-public class GridEditor : EditorWindow
+public class GridEditorTest : EditorWindow
 {
     public string gridName = "Grid Manager";
     public GameObject prefab;
@@ -71,10 +71,10 @@ public class GridEditor : EditorWindow
     [SerializeField] ColorGridElement _colorGridElement = new ColorGridElement();
     private bool showOffsetPositionHandles;
 
-    [MenuItem("Tools/Level Design/Grid Editor")]
+    [MenuItem("Tools/R&D/Grid Editor R&D")]
     public static void ShowWindow()
     {
-        GridEditor window = (GridEditor)EditorWindow.GetWindow(typeof(GridEditor));
+        GridEditorTest window = (GridEditorTest)EditorWindow.GetWindow(typeof(GridEditorTest));
         window.Show();
     }
     
@@ -214,6 +214,53 @@ public class GridEditor : EditorWindow
             }
         }
         
+        gridSize = EditorGUILayout.IntField("Grid Size", gridSize);
+
+        if (gridSize < 0) {
+            gridSize = 0;
+        }
+
+        if (foldoutStates == null || foldoutStates.Length != gridSize) {
+            foldoutStates = new bool[gridSize];
+        }
+
+        if (grids == null || grids.Length != gridSize) {
+            grids = new Grid[gridSize];
+        }
+
+        float yPos = 40; // Start the first foldout below the Grid Size field
+
+        for (int i = 0; i < gridSize; i++) {
+            foldoutStates[i] = EditorGUILayout.Foldout(foldoutStates[i], "Grid " + i);
+
+            if (foldoutStates[i]) {
+                EditorGUI.indentLevel++;
+
+                // Check if a Grid object exists for this foldout
+                if (grids[i] == null) {
+                    grids[i] = new Grid();
+                }
+                
+                grids[i].name = EditorGUILayout.TextField("Insert Name", grids[i].name);
+                grids[i].x = EditorGUILayout.IntField("X", grids[i].x);
+                grids[i].y = EditorGUILayout.IntField("Y", grids[i].y);
+                grids[i].emptyFolder = (GameObject)EditorGUILayout.ObjectField(" Object to Instantiate ", grids[i].emptyFolder, typeof(GameObject), false);
+                
+
+                if (GUILayout.Button("Generate Grid"))
+                {
+                    CreateGridForLayer();
+                }
+
+                yPos += 100; // Offset the position of the next foldout
+
+                EditorGUI.indentLevel--;
+            }
+            else {
+                yPos += 20; // Offset the position of the next foldout
+            }
+        }
+
         UpdateListTileManage();
     }
 
@@ -240,7 +287,78 @@ public class GridEditor : EditorWindow
         PositionGridObject(gridObject);
         EditorUtility.SetDirty(gridObject);
     }
+
+    private void CreateGridForLayer()
+    {
+        GameObject gridObject = new GameObject("Grid Manager");
+        gridObject.AddComponent<GridManager>();
+        _gridManager.grid = new List<Tile>(0);
+        _gridManager.grid = new List<Tile>(0);
+        for (int i = 0; i < gridSize; i++)
+        {
+            CreateLayer(gridObject,gridSize - 1);
+        }
+    }
+
+    private void CreateLayer(GameObject parent,int id)
+    {
+        grids[id].x = rows;
+        grids[id].y = cols;
+        PositionGridObjectLayer(parent, grids[id].emptyFolder, grids[id].x, grids[id].y);
+        EditorUtility.SetDirty(grids[id].emptyFolder);
+    }
     
+    private void PositionGridObjectLayer(GameObject parent, GameObject gridObject, int rows, int columns)
+    {
+        Vector3 centerOffset = new Vector3(columns / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
+        Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
+        Vector3 offset = Vector3.zero;
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < cols; col++)
+            {
+                //Create a tile
+                Tile tile = new Tile();
+                tile.name = "Tile " + row + "," + col;
+                Vector3 positionGridObject = new Vector3(col, 0, row) * cellSize - center + offset + offsetGridPosition;
+
+                //Instantiate Prefab
+                _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(gridObject) as GameObject;
+                if (_gridManager.tilePrefab != null)
+                {
+                    
+                    _gridManager.name = "Tile " + row + "," + col;
+                    _gridManager.transform.position = positionGridObject;
+                    _gridManager.transform.rotation = randomRotation
+                        ? Quaternion.Euler(0, Random.Range(-360, 360), 0)
+                        : Quaternion.identity;
+                
+                    //Set the transform
+                    _gridManager.grid.Add(tile);
+                    tile.transform = gridObject.transform;
+
+                    // Increment the offset by the spacing factor
+                    offset += Vector3.right * offsetObjectPositionX;
+                    if (row > 0 && row < rows 
+                        && col > 0 && col < columns)
+                    {
+                        {
+                            //Add Grid Walkable Component
+                            _gridManager.tilePrefab.AddComponent<GridFloorWalkable>();
+                            tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>(); 
+                            _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
+                        }
+                    }
+                }
+                //Place in an empty folder
+                _gridManager.tilePrefab.transform.parent = parent.transform;
+            }
+            // Reset the offset for the next row
+            offset = Vector3.forward * (row + 1) * offsetObjectPositionZ;
+        }
+    }
+
     private void PositionGridObject(GameObject gridObject)
     {
         Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
