@@ -99,7 +99,7 @@ public class GridEditorTest : EditorWindow
         prefab = (GameObject)EditorGUILayout.ObjectField("Prefab", prefab, typeof(GameObject), false);
         offsetObjectPositionX = EditorGUILayout.FloatField("Offset Object Position X", offsetObjectPositionX);
         offsetObjectPositionZ = EditorGUILayout.FloatField("Offset Object Position Z", offsetObjectPositionZ);
-        showGenerateGridParameter = EditorUtils.FoldoutShurikenStyle("Show Grid Parameter", showGenerateGridParameter);
+        showGenerateGridParameter = EditorUtils.FoldoutShurikenStyle( showGenerateGridParameter, "Show Grid Parameter");
         if (showGenerateGridParameter)
         {
             cellSize = EditorGUILayout.FloatField("Cell Size", cellSize);
@@ -122,7 +122,7 @@ public class GridEditorTest : EditorWindow
 
         EditorGUILayout.Space();
 
-        showPreviewEditorSelect = EditorUtils.FoldoutShurikenStyle("Show Preview Editor Parameter", showPreviewEditorSelect);
+        showPreviewEditorSelect = EditorUtils.FoldoutShurikenStyle(showPreviewEditorSelect, "Show Preview Editor Parameter");
         if (showPreviewEditorSelect)
         {
             showPreviewGridPivotHandles = EditorGUILayout.Toggle("Preview Grid Size", showPreviewGridPivotHandles);
@@ -187,10 +187,10 @@ public class GridEditorTest : EditorWindow
 
         EditorGUILayout.Space();
 
-        showOthersParameter = EditorUtils.FoldoutShurikenStyle("Show Other Parameter that Affect the Grid", showOthersParameter);
+        showOthersParameter = EditorUtils.FoldoutShurikenStyle( showOthersParameter, "Show Other Parameter that Affect the Grid");
         if (showOthersParameter)
         {
-            showColorForTyle = EditorUtils.FoldoutShurikenStyle("Show Tyle Color Editor", showColorForTyle);
+            showColorForTyle = EditorUtils.FoldoutShurikenStyle( showColorForTyle , "Show Other Parameter that Affect the Grid");
             if (showColorForTyle)
             {
                 _colorGridElement.colorGridFloorBarrier = EditorGUILayout.ColorField("Color GridFloor Barrier", _colorGridElement.colorGridFloorBarrier);
@@ -201,7 +201,7 @@ public class GridEditorTest : EditorWindow
                 _colorGridElement.GridFloorWalkable = EditorGUILayout.ColorField("Color GridFloor Floor Walkable", _colorGridElement.GridFloorWalkable);
             }
             
-            showOffsetPositionHandles = EditorUtils.FoldoutShurikenStyle("Show Pos Offset For handles", showOffsetPositionHandles);
+            showOffsetPositionHandles = EditorUtils.FoldoutShurikenStyle( showOffsetPositionHandles, "Show Pos Offset For handles");
             if (showOffsetPositionHandles)
             {
                 offsetPrevPosButtonHandles = EditorGUILayout.Vector3Field("Offset Position Handles Button", offsetPrevPosButtonHandles);
