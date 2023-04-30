@@ -3,7 +3,7 @@ using UnityEditor;
 
 public static class EditorUtils
 {
-    public static bool Foldout(string title, bool display)
+    public static bool FoldoutShurikenStyle(bool display, string title)
     {
         var style = new GUIStyle("ShurikenModuleTitle");
         style.font = new GUIStyle(EditorStyles.label).font;
