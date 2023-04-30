@@ -101,7 +101,6 @@ public class MiniGame_Sails : MiniGame
 
     protected override void ExitMiniGame(bool victory)
     {
-        // Todo - Should disconnect other player too
         base.ExitMiniGame(victory);
     }
 

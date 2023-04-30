@@ -92,6 +92,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         // Logic for Host
         base.StartEvent();
+        EventsManager.instance.SetLastAttackPos();
         ShipManager.instance.SetUnderAttack(true);
         //shipPosition.Value = point1.position;
         currentPoint = point1;
@@ -117,8 +118,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     public override void ExecuteEvent()
     {
-        if (!NetworkManager.Singleton.IsHost) return;
-
+        // Host-side only
         CheckStationaryTimer();
         CheckShrimpSpawnTimer();
         CheckFireTimer();

@@ -19,6 +19,7 @@ public class EventsManager : MonoSingleton<EventsManager>
 
     private float timerBetweenShrimpShipAttacks;
 
+    [SerializeField] private Vector3 lastAttackPosition;
     [SerializeField] private float minDistanceBetweenShrimpShipAttacks;
     private float minSqrDistanceBetweenShrimpShipAttacks;
     private float currentSqrDistanceBetweenShrimpShipAttacks;
@@ -33,19 +34,22 @@ public class EventsManager : MonoSingleton<EventsManager>
     #region Storms
 
     public static Action<StormEvent> OnEnterStorm;
-    
+    public ConnectedWorkshop sailsWorkshop;
+
     #endregion
 
     [SerializeField] private RandomEvent[] allRandomEvents;
     [SerializeField] private StormEvent[] stormEvents;
     [SerializeField] private List<RandomEvent> currentEvent = new List<RandomEvent>();
     private bool isRunning;
-    
+
     public void StartGameLoop()
     {
         if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
+        //minSqrDistanceBetweenShrimpShipAttacks = minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
         minSqrDistanceBetweenShrimpShipAttacks =
             minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
+        lastAttackPosition = ShipManager.instance.GetShipPositionOnMap();
         OnEnterStorm = StartNewEvent;
         InitiateEventsManager();
     }
@@ -106,9 +110,9 @@ public class EventsManager : MonoSingleton<EventsManager>
         currentShrimpCount--;
     }
 
-    public void UpdateDistanceFromLastAttack(float sqrDelta)
+    public void SetLastAttackPos()
     {
-        currentSqrDistanceBetweenShrimpShipAttacks += sqrDelta;
+        lastAttackPosition = ShipManager.instance.GetShipPositionOnMap();
     }
 
     public void ResetDistanceFromLastAttack()
@@ -118,7 +122,9 @@ public class EventsManager : MonoSingleton<EventsManager>
 
     public bool IsFarEnoughFromLastAttack()
     {
-        return currentSqrDistanceBetweenShrimpShipAttacks > minSqrDistanceBetweenShrimpShipAttacks;
+        Debug.Log((ShipManager.instance.GetShipPositionOnMap() - lastAttackPosition).sqrMagnitude);
+        return (ShipManager.instance.GetShipPositionOnMap() - lastAttackPosition).sqrMagnitude >
+               minSqrDistanceBetweenShrimpShipAttacks;
     }
 
     public int? GetShrimpWorkshopIndex()

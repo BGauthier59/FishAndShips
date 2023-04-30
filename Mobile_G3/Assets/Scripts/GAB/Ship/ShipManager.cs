@@ -77,8 +77,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     Vector3 pos;
-    private Vector3 previousPos;
-
     private void MoveOnMap()
     {
         boatTransformOnMap.localPosition += boatTransformOnMap.right * (currentBoatSpeed.Value * Time.deltaTime);
@@ -111,9 +109,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             boatTransformOnMap.localPosition = pos;
         }
 
-        previousPos = mapPosition;
         mapPosition = boatTransformOnMap.localPosition;
-        EventsManager.instance.UpdateDistanceFromLastAttack((previousPos - mapPosition).sqrMagnitude);
     }
 
     private float previous;
