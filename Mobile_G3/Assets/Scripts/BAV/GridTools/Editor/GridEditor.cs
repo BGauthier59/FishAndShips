@@ -411,7 +411,14 @@ public class GridEditor : EditorWindow
                 Vector3 positionGridObject = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid;
 
                 //Instantiate Prefab
-                _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                if (prefab != null)
+                {
+                    _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                }
+                else
+                {
+                    _gridManager.tilePrefab = new GameObject();
+                }
                 if (_gridManager.tilePrefab != null)
                 {
                     _gridManager.tilePrefab.name = gridName + " " + row + "," + col;
