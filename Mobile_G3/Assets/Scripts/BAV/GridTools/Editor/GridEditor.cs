@@ -121,8 +121,15 @@ public class GridEditor : EditorWindow
         }
         else
         {
-            EditorGUILayout.LabelField("Grid found!");
-            _listGridManagerTile = _gridManager.grid;
+            if (_gridManager.gameObject.name != gridName)
+            {
+                EditorGUILayout.HelpBox("Find Grid Object in scene but not the same name", MessageType.Error);
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Grid Found, you edit this grid : " + gridName);
+                _listGridManagerTile = _gridManager.grid;
+            }
         }
 
 
@@ -496,10 +503,8 @@ public class GridEditor : EditorWindow
         Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPrevPosButtonHandles.x,
             offsetPrevPositionText.y, _selectedObject.transform.position.z + offsetPrevPosButtonHandles.z);
         Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
-
+        
         DetectComponentOnSelectionObject(_selectedObject, true);
-
-        SwitchColorBaseOnComponent(currentType);
         if (Handles.Button(buttonPos, buttonRot,
                 cellSizeDeck * 0.5f, cellSizeDeck, Handles.RectangleHandleCap))
         {
@@ -792,24 +797,23 @@ public class GridEditor : EditorWindow
             tileSelectedInScene.GetComponent<GridFloorStair>(),
             tileSelectedInScene.GetComponent<GridFloorWalkable>()
         };
-
+        bool foundComponent = false;
         foreach (Component component in components)
         {
-            DetectComponent(component, changeColor);
+            if (component != null)
+            {
+                foundComponent = true;
+                DetectComponent(component, changeColor);
+            }
+        }
+        if (!foundComponent && changeColor)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
         }
     }
 
     public void DetectComponent(Component component, bool switchColor)
     {
-        if (component == null)
-        {
-            if (switchColor)
-            {
-                SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
-            }
-            return;
-        }
-
         switch (component)
         {
             case GridFloorBarrier:
@@ -829,35 +833,40 @@ public class GridEditor : EditorWindow
                 return;
             }
             case GridFloorIce:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorIce);
                 }
                 return;
+            }
             case GridFloorPressurePlate:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorPressurePlate);
                 }
                 return;
+            }
             case GridFloorStair:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorStair);
                 }
                 return;
+            }
             case GridFloorWalkable:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorWalkable);
-
                 }
                 return;
+            }
+            
             default:
-                if (switchColor)
-                {
-                    SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
-                }
+                SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
                 break;
         }
     }
