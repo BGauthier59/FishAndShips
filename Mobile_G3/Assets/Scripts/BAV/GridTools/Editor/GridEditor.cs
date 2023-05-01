@@ -807,7 +807,6 @@ public class GridEditor : EditorWindow
             {
                 SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
             }
-            return;
         }
 
         switch (component)
@@ -829,36 +828,37 @@ public class GridEditor : EditorWindow
                 return;
             }
             case GridFloorIce:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorIce);
                 }
                 return;
+            }
             case GridFloorPressurePlate:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorPressurePlate);
                 }
                 return;
+            }
             case GridFloorStair:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorStair);
                 }
                 return;
+            }
             case GridFloorWalkable:
+            {
                 if (switchColor)
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorWalkable);
-
                 }
                 return;
-            default:
-                if (switchColor)
-                {
-                    SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
-                }
-                break;
+            }
         }
     }
     
