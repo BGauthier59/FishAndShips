@@ -88,7 +88,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     public override void StartEvent()
     {
-        StartEventFeedbackClientRpc();
+        StartShrimpShipEventFeedbackClientRpc();
 
         // Logic for Host
         base.StartEvent();
@@ -106,7 +106,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     }
 
     [ClientRpc]
-    private void StartEventFeedbackClientRpc()
+    private void StartShrimpShipEventFeedbackClientRpc()
     {
         SetYPos();
         shrimpShip.position = point1.position;
@@ -126,7 +126,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     public override void EndEvent()
     {
-        EndEventFeedbackClientRpc();
+        EndShrimpShipEventFeedbackClientRpc();
         base.EndEvent();
 
         EventsManager.instance.StartShrimpShipCooldown();
@@ -135,7 +135,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     }
 
     [ClientRpc]
-    private void EndEventFeedbackClientRpc()
+    private void EndShrimpShipEventFeedbackClientRpc()
     {
         EndEventFeedback();
     }

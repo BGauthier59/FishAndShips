@@ -21,12 +21,18 @@ public class StormEvent : RandomEvent
 
     public override void StartEvent()
     {
-        // Todo - feedback on network
+        StartStormEventFeedbackClientRpc();
 
         // Host-side logic
         base.StartEvent();
         SetNewSailsActivationDuration();
         Debug.Log("You entered a stormy area!");
+    }
+    
+    [ClientRpc]
+    private void StartStormEventFeedbackClientRpc()
+    {
+        // Todo - Implement feedback storm begins
     }
 
     public override bool CheckConditions()
@@ -43,8 +49,17 @@ public class StormEvent : RandomEvent
 
     public override void EndEvent()
     {
+        EndStormEventFeedbackClientRpc();
+        
+        // Host-side logic
         base.EndEvent();
         Debug.Log("You exited a stormy area!");
+    }
+    
+    [ClientRpc]
+    private void EndStormEventFeedbackClientRpc()
+    {
+        // Todo - Implement feedbacks   
     }
 
     #region Sails Management

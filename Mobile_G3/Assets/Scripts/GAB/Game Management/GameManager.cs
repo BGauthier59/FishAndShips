@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
@@ -14,7 +15,7 @@ public class GameManager : MonoSingleton<GameManager>
     private CanvasManager canvasManager;
     private TimerManager timerManager;
     private CameraManager cameraManager;
-    
+
     private List<PlayerManager> players = new List<PlayerManager>();
     public static Action<bool> onGameEnds;
 
@@ -79,12 +80,23 @@ public class GameManager : MonoSingleton<GameManager>
         timerManager.UpdateGameLoop();
     }
 
-    private async void GameEnds(bool victory)
+    private void GameEnds(bool victory)
     {
+        // Host-side!
+        GameEndsClientRpc(victory);
+    }
+
+    [ClientRpc]
+    private void GameEndsClientRpc(bool victory)
+    {
+        Debug.Log("You won!!!");
         isRunning = false;
-        
+        GameEndsFeedback();
+    }
+
+    private async void GameEndsFeedback()
+    {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
-
     }
 }

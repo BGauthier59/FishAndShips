@@ -46,7 +46,6 @@ public class EventsManager : MonoSingleton<EventsManager>
     public void StartGameLoop()
     {
         if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
-        //minSqrDistanceBetweenShrimpShipAttacks = minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
         minSqrDistanceBetweenShrimpShipAttacks =
             minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
         lastAttackPosition = ShipManager.instance.GetShipPositionOnMap();
