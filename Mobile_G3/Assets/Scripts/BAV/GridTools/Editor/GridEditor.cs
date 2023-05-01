@@ -496,10 +496,8 @@ public class GridEditor : EditorWindow
         Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPrevPosButtonHandles.x,
             offsetPrevPositionText.y, _selectedObject.transform.position.z + offsetPrevPosButtonHandles.z);
         Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
-
+        
         DetectComponentOnSelectionObject(_selectedObject, true);
-
-        SwitchColorBaseOnComponent(currentType);
         if (Handles.Button(buttonPos, buttonRot,
                 cellSizeDeck * 0.5f, cellSizeDeck, Handles.RectangleHandleCap))
         {
@@ -792,23 +790,23 @@ public class GridEditor : EditorWindow
             tileSelectedInScene.GetComponent<GridFloorStair>(),
             tileSelectedInScene.GetComponent<GridFloorWalkable>()
         };
-
+        bool foundComponent = false;
         foreach (Component component in components)
         {
-            DetectComponent(component, changeColor);
+            if (component != null)
+            {
+                foundComponent = true;
+                DetectComponent(component, changeColor);
+            }
+        }
+        if (!foundComponent && changeColor)
+        {
+            SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
         }
     }
 
     public void DetectComponent(Component component, bool switchColor)
     {
-        if (component == null)
-        {
-            if (switchColor)
-            {
-                SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
-            }
-        }
-
         switch (component)
         {
             case GridFloorBarrier:
@@ -859,6 +857,10 @@ public class GridEditor : EditorWindow
                 }
                 return;
             }
+            
+            default:
+                SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
+                break;
         }
     }
     
