@@ -121,8 +121,15 @@ public class GridEditor : EditorWindow
         }
         else
         {
-            EditorGUILayout.LabelField("Grid found!");
-            _listGridManagerTile = _gridManager.grid;
+            if (_gridManager.gameObject.name != gridName)
+            {
+                EditorGUILayout.HelpBox("Find Grid Object in scene but not the same name", MessageType.Error);
+            }
+            else
+            {
+                EditorGUILayout.LabelField("Grid Found, you edit this grid : " + gridName);
+                _listGridManagerTile = _gridManager.grid;
+            }
         }
 
 
