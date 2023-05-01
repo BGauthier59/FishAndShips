@@ -92,7 +92,7 @@ public class SeriesWorkshop : Workshop
     [ClientRpc]
     private void InitiateWorkshopInteractionClientRpc(int newMiniGameIndex, ClientRpcParams parameters)
     {
-        currentMiniGameIndexSafe++;
+        currentMiniGameIndexSafe = newMiniGameIndex;
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
