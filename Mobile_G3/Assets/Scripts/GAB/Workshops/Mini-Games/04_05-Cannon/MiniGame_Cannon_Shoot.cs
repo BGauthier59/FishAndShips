@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MiniGame_Cannon_Shoot : MiniGame
 {
     [SerializeField] private CannonDragAndDropData data;
     private byte index;
+
+    [Header("Feedbacks")] [SerializeField] private UnityEvent inGameShootEvent;
     
     public override void StartMiniGame()
     {
@@ -33,8 +36,8 @@ public class MiniGame_Cannon_Shoot : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.cannonDragAndDropManager.Disable();
 
-        // Todo - Feedback
-
+        inGameShootEvent?.Invoke();
+        
         ShipManager.instance.FireServerRpc(index);
         
         await Task.Delay(1000);

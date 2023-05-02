@@ -214,7 +214,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         inventoryObject = filling;
         if (IsOwner)
         {
-            // TODO : Changer l'inventaire UI
             MainCanvasManager.instance.SetItemOnDisplay(filling);
         }
     }

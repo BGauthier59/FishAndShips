@@ -6,7 +6,6 @@ public class GridEntity_InventoryFiller : MonoBehaviour, IGridEntity
 {
     public InventoryObject filling;
     
-
     public void OnCollision(IGridEntity entity, int direction)
     {
         PlayerManager player = entity as PlayerManager;

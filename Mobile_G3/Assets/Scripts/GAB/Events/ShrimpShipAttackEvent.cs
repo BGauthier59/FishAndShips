@@ -5,6 +5,7 @@ using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class ShrimpShipAttackEvent : RandomEvent
@@ -71,6 +72,9 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #endregion
 
+    [Header("Feedbacks")] [SerializeField] private UnityEvent destructionEvent;
+    [SerializeField] private UnityEvent fireEvent;
+    [SerializeField] private UnityEvent getHitEvent;
     public TMP_Text DEBUG_ShipLife;
 
     #endregion
@@ -142,7 +146,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     private async void EndEventFeedback()
     {
-        // Todo - Implement destruction animation
+        destructionEvent?.Invoke();
 
         await Task.Delay(1000);
 
@@ -255,7 +259,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         isFiring = true;
 
         // Select a tile that is alright
-        Tile targetedTile = GetAvailableTile();
+        Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
 
         if (targetedTile == null)
         {
@@ -286,7 +290,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     private async void CannonBulletAnimation(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
     {
-        // Todo - Implement VFX, screen shake...
+        fireEvent?.Invoke();
 
         bullet.position = p1;
         bullet.gameObject.SetActive(true);
@@ -334,7 +338,7 @@ public class ShrimpShipAttackEvent : RandomEvent
             return;
         }
 
-        Tile targetedTile = GetAvailableTile();
+        Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
         if (targetedTile == null)
         {
             Debug.Log("Couldn't spawn shrimp");
@@ -392,34 +396,12 @@ public class ShrimpShipAttackEvent : RandomEvent
         Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
 
         ShrimpWorkshop shrimpWorkshop = EventsManager.instance.GetShrimpWorkshop(index);
-        targetedTile.SetTile(shrimpWorkshop, targetedTile.GetFloor());
+        //targetedTile.SetTile(shrimpWorkshop, targetedTile.GetFloor());
         shrimpWorkshop.SetPosition(coordX, coordY);
-        if (Unity.Netcode.NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
+        if (NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
     }
 
-    private Tile GetAvailableTile()
-    {
-        Tile targetedTile;
-        int randomX, randomY;
-        int securityCount = 0;
-
-        do
-        {
-            randomX = Random.Range(0, GridManager.instance.xSize);
-            randomY = Random.Range(0, GridManager.instance.ySize);
-            targetedTile = GridManager.instance.GetTile(randomX, randomY);
-
-            securityCount++;
-            if (securityCount == 100)
-            {
-                Debug.LogWarning("Didn't find any tile after trying 100 times. Returns null.");
-                return null;
-            }
-        } while (targetedTile == null || targetedTile.GetEntity() != null ||
-                 targetedTile.GetFloor() is not GridFloorWalkable);
-
-        return targetedTile;
-    }
+    
 
     #endregion
 
@@ -445,7 +427,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     [ClientRpc]
     private void GetHitFeedbackClientRpc()
     {
-        // Todo - Implement feedback
+        getHitEvent?.Invoke();
     }
 
     #endregion

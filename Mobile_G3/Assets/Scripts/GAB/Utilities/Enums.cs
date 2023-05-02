@@ -41,3 +41,8 @@ public enum WorkshopType
 {
     Permanent, Temporary
 }
+
+public enum TileFilter
+{
+    Walkable
+}

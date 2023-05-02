@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public Transform miniGameEnvironmentCamera;
 
+    [SerializeField] private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
+
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public ShrimpSwipeManager shrimpSwipeManager;
     public GyroscopeManager gyroscopeManager;
@@ -17,10 +20,29 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     #region Game Loop
 
+    public void AddUpdatedWorkshop(IUpdateWorkshop workshop)
+    {
+        // Host-side only
+        if (!NetworkManager.Singleton.IsHost) return;
+        updatedWorkshop.Add(workshop);
+        workshop.StartGameLoopHostOnly();
+    }
+
     public void UpdateGameLoop()
     {
-        if (!currentMiniGame || !currentMiniGame.isRunning) return;
-        currentMiniGame.ExecuteMiniGame();
+        if (currentMiniGame && currentMiniGame.isRunning)
+        {
+            currentMiniGame.ExecuteMiniGame();
+        }
+        
+        // Updated Workshops are managed by Host only
+        if (NetworkManager.Singleton.IsHost)
+        {
+            foreach (var workshop in updatedWorkshop)
+            {
+                workshop.UpdateGameLoopHostOnly();
+            }
+        }
     }
 
     #endregion
@@ -96,10 +118,10 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
         var workshopToDeactivate =
             currentWorkshop; // Must set currentWorkshop to null for series workshop before deactivation
-        currentWorkshop = null; 
+        currentWorkshop = null;
         workshopToDeactivate.DeactivateServerRpc(victory, NetworkManager.Singleton.LocalClientId);
     }
-    
+
     #endregion
 
     #region Utilities

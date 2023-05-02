@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class Workshop : NetworkBehaviour, IGridEntity
 {
     [SerializeField] private WorkshopType type;
-    private Tile currentTile;
+    protected Tile currentTile;
     public int positionX, positionY;
     [SerializeField] private Transform workshopObject;
     public MiniGame associatedMiniGame;
@@ -94,6 +94,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         workshopObject.position = currentTile.transform.position + workshopObjectOffset;
+        currentTile.SetTile(this, currentTile.GetFloor());
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -149,7 +150,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [ClientRpc]
     private void GetDeactivatedClientRpc()
     {
-        deactivationEvent?.Invoke(); // Todo - this is not sync on network! Must be fixed
+        deactivationEvent?.Invoke();
     }
 
     #region Network

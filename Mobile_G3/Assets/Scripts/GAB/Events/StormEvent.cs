@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class StormEvent : RandomEvent
 {
@@ -17,6 +18,10 @@ public class StormEvent : RandomEvent
 
     #endregion
 
+    [Header("Feedbacks")] [SerializeField] private UnityEvent enterStormEvent;
+    [SerializeField] private UnityEvent exitStormEvent;
+    [SerializeField] private UnityEvent sailsGetActivatedEvent;
+    
     #endregion
 
     public override void StartEvent()
@@ -32,7 +37,7 @@ public class StormEvent : RandomEvent
     [ClientRpc]
     private void StartStormEventFeedbackClientRpc()
     {
-        // Todo - Implement feedback storm begins
+        enterStormEvent?.Invoke();
     }
 
     public override bool CheckConditions()
@@ -59,7 +64,7 @@ public class StormEvent : RandomEvent
     [ClientRpc]
     private void EndStormEventFeedbackClientRpc()
     {
-        // Todo - Implement feedbacks   
+        exitStormEvent?.Invoke();
     }
 
     #region Sails Management
@@ -86,7 +91,7 @@ public class StormEvent : RandomEvent
     [ClientRpc]
     private void ActivateSailsFeedbackClientRpc()
     {
-        // Todo - Implement feedbacks
+        sailsGetActivatedEvent?.Invoke();
 
         // Pas le feedback du workshop, mais plutôt un truc global comme du vent fort qui souffle
         Debug.Log("Sails are activated");

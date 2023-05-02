@@ -2,6 +2,7 @@ using System;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
@@ -48,6 +49,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private NetworkVariable<bool> underAttack = new NetworkVariable<bool>();
 
     [Header("Feedbacks")] [SerializeField] private Animation collisionWarningAnim;
+    [SerializeField] private UnityEvent shootEvent;
+    [SerializeField] private Transform shootVfxTransform;
 
     #region Ship Behaviour
 
@@ -77,6 +80,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     Vector3 pos;
+
     private void MoveOnMap()
     {
         boatTransformOnMap.localPosition += boatTransformOnMap.right * (currentBoatSpeed.Value * Time.deltaTime);
@@ -325,7 +329,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             _ => throw new ArgumentOutOfRangeException(nameof(index), index, null)
         };
 
-        FireClientRpc(origin);
+        FireClientRpc(origin, index);
 
         Vector3 direction = index switch
         {
@@ -349,9 +353,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     [ClientRpc]
-    private void FireClientRpc(Vector3 feedbackPos)
+    private void FireClientRpc(Vector3 feedbackPos, byte index)
     {
-        // Todo - shoot feedback
+        shootVfxTransform.position = feedbackPos;
+        shootVfxTransform.eulerAngles = Vector3.up * (index is 0 or 1 ? 0 : 180);
+        shootEvent?.Invoke();
     }
 
     #endregion
