@@ -79,7 +79,7 @@ MonoBehaviour:
   previewPointsLocalScale: {x: 0.1, y: 0.1, z: 1}
   previewPointsEulerAngles: {x: 90, y: 0, z: 0}
   rotationGapToWritePointOnLine: 10
-  collisionDetectionRayLength: 3
+  collisionDetectionRayLength: 2
   leftTopCannonOrigin: {fileID: 5050849415955258208}
   rightTopCannonOrigin: {fileID: 7982148310747907259}
   leftBottomCannonOrigin: {fileID: 3563568449140171990}
@@ -88,6 +88,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   collisionWarningAnim: {fileID: 3763730948434318675}
+  shootEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  shootVfxTransform: {fileID: 0}
 --- !u!114 &391967020182770581
 MonoBehaviour:
   m_ObjectHideFlags: 0

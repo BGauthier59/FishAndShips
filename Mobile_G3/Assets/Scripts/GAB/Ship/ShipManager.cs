@@ -52,6 +52,9 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private UnityEvent shootEvent;
     [SerializeField] private Transform shootVfxTransform;
 
+    [SerializeField] private UnityEvent enterDangerZoneEvent;
+    [SerializeField] private UnityEvent exitDangerZoneEvent;
+
     #region Ship Behaviour
 
     public void StartGameLoop()
@@ -129,6 +132,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     }
 
     private RaycastHit2D hit;
+    private string tag;
 
     private void CheckCollisions()
     {
@@ -140,7 +144,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         hit = Physics2D.Raycast(boatCollisionRayOrigin.position, boatCollisionRayOrigin.right,
             collisionDetectionRayLength,
             boatCollisionLayerMask);
-        if (!hit || hit.collider.gameObject.CompareTag("Star"))
+        tag = hit ? hit.collider.gameObject.tag : null;
+        if (!hit || (hit && tag is "Star" or "Goal" or "Storm"))
         {
             if (isInDangerousArea.Value) ExitDangerZone();
             return;
@@ -154,15 +159,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         isInDangerousArea.Value = true;
         Debug.Log("Entered danger zone!");
-        // When gets too much close to an obstacle, enters danger zone
-
-        // Feedbacks with UnityEvent ?
     }
 
     private void ExitDangerZone()
     {
         Debug.Log("Exited danger zone!");
-
         isInDangerousArea.Value = false;
     }
 
@@ -282,13 +283,13 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         if (current)
         {
-            // Feedback warning
+            enterDangerZoneEvent?.Invoke();
             collisionWarningAnim.gameObject.SetActive(true);
             collisionWarningAnim.Play(collisionWarningAnim.clip.name);
         }
         else
         {
-            // Cancel feedback
+            exitDangerZoneEvent?.Invoke();
             collisionWarningAnim.gameObject.SetActive(false);
             collisionWarningAnim.Stop();
         }

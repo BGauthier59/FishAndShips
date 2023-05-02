@@ -98,7 +98,7 @@ public class MiniGame_Map : MiniGame
     {
         shipPosition = ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
         shipPosition.z = shipPosition.y;
-        shipPosition.y = 0.1f;
+        shipPosition.y = 0.01f; // We can hardcode Y value as it must be really close to 0
 
         ship.localPosition = shipPosition;
     }

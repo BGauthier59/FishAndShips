@@ -39,6 +39,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     private float distanceBetweenPoints;
 
     [SerializeField] private Transform shrimpShip;
+    [SerializeField] private Transform targetedTileFeedbackTransform;
 
     #endregion
 
@@ -113,6 +114,9 @@ public class ShrimpShipAttackEvent : RandomEvent
     private void StartShrimpShipEventFeedbackClientRpc()
     {
         SetYPos();
+        
+        targetedTileFeedbackTransform.SetParent(null);
+
         shrimpShip.position = point1.position;
         shrimpShip.gameObject.SetActive(true);
 
@@ -276,9 +280,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         FireFeedbackClientRpc(p1, p2, p3, p4);
 
         await Task.Delay((int) (fireAnimationDuration * 1000));
-
-        // Todo - Spawn workshop here
-
+        
         SetNewFireCooldownDuration();
     }
 
@@ -292,6 +294,9 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         fireEvent?.Invoke();
 
+        targetedTileFeedbackTransform.gameObject.SetActive(true);
+        targetedTileFeedbackTransform.position = p4;
+
         bullet.position = p1;
         bullet.gameObject.SetActive(true);
 
@@ -303,6 +308,7 @@ public class ShrimpShipAttackEvent : RandomEvent
             bullet.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / fireAnimationDuration);
         }
 
+        targetedTileFeedbackTransform.gameObject.SetActive(false);
         bullet.gameObject.SetActive(false);
     }
 
@@ -393,7 +399,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         spawningShrimp.gameObject.SetActive(false);
         spawningShrimp.SetParent(initShrimpParent);
 
-        Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
+        //Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
 
         ShrimpWorkshop shrimpWorkshop = EventsManager.instance.GetShrimpWorkshop(index);
         //targetedTile.SetTile(shrimpWorkshop, targetedTile.GetFloor());
