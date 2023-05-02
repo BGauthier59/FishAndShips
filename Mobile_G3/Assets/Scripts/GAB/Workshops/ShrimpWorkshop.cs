@@ -120,7 +120,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     {
         // Called by every client when workshop is over
         base.RemoveWorkshopFromGrid();
-        if (Unity.Netcode.NetworkManager.Singleton.IsHost)
+        if (NetworkManager.Singleton.IsHost)
         {
             EventsManager.instance.RemoveShrimp();
         }

@@ -6,7 +6,6 @@ public class GridFloorWalkable : MonoBehaviour, IGridFloor
 {
     public int positionX;
     public int positionY;
-
     
     public void SetPosition(int posX, int posY)
     {

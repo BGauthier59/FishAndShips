@@ -39,7 +39,6 @@ public class ShrimpShipAttackEvent : RandomEvent
     private float distanceBetweenPoints;
 
     [SerializeField] private Transform shrimpShip;
-    [SerializeField] private Transform targetedTileFeedbackTransform;
 
     #endregion
 
@@ -75,7 +74,10 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent destructionEvent;
     [SerializeField] private UnityEvent fireEvent;
-    [SerializeField] private UnityEvent getHitEvent;
+    [SerializeField] private UnityEvent getHitEvent;    
+    [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
+    [SerializeField] private GridFloorNotWalkable cannonShootGridFloorNotWalkable, shrimpGridFloorNotWalkable;
+
     public TMP_Text DEBUG_ShipLife;
 
     #endregion
@@ -115,7 +117,8 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         SetYPos();
         
-        targetedTileFeedbackTransform.SetParent(null);
+        cannonShootTargetedTile.SetParent(null);
+        shrimpTargetedTile.SetParent(null);
 
         shrimpShip.position = point1.position;
         shrimpShip.gameObject.SetActive(true);
@@ -277,7 +280,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         p4 = targetedTile.transform.position;
         p3 = p4 + Vector3.up * controlPoint2Height;
 
-        FireFeedbackClientRpc(p1, p2, p3, p4);
+        int2 coord = targetedTile.GetTilePos();
+        FireFeedbackClientRpc(p1, p2, p3, p4, coord.x, coord.y);
 
         await Task.Delay((int) (fireAnimationDuration * 1000));
         
@@ -285,17 +289,21 @@ public class ShrimpShipAttackEvent : RandomEvent
     }
 
     [ClientRpc]
-    private void FireFeedbackClientRpc(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+    private void FireFeedbackClientRpc(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, int x, int y)
     {
-        CannonBulletAnimation(p1, p2, p3, p4);
+        CannonBulletAnimation(p1, p2, p3, p4, x, y);
     }
 
-    private async void CannonBulletAnimation(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
+    private async void CannonBulletAnimation(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, int x, int y)
     {
         fireEvent?.Invoke();
 
-        targetedTileFeedbackTransform.gameObject.SetActive(true);
-        targetedTileFeedbackTransform.position = p4;
+        cannonShootTargetedTile.gameObject.SetActive(true);
+        var targetedTile = GridManager.instance.GetTile(x, y);
+        var walkable = targetedTile.GetFloor();
+        targetedTile.SetTile(targetedTile.GetEntity(), cannonShootGridFloorNotWalkable);
+        
+        cannonShootTargetedTile.position = p4;
 
         bullet.position = p1;
         bullet.gameObject.SetActive(true);
@@ -308,7 +316,8 @@ public class ShrimpShipAttackEvent : RandomEvent
             bullet.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / fireAnimationDuration);
         }
 
-        targetedTileFeedbackTransform.gameObject.SetActive(false);
+        targetedTile.SetTile(targetedTile.GetEntity(), walkable);
+        cannonShootTargetedTile.gameObject.SetActive(false);
         bullet.gameObject.SetActive(false);
     }
 
@@ -387,6 +396,12 @@ public class ShrimpShipAttackEvent : RandomEvent
         spawningShrimp.position = p1;
         spawningShrimp.SetParent(null);
         spawningShrimp.gameObject.SetActive(true);
+        
+        shrimpTargetedTile.gameObject.SetActive(true);
+        shrimpTargetedTile.position = p4;
+        Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
+        var walkable = targetedTile.GetFloor();
+        targetedTile.SetTile(targetedTile.GetEntity(), shrimpGridFloorNotWalkable);
 
         var timer = 0f;
         while (timer < spawnDuration)
@@ -399,10 +414,10 @@ public class ShrimpShipAttackEvent : RandomEvent
         spawningShrimp.gameObject.SetActive(false);
         spawningShrimp.SetParent(initShrimpParent);
 
-        //Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
+        shrimpTargetedTile.gameObject.SetActive(false);
 
         ShrimpWorkshop shrimpWorkshop = EventsManager.instance.GetShrimpWorkshop(index);
-        //targetedTile.SetTile(shrimpWorkshop, targetedTile.GetFloor());
+        targetedTile.SetTile(targetedTile.GetEntity(), walkable);
         shrimpWorkshop.SetPosition(coordX, coordY);
         if (NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
     }
