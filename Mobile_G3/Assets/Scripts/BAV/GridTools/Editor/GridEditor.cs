@@ -55,6 +55,7 @@ public class GridEditor : EditorWindow
     private bool showGenerateContainerParameter = false;
     private bool showPreviewEditorSelect = false;
     private bool showOthersParameter = false;
+    private bool showUpdateGridParameter = false;
     
     private int idTileList;
 
@@ -246,6 +247,14 @@ public class GridEditor : EditorWindow
                     EditorGUILayout.Space(); 
                 } 
             }
+        }
+        
+        EditorGUILayout.Space();
+
+        showUpdateGridParameter = EditorUtils.FoldoutShurikenStyle(showUpdateGridParameter, "Update Grid base on Data");
+        if (showUpdateGridParameter)
+        {
+            
         }
         
         EditorGUILayout.Space();

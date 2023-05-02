@@ -6,11 +6,11 @@ using UnityEditor.SceneManagement;
 
 public class SceneListManageWindow : EditorWindow
 {
-    private string folderPath = "Assets/Scenes";
+    private string folderPath = "Assets/_Scenes";
     private Dictionary<string, List<Object>> sceneLists = new Dictionary<string, List<Object>>();
     private Vector2 scrollPos;
 
-    [MenuItem("Tools/R&D/Manage Scenes")]
+    [MenuItem("Tools/Navigation/Manage Scenes")]
     public static void ShowWindow()
     {
         GetWindow<SceneListManageWindow>("Manage Scenes");
@@ -22,7 +22,7 @@ public class SceneListManageWindow : EditorWindow
         GUILayout.Label("Root Path : ");
         folderPath = EditorGUILayout.TextField(folderPath);
 
-        if (GUILayout.Button("Load"))
+        if (GUILayout.Button("Refresh the List"))
         {
             LoadScenes(folderPath);
         }
