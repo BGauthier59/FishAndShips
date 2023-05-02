@@ -4,11 +4,8 @@ using UnityEditor;
 public class PrefabListWindow : EditorWindow
 {
     private string folderPath1 = "Assets/Prefabs/GAB/Workshops/Minigames";
-    private string folderPath2 = "Assets/Prefabs/GAB/Workshops/WorkshopObjects";
     private GameObject[] prefabs1;
-    private GameObject[] prefabs2;
     private Vector2 scrollPos1;
-    private Vector2 scrollPos2;
 
     [MenuItem("Tools/R&D/Manage Workshop")]
     public static void ShowWindow()
@@ -27,18 +24,6 @@ public class PrefabListWindow : EditorWindow
         }
 
         DrawPrefabList(prefabs1, ref scrollPos1);
-
-        EditorGUILayout.Space();
-        
-        GUILayout.Label("Workshop Minigames");
-        GUILayout.Label("Path : ");
-        folderPath2 = EditorGUILayout.TextField(folderPath2);
-        if (GUILayout.Button("Load Workshop Minigames Renderer"))
-        {
-            prefabs2 = LoadPrefabs(folderPath2);
-        }
-
-        DrawPrefabList(prefabs2, ref scrollPos2);
     }
 
     private GameObject[] LoadPrefabs(string folderPath)
