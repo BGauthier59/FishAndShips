@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 public class GridEditor : EditorWindow
 {
-    public string gridName = "Grid Manager";
+    public string gridNameEnter = "Grid Manager";
     public GameObject prefab;
     public float offsetObjectPositionX = 0f;
     public float offsetObjectPositionZ = 0f;
@@ -75,7 +75,6 @@ public class GridEditor : EditorWindow
     private GameObject _layerFolder;
     
     private List<Tile> _listGridManagerTile;
-    private List<GameObject> permentlyDeckObject = new List<GameObject>();
     private Camera sceneCamera;
 
     //Offset Position Handles
@@ -112,15 +111,18 @@ public class GridEditor : EditorWindow
     private const string deckName = "Deck";
     private const string containerName = "Container";
     private const string gridDataPath = "Assets/GridData/";
+    private const string gridPrefixSave = "GDM_";
+    private string gridFinalNameSave;
     
     //Load Saving Parameter
     private GameObject _gridDataManager;
     private GameObject _gridDeckDataManager;
     private GameObject _gridContainerDataManager;
-    private Dictionary<string, List<Object>> gridPrefabSave = new Dictionary<string, List<Object>>();
+    private Dictionary<string, List<Object>> gridPrefabSaveDico = new Dictionary<string, List<Object>>();
     private Vector2 scrollPosPrefabFolder;
 
     private int index = 0;
+    private int emptyFolderForRefresh = 0;
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -144,20 +146,23 @@ public class GridEditor : EditorWindow
         }
         else
         {
-            if (_gridManager.gameObject.name != gridName)
+            if (_gridManager.gameObject.name != gridPrefixSave + gridNameEnter)
             {
                 EditorGUILayout.HelpBox("Find Grid Object in scene but not the same name", MessageType.Error);
             }
             else
             {
-                EditorGUILayout.LabelField("Grid Found, you edit this grid : " + gridName);
+                EditorGUILayout.LabelField("Grid Found, you edit this grid : " + gridNameEnter);
                 _listGridManagerTile = _gridManager.grid;
             }
         }
 
+        //Create a path for saving
+        gridFinalNameSave = gridPrefixSave + gridNameEnter;
+
 
         //Properties 
-        gridName = EditorGUILayout.TextField("Grid Manager", gridName);
+        gridNameEnter = EditorGUILayout.TextField("Grid Manager", gridNameEnter);
         prefab = (GameObject)EditorGUILayout.ObjectField("Prefab", prefab, typeof(GameObject), false);
         offsetObjectPositionX = EditorGUILayout.FloatField("Offset Object Position X", offsetObjectPositionX);
         offsetObjectPositionZ = EditorGUILayout.FloatField("Offset Object Position Z", offsetObjectPositionZ);
@@ -194,7 +199,7 @@ public class GridEditor : EditorWindow
             
             if (GUILayout.Button("Save Grid Base On Data"))
             {
-                SaveGameObjectAsPrefab(gridName, _gridManager.gameObject);
+                SaveGameObjectAsPrefab(gridFinalNameSave, _gridManager.gameObject);
             }
                 
             EditorGUILayout.Space();
@@ -236,8 +241,8 @@ public class GridEditor : EditorWindow
                         }
                         if (GUILayout.Button("Save Deck Grid"))
                         {
-                            _layerSelected = GameObject.Find(deckName + "_" + gridName);
-                            SaveGameObjectAsPrefab(deckName, _layerSelected, true, gridName);
+                            _layerSelected = GameObject.Find(deckName + "_" + gridNameEnter);
+                            SaveGameObjectAsPrefab(deckName, _layerSelected, true, gridFinalNameSave);
                         }
                     }
                     EditorGUILayout.EndVertical();
@@ -276,8 +281,8 @@ public class GridEditor : EditorWindow
                         
                         if (GUILayout.Button("Save Container Grid"))
                         {
-                            _layerSelected = GameObject.Find(containerName + "_" + gridName);
-                            SaveGameObjectAsPrefab(containerName, _layerSelected, true, gridName);
+                            _layerSelected = GameObject.Find(containerName + "_" + gridNameEnter);
+                            SaveGameObjectAsPrefab(containerName, _layerSelected, true, gridFinalNameSave);
                         }
                     }
                     EditorGUILayout.EndVertical();
@@ -293,14 +298,71 @@ public class GridEditor : EditorWindow
         if (showUpdateDataGridParameter)
         {
             EditorGUILayout.LabelField("Refresh the contains of the Grid Data");
+            if (gridPrefabSaveDico.Count == 0)
+            {
+                EditorGUILayout.HelpBox("No Prefab have been save, please save a prefab", MessageType.Info);
+            }
+            
             if (GUILayout.Button("Refresh the List"))
             {
-                LoadPrefabInDirectory(gridDataPath);
+                if (gridPrefabSaveDico.Count != 0)
+                {
+                    emptyFolderForRefresh = 0;
+                }
+                else
+                {
+                    LoadPrefabInDirectory(gridDataPath);
+                    emptyFolderForRefresh++;
+                }
             }
 
-            scrollPosPrefabFolder = EditorGUILayout.BeginScrollView(scrollPosPrefabFolder);
+            switch (emptyFolderForRefresh)
+            {
+                case 1:
+                    EditorGUILayout.HelpBox("The folder is empty please save a prefab", MessageType.Error);
+                    break;
+                case 2:
+                    EditorGUILayout.HelpBox("Tu comprends pas l'anglais ? Y a rien dans le dossier save, il faut que tu sauvegardes une grid", MessageType.Error);
+                    break;
+                case 3:
+                    EditorGUILayout.HelpBox("Allo il y a quelqu'un", MessageType.Error);
+                    break;
+                case 4:
+                    EditorGUILayout.HelpBox(".", MessageType.Error);
+                    break;
+                case 5:
+                    EditorGUILayout.HelpBox("..", MessageType.Error);
+                    break;
+                case 6:
+                    EditorGUILayout.HelpBox("...", MessageType.Error);
+                    break;
+                case 7:
+                    EditorGUILayout.HelpBox("Stop", MessageType.Error);
+                    break;
+            }
 
-            foreach (KeyValuePair<string, List<Object>> gridDataList in gridPrefabSave)
+            if (emptyFolderForRefresh > 7 && emptyFolderForRefresh < 10)
+            {
+                EditorGUILayout.HelpBox("Sérieusement ? Je te déteste", MessageType.Error);
+            }
+            
+            if (emptyFolderForRefresh > 20 && emptyFolderForRefresh < 22)
+            {
+                EditorGUILayout.HelpBox("Encore la  ?", MessageType.Error);
+            } 
+            
+            if (emptyFolderForRefresh > 21 && emptyFolderForRefresh < 99)
+            {
+                EditorGUILayout.HelpBox("Save des LD au lieu de perdre du temps", MessageType.Error);
+            } 
+            
+            if (emptyFolderForRefresh > 100)
+            {
+                EditorGUILayout.HelpBox("Bravo tu as officiellement appuyé 100 fois maintenant au travail !", MessageType.Error);
+            }
+            
+            scrollPosPrefabFolder = EditorGUILayout.BeginScrollView(scrollPosPrefabFolder);
+            foreach (KeyValuePair<string, List<Object>> gridDataList in gridPrefabSaveDico)
             {
                 if (gridDataList.Value.Count > 0)
                 {
@@ -453,7 +515,7 @@ public class GridEditor : EditorWindow
     // Fonction pour créer la grille
     private void CreateGrid(int createIndex)
     {
-        GameObject gridObject = new GameObject(gridName);
+        GameObject gridObject = new GameObject(gridFinalNameSave);
         gridObject.AddComponent<GridManager>();
         _gridManager = gridObject.GetComponent<GridManager>();
         _gridManager.grid = new List<Tile>(0);
@@ -499,7 +561,7 @@ public class GridEditor : EditorWindow
         if (createLayer)
         {
             _layerFolder = new GameObject();
-            _layerFolder.name = name + "_" + gridName;
+            _layerFolder.name = name + "_" + gridNameEnter;
             _layerFolder.transform.position = offsetGrid;
             _layerFolder.AddComponent<LayerTileList>();
         }
@@ -639,7 +701,7 @@ public class GridEditor : EditorWindow
 
     private void UpdateGrid()
     {
-        GameObject gridObject = GameObject.Find(gridName);
+        GameObject gridObject = GameObject.Find(gridFinalNameSave);
         if (gridObject == null)
         {
             Debug.LogWarning("Grid not found");
@@ -674,10 +736,10 @@ public class GridEditor : EditorWindow
 
     private void UpdateGridLayerBaseOnSave(GameObject gridDataType,string layerName, bool containerGrid)
     {
-        GameObject gridObject = GameObject.Find(layerName + "_" + gridName);
+        GameObject gridObject = GameObject.Find(layerName + "_" + gridNameEnter);
         if (gridObject == null)
         {
-            Debug.LogWarning(layerName + "_" + gridName + " not found !");
+            Debug.LogWarning(layerName + "_" + gridNameEnter + " not found !");
             return;
         }
 
@@ -697,7 +759,7 @@ public class GridEditor : EditorWindow
         _instantiatePrefab = (GameObject)PrefabUtility.InstantiatePrefab(gridDataType);
         _instantiatePrefab.transform.parent = _gridManager.transform;
         PrefabUtility.UnpackPrefabInstance(_instantiatePrefab, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
-        _instantiatePrefab.name = layerName + "_" + gridName;
+        _instantiatePrefab.name = layerName + "_" + gridNameEnter;
 
         LayerTileList tileLayer = gridDataType.GetComponent<LayerTileList>();
         for (int i = 0; i < tileLayer.layerTileData.Count; i++)
@@ -718,11 +780,11 @@ public class GridEditor : EditorWindow
     
     private void UpdateGridLayer(string layerName, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool containerGrid)
     {
-        GameObject gridObject = GameObject.Find(layerName + "_" + gridName);
+        GameObject gridObject = GameObject.Find(layerName + "_" + gridNameEnter);
 
         if (gridObject == null)
         {
-            Debug.LogWarning(layerName + "_" + gridName + " not found !");
+            Debug.LogWarning(layerName + "_" + gridNameEnter + " not found !");
             return;
         }
 
@@ -1110,7 +1172,7 @@ public class GridEditor : EditorWindow
     
     private void LoadPrefabInDirectory(string path)
     {
-        gridPrefabSave.Clear();
+        gridPrefabSaveDico.Clear();
         LoadPrefabRecursive(path);
     }
 
@@ -1132,7 +1194,7 @@ public class GridEditor : EditorWindow
 
             if (sceneList.Count > 0)
             {
-                gridPrefabSave.Add(folderName, sceneList);
+                gridPrefabSaveDico.Add(folderName, sceneList);
             }
 
             LoadPrefabRecursive(folderPath);
