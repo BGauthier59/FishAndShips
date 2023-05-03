@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class TimerManager : MonoSingleton<TimerManager>
@@ -20,7 +21,11 @@ public class TimerManager : MonoSingleton<TimerManager>
             timer -= 1;
             currentDuration -= 1;
 
-            if (currentDuration <= -1) GameManager.onGameEnds?.Invoke(false);
+            if (currentDuration <= -1)
+            {
+                currentDuration = 0;
+                if(NetworkManager.Singleton.IsHost) GameManager.instance.GameEnds(false);
+            }
             else MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
         }
     }

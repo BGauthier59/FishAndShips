@@ -54,6 +54,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     [SerializeField] private UnityEvent enterDangerZoneEvent;
     [SerializeField] private UnityEvent exitDangerZoneEvent;
+    [SerializeField] private UnityEvent collideEvent;
 
     #region Ship Behaviour
 
@@ -170,12 +171,13 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void Collide(float angle)
     {
         SetEulerAnglesServerRpc(angle);
+        CollideClientRpc();
+    }
 
-        // When hits an obstacle, direction changes according to surface normal
-
-        // Starts a reparation workshop
-
-        // Feedbacks with UnityEvent ?
+    [ClientRpc]
+    private void CollideClientRpc()
+    {
+        collideEvent?.Invoke();
     }
 
     public void GetStar(byte index)

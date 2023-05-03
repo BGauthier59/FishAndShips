@@ -32,7 +32,7 @@ public class ShipPhysics : MonoBehaviour
         }
         else if (other.CompareTag("Goal"))
         {
-            GameManager.onGameEnds?.Invoke(true);
+            GameManager.instance.GameEnds(true);
         }
         else if (other.CompareTag("Storm"))
         {

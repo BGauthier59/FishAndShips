@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
-public class GameManager : MonoSingleton<GameManager>
+public class GameManager : NetworkMonoSingleton<GameManager>
 {
     public bool isRunning;
 
@@ -17,11 +17,9 @@ public class GameManager : MonoSingleton<GameManager>
     private CameraManager cameraManager;
 
     private List<PlayerManager> players = new List<PlayerManager>();
-    public static Action<bool> onGameEnds;
 
     private void Start()
     {
-        onGameEnds += GameEnds;
         StartGameLoop();
     }
 
@@ -80,12 +78,18 @@ public class GameManager : MonoSingleton<GameManager>
         timerManager.UpdateGameLoop();
     }
 
-    private void GameEnds(bool victory)
+    public void GameEnds(bool victory)
     {
         // Host-side!
+        if (NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogError("No client should call GameEnds()");
+            return;
+        }
+        
         GameEndsClientRpc(victory);
     }
-
+    
     [ClientRpc]
     private void GameEndsClientRpc(bool victory)
     {
@@ -98,5 +102,8 @@ public class GameManager : MonoSingleton<GameManager>
     {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
+        
+        // Todo - Le Host peut choisir de poursuivre la partie ou de couper ?
+        // Todo - Le client, pendant ce temps, peut voir des trucs sur la partie, son titre, etc
     }
 }
