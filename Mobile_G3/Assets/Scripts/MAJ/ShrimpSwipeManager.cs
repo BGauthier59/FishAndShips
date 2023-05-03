@@ -29,7 +29,12 @@ public class ShrimpSwipeManager : MiniGameInput<ShrimpSwipeSetupData>
         }
     }
 
-    
+    public override void Disable()
+    {
+        base.Disable();
+        isDragging = false;
+        startTouch = Vector3.zero;
+    }
 }
 
 [Serializable]

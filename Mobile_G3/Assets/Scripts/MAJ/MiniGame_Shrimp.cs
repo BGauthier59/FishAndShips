@@ -7,7 +7,7 @@ public class MiniGame_Shrimp : MiniGame
     [SerializeField] private ShrimpSwipeSetupData data;
 
     public Transform shrimpCollision, swipeTrail, planeOrigin;
-    public float shrimpCollisionSize, swordCollisionSize, angle, posAngle;
+    public float shrimpCollisionSize, swordCollisionSize, posAngle;
     public Vector2 lastPos;
     public bool validSwipe;
     public float topAngleCheck, botAngleCheck;
@@ -43,10 +43,10 @@ public class MiniGame_Shrimp : MiniGame
             if (validSwipe)
             {
                 if (Vector2.SqrMagnitude(WorkshopManager.instance.shrimpSwipeManager.startTouch -
-                                         shrimpCollision.position) <
-                    swordCollisionSize * swordCollisionSize) validSwipe = false;
-                if ((Vector2) Input.mousePosition - lastPos != Vector2.zero)
-                    angle = Vector2.SignedAngle(Vector2.up, lastPos - (Vector2) Input.mousePosition);
+                                         shrimpCollision.position) < swordCollisionSize * swordCollisionSize)
+                {
+                    validSwipe = false;
+                }
 
                 lastPos = Input.mousePosition;
 
@@ -145,7 +145,10 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void Reset()
     {
-        // Todo - reset mini-game ?
+        validSwipe = false;
+        lastPos = Vector2.zero;
+        posAngle = 0;
+        swipeTrail.gameObject.SetActive(false);
     }
 
     public override void OnLeaveMiniGame()
