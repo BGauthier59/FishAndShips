@@ -68,6 +68,8 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private Transform spawnShrimpOrigin;
     [SerializeField] private float spawnDuration;
     [SerializeField] private Transform spawningShrimp;
+    [SerializeField] private Animation spawningShrimpAnim;
+    [SerializeField] private AnimationClip spawningShrimpJump;
     [SerializeField] private Transform initShrimpParent;
 
     #endregion
@@ -403,6 +405,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         var walkable = targetedTile.GetFloor();
         targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
 
+        spawningShrimpAnim.Play(spawningShrimpJump.name);
+        
         var timer = 0f;
         while (timer < spawnDuration)
         {

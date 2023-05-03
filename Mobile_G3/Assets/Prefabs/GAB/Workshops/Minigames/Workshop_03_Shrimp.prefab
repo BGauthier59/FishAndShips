@@ -75,6 +75,11 @@ MonoBehaviour:
   - {fileID: 1160600849936091820}
   inputCamera: {fileID: 0}
   animation: {fileID: 5697173705319055370}
+  idle1: {fileID: 7400000, guid: 913ba6b636535164fbc12faf3c13b05f, type: 2}
+  idle2: {fileID: 7400000, guid: 41e9ce32c0328d84f8f1189105d58d69, type: 2}
+  idle3: {fileID: 7400000, guid: 28cd2690866d21a49a1915390cad8f11, type: 2}
+  flip: {fileID: 7400000, guid: b6ac0155f82214040ba8c35cdb6c211b, type: 2}
+  jump: {fileID: 7400000, guid: 96f5801f0d05d6f41a5782e9a33c4fee, type: 2}
 --- !u!114 &5697173704008253013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1742,12 +1747,13 @@ Animation:
   m_GameObject: {fileID: 4886692145117814941}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: d906b07d90d3865468c7d117adb13da0, type: 2}
+  m_Animation: {fileID: 7400000, guid: 913ba6b636535164fbc12faf3c13b05f, type: 2}
   m_Animations:
-  - {fileID: 7400000, guid: d906b07d90d3865468c7d117adb13da0, type: 2}
-  - {fileID: 7400000, guid: 2d75523f0958f854f93fa24840bb39ad, type: 2}
-  - {fileID: 7400000, guid: fc382f4f14632ed4aab8fbdf97ab4199, type: 2}
-  - {fileID: 7400000, guid: 867f600de434aa24ebb2974786c59a65, type: 2}
+  - {fileID: 7400000, guid: 913ba6b636535164fbc12faf3c13b05f, type: 2}
+  - {fileID: 7400000, guid: 41e9ce32c0328d84f8f1189105d58d69, type: 2}
+  - {fileID: 7400000, guid: 28cd2690866d21a49a1915390cad8f11, type: 2}
+  - {fileID: 7400000, guid: b6ac0155f82214040ba8c35cdb6c211b, type: 2}
+  - {fileID: 7400000, guid: 96f5801f0d05d6f41a5782e9a33c4fee, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0

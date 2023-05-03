@@ -18,6 +18,9 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     private float moveTimer;
     [SerializeField] private AnimationCurve moveAmplitudeY;
 
+    [SerializeField] private Animation animation;
+    [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
+
     private void Awake()
     {
         Setup();
@@ -132,6 +135,8 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         float ratio = 0;
         moveTimer = 0;
 
+        animation.Play(jump.name);
+        
         while (moveTimer < moveDuration)
         {
             workshopObject.position = Vector3.Lerp(oldPosition, newPosition, ratio) +
@@ -143,6 +148,11 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         }
 
         workshopObject.position = newPosition;
+        
+        var random = Random.Range(0, 3);
+        if (random == 1) animation.Play(idle1.name);
+        else if (random == 2) animation.Play(idle2.name);
+        else animation.Play(idle3.name);
     }
 
     private Quaternion SetRotation(Vector3 direction)
