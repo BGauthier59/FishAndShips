@@ -4241,6 +4241,12 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!224 &365799442 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5697173705940924957, guid: c341bfa3a0832674ba680d335a1061ff,
+    type: 3}
+  m_PrefabInstance: {fileID: 5697173705329506125}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &368372234
 GameObject:
   m_ObjectHideFlags: 0
@@ -24355,11 +24361,28 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1996715012}
     m_Modifications:
+    - target: {fileID: 3354028571251740742, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8960786dc56663b4a8d7ba2e553e469f,
+        type: 2}
+    - target: {fileID: 3354028571251740742, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+        type: 2}
     - target: {fileID: 5697173704008253012, guid: c341bfa3a0832674ba680d335a1061ff,
         type: 3}
       propertyPath: inputCamera
       value: 
       objectReference: {fileID: 1901295940}
+    - target: {fileID: 5697173704008253012, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: DEBUG_Canvas
+      value: 
+      objectReference: {fileID: 365799442}
     - target: {fileID: 5697173704008253012, guid: c341bfa3a0832674ba680d335a1061ff,
         type: 3}
       propertyPath: debugWorkshop
@@ -24429,6 +24452,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Workshop_03_Shrimp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697173705146645680, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697173705146645680, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697173705146645680, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697173705146645683, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697173705890337779, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5697173705940924959, guid: c341bfa3a0832674ba680d335a1061ff,
+        type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c341bfa3a0832674ba680d335a1061ff, type: 3}
