@@ -10,8 +10,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public Transform miniGameEnvironmentCamera;
 
-    [SerializeField] private Animation miniGameIndicatorAnim;
-    [SerializeField] private AnimationClip indicatorClip;
+    [SerializeField] private Animation miniGameIndicatorAnim, victoryIndicatorAnimation;
+    [SerializeField] private AnimationClip indicatorClip, victoryClip;
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
     [SerializeField] private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
@@ -39,7 +39,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         {
             currentMiniGame.ExecuteMiniGame();
         }
-        
+
         // Updated Workshops are managed by Host only
         if (NetworkManager.Singleton.IsHost)
         {
@@ -193,11 +193,25 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public void SetGameIndicator(string text)
     {
         miniGameIndicatorText.text = text;
+        victoryIndicatorAnimation.gameObject.SetActive(false);
+        miniGameIndicatorAnim.gameObject.SetActive(true);
         miniGameIndicatorAnim.Play(indicatorClip.name);
+    }
+
+    public void SetVictoryIndicator()
+    {
+        miniGameIndicatorAnim.gameObject.SetActive(false);
+        victoryIndicatorAnimation.gameObject.SetActive(true);
+        victoryIndicatorAnimation.Play(victoryClip.name);
     }
 
     public int GetIndicatorAnimationLength()
     {
-        return (int) (indicatorClip.length * 1000);
+        return ((int) (indicatorClip.length * 1000) - 200); // For async await only
+    }
+
+    public int GetVictoryAnimationLength()
+    {
+        return ((int) (victoryClip.length * 1000) - 100); // For async await only
     }
 }

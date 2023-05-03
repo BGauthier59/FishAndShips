@@ -107,7 +107,10 @@ public class MiniGame_Cannon_Load : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
         cannonAnim.Play(cannonIsReady.name);
-        await Task.Delay(1000);
+        
+        WorkshopManager.instance.SetVictoryIndicator();
+        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        
         ExitMiniGame(true);
     }
     

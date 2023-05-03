@@ -95,9 +95,12 @@ public class MiniGame_Sails : MiniGame
 
     private async void SailIsRaised()
     {
+        // Todo - play animation
+        
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
-        await Task.Delay(1000);
+        WorkshopManager.instance.SetVictoryIndicator();
+        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         ExitMiniGame(true);
     }
 

@@ -92,8 +92,21 @@ public class MiniGame_Shrimp : MiniGame
     void DamageDealt()
     {
         lifePoints--;
-        if (lifePoints <= 0) ExitMiniGame(true);
+        if (lifePoints <= 0) KillShrimp();
         SwitchSwords();
+    }
+
+    private async void KillShrimp()
+    {
+        // Todo - play animation
+        
+        StopExecutingMiniGame();
+        WorkshopManager.instance.shrimpSwipeManager.Disable();
+        
+        WorkshopManager.instance.SetVictoryIndicator();
+        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        
+        ExitMiniGame(true);
     }
 
     async void SwitchSwords()
@@ -145,8 +158,6 @@ public class MiniGame_Shrimp : MiniGame
 
     protected override void ExitMiniGame(bool victory)
     {
-        StopExecutingMiniGame();
-        WorkshopManager.instance.shrimpSwipeManager.Disable();
         base.ExitMiniGame(victory);
     }
 
@@ -160,6 +171,8 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        StopExecutingMiniGame();
+        WorkshopManager.instance.shrimpSwipeManager.Disable();
         ExitMiniGame(false);
     }
 }

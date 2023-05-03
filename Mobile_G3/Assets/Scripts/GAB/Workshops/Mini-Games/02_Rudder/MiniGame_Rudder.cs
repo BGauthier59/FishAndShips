@@ -39,11 +39,15 @@ public class MiniGame_Rudder : MiniGame
         }
     }
 
-    protected override void ExitMiniGame(bool victory)
+    protected override async void ExitMiniGame(bool victory)
     {
         StopExecutingMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Disable();
         SetRudderRotationServerRpc(data.rudder.eulerAngles.z);
+        
+        WorkshopManager.instance.SetVictoryIndicator();
+        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        
         base.ExitMiniGame(victory);
     }
 
