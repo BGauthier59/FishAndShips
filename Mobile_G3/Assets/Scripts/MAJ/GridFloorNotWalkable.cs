@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GridFloorNotWalkable : MonoBehaviour, IGridFloor
 {
+    // Used for targeted tile (shrimp ship event)
     public void SetPosition(int posX, int posY)
     {
     }

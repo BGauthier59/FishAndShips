@@ -12688,6 +12688,40 @@ MonoBehaviour:
   DEBUG_GridManager: {fileID: 2048135494}
   baseStationaryDuration: 3
   randomStationaryDurationGap: 1
+  moveDuration: 0.25
+  moveAmplitudeY:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &1125738592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15292,6 +15326,40 @@ MonoBehaviour:
   DEBUG_GridManager: {fileID: 2048135494}
   baseStationaryDuration: 3
   randomStationaryDurationGap: 1
+  moveDuration: 0.25
+  moveAmplitudeY:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1471848325
 GameObject:
   m_ObjectHideFlags: 0
@@ -22976,6 +23044,40 @@ MonoBehaviour:
   DEBUG_GridManager: {fileID: 2048135494}
   baseStationaryDuration: 3
   randomStationaryDurationGap: 1
+  moveDuration: 0.25
+  moveAmplitudeY:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.5
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &2082388050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25478,17 +25580,17 @@ PrefabInstance:
     - target: {fileID: 8247484162567955523, guid: 7e1286716c84afd48b06d15e8774ca5d,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8247484162567955523, guid: 7e1286716c84afd48b06d15e8774ca5d,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8247484162567955523, guid: 7e1286716c84afd48b06d15e8774ca5d,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8247484162567955523, guid: 7e1286716c84afd48b06d15e8774ca5d,
         type: 3}

@@ -7,7 +7,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [SerializeField] private WorkshopType type;
     protected Tile currentTile;
     public int positionX, positionY;
-    [SerializeField] private Transform workshopObject;
+    [SerializeField] protected Transform workshopObject;
     public MiniGame associatedMiniGame;
 
     public NetworkVariable<bool> isOccupied = new(false, NetworkVariableReadPermission.Everyone,
@@ -74,9 +74,14 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void SetPosition(int posX, int posY)
     {
+        if (positionX == -1 && positionY == -1) // SetPosition was called on a workshop removed from grid. Must set positions here
+        {
+            if (posX != -1 && posY != -1) workshopObject.position = DEBUG_GridManager.GetTile(posX, posY).transform.position + workshopObjectOffset;
+        }
+        
         positionX = posX;
         positionY = posY;
-        
+
         if (posX == -1 && posY == -1)
         {
             Debug.Log("You removed this workshop from grid!");
@@ -93,7 +98,13 @@ public class Workshop : NetworkBehaviour, IGridEntity
             return;
         }
 
-        workshopObject.position = currentTile.transform.position + workshopObjectOffset;
+        MoveToNewTile(currentTile.transform.position + workshopObjectOffset);
+    }
+
+    protected virtual void MoveToNewTile(Vector3 newPosition)
+    {
+        // Set workshop position, might be override to allow animations if they are needed
+        workshopObject.position = newPosition;
         currentTile.SetTile(this, currentTile.GetFloor());
     }
 

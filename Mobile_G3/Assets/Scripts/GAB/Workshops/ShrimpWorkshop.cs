@@ -14,6 +14,10 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     private float currentStationaryDuration, stationaryTimer;
     private bool isMoving;
 
+    [SerializeField] private float moveDuration;
+    private float moveTimer;
+    [SerializeField] private AnimationCurve moveAmplitudeY;
+
     private void Awake()
     {
         Setup();
@@ -26,7 +30,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
             Debug.Log("Waiting...");
             await Task.Yield();
         }
-        
+
         WorkshopManager.instance.AddUpdatedWorkshop(this);
     }
 
@@ -91,9 +95,9 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         int2 coord = randomTile.GetTilePos();
 
         MoveClientRpc(coord.x, coord.y);
-        
+
         // Todo - Add move duration ?
-        
+
         SetNewStationaryDuration();
     }
 
@@ -112,8 +116,43 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
             Debug.Log("This workshop does not have any current tile, then didn't reset last tile");
         }
         else currentTile.SetTile(null, currentTile.GetFloor());
-        
+
         base.SetPosition(posX, posY);
+    }
+
+    protected override async void MoveToNewTile(Vector3 newPosition)
+    {
+        // Todo - animation de saut à intégrer ici
+
+        currentTile.SetTile(this, currentTile.GetFloor());
+
+        Vector3 oldPosition = workshopObject.position;
+        Quaternion oldRotation = workshopObject.rotation;
+        Quaternion nextRotation = SetRotation(newPosition - oldPosition);
+        float ratio = 0;
+        moveTimer = 0;
+
+        while (moveTimer < moveDuration)
+        {
+            workshopObject.position = Vector3.Lerp(oldPosition, newPosition, ratio) +
+                                      (Vector3.up * moveAmplitudeY.Evaluate(ratio));
+            workshopObject.rotation = Quaternion.Lerp(oldRotation, nextRotation, ratio);
+            await Task.Yield();
+            moveTimer += Time.deltaTime;
+            ratio = moveTimer / moveDuration;
+        }
+
+        workshopObject.position = newPosition;
+    }
+
+    private Quaternion SetRotation(Vector3 direction)
+    {
+        if (direction.x > 0) return Quaternion.Euler(Vector3.up * 270);
+        if (direction.x < 0) return Quaternion.Euler(Vector3.up * 90);
+        if (direction.z > 0) return Quaternion.Euler(Vector3.up * 180);
+        if (direction.z < 0) return Quaternion.Euler(Vector3.zero);
+
+        return Quaternion.identity;
     }
 
     protected override void RemoveWorkshopFromGrid()

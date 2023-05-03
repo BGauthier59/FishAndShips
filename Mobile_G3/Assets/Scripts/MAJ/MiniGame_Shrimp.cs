@@ -34,7 +34,7 @@ public class MiniGame_Shrimp : MiniGame
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
-        await Task.Delay(1000);
+        //await Task.Delay(1000);
         WorkshopManager.instance.shrimpSwipeManager.Enable(data);
         StartExecutingMiniGame();
         SwitchSwords();

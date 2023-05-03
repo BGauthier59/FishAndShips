@@ -76,7 +76,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private UnityEvent fireEvent;
     [SerializeField] private UnityEvent getHitEvent;    
     [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
-    [SerializeField] private GridFloorNotWalkable cannonShootGridFloorNotWalkable, shrimpGridFloorNotWalkable;
+    [SerializeField] private GridFloorNotWalkable notWalkable;
 
     public TMP_Text DEBUG_ShipLife;
 
@@ -301,7 +301,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         cannonShootTargetedTile.gameObject.SetActive(true);
         var targetedTile = GridManager.instance.GetTile(x, y);
         var walkable = targetedTile.GetFloor();
-        targetedTile.SetTile(targetedTile.GetEntity(), cannonShootGridFloorNotWalkable);
+        targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
         
         cannonShootTargetedTile.position = p4;
 
@@ -401,7 +401,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         shrimpTargetedTile.position = p4;
         Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
         var walkable = targetedTile.GetFloor();
-        targetedTile.SetTile(targetedTile.GetEntity(), shrimpGridFloorNotWalkable);
+        targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
 
         var timer = 0f;
         while (timer < spawnDuration)
@@ -421,9 +421,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         shrimpWorkshop.SetPosition(coordX, coordY);
         if (NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
     }
-
     
-
     #endregion
 
     #region Life Management
