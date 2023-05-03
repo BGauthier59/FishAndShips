@@ -39,6 +39,7 @@ public class GridEditor : EditorWindow
     
     //Show Preview Position 
     public bool showSpecificGridSize = false;
+    public bool showLoadSpecificGridSize = false;
     public bool showPreviewGridPivot = false;
     public bool showPreviewGridDeckPivot = false;
     public bool showPreviewGridContainerPivot = false;
@@ -55,12 +56,23 @@ public class GridEditor : EditorWindow
     private bool showGenerateContainerParameter = false;
     private bool showPreviewEditorSelect = false;
     private bool showOthersParameter = false;
-    private bool showUpdateGridParameter = false;
+    
+    //Update Grid Foldout
+    private bool showUpdateDataGridParameter = false;
+    private bool showUpdateDataCustomParameter = false;
+    private bool showUpdateDataDeckParameter = false;
+    private bool showUpdateDataContainerParameter = false;
+
+    private GameObject _gridDataManager;
+    private GameObject _gridDeckDataManager;
+    private GameObject _gridContainerDataManager;
+
     
     private int idTileList;
 
     //Private Variable
     private GridManager _gridManager;
+    private GameObject _layerSelected;
     private GameObject _selectedObject;
     private List<Tile> _listGridManagerTile;
     private List<Tile> updateDeckTilePermently = new List<Tile>();
@@ -99,6 +111,7 @@ public class GridEditor : EditorWindow
     //Const Name
     private const string deckName = "Deck";
     private const string containerName = "Container";
+
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -251,10 +264,50 @@ public class GridEditor : EditorWindow
         
         EditorGUILayout.Space();
 
-        showUpdateGridParameter = EditorUtils.FoldoutShurikenStyle(showUpdateGridParameter, "Update Grid base on Data");
-        if (showUpdateGridParameter)
+        showUpdateDataGridParameter = EditorUtils.FoldoutShurikenStyle(showUpdateDataGridParameter, "Update Grid base on Data");
+        if (showUpdateDataGridParameter)
         {
-            
+            _gridDataManager = (GameObject)EditorGUILayout.ObjectField("Load this Grid Data : ", _gridDataManager, typeof(GameObject), false);
+            if (GUILayout.Button("Save Grid Base On Data"))
+            {
+                SaveGameObjectAsPrefab(gridName, _gridManager.gameObject);
+            }
+             
+            showUpdateDataCustomParameter = EditorGUILayout.Foldout(showUpdateDataCustomParameter, "Load Size for the Deck or the Floor ?");
+            if(showUpdateDataCustomParameter)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginVertical();
+                showUpdateDataDeckParameter = EditorUtils.FoldoutShurikenStyle(showUpdateDataDeckParameter, "Update Deck Parameter base on Data");
+                if (showUpdateDataDeckParameter)
+                {
+                    _gridDeckDataManager = (GameObject)EditorGUILayout.ObjectField("Load this Grid Data : ", _gridDeckDataManager, typeof(GameObject), false);
+                    if (GUILayout.Button("Update Deck Grid"))
+                    {
+                        _layerSelected = GameObject.Find(deckName + "_" + gridName);
+                        SaveGameObjectAsPrefab(deckName, _layerSelected, true, gridName);
+                    }
+                }
+                EditorGUILayout.EndVertical();
+                    
+                EditorGUILayout.Space();
+                    
+                EditorGUILayout.BeginVertical();
+                showUpdateDataContainerParameter = EditorUtils.FoldoutShurikenStyle(showUpdateDataContainerParameter, "Update Container Parameter base on Data");
+                if (showUpdateDataContainerParameter)
+                {
+                    _gridContainerDataManager = (GameObject)EditorGUILayout.ObjectField("Load this Grid Data : ", _gridContainerDataManager, typeof(GameObject), false);
+                    if (GUILayout.Button("Update Container Grid"))
+                    {
+                        _layerSelected = GameObject.Find(containerName + "_" + gridName);
+                        SaveGameObjectAsPrefab(containerName, _layerSelected, true, gridName);
+                    }   
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndHorizontal();
+                EditorGUILayout.Space(); 
+            }
         }
         
         EditorGUILayout.Space();
@@ -394,7 +447,7 @@ public class GridEditor : EditorWindow
         PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, containerName);
     }
     
-    private void PositionGridObject(GameObject gridObject, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool createLayer, bool updateDeckListElement, string gridName)
+    private void PositionGridObject(GameObject gridObject, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool createLayer, bool updateDeckListElement, string name)
     {
         Vector3 centerOffset = new Vector3(colsGrid / 2f - 0.5f, 0, rowsGrid / 2f - 0.5f) * cellSizeDeck;
         //Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
@@ -406,7 +459,7 @@ public class GridEditor : EditorWindow
         if (createLayer)
         {
             layerFolder = new GameObject();
-            layerFolder.name = gridName;
+            layerFolder.name = name + "_" + gridName;
             layerFolder.transform.position = offsetGrid;
         }
         
@@ -416,7 +469,7 @@ public class GridEditor : EditorWindow
             {
                 //Create a tile
                 Tile tile = new Tile();
-                tile.name = gridName + " " + row + "," + col;
+                tile.name = name + " " + row + "," + col;
                 Vector3 positionGridObject = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid;
 
                 //Instantiate Prefab
@@ -430,7 +483,7 @@ public class GridEditor : EditorWindow
                 }
                 if (_gridManager.tilePrefab != null)
                 {
-                    _gridManager.tilePrefab.name = gridName + " " + row + "," + col;
+                    _gridManager.tilePrefab.name = name + " " + row + "," + col;
                     _gridManager.tilePrefab.transform.position = positionGridObject;
                     _gridManager.tilePrefab.transform.rotation = randomRotation
                         ? Quaternion.Euler(0, Random.Range(-360, 360), 0)
@@ -550,7 +603,7 @@ public class GridEditor : EditorWindow
 
         _gridManager.xSize = rowsGridDeck;
         _gridManager.ySize = colsGridDeck;
-        PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, Vector3.zero, true, false,deckName);
+        PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, Vector3.zero, true, false, deckName);
         PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetGridDeckPosition, true,false, containerName);
         EditorUtility.SetDirty(gridObject);
     }
@@ -568,11 +621,11 @@ public class GridEditor : EditorWindow
     
     private void UpdateGridLayer(string layerName, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool containerGrid)
     {
-        GameObject gridObject = GameObject.Find(layerName);
+        GameObject gridObject = GameObject.Find(layerName + "_" + gridName);
 
         if (gridObject == null)
         {
-            Debug.LogWarning(layerName + " not found !");
+            Debug.LogWarning(layerName + "_" + gridName + " not found !");
             return;
         }
 
@@ -933,6 +986,30 @@ public class GridEditor : EditorWindow
                 DestroyImmediate(component);
             }
         }
+    }
+    
+    private const string gridDataPath = "Assets/GridData/";
+    public static void SaveGameObjectAsPrefab(string prefabName, GameObject gameObject, bool layer = false, string specificPath = "null")
+    {
+        string folderPath = layer ? gridDataPath + specificPath : gridDataPath + prefabName;
+        // Create the GridData folder if it doesn't exist
+        if (!AssetDatabase.IsValidFolder(gridDataPath))
+        {
+            AssetDatabase.CreateFolder("Assets", "GridData");
+        }
+
+        if (!layer)
+        {
+            // Create a folder for the prefab
+            if (!AssetDatabase.IsValidFolder(folderPath))
+            {
+                AssetDatabase.CreateFolder("Assets/GridData", prefabName);
+            }
+        }
+
+        //Save the prefab at the specified path
+        string prefabPath =  layer ? folderPath + "/" + specificPath + " " + prefabName  + ".prefab": folderPath + "/" + prefabName + ".prefab";
+        PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
     }
     
     
