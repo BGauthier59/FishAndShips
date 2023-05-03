@@ -11,9 +11,11 @@ public class MiniGame_Cannon_Shoot : MiniGame
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent inGameShootEvent;
     
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
+        
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.cannonDragAndDropManager.Enable(data);
         StartExecutingMiniGame();
     }

@@ -53,7 +53,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1302633896628049500}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -815,6 +815,7 @@ MonoBehaviour:
   miniGameObject: {fileID: 5340170873430285391}
   miniGameCameraPosition: {x: 50, y: 3, z: -5}
   miniGameCameraEulerAngles: {x: 25, y: 0, z: 0}
+  indicatorGame: Light it up!
   debugWorkshop: {fileID: 0}
   data:
     startPoint: {fileID: 5625962282267282769}
@@ -828,6 +829,9 @@ MonoBehaviour:
     maxSpeed: 2000
     matchstickDuration: 10
     matchstickOnTable: {fileID: 4773823268575937997}
+  inGameShootEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5340170874502647986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -935,7 +939,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7400470831860021700}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

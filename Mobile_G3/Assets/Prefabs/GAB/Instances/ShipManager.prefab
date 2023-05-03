@@ -35,6 +35,7 @@ Transform:
   - {fileID: 7982148310747907259}
   - {fileID: 3563568449140171990}
   - {fileID: 9154980356737687938}
+  - {fileID: 2029206151532585684}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -91,7 +92,13 @@ MonoBehaviour:
   shootEvent:
     m_PersistentCalls:
       m_Calls: []
-  shootVfxTransform: {fileID: 0}
+  shootVfxTransform: {fileID: 2029206151532585684}
+  enterDangerZoneEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  exitDangerZoneEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &391967020182770581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,6 +176,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 391967020182770580}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4733310631106655930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2029206151532585684}
+  m_Layer: 0
+  m_Name: ShootVFXTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2029206151532585684
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4733310631106655930}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 391967020182770580}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5709133201676376715
 GameObject:

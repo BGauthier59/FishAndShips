@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,6 +9,10 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public MiniGame currentMiniGame;
 
     public Transform miniGameEnvironmentCamera;
+
+    [SerializeField] private Animation miniGameIndicatorAnim;
+    [SerializeField] private AnimationClip indicatorClip;
+    [SerializeField] private TMP_Text miniGameIndicatorText;
 
     [SerializeField] private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
 
@@ -184,4 +189,15 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     }
 
     #endregion
+
+    public void SetGameIndicator(string text)
+    {
+        miniGameIndicatorText.text = text;
+        miniGameIndicatorAnim.Play(indicatorClip.name);
+    }
+
+    public int GetIndicatorAnimationLength()
+    {
+        return (int) (indicatorClip.length * 1000);
+    }
 }

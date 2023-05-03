@@ -39,9 +39,11 @@ public class MiniGame_Cannon_Load : MiniGame
         muzzleEulerAngles = muzzle.eulerAngles;
     }
 
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
+        
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         SwitchState(CannonState.Step1);
     }
     

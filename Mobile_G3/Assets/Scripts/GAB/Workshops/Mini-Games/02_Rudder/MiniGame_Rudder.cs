@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -10,9 +11,11 @@ public class MiniGame_Rudder : MiniGame
     private float currentRotationPerSecond;
     [SerializeField] private float2 minMaxRotationPerSecond;
     
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
+        
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
         StartExecutingMiniGame();
     }

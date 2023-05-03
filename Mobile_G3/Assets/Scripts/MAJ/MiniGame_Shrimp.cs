@@ -28,14 +28,20 @@ public class MiniGame_Shrimp : MiniGame
     {
         base.StartMiniGame();
         animation.Play(jump.name);
+
         await Task.Delay(500);
-        WorkshopManager.instance.shrimpSwipeManager.Enable(data);
-        StartExecutingMiniGame();
+        
         SwitchSwords();
         lifePoints = baseLifePoints;
+
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength() - 500);
+
+        WorkshopManager.instance.shrimpSwipeManager.Enable(data);
+        StartExecutingMiniGame();
     }
 
     private Ray ray;
+
     public override void ExecuteMiniGame()
     {
         if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
@@ -133,6 +139,7 @@ public class MiniGame_Shrimp : MiniGame
                 if (posAngle > botAngleCheck && posAngle < 180) return true;
                 break;
         }
+
         return false;
     }
 

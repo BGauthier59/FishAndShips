@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class MiniGame_Fire : MiniGame
@@ -14,13 +15,13 @@ public class MiniGame_Fire : MiniGame
     [SerializeField] private GyroscopeSetupData data;
     [SerializeField] private float damagePerSecond;
 
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
         
         // Enables Gyroscope
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.gyroscopeManager.Enable(data);
-        
         StartExecutingMiniGame();
     }
     

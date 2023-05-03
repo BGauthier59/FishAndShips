@@ -1,4 +1,3 @@
-using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,11 +9,14 @@ public abstract class MiniGame : NetworkBehaviour
     [SerializeField] protected Vector3 miniGameCameraPosition;
     [SerializeField] protected Vector3 miniGameCameraEulerAngles;
 
+    [SerializeField] private string indicatorGame;
+
     public WorkshopManager debugWorkshop;
 
     public virtual void StartMiniGame()
     {
         miniGameObject.SetActive(true);
+        WorkshopManager.instance.SetGameIndicator(indicatorGame);
     }
 
     public abstract void ExecuteMiniGame();

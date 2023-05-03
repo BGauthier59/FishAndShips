@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -20,12 +21,12 @@ public class MiniGame_Map : MiniGame
 
     [SerializeField] private Vector4 leftRightBottomTopBorders;
 
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
         SetRelativeMapPosition();
         
-        // Enable input
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.mapSwipeManager.Enable(data);
         StartExecutingMiniGame();
     }

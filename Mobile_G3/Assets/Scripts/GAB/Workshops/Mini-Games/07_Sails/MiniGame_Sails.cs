@@ -37,7 +37,7 @@ public class MiniGame_Sails : MiniGame
         ShipManager.instance.SetSpeed(1);
     }
 
-    public override void StartMiniGame()
+    public override async void StartMiniGame()
     {
         base.StartMiniGame();
         var connectedWorkshop = WorkshopManager.instance.GetCurrentWorkshop() as ConnectedWorkshop;
@@ -52,7 +52,6 @@ public class MiniGame_Sails : MiniGame
             currentData = firstPlayerData;
             currentRope = leftRope;
             rightRope.SetActive(false);
-            // Timer is only checked on first player
             isCooldown.OnValueChanged += OnCooldownValueChanged;
         }
         else
@@ -61,6 +60,9 @@ public class MiniGame_Sails : MiniGame
             currentRope = rightRope;
             leftRope.SetActive(false);
         }
+
+        
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.swipeManager.Enable(currentData);
         StartExecutingMiniGame();
