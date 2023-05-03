@@ -20,6 +20,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     [SerializeField] [Tooltip("WARNING! Might cause unexpected effects!")]
     private bool enableMultiUsing;
+<<<<<<< Updated upstream
 
     [SerializeField] protected bool occupationRequireItem;
     [SerializeField] protected InventoryObject requiredItem;
@@ -29,6 +30,17 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [Header("Feedbacks")] [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
     [SerializeField] private Vector3 workshopObjectOffset;
+=======
+
+    [SerializeField] protected bool occupationRequireItem;
+    [SerializeField] protected InventoryObject requiredItem;
+
+    private PlayerManager playingPlayer;
+    
+    [Header("Feedbacks")]
+    [SerializeField] protected UnityEvent activationEvent;
+    [SerializeField] protected UnityEvent deactivationEvent;
+>>>>>>> Stashed changes
 
     public virtual void Start()
     {
@@ -122,6 +134,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         SetActiveServerRpc(true);
+<<<<<<< Updated upstream
         associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
         GetActivatedClientRpc();
     }
@@ -136,6 +149,9 @@ public class Workshop : NetworkBehaviour, IGridEntity
     public void DeactivateServerRpc(bool victory, ulong playerId = 5)
     {
         Deactivate(victory, playerId);
+=======
+        activationEvent?.Invoke();
+>>>>>>> Stashed changes
     }
 
     protected virtual void Deactivate(bool victory, ulong playerId = 5)
@@ -150,6 +166,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         if (victory)
         {
             SetActiveServerRpc(false);
+<<<<<<< Updated upstream
             GetDeactivatedClientRpc();
             if (type == WorkshopType.Temporary)
             {
@@ -162,6 +179,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
     private void GetDeactivatedClientRpc()
     {
         deactivationEvent?.Invoke();
+=======
+            deactivationEvent?.Invoke();
+        }
+>>>>>>> Stashed changes
     }
 
     #region Network

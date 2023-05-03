@@ -11,7 +11,11 @@ public class MiniGame_Rudder : MiniGame
     private float currentRotationPerSecond;
     [SerializeField] private float2 minMaxRotationPerSecond;
     
+<<<<<<< Updated upstream
     public override async void StartMiniGame()
+=======
+    public override void StartMiniGame()
+>>>>>>> Stashed changes
     {
         base.StartMiniGame();
         

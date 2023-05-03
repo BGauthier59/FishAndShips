@@ -49,10 +49,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRunning: 0
+<<<<<<< Updated upstream
   cameraPos:
     pos: {x: 4.5, y: 14, z: -7}
     rot: {x: 49, y: 0, z: 0}
   totalLife: 3
+=======
+>>>>>>> Stashed changes
   moveDuration: 1.5
   moveLook:
     serializedVersion: 2
@@ -96,6 +99,7 @@ MonoBehaviour:
   randomFireCooldownDurationGap: 5
   fireAnimationDuration: 2
   cannonOrigin: {fileID: 8127708719542402802}
+<<<<<<< Updated upstream
   bullet: {fileID: 2787119383451817640}
   controlPoint1Height: 2
   controlPoint2Height: 8
@@ -119,6 +123,15 @@ MonoBehaviour:
   cannonShootTargetedTile: {fileID: 8376799344871286446}
   shrimpTargetedTile: {fileID: 2109153131786482421}
   notWalkable: {fileID: 3699071092612923195}
+=======
+  bullet: {fileID: 2281775896909392543}
+  controlPoint1Height: 2
+  controlPoint2Height: 8
+  cameraPos:
+    pos: {x: 4.5, y: 14, z: -7}
+    rot: {x: 49, y: 0, z: 0}
+  totalLife: 3
+>>>>>>> Stashed changes
   DEBUG_ShipLife: {fileID: 5681155279109986987}
 --- !u!114 &6126979554570275309
 MonoBehaviour:
@@ -216,10 +229,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isRunning: 0
+<<<<<<< Updated upstream
   cameraPos:
     pos: {x: 4.5, y: 15, z: -9.5}
     rot: {x: 57, y: 0, z: 0}
   totalLife: 3
+=======
+>>>>>>> Stashed changes
   moveDuration: 1.5
   moveLook:
     serializedVersion: 2
@@ -263,6 +279,7 @@ MonoBehaviour:
   randomFireCooldownDurationGap: 5
   fireAnimationDuration: 2
   cannonOrigin: {fileID: 2967691417364266532}
+<<<<<<< Updated upstream
   bullet: {fileID: 9172110424174483070}
   controlPoint1Height: 2
   controlPoint2Height: 8
@@ -286,6 +303,15 @@ MonoBehaviour:
   cannonShootTargetedTile: {fileID: 3288869100181563000}
   shrimpTargetedTile: {fileID: 4945233880758792739}
   notWalkable: {fileID: 3699071092612923195}
+=======
+  bullet: {fileID: 5066066399194425929}
+  controlPoint1Height: 2
+  controlPoint2Height: 8
+  cameraPos:
+    pos: {x: 4.5, y: 15, z: -9.5}
+    rot: {x: 57, y: 0, z: 0}
+  totalLife: 3
+>>>>>>> Stashed changes
   DEBUG_ShipLife: {fileID: 1671876948675795581}
 --- !u!114 &4688909802771003816
 MonoBehaviour:
@@ -334,6 +360,7 @@ Transform:
   m_Father: {fileID: 4853892707592759009}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
 --- !u!1 &3298460845849196720
 GameObject:
   m_ObjectHideFlags: 0
@@ -382,6 +409,8 @@ MonoBehaviour:
   flattenMode: 0
   flattenSpace: 0
   destroyAfterFlatten: 1
+=======
+>>>>>>> Stashed changes
 --- !u!1 &4619244305854795352
 GameObject:
   m_ObjectHideFlags: 0
@@ -444,8 +473,11 @@ Transform:
   m_Children:
   - {fileID: 4853892707592759009}
   - {fileID: 4348833082144485700}
+<<<<<<< Updated upstream
   - {fileID: 2444935952667838359}
   - {fileID: 845960790189160288}
+=======
+>>>>>>> Stashed changes
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -464,6 +496,7 @@ MonoBehaviour:
   durationBetweenRandomEventGenerationTry: 3
   shrimpShipAttackActivationDuration: 2
   durationBetweenShrimpShipAttacks: 10
+<<<<<<< Updated upstream
   lastAttackPosition: {x: 0, y: 0, z: 0}
   minDistanceBetweenShrimpShipAttacks: 5
   maxShrimpInstantiatedCount: 3
@@ -478,6 +511,13 @@ MonoBehaviour:
   stormEvents:
   - {fileID: 1062869571861247694}
   currentEvent: []
+=======
+  allEvents:
+  - {fileID: 4505960945226804444}
+  - {fileID: 913933736702132406}
+  currentEvent: []
+  DEBUG_selectedEvent: {fileID: 4505960945226804444}
+>>>>>>> Stashed changes
 --- !u!1 &6160094568212708374
 GameObject:
   m_ObjectHideFlags: 0
@@ -509,6 +549,7 @@ Transform:
   m_Father: {fileID: 4853892707592759009}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< Updated upstream
 --- !u!1 &8101551989934907078
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,6 +667,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f11de170ec40cd46a8c03050454a34e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+=======
+>>>>>>> Stashed changes
 --- !u!1001 &1786258206037139674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -716,12 +759,15 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1786258206037139674}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< Updated upstream
 --- !u!4 &1527685785860998886 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1006975075709150780, guid: 8007cd2174cd5ae4189056c94920e92d,
     type: 3}
   m_PrefabInstance: {fileID: 1786258206037139674}
   m_PrefabAsset: {fileID: 0}
+=======
+>>>>>>> Stashed changes
 --- !u!114 &1671876948675795581 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1151130837279079079, guid: 8007cd2174cd5ae4189056c94920e92d,
@@ -740,6 +786,7 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1786258206037139674}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< Updated upstream
 --- !u!4 &3147979476240897990 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3703593835251070748, guid: 8007cd2174cd5ae4189056c94920e92d,
@@ -773,6 +820,11 @@ Transform:
 --- !u!4 &9172110424174483070 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7459070984716007076, guid: 8007cd2174cd5ae4189056c94920e92d,
+=======
+--- !u!4 &5066066399194425929 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6810666201153194643, guid: 8007cd2174cd5ae4189056c94920e92d,
+>>>>>>> Stashed changes
     type: 3}
   m_PrefabInstance: {fileID: 1786258206037139674}
   m_PrefabAsset: {fileID: 0}
@@ -845,6 +897,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8007cd2174cd5ae4189056c94920e92d, type: 3}
+<<<<<<< Updated upstream
 --- !u!111 &1651941557482924223 stripped
 Animation:
   m_CorrespondingSourceObject: {fileID: 6323836581070391475, guid: 8007cd2174cd5ae4189056c94920e92d,
@@ -872,6 +925,11 @@ Transform:
 --- !u!4 &5536992924798748208 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1006975075709150780, guid: 8007cd2174cd5ae4189056c94920e92d,
+=======
+--- !u!4 &2281775896909392543 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6810666201153194643, guid: 8007cd2174cd5ae4189056c94920e92d,
+>>>>>>> Stashed changes
     type: 3}
   m_PrefabInstance: {fileID: 4696735190925172748}
   m_PrefabAsset: {fileID: 0}
@@ -899,6 +957,7 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4696735190925172748}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< Updated upstream
 --- !u!4 &8235932795761628944 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3703593835251070748, guid: 8007cd2174cd5ae4189056c94920e92d,
@@ -911,3 +970,5 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4696735190925172748}
   m_PrefabAsset: {fileID: 0}
+=======
+>>>>>>> Stashed changes

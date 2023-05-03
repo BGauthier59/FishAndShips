@@ -11,6 +11,7 @@ public class EventsManager : MonoSingleton<EventsManager>
     [SerializeField] private float durationBetweenRandomEventGenerationTry;
     private float timerBetweenRandomEventGenerationTry;
 
+<<<<<<< Updated upstream
     #region Shrimp ships main variables
 
     [SerializeField] private float shrimpShipAttackActivationDuration;
@@ -42,14 +43,38 @@ public class EventsManager : MonoSingleton<EventsManager>
     [SerializeField] private StormEvent[] stormEvents;
     [SerializeField] private List<RandomEvent> currentEvent = new List<RandomEvent>();
     private bool isRunning;
+=======
+    // EventsManager va régulièrement check s'il peut créer un nouvel event, et le faire si besoin
+
+    // Il va check les events qu'il peut créer (avec check de CheckConditions) et les stocker dans une liste, puis en choisir un aléatoirement
+>>>>>>> Stashed changes
+
+    [SerializeField] private float durationBetweenRandomEventGenerationTry;
+    private float timerBetweenRandomEventGenerationTry;
+    
+    [SerializeField] private float shrimpShipAttackActivationDuration;
+    [SerializeField] private float durationBetweenShrimpShipAttacks;
+    private bool isShrimpShipCooldownOver;
+
+    private float timerBetweenShrimpShipAttacks;
+    private float currentDistanceBetweenShrimpShipAttacks;
+
+    [SerializeField] private RandomEvent[] allEvents;
+    [SerializeField] private List<RandomEvent> currentEvent = new List<RandomEvent>();
+    private bool isRunning;
+
+    public RandomEvent DEBUG_selectedEvent;
 
     public void StartGameLoop()
     {
         if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
+<<<<<<< Updated upstream
         minSqrDistanceBetweenShrimpShipAttacks =
             minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
         lastAttackPosition = ShipManager.instance.GetShipPositionOnMap();
         OnEnterStorm = StartNewEvent;
+=======
+>>>>>>> Stashed changes
         InitiateEventsManager();
     }
 
@@ -71,6 +96,34 @@ public class EventsManager : MonoSingleton<EventsManager>
         currentEvent.Remove(randomEvent);
     }
 
+<<<<<<< Updated upstream
+=======
+    [ContextMenu("Start current event")]
+    public void DEBUG_StartEvent()
+    {
+        if (currentEvent == null) return;
+
+        if (DEBUG_selectedEvent.CheckConditions())
+        {
+            isRunning = true;
+            StartNewEvent(DEBUG_selectedEvent);
+        }
+        else Debug.LogWarning("Couldn't start selected event.");
+    }
+
+    [ContextMenu("Start Running")]
+    public void DEBUG_StartRunning()
+    {
+        isRunning = true;
+    }
+
+    [ContextMenu("Stop Running")]
+    public void DEBUG_StopRunning()
+    {
+        isRunning = false;
+    }
+
+>>>>>>> Stashed changes
     public void UpdateGameLoop()
     {
         if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
@@ -94,6 +147,7 @@ public class EventsManager : MonoSingleton<EventsManager>
         return isShrimpShipCooldownOver;
     }
 
+<<<<<<< Updated upstream
     public bool CanInstantiateShrimpWorkshop()
     {
         return currentShrimpCount < maxShrimpInstantiatedCount;
@@ -155,6 +209,10 @@ public class EventsManager : MonoSingleton<EventsManager>
 
     #endregion
 
+=======
+    #endregion
+    
+>>>>>>> Stashed changes
     private RandomEvent tempEvent;
 
     private void TryGenerateNewRandomEvent()
@@ -162,7 +220,11 @@ public class EventsManager : MonoSingleton<EventsManager>
         if (timerBetweenRandomEventGenerationTry > durationBetweenRandomEventGenerationTry)
         {
             timerBetweenRandomEventGenerationTry = 0;
+<<<<<<< Updated upstream
             tempEvent = allRandomEvents[Random.Range(0, allRandomEvents.Length)];
+=======
+            tempEvent = allEvents[Random.Range(0, allEvents.Length)];
+>>>>>>> Stashed changes
             if (tempEvent.CheckConditions()) StartNewEvent(tempEvent);
         }
         else timerBetweenRandomEventGenerationTry += Time.deltaTime;

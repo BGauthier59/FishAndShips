@@ -4,13 +4,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Serialization;
+<<<<<<< Updated upstream
 using static UnityEditor.SceneView;
+=======
+>>>>>>> Stashed changes
 using Random = UnityEngine.Random;
 
 public class GridEditor : EditorWindow
 {
     public string gridName = "Grid Manager";
     public GameObject prefab;
+<<<<<<< Updated upstream
     public float offsetObjectPositionX = 0f;
     public float offsetObjectPositionZ = 0f;
     
@@ -29,6 +33,13 @@ public class GridEditor : EditorWindow
     public int bordersGridContainer = 0;
     public Vector3 offsetGridContainerPosition = new Vector3(0f, 0f, 0f);
     
+=======
+    public float cellSize = 1f;
+    public int rows = 7;
+    public int cols = 10;
+    public int borders = 1;
+    public Vector3 offset = new Vector3(0f, 0f, 0f);
+>>>>>>> Stashed changes
     public Vector3 centerPosition = Vector3.zero;
     
     public bool useCenterOffset = false;
@@ -36,6 +47,7 @@ public class GridEditor : EditorWindow
     //Bool for enabling debug Preview
     public bool showSpecificObjetPreview = false;
     public bool showPreviewAllHandlesButton = false;
+<<<<<<< Updated upstream
     
     //Show Preview Position 
     public bool showSpecificGridSize = false;
@@ -48,6 +60,10 @@ public class GridEditor : EditorWindow
     
     public bool showPrevTileTypeName = false;
     public bool showPrevTileTypeID = false;
+=======
+    public bool showPreviewGridPivotHandles = false;
+    public bool showPreviewTileType = false;
+>>>>>>> Stashed changes
 
     //Foldout Boolean
     private bool showGenerateGridParameter = false;
@@ -55,8 +71,11 @@ public class GridEditor : EditorWindow
     private bool showGenerateContainerParameter = false;
     private bool showPreviewEditorSelect = false;
     private bool showOthersParameter = false;
+<<<<<<< Updated upstream
     
     private int idTileList;
+=======
+>>>>>>> Stashed changes
 
     //Private Variable
     private GridManager _gridManager;
@@ -65,14 +84,18 @@ public class GridEditor : EditorWindow
     private List<Tile> updateDeckTilePermently = new List<Tile>();
     private Camera sceneCamera;
 
+<<<<<<< Updated upstream
     //Offset Position Handles
     public Vector3 offsetPrevPositionText = new Vector3(0f, 0.5f, 0f);
     public Vector3 offsetPrevPosButtonHandles = new Vector3(0f, 0.5f, 0f);
     
+=======
+>>>>>>> Stashed changes
     //TileFloorType
     private TileFloorType tyleFloorType;
     private TileFloorType currentType = TileFloorType.GridFloorBarrier;
     private Component comp;
+<<<<<<< Updated upstream
     
     //Private Vector
     Vector3 offsetObjectPos = Vector3.zero;
@@ -98,6 +121,8 @@ public class GridEditor : EditorWindow
     //Const Name
     private const string deckName = "Deck";
     private const string containerName = "Container";
+=======
+>>>>>>> Stashed changes
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -108,10 +133,13 @@ public class GridEditor : EditorWindow
     
     private void OnGUI()
     {
+<<<<<<< Updated upstream
         // Begin a scroll view with a maximum height of 200 pixels
         using var scrollView = new EditorGUILayout.ScrollViewScope(scrollPosition, GUILayout.MaxHeight(position.height));
         scrollPosition = scrollView.scrollPosition; // Update the scroll position
         
+=======
+>>>>>>> Stashed changes
         // Find the grid object in the scene
         _gridManager = FindObjectOfType<GridManager>();
 
@@ -121,6 +149,7 @@ public class GridEditor : EditorWindow
         }
         else
         {
+<<<<<<< Updated upstream
             if (_gridManager.gameObject.name != gridName)
             {
                 EditorGUILayout.HelpBox("Find Grid Object in scene but not the same name", MessageType.Error);
@@ -134,6 +163,12 @@ public class GridEditor : EditorWindow
 
 
         //Properties 
+=======
+            EditorGUILayout.LabelField("Grid found!");
+        }
+
+
+>>>>>>> Stashed changes
         gridName = EditorGUILayout.TextField("Grid Manager", gridName);
         prefab = (GameObject)EditorGUILayout.ObjectField("Prefab", prefab, typeof(GameObject), false);
         offsetObjectPositionX = EditorGUILayout.FloatField("Offset Object Position X", offsetObjectPositionX);
@@ -141,6 +176,7 @@ public class GridEditor : EditorWindow
         showGenerateGridParameter = EditorUtils.FoldoutShurikenStyle(showGenerateGridParameter, "Create Grid and Edit Parameter");
         if (showGenerateGridParameter)
         {
+<<<<<<< Updated upstream
             EditorGUILayout.LabelField("Generate Global Grid Manager : ");
             cellSizeDeck = EditorGUILayout.FloatField("Cell Size", cellSizeDeck);
             rowsGridDeck = EditorGUILayout.IntField("Rows", rowsGridDeck);
@@ -159,6 +195,15 @@ public class GridEditor : EditorWindow
                 duringSceneGui -= PreviewGridDeckPivot;
             }
             
+=======
+            cellSize = EditorGUILayout.FloatField("Cell Size", cellSize);
+            rows = EditorGUILayout.IntField("Rows", rows);
+            cols = EditorGUILayout.IntField("Columns", cols);
+            borders = EditorGUILayout.IntField("Border", borders);
+            offset = EditorGUILayout.Vector3Field("Offset", offset);
+            useCenterOffset = EditorGUILayout.Toggle("Center the grid", useCenterOffset);
+            centerPosition = EditorGUILayout.Vector3Field("Center Position", centerPosition);
+>>>>>>> Stashed changes
             if (GUILayout.Button("Create Grid"))
             {
                 CreateGrid(2);
@@ -236,6 +281,7 @@ public class GridEditor : EditorWindow
                             CreateGrid(1);
                         }
 
+<<<<<<< Updated upstream
                         if (GUILayout.Button("Update Container Grid"))
                         {
                             UpdateContainerLayer();
@@ -255,6 +301,16 @@ public class GridEditor : EditorWindow
         {
             showPreviewAllTileTypeHandles = EditorGUILayout.Toggle("Preview All Type Tile", showPreviewAllTileTypeHandles);
             if (showPreviewAllTileTypeHandles)
+=======
+        EditorGUILayout.Space();
+
+        showPreviewEditorSelect = EditorUtils.Foldout("Show Preview Editor Parameter", showPreviewEditorSelect);
+        if (showPreviewEditorSelect)
+        {
+            showPreviewGridPivotHandles =
+                EditorGUILayout.Toggle("Preview Position for the Grid", showPreviewGridPivotHandles);
+            if (showPreviewGridPivotHandles)
+>>>>>>> Stashed changes
             {
                 duringSceneGui += PreviewAllTileTypeHandles;
             }
@@ -263,6 +319,7 @@ public class GridEditor : EditorWindow
                 duringSceneGui -= PreviewAllTileTypeHandles;
             }
 
+<<<<<<< Updated upstream
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
             showPrevTileTypeName = EditorGUILayout.Toggle("Tile Type Name", showPrevTileTypeName);
@@ -271,6 +328,10 @@ public class GridEditor : EditorWindow
             EditorGUILayout.EndHorizontal();
             
             if (showPrevTileTypeName || showPrevTileTypeID)
+=======
+            showPreviewTileType = EditorGUILayout.Toggle("Tile Type", showPreviewTileType);
+            if (showPreviewTileType)
+>>>>>>> Stashed changes
             {
                 duringSceneGui += PreviewTileTypeName;
             }
@@ -305,7 +366,11 @@ public class GridEditor : EditorWindow
 
         EditorGUILayout.Space();
 
+<<<<<<< Updated upstream
         showOthersParameter = EditorUtils.FoldoutShurikenStyle(showOthersParameter, "Show Other Parameter that Affect the Grid");
+=======
+        showOthersParameter = EditorUtils.Foldout("Show Other Parameter that Affect the Grid", showOthersParameter);
+>>>>>>> Stashed changes
         if (showOthersParameter)
         {
             showColorForTyle = EditorUtils.FoldoutShurikenStyle(showColorForTyle, "Show Tyle Color Editor");
@@ -335,7 +400,11 @@ public class GridEditor : EditorWindow
         UpdateListTileManage();
     }
 
+<<<<<<< Updated upstream
     private void OnDestroy()
+=======
+    private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
+>>>>>>> Stashed changes
     {
          showSpecificObjetPreview = false;
          showPreviewAllHandlesButton = false;
@@ -410,9 +479,13 @@ public class GridEditor : EditorWindow
                 tile.name = gridName + " " + row + "," + col;
                 Vector3 positionGridObject = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid;
 
+<<<<<<< Updated upstream
                 //Instantiate Prefab
                 _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
                 if (_gridManager.tilePrefab != null)
+=======
+                if (row > 0 + borders && row < rows - borders && col > 0 + borders && col < cols - borders)
+>>>>>>> Stashed changes
                 {
                     _gridManager.tilePrefab.name = gridName + " " + row + "," + col;
                     _gridManager.tilePrefab.transform.position = positionGridObject;
@@ -439,6 +512,7 @@ public class GridEditor : EditorWindow
                     
                     tile.transform = _gridManager.tilePrefab.GetComponent<Transform>();
 
+<<<<<<< Updated upstream
                     // Increment the offset by the spacing factor
                     offset += Vector3.right * offsetObjectPositionX;
                     if (row > bordersGrid - 1 && row < rowsGrid - bordersGrid 
@@ -451,6 +525,18 @@ public class GridEditor : EditorWindow
                             _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
                         }
                     }
+=======
+    public void ShowHandlesButtonForSelectedObject(SceneView sceneView)
+    {
+        if (!Selection.activeGameObject) return;
+        if (!showSpecificObjetPreview) return;
+        if (!sceneCamera) GetCameraScene(sceneView);
+        UpdateListTileManage();
+        _selectedObject = Selection.activeGameObject;
+        bool isSelectedObjectInList = false;
+        foreach (Tile obj in _listGridManagerTile)
+        {
+>>>>>>> Stashed changes
 
                     //Place in an empty folder
                     _gridManager.tilePrefab.transform.parent = createLayer ? layerFolder.transform : gridObject.transform;
@@ -459,6 +545,7 @@ public class GridEditor : EditorWindow
             // Reset the offset for the next row
             offset = Vector3.forward * (row + 1) * offsetObjectPositionZ;
         }
+<<<<<<< Updated upstream
         
         // Reset the index variable
         index = 0;
@@ -466,12 +553,39 @@ public class GridEditor : EditorWindow
         if (createLayer)
         {
             layerFolder.transform.parent = gridObject.transform;
+=======
+
+        // Calculate position and rotation of button
+        Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPreviewPosition.x,
+            offsetPreviewPosition.y, _selectedObject.transform.position.z + offsetPreviewPosition.z);
+        Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
+
+        if (!isSelectedObjectInList) return;
+
+        if (Handles.Button(buttonPos, buttonRot,
+                cellSize * 0.5f, cellSize, Handles.RectangleHandleCap))
+        {
+            currentType = (TileFloorType)(((int)currentType + 1) % Enum.GetNames(typeof(TileFloorType)).Length);
+            SwitchComponent(_selectedObject, currentType);
+>>>>>>> Stashed changes
         }
     }
 
     private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
     {
+<<<<<<< Updated upstream
         if (!showPreviewAllHandlesButton) return;
+=======
+        GameObject gridObject = new GameObject(gridName);
+        gridObject.AddComponent<GridManager>();
+        _gridManager = gridObject.GetComponent<GridManager>();
+        _gridManager.grid = new List<Tile>(0);
+        _gridManager.xSize = rows;
+        _gridManager.ySize = cols;
+        PositionGridObject(gridObject);
+        EditorUtility.SetDirty(gridObject);
+    }
+>>>>>>> Stashed changes
 
         Vector3 centerOffset = new Vector3(colsGridDeck / 2f - 0.5f, 0, rowsGridDeck / 2f - 0.5f) * cellSizeDeck;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
@@ -481,11 +595,45 @@ public class GridEditor : EditorWindow
             Vector3 positionAllButton_Handles = new Vector3(tile.transform.position.x, 0, tile.transform.position.z) * cellSizeDeck - center + offsetPrevPosButtonHandles;
             if (tile.floor != null)
             {
+<<<<<<< Updated upstream
                 Handles.Label(positionAllButton_Handles, tile.floor.ToString());
             }
             else
             {
                 Handles.Label(positionAllButton_Handles, "No Component Attach");
+=======
+                //Create a tile
+                Tile tile = new Tile();
+                tile.name = "Tile " + row + "," + col;
+                Vector3 position = new Vector3(col, 0, row) * cellSize - center + offset;
+
+                //Instantiate Prefab
+                _gridManager.tilePrefab = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+                if (_gridManager.tilePrefab != null)
+                {
+                    _gridManager.tilePrefab.name = "Tile " + row + "," + col;
+                    _gridManager.tilePrefab.transform.position = position;
+                    _gridManager.tilePrefab.transform.rotation = randomRotation
+                        ? Quaternion.Euler(0, Random.Range(-360, 360), 0)
+                        : Quaternion.identity;
+
+                    //Set the transform
+                    _gridManager.grid.Add(tile);
+                    tile.transform = _gridManager.tilePrefab.GetComponent<Transform>();
+                    tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>();
+
+                    if (row > 0 + borders && row < rows - borders
+                                          && col > 0 && col < cols - borders)
+                    {
+                        //Add Grid Walkable Component
+                        _gridManager.tilePrefab.AddComponent<GridFloorWalkable>();
+                        _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
+                    }
+
+                    //Place in an empty folder
+                    _gridManager.tilePrefab.transform.parent = gridObject.transform;
+                }
+>>>>>>> Stashed changes
             }
         }
     }
@@ -532,6 +680,7 @@ public class GridEditor : EditorWindow
             _gridManager.grid.Clear();
         }
 
+<<<<<<< Updated upstream
         _gridManager.xSize = rowsGridDeck;
         _gridManager.ySize = colsGridDeck;
         PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, Vector3.zero, true, false,deckName);
@@ -577,6 +726,12 @@ public class GridEditor : EditorWindow
     private void UpdateListBaseOnGrid(List<Tile> tileList, int beginRange, int endRange)
     {
         tileList.RemoveRange(beginRange, endRange);
+=======
+        _gridManager.xSize = rows;
+        _gridManager.ySize = cols;
+        PositionGridObject(gridObject);
+        EditorUtility.SetDirty(gridObject);
+>>>>>>> Stashed changes
     }
 
     private void UpdateListTileManage()
@@ -623,15 +778,24 @@ public class GridEditor : EditorWindow
     private void PreviewGridSizePivot(SceneView sceneView, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool showType)
     {
         GetCameraScene(sceneView);
+<<<<<<< Updated upstream
         if (!showType) return;
         Vector3 centerOffset = new Vector3(colsGrid / 2f - 0.5f, 0, rowsGrid / 2f - 0.5f) * cellSizeDeck;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
         Vector3 offset = Vector3.zero;
 
         for (int row = 0; row < rowsGrid; row++)
+=======
+        if (!showPreviewGridPivotHandles) return;
+        Vector3 centerOffset = new Vector3(cols / 2f - 0.5f, 0, rows / 2f - 0.5f) * cellSize;
+        Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
+
+        for (int row = 0; row < rows; row++)
+>>>>>>> Stashed changes
         {
             for (int col = 0; col < colsGrid; col++)
             {
+<<<<<<< Updated upstream
                 positionGridSize_Handles = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid + offsetPrevPosButtonHandles;
                 offset += Vector3.right * offsetObjectPositionX;
                 if (row > bordersGrid -1 && row < rowsGrid - bordersGrid 
@@ -655,6 +819,31 @@ public class GridEditor : EditorWindow
                         //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
                         Quaternion.identity,
                         HandleUtility.GetHandleSize(positionGridSize_Handles) * 0.2f,
+=======
+                Vector3 position = new Vector3(col, 0, row) * cellSize - center + offsetPreviewPosition;
+                if (row > borders && row < rows - (borders + 1)
+                                  && col > borders && col < cols - (borders + 1))
+                {
+                    Handles.color = Color.green;
+                    Handles.CubeHandleCap(
+                        0,
+                        position,
+                        //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
+                        Quaternion.identity,
+                        HandleUtility.GetHandleSize(position) * 0.2f,
+                        EventType.Repaint
+                    );
+                }
+                else
+                {
+                    Handles.color = Color.red;
+                    Handles.CubeHandleCap(
+                        0,
+                        position,
+                        //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
+                        Quaternion.identity,
+                        HandleUtility.GetHandleSize(position) * 0.2f,
+>>>>>>> Stashed changes
                         EventType.Repaint
                     );
                 }
@@ -691,8 +880,12 @@ public class GridEditor : EditorWindow
     private void PreviewTileTypeName(SceneView sceneView)
     {
         if (!Selection.activeGameObject) return;
+<<<<<<< Updated upstream
         if (!showPrevTileTypeName && !showPrevTileTypeID) return;
         if (CheckSelectedObjectIsInTheList()) return;
+=======
+        if (!showPreviewTileType) return;
+>>>>>>> Stashed changes
         UpdateListTileManage();
         // Calculate position and rotation of button
         Vector3 labelNamePos = new Vector3(_selectedObject.transform.position.x + offsetPrevPositionText.x,
@@ -734,6 +927,14 @@ public class GridEditor : EditorWindow
                 break;
             }
         }
+<<<<<<< Updated upstream
+=======
+
+        if (!isSelectedObjectInList) return;
+        // Calculate position and rotation of button
+        Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPreviewPosition.x,
+            offsetPreviewPosition.y, _selectedObject.transform.position.z + offsetPreviewPosition.z);
+>>>>>>> Stashed changes
 
         if (!isSelectedObjectInList) return true;
         return false;
@@ -806,6 +1007,7 @@ public class GridEditor : EditorWindow
                 DetectComponent(component, changeColor);
             }
         }
+<<<<<<< Updated upstream
         if (!foundComponent && changeColor)
         {
             SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
@@ -895,6 +1097,45 @@ public class GridEditor : EditorWindow
                 break; 
             case TileFloorType.GridFloorNonWalkable:
                 Handles.color = _colorGridElement.GridFloorNonWalkable;
+=======
+
+    }
+
+    void SwitchComponent(GameObject tileSelected, TileFloorType type)
+    {
+        var positionTile = tileSelected.transform.position;
+        switch (type)
+        {
+            case TileFloorType.GridFloorBarrier:
+                DestroyComponentForObject(tileSelected);
+                tileSelected.AddComponent<GridFloorBarrier>();
+                tileSelected.GetComponent<GridFloorBarrier>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                break;
+            case TileFloorType.GridFloorBouncePad:
+                DestroyComponentForObject(tileSelected);
+                tileSelected.AddComponent<GridFloorBouncePad>();
+                tileSelected.GetComponent<GridFloorBouncePad>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                break;
+            case TileFloorType.GridFloorIce:
+                DestroyComponentForObject(tileSelected);
+                tileSelected.AddComponent<GridFloorIce>();
+                tileSelected.GetComponent<GridFloorIce>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                break;
+            case TileFloorType.GridFloorPressurePlate:
+                DestroyComponentForObject(tileSelected);
+                tileSelected.AddComponent<GridFloorPressurePlate>();
+                tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                break;
+            case TileFloorType.GridFloorStair:
+                DestroyComponentForObject(tileSelected);
+                tileSelected.AddComponent<GridFloorStair>();
+                tileSelected.GetComponent<GridFloorStair>().SetPosition((int)positionTile.x, (int)positionTile.z);
+                break;
+            case TileFloorType.GridFloorWalkable:
+                DestroyComponentForObject(tileSelected);
+                tileSelected.AddComponent<GridFloorWalkable>();
+                tileSelected.GetComponent<GridFloorWalkable>().SetPosition((int)positionTile.x, (int)positionTile.z);
+>>>>>>> Stashed changes
                 break;
         }
     }
@@ -917,6 +1158,7 @@ public class GridEditor : EditorWindow
                 DestroyImmediate(component);
             }
         }
+<<<<<<< Updated upstream
     }
     
     
@@ -927,5 +1169,18 @@ public class GridEditor : EditorWindow
         public Vector3 offsetGrid = Vector3.zero;
         public GameObject emptyFolder;
         public GameObject intantistateObject;
+=======
+>>>>>>> Stashed changes
     }
+}
+
+[System.Serializable]
+enum TileFloorType
+{
+    GridFloorBarrier,
+    GridFloorBouncePad,
+    GridFloorIce,
+    GridFloorPressurePlate,
+    GridFloorStair,
+    GridFloorWalkable,
 }

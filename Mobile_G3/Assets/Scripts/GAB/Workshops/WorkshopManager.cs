@@ -9,12 +9,15 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public MiniGame currentMiniGame;
 
     public Transform miniGameEnvironmentCamera;
+<<<<<<< Updated upstream
 
     [SerializeField] private Animation miniGameIndicatorAnim, victoryIndicatorAnimation;
     [SerializeField] private AnimationClip indicatorClip, victoryClip;
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
     [SerializeField] private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
+=======
+>>>>>>> Stashed changes
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public ShrimpSwipeManager shrimpSwipeManager;
@@ -100,6 +103,10 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public void ExitMiniGame(bool victory)
     {
+<<<<<<< Updated upstream
+=======
+        Debug.Log($"Exited with {victory}");
+>>>>>>> Stashed changes
         miniGameEnvironmentCamera.gameObject.SetActive(false);
         currentMiniGame = null;
         EndWorkshopInteraction(victory);

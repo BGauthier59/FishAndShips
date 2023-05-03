@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+<<<<<<< Updated upstream
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -43,11 +44,26 @@ public class StormEvent : RandomEvent
     public override bool CheckConditions()
     {
         // This is not fully random, then no need to check any condition
+=======
+using UnityEngine;
+
+public class StormEvent : RandomEvent
+{
+    public override void StartEvent()
+    {
+        base.StartEvent();
+    }
+    
+    public override bool CheckConditions()
+    {
+
+>>>>>>> Stashed changes
         return true;
     }
 
     public override void ExecuteEvent()
     {
+<<<<<<< Updated upstream
         // Host-side only
         CheckSailsActivationTimer();
     }
@@ -116,3 +132,13 @@ public class StormEvent : RandomEvent
 
     #endregion
 }
+=======
+        
+    }
+    
+    protected override void EndEvent()
+    {
+        base.EndEvent();
+    }
+}
+>>>>>>> Stashed changes

@@ -15,7 +15,11 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private CanvasManager canvasManager;
     private TimerManager timerManager;
     private CameraManager cameraManager;
+<<<<<<< Updated upstream
 
+=======
+    
+>>>>>>> Stashed changes
     private List<PlayerManager> players = new List<PlayerManager>();
 
     private void Start()

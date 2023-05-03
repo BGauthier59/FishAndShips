@@ -8,10 +8,15 @@ public class MiniGame_Cannon_Shoot : MiniGame
 {
     [SerializeField] private CannonDragAndDropData data;
     private byte index;
+<<<<<<< Updated upstream
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent inGameShootEvent;
     
     public override async void StartMiniGame()
+=======
+    
+    public override void StartMiniGame()
+>>>>>>> Stashed changes
     {
         base.StartMiniGame();
         
@@ -38,12 +43,18 @@ public class MiniGame_Cannon_Shoot : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.cannonDragAndDropManager.Disable();
 
+<<<<<<< Updated upstream
         inGameShootEvent?.Invoke();
         
         ShipManager.instance.FireServerRpc(index);
         
         WorkshopManager.instance.SetVictoryIndicator();
         await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+=======
+        // Todo - Feedback
+
+        ShipManager.instance.FireServerRpc(index);
+>>>>>>> Stashed changes
         
         ExitMiniGame(true);
     }

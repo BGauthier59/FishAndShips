@@ -25,6 +25,7 @@ public class MiniGame_Sails : MiniGame
 
     [SerializeField] private float boatSpeedFactor;
 
+<<<<<<< Updated upstream
     public override void AssociatedWorkshopGetActivatedHostSide()
     {
         base.AssociatedWorkshopGetActivatedHostSide();
@@ -38,6 +39,19 @@ public class MiniGame_Sails : MiniGame
     }
 
     public override async void StartMiniGame()
+=======
+    public override void AssociatedWorkshopGetActivated()
+    {
+        if(NetworkManager.Singleton.IsHost) ShipManager.instance.SetSpeed(boatSpeedFactor);
+    }
+
+    public override void AssociatedWorkshopGetDeactivated()
+    {
+        if(NetworkManager.Singleton.IsHost) ShipManager.instance.SetSpeed(1);
+    }
+
+    public override void StartMiniGame()
+>>>>>>> Stashed changes
     {
         base.StartMiniGame();
         var connectedWorkshop = WorkshopManager.instance.GetCurrentWorkshop() as ConnectedWorkshop;

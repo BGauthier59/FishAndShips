@@ -13,7 +13,11 @@ public abstract class RandomEvent : NetworkBehaviour
 
     public abstract void ExecuteEvent();
 
+<<<<<<< Updated upstream
     public virtual void EndEvent()
+=======
+    protected virtual void EndEvent()
+>>>>>>> Stashed changes
     {
         isRunning = false;
         EventsManager.instance.EndEvent(this);

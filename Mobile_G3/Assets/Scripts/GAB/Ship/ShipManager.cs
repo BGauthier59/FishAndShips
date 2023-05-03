@@ -44,10 +44,16 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     [SerializeField]
     private Transform leftTopCannonOrigin, rightTopCannonOrigin, leftBottomCannonOrigin, rightBottomCannonOrigin;
+<<<<<<< Updated upstream
 
     [SerializeField] private LayerMask shrimpShipLayer;
     private NetworkVariable<bool> underAttack = new NetworkVariable<bool>();
 
+=======
+    [SerializeField] private LayerMask shrimpShipLayer;
+    private NetworkVariable<bool> underAttack = new NetworkVariable<bool>();
+    
+>>>>>>> Stashed changes
     [Header("Feedbacks")] [SerializeField] private Animation collisionWarningAnim;
     [SerializeField] private UnityEvent shootEvent;
     [SerializeField] private Transform shootVfxTransform;
@@ -183,7 +189,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void GetStar(byte index)
     {
         // Only called on Host as Physics is only checked on Host
+<<<<<<< Updated upstream
 
+=======
+        
+>>>>>>> Stashed changes
         Debug.Log("You got a star!");
 
         MiniGame_Map.OnGetStar?.Invoke(index);
@@ -212,7 +222,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             Debug.LogWarning("Only host should manage shrimp shrimp attack!");
             return;
         }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         this.underAttack.Value = underAttack;
     }
 
@@ -324,6 +337,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void FireServerRpc(byte index)
     {
         Vector3 origin = index switch
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
         {
             0 => leftTopCannonOrigin.position,
             1 => rightTopCannonOrigin.position,
@@ -331,8 +348,13 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
             3 => rightBottomCannonOrigin.position,
             _ => throw new ArgumentOutOfRangeException(nameof(index), index, null)
         };
+<<<<<<< Updated upstream
 
         FireClientRpc(origin, index);
+=======
+        
+        FireClientRpc(origin);
+>>>>>>> Stashed changes
 
         Vector3 direction = index switch
         {
@@ -343,6 +365,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, 10f, shrimpShipLayer))
         {
+<<<<<<< Updated upstream
             var shrimpShipEvent = hit.transform.parent.parent.parent.GetComponent<ShrimpShipAttackEvent>();
             if (!shrimpShipEvent)
             {
@@ -351,11 +374,20 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
                 return;
             }
 
+=======
+            var shrimpShipEvent = hit.transform.parent.parent.GetComponent<ShrimpShipAttackEvent>();
+            if (!shrimpShipEvent)
+            {
+                Debug.LogWarning("Shrimp ship event script was not found. Searched on parent's parent of collision box.");
+                return;
+            }
+>>>>>>> Stashed changes
             shrimpShipEvent.GetHit();
         }
     }
 
     [ClientRpc]
+<<<<<<< Updated upstream
     private void FireClientRpc(Vector3 feedbackPos, byte index)
     {
         shootVfxTransform.position = feedbackPos;
@@ -363,5 +395,13 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         shootEvent?.Invoke();
     }
 
+=======
+    private void FireClientRpc(Vector3 feedbackPos)
+    {
+        // Todo - shoot feedback
+        
+    }
+    
+>>>>>>> Stashed changes
     #endregion
 }

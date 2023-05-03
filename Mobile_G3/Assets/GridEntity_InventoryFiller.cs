@@ -6,6 +6,10 @@ public class GridEntity_InventoryFiller : MonoBehaviour, IGridEntity
 {
     public InventoryObject filling;
     
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     public void OnCollision(IGridEntity entity, int direction)
     {
         PlayerManager player = entity as PlayerManager;

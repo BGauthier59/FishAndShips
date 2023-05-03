@@ -21,12 +21,20 @@ public class MiniGame_Map : MiniGame
 
     [SerializeField] private Vector4 leftRightBottomTopBorders;
 
+<<<<<<< Updated upstream
     public override async void StartMiniGame()
+=======
+    public override void StartMiniGame()
+>>>>>>> Stashed changes
     {
         base.StartMiniGame();
         SetRelativeMapPosition();
         
+<<<<<<< Updated upstream
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+=======
+        // Enable input
+>>>>>>> Stashed changes
         WorkshopManager.instance.mapSwipeManager.Enable(data);
         StartExecutingMiniGame();
     }
@@ -99,7 +107,11 @@ public class MiniGame_Map : MiniGame
     {
         shipPosition = ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
         shipPosition.z = shipPosition.y;
+<<<<<<< Updated upstream
         shipPosition.y = 0.01f; // We can hardcode Y value as it must be really close to 0
+=======
+        shipPosition.y = 0.1f;
+>>>>>>> Stashed changes
 
         ship.localPosition = shipPosition;
     }

@@ -21,11 +21,15 @@ public class TimerManager : MonoSingleton<TimerManager>
             timer -= 1;
             currentDuration -= 1;
 
+<<<<<<< Updated upstream
             if (currentDuration <= -1)
             {
                 currentDuration = 0;
                 if(NetworkManager.Singleton.IsHost) GameManager.instance.GameEnds(false);
             }
+=======
+            if (currentDuration <= -1) GameManager.onGameEnds?.Invoke(false);
+>>>>>>> Stashed changes
             else MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
         }
     }

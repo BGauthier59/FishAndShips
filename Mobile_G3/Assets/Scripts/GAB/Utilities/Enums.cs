@@ -35,6 +35,7 @@ public enum GameState
 public enum BoatSide
 {
     Deck, Hold
+<<<<<<< Updated upstream
 }
 
 public enum WorkshopType
@@ -45,4 +46,6 @@ public enum WorkshopType
 public enum TileFilter
 {
     Walkable
+=======
+>>>>>>> Stashed changes
 }

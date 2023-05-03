@@ -214,6 +214,10 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         inventoryObject = filling;
         if (IsOwner)
         {
+<<<<<<< Updated upstream
+=======
+            // TODO : Changer l'inventaire UI
+>>>>>>> Stashed changes
             MainCanvasManager.instance.SetItemOnDisplay(filling);
         }
     }

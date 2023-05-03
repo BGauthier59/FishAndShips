@@ -13,6 +13,7 @@ public class SeriesWorkshop : Workshop
 
     [Tooltip("For next mini-games only")] [SerializeField]
     private InventoryObject[] requiredItems;
+<<<<<<< Updated upstream
 
     [SerializeField] [Range(0, 3)] [Tooltip("0 is top left, 1 is top right, 2 is bottom left, 3 is bottom right")]
     private byte cannonIndex;
@@ -25,6 +26,12 @@ public class SeriesWorkshop : Workshop
     [Tooltip("Same as for activation events tooltip")] [SerializeField]
     private UnityEvent[] deactivationEvents;
 
+=======
+    
+    [SerializeField] [Range(0, 3)] [Tooltip("0 is top left, 1 is top right, 2 is bottom left, 3 is bottom right")]
+    private byte cannonIndex;
+
+>>>>>>> Stashed changes
     public override void Start()
     {
         base.Start();
@@ -46,6 +53,7 @@ public class SeriesWorkshop : Workshop
     {
         currentMiniGameIndexSafe = currentMiniGameIndex.Value;
     }
+<<<<<<< Updated upstream
 
     protected override void Activate()
     {
@@ -55,6 +63,10 @@ public class SeriesWorkshop : Workshop
     }
 
     protected override void Deactivate(bool victory, ulong playerId = 5)
+=======
+    
+    public override void Deactivate(bool victory)
+>>>>>>> Stashed changes
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
 
@@ -63,6 +75,7 @@ public class SeriesWorkshop : Workshop
             SetOccupiedServerRpc(false);
             return;
         }
+<<<<<<< Updated upstream
 
         deactivationEvent?.Invoke();
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
@@ -72,6 +85,17 @@ public class SeriesWorkshop : Workshop
         if (currentMiniGameIndexSafe == nextMiniGames.Length)
         {
             currentMiniGameIndex.Value = -1;
+=======
+        
+        deactivationEvent?.Invoke();
+        
+        SetMiniGameIndexServerRpc(currentMiniGameIndex.Value + 1);
+        currentMiniGameIndexSafe++;
+        if (currentMiniGameIndexSafe == nextMiniGames.Length)
+        {
+            SetMiniGameIndexServerRpc(-1);
+            currentMiniGameIndexSafe = -1;
+>>>>>>> Stashed changes
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
             Activate();
@@ -79,6 +103,7 @@ public class SeriesWorkshop : Workshop
         }
 
         Activate();
+<<<<<<< Updated upstream
         ClientRpcParams parameters = new ClientRpcParams()
         {
             Send = new ClientRpcSendParams()
@@ -93,6 +118,8 @@ public class SeriesWorkshop : Workshop
     private void InitiateWorkshopInteractionClientRpc(int newMiniGameIndex, ClientRpcParams parameters)
     {
         currentMiniGameIndexSafe = newMiniGameIndex;
+=======
+>>>>>>> Stashed changes
         WorkshopManager.instance.StartWorkshopInteraction(this);
     }
 
@@ -101,6 +128,24 @@ public class SeriesWorkshop : Workshop
         if (!occupationRequireItem) return null;
         if (currentMiniGameIndexSafe == -1) return requiredItem;
         if (requiredItems.Length == 0) return null;
+
+        return requiredItems[currentMiniGameIndexSafe];
+    }
+
+    public byte GetCannonIndex()
+    {
+        return cannonIndex;
+    }
+
+    public override InventoryObject? TryGetWorkshopRequireItem()
+    {
+        if (!occupationRequireItem) return null;
+        if (currentMiniGameIndexSafe == -1) return requiredItem;
+        if (requiredItems.Length == 0)
+        {
+            Debug.LogWarning("No item in required items list!");
+            return null;
+        }
 
         return requiredItems[currentMiniGameIndexSafe];
     }

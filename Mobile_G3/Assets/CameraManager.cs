@@ -59,8 +59,11 @@ public class CameraManager : MonoSingleton<CameraManager>
         }
         
         PosRot current = side == BoatSide.Deck ? currentDeckPosRot : currentHoldPosRot;
+<<<<<<< Updated upstream
         
         // Todo - replace DOMove & DORotate by something else (must be cancelled if we reach the other side while moving camera)
+=======
+>>>>>>> Stashed changes
         transform.DOMove(current.pos, smoothTime);
         transform.DORotate(current.rot, smoothTime);
     }

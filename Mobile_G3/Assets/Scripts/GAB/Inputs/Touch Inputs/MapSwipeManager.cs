@@ -25,12 +25,16 @@ public class MapSwipeManager : MiniGameInput<MapSwipeData>
             Reset();
         }
     }
+<<<<<<< Updated upstream
 
     public override void Enable(MapSwipeData setupData)
     {
         base.Enable(setupData);
     }
 
+=======
+    
+>>>>>>> Stashed changes
     private void Reset()
     {
         currentTouch = lastTouch = Vector3.zero;
@@ -43,8 +47,13 @@ public class MapSwipeManager : MiniGameInput<MapSwipeData>
 
         lastTouch = currentTouch;
         currentTouch = Input.mousePosition;
+<<<<<<< Updated upstream
         
         var dir = (currentTouch - lastTouch) * (Time.deltaTime * data.sensitivity);
+=======
+
+        var dir = (currentTouch - lastTouch).normalized * (Time.deltaTime * data.sensitivity);
+>>>>>>> Stashed changes
         dir.z = dir.y;
         dir.y = 0;
         
