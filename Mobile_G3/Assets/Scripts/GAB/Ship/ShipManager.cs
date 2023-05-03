@@ -343,11 +343,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, 10f, shrimpShipLayer))
         {
-            var shrimpShipEvent = hit.transform.parent.parent.GetComponent<ShrimpShipAttackEvent>();
+            var shrimpShipEvent = hit.transform.parent.parent.parent.GetComponent<ShrimpShipAttackEvent>();
             if (!shrimpShipEvent)
             {
                 Debug.LogError(
-                    "Shrimp ship event script was not found. Searched on parent's parent of collision box.");
+                    "Shrimp ship event script was not found. Searched on parent's parent's parent of collision box.");
                 return;
             }
 

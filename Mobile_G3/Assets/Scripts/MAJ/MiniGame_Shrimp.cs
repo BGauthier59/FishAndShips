@@ -18,7 +18,7 @@ public class MiniGame_Shrimp : MiniGame
     public Animation animation;
 
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
-
+    
     private void Start()
     {
         plane = new Plane(miniGameCameraPosition - planeOrigin.position, planeOrigin.position);

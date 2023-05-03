@@ -81,7 +81,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     public void GameEnds(bool victory)
     {
         // Host-side!
-        if (NetworkManager.Singleton.IsHost)
+        if (!NetworkManager.Singleton.IsHost)
         {
             Debug.LogError("No client should call GameEnds()");
             return;
