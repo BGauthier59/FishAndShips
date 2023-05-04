@@ -8,6 +8,7 @@ public class CompareTextures : MonoBehaviour
     public RenderTexture renderTexture;
     public TextMeshPro percentageTexture;
     public float precisionColor;
+
     private void Update()
     {
         CompareTexturesAndGetPercentage();
