@@ -128,7 +128,7 @@ public class GridEditor : EditorWindow
     private Vector2 scroolPosWorkshopObject;
 
     private int index = 0;
-    private int emptyFolderForRefresh = 0;
+    private int emptyFolderForRefresh = -1;
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -304,7 +304,7 @@ public class GridEditor : EditorWindow
         if (showUpdateDataGridParameter)
         {
             EditorGUILayout.LabelField("Refresh the contains of the Grid Data");
-            if (gridPrefabSaveDico.Count == 0)
+            if (gridPrefabSaveDico.Count == 0 && emptyFolderForRefresh == -1)
             {
                 EditorGUILayout.HelpBox("No Prefab have been save, please save a prefab", MessageType.Info);
             }
