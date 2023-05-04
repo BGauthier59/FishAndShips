@@ -59,6 +59,7 @@ public class MiniGame_Reparation : MiniGame
 
     private async void WallIsFixed()
     {
+        WorkshopManager.instance.reparationDragAndDrop.Disable();
         StopExecutingMiniGame();
         WorkshopManager.instance.SetVictoryIndicator();
         await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
@@ -72,6 +73,7 @@ public class MiniGame_Reparation : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        WorkshopManager.instance.reparationDragAndDrop.Disable();
         StopExecutingMiniGame();
         ExitMiniGame(false);
     }

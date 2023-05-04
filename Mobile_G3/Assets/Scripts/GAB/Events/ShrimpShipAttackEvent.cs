@@ -76,7 +76,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent destructionEvent;
     [SerializeField] private UnityEvent fireEvent;
-    [SerializeField] private UnityEvent getHitEvent;    
+    [SerializeField] private UnityEvent getHitEvent;
     [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
     [SerializeField] private GridFloorNotWalkable notWalkable;
 
@@ -118,7 +118,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     private void StartShrimpShipEventFeedbackClientRpc()
     {
         SetYPos();
-        
+
         cannonShootTargetedTile.SetParent(null);
         shrimpTargetedTile.SetParent(null);
 
@@ -265,7 +265,11 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     private async void Fire()
     {
-        isFiring = true;
+        if (!EventsManager.instance.CanInstantiateHole())
+        {
+            SetNewFireCooldownDuration();
+            return;
+        }
 
         // Select a tile that is alright
         Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
@@ -276,6 +280,16 @@ public class ShrimpShipAttackEvent : RandomEvent
             return;
         }
 
+        EventsManager.instance.AddHole();
+        int? index = EventsManager.instance.GetReparationWorkshopIndex();
+        if (!index.HasValue)
+        {
+            Debug.LogError("Should not happen. There's no workshop available but still tried to instantiate one.");
+            return;
+        }
+
+        isFiring = true;
+
         Vector3 p1, p2, p3, p4;
         p1 = cannonOrigin.position;
         p2 = p1 + Vector3.up * controlPoint1Height;
@@ -283,20 +297,20 @@ public class ShrimpShipAttackEvent : RandomEvent
         p3 = p4 + Vector3.up * controlPoint2Height;
 
         int2 coord = targetedTile.GetTilePos();
-        FireFeedbackClientRpc(p1, p2, p3, p4, coord.x, coord.y);
+        FireFeedbackClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
 
         await Task.Delay((int) (fireAnimationDuration * 1000));
-        
+
         SetNewFireCooldownDuration();
     }
 
     [ClientRpc]
-    private void FireFeedbackClientRpc(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, int x, int y)
+    private void FireFeedbackClientRpc(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, int x, int y, int index)
     {
-        CannonBulletAnimation(p1, p2, p3, p4, x, y);
+        Fire(p1, p2, p3, p4, x, y, index);
     }
 
-    private async void CannonBulletAnimation(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, int x, int y)
+    private async void Fire(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, int x, int y, int index)
     {
         fireEvent?.Invoke();
 
@@ -304,7 +318,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         var targetedTile = GridManager.instance.GetTile(x, y);
         var walkable = targetedTile.GetFloor();
         targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
-        
+
         cannonShootTargetedTile.position = p4;
 
         bullet.position = p1;
@@ -317,10 +331,14 @@ public class ShrimpShipAttackEvent : RandomEvent
             timer += Time.deltaTime;
             bullet.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / fireAnimationDuration);
         }
-
-        targetedTile.SetTile(targetedTile.GetEntity(), walkable);
-        cannonShootTargetedTile.gameObject.SetActive(false);
+        
         bullet.gameObject.SetActive(false);
+        cannonShootTargetedTile.gameObject.SetActive(false);
+
+        ReparationWorkshop reparationWorkshop = EventsManager.instance.GetReparationWorkshop(index);
+        targetedTile.SetTile(targetedTile.GetEntity(), walkable);
+        reparationWorkshop.SetPosition(x, y);
+        if (NetworkManager.Singleton.IsHost) reparationWorkshop.ActivateServerRpc();
     }
 
     #endregion
@@ -398,7 +416,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         spawningShrimp.position = p1;
         spawningShrimp.SetParent(null);
         spawningShrimp.gameObject.SetActive(true);
-        
+
         shrimpTargetedTile.gameObject.SetActive(true);
         shrimpTargetedTile.position = p4;
         Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
@@ -406,7 +424,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
 
         spawningShrimpAnim.Play(spawningShrimpJump.name);
-        
+
         var timer = 0f;
         while (timer < spawnDuration)
         {
@@ -425,7 +443,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         shrimpWorkshop.SetPosition(coordX, coordY);
         if (NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
     }
-    
+
     #endregion
 
     #region Life Management

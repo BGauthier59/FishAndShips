@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2479732158594935735}
   - component: {fileID: 2479732158594935732}
-  - component: {fileID: 2479732158594935733}
+  - component: {fileID: 2593875001303832714}
   m_Layer: 0
   m_Name: 06_Reparation
   m_TagString: Untagged
@@ -50,7 +50,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2479732158594935733
+--- !u!114 &2593875001303832714
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,28 +59,52 @@ MonoBehaviour:
   m_GameObject: {fileID: 2479732158594935734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0307a24b686bb2419c47ddc7ed68614, type: 3}
+  m_Script: {fileID: 11500000, guid: 8577c2a7acbbd85459bd9571fbea52ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  positionX: 2
-  positionY: 1
+  positionX: -1
+  positionY: -1
   workshopObject: {fileID: 2479732158805567858}
   associatedMiniGame: {fileID: 0}
   isOccupied:
     m_InternalValue: 0
   isActive:
     m_InternalValue: 0
-  isActiveByDefault: 1
+  isActiveByDefault: 0
   enableMultiUsing: 0
   occupationRequireItem: 1
   requiredItem: 2
   activationEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7264787980162742484}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
   deactivationEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7264787980162742484}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   workshopObjectOffset: {x: 0, y: 0, z: 0}
   DEBUG_GridManager: {fileID: 0}
 --- !u!1001 &8941683867424193591
@@ -108,7 +132,7 @@ PrefabInstance:
     - target: {fileID: 6809153845870925125, guid: 415674ee673ff794c82bf73a72a74519,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6809153845870925125, guid: 415674ee673ff794c82bf73a72a74519,
         type: 3}
@@ -155,6 +179,12 @@ PrefabInstance:
 --- !u!4 &2479732158805567858 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6809153845870925125, guid: 415674ee673ff794c82bf73a72a74519,
+    type: 3}
+  m_PrefabInstance: {fileID: 8941683867424193591}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7264787980162742484 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1785264073672770787, guid: 415674ee673ff794c82bf73a72a74519,
     type: 3}
   m_PrefabInstance: {fileID: 8941683867424193591}
   m_PrefabAsset: {fileID: 0}

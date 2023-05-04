@@ -125,8 +125,6 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
 
     protected override async void MoveToNewTile(Vector3 newPosition)
     {
-        // Todo - animation de saut à intégrer ici
-
         currentTile.SetTile(this, currentTile.GetFloor());
 
         Vector3 oldPosition = workshopObject.position;
@@ -168,6 +166,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     protected override void RemoveWorkshopFromGrid()
     {
         // Called by every client when workshop is over
+        Debug.Log("Remove workshop from grid");
         base.RemoveWorkshopFromGrid();
         if (NetworkManager.Singleton.IsHost)
         {

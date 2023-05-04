@@ -24,10 +24,11 @@ public class EventsManager : MonoSingleton<EventsManager>
     private float minSqrDistanceBetweenShrimpShipAttacks;
     private float currentSqrDistanceBetweenShrimpShipAttacks;
 
-    [SerializeField] private int maxShrimpInstantiatedCount;
-    private int currentShrimpCount;
+    [SerializeField] private int maxShrimpInstantiatedCount, maxHoleInstantiatedCount;
+    private int currentShrimpCount, currentHoleCount;
 
     [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
+    [SerializeField] private ReparationWorkshop[] reparationWorkshops;
 
     #endregion
 
@@ -142,6 +143,37 @@ public class EventsManager : MonoSingleton<EventsManager>
         // WARNING! The index must be the one sent by Host as currentShrimpCount is not modified on clients
 
         return shrimpWorkshops[index];
+    }
+
+    public bool CanInstantiateHole()
+    {
+        return currentHoleCount < maxHoleInstantiatedCount;
+    }
+    
+    public void AddHole()
+    {
+        currentHoleCount++;
+    }
+
+    public void RemoveHole()
+    {
+        currentHoleCount--;
+    }
+
+    public int? GetReparationWorkshopIndex()
+    {
+        for (int i = 0; i < reparationWorkshops.Length; i++)
+        {
+            if(reparationWorkshops[i].isActive.Value) continue;
+            return i;
+        }
+
+        return null;
+    }
+
+    public ReparationWorkshop GetReparationWorkshop(int index)
+    {
+        return reparationWorkshops[index];
     }
 
     #endregion
