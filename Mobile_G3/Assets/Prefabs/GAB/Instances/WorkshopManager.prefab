@@ -82,6 +82,7 @@ GameObject:
   - component: {fileID: 23070647440256550}
   - component: {fileID: 764111343}
   - component: {fileID: 6441235418117161254}
+  - component: {fileID: 8537472463373434478}
   m_Layer: 0
   m_Name: PlayerInputs
   m_TagString: Untagged
@@ -256,6 +257,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8537472463373434478}
+        m_TargetAssemblyTypeName: ReparationDragAndDropManager, Assembly-CSharp
+        m_MethodName: OnTapOnScreen
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: e17d6d74-555d-4285-92bc-eb53f583f582
     m_ActionName: Player/Tap[/Mouse/leftButton]
   m_NeverAutoSwitchControlSchemes: 0
@@ -275,6 +288,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 753a7a7b859715540b3ef466472ea005, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8537472463373434478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764111342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91753c7094bd3ce4b9619c968799805b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputCamera: {fileID: 1901295940}
 --- !u!1 &804453597
 GameObject:
   m_ObjectHideFlags: 0
@@ -635,7 +661,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1901295941
 Transform:
   m_ObjectHideFlags: 0
@@ -643,8 +669,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1901295936}
-  m_LocalRotation: {x: 0.21643962, y: -0, z: -0, w: 0.976296}
-  m_LocalPosition: {x: 50, y: 3, z: -5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 50, y: 1.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -653,7 +679,7 @@ Transform:
   - {fileID: 7832181518044968560}
   m_Father: {fileID: 3947346014406555195}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -0.72, y: 0, z: 0}
 --- !u!20 &1901295940
 Camera:
   m_ObjectHideFlags: 0
@@ -685,7 +711,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1152
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -882,6 +908,7 @@ MonoBehaviour:
   swipeManager: {fileID: 764111347}
   cannonDragAndDropManager: {fileID: 764111348}
   mapSwipeManager: {fileID: 6441235418117161254}
+  reparationDragAndDrop: {fileID: 8537472463373434478}
 --- !u!114 &3947346014406555194
 MonoBehaviour:
   m_ObjectHideFlags: 0
