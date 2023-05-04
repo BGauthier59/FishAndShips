@@ -112,14 +112,20 @@ public class GridEditor : EditorWindow
     private const string containerName = "Container";
     private const string gridDataPath = "Assets/GridData/";
     private const string gridPrefixSave = "GDM_";
+    private string folderPathForMinigame = "Assets/Prefabs/GAB/Workshops/Minigames";
+    private string folderPathForWorkshopObjects = "Assets/Prefabs/GAB/Workshops/WorkshopObjects";
     private string gridFinalNameSave;
     
     //Load Saving Parameter
-    private GameObject _gridDataManager;
-    private GameObject _gridDeckDataManager;
-    private GameObject _gridContainerDataManager;
-    private Dictionary<string, List<Object>> gridPrefabSaveDico = new Dictionary<string, List<Object>>();
     private Vector2 scrollPosPrefabFolder;
+    private Dictionary<string, List<Object>> gridPrefabSaveDico = new Dictionary<string, List<Object>>();
+    
+    //Create MiniGame
+    private bool showMiniGameFolder = false;
+    private GameObject[] prefabWorkshopMiniGames;
+    private GameObject[] prefabWorkshopObjects;
+    private Vector2 scroolPosWorkshopMiniGames;
+    private Vector2 scroolPosWorkshopObject;
 
     private int index = 0;
     private int emptyFolderForRefresh = 0;
@@ -316,13 +322,15 @@ public class GridEditor : EditorWindow
                 }
             }
 
+            #region Easter Egg
+
             switch (emptyFolderForRefresh)
             {
                 case 1:
                     EditorGUILayout.HelpBox("The folder is empty please save a prefab", MessageType.Error);
                     break;
                 case 2:
-                    EditorGUILayout.HelpBox("Tu comprends pas l'anglais ? Y a rien dans le dossier save, il faut que tu sauvegardes une grid", MessageType.Error);
+                    EditorGUILayout.HelpBox("Tu ne comprends pas l'anglais ? Y a rien dans le dossier save, il faut que tu sauvegardes une grid", MessageType.Error);
                     break;
                 case 3:
                     EditorGUILayout.HelpBox("Allo il y a quelqu'un", MessageType.Error);
@@ -343,7 +351,7 @@ public class GridEditor : EditorWindow
 
             if (emptyFolderForRefresh > 7 && emptyFolderForRefresh < 10)
             {
-                EditorGUILayout.HelpBox("Sérieusement ? Je te déteste", MessageType.Error);
+                EditorGUILayout.HelpBox("Sérieusement ?", MessageType.Error);
             }
             
             if (emptyFolderForRefresh > 20 && emptyFolderForRefresh < 22)
@@ -353,13 +361,15 @@ public class GridEditor : EditorWindow
             
             if (emptyFolderForRefresh > 21 && emptyFolderForRefresh < 99)
             {
-                EditorGUILayout.HelpBox("Save des LD au lieu de perdre du temps", MessageType.Error);
+                EditorGUILayout.HelpBox("Tu n'as pas des LD à faire ?", MessageType.Error);
             } 
             
             if (emptyFolderForRefresh > 100)
             {
-                EditorGUILayout.HelpBox("Bravo tu as officiellement appuyé 100 fois maintenant au travail !", MessageType.Error);
+                EditorGUILayout.HelpBox("Bravo tu as officiellement appuyé 100 fois ! :)", MessageType.Error);
             }
+            
+            #endregion
             
             scrollPosPrefabFolder = EditorGUILayout.BeginScrollView(scrollPosPrefabFolder);
             foreach (KeyValuePair<string, List<Object>> gridDataList in gridPrefabSaveDico)
@@ -412,6 +422,24 @@ public class GridEditor : EditorWindow
                 }
             }
             EditorGUILayout.EndScrollView();
+        }
+        
+        EditorGUILayout.Space();
+        
+        showMiniGameFolder = EditorUtils.FoldoutShurikenStyle(showMiniGameFolder, "Show Mini Game Parameter");
+        {
+            if (showMiniGameFolder)
+            {
+                GUILayout.Label("Workshop Minigames");
+                GUILayout.Label("Path : ");
+                folderPathForWorkshopObjects = EditorGUILayout.TextField(folderPathForWorkshopObjects);
+                if (GUILayout.Button("Load Minigames"))
+                {
+                    prefabWorkshopObjects = LoadPrefabs(folderPathForWorkshopObjects);
+                }
+                
+                DrawPrefabList(prefabWorkshopObjects, ref scroolPosWorkshopMiniGames);
+            }
         }
         
         EditorGUILayout.Space();
@@ -1147,6 +1175,8 @@ public class GridEditor : EditorWindow
         }
     }
     
+    #region Saving System
+    
     public static void SaveGameObjectAsPrefab(string prefabName, GameObject gameObject, bool layer = false, string specificPath = "null")
     {
         string folderPath = layer ? gridDataPath + specificPath : gridDataPath + prefabName;
@@ -1170,6 +1200,65 @@ public class GridEditor : EditorWindow
         PrefabUtility.SaveAsPrefabAsset(gameObject, prefabPath);
     }
     
+    #endregion
+
+    #region Load Prefab Mini Game
+
+    private GameObject[] LoadPrefabs(string folderPath)
+    {
+        GameObject[] prefabs = null;
+
+        if (!string.IsNullOrEmpty(folderPath))
+        {
+            string[] prefabGUIDs = AssetDatabase.FindAssets("t:Prefab", new[] { folderPath });
+
+            if (prefabGUIDs != null && prefabGUIDs.Length > 0)
+            {
+                prefabs = new GameObject[prefabGUIDs.Length];
+
+                for (int i = 0; i < prefabGUIDs.Length; i++)
+                {
+                    string prefabPath = AssetDatabase.GUIDToAssetPath(prefabGUIDs[i]);
+                    prefabs[i] = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+                }
+            }
+        }
+
+        return prefabs;
+    }
+
+    private void DrawPrefabList(GameObject[] prefabs, ref Vector2 scrollPos)
+    {
+        if (prefabs != null)
+        {
+            scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
+
+            for (int i = 0; i < prefabs.Length; i++)
+            {
+                EditorGUILayout.BeginHorizontal();
+
+                EditorGUILayout.ObjectField(prefabs[i], typeof(GameObject), false);
+
+                if (GUILayout.Button("Select"))
+                {
+                    Selection.activeObject = prefabs[i];
+                }
+
+                EditorGUILayout.EndHorizontal();
+            }
+
+            EditorGUILayout.EndScrollView();
+        }
+        else
+        {
+            EditorGUILayout.LabelField("No prefabs found.");
+        }
+    }
+
+    #endregion
+    
+    #region Load the Grid Data Prefab
+    
     private void LoadPrefabInDirectory(string path)
     {
         gridPrefabSaveDico.Clear();
@@ -1184,11 +1273,11 @@ public class GridEditor : EditorWindow
         {
             string folderName = new DirectoryInfo(folderPath).Name;
             List<Object> sceneList = new List<Object>();
-            string[] scenePaths = Directory.GetFiles(folderPath, "*.prefab");
+            string[] dataGridPaths = Directory.GetFiles(folderPath, "*.prefab");
 
-            foreach (string scenePath in scenePaths)
+            foreach (string dataGridPath in dataGridPaths)
             {
-                Object scene = AssetDatabase.LoadAssetAtPath<Object>(scenePath);
+                Object scene = AssetDatabase.LoadAssetAtPath<Object>(dataGridPath);
                 sceneList.Add(scene);
             }
 
@@ -1196,11 +1285,10 @@ public class GridEditor : EditorWindow
             {
                 gridPrefabSaveDico.Add(folderName, sceneList);
             }
-
             LoadPrefabRecursive(folderPath);
         }
     }
-    
+    #endregion
     
     private class Grid {
         public string name;
