@@ -13,7 +13,6 @@ public class ConvertIP : MonoBehaviour
     private  string codeIpAdress;
 
     
-    
     // Start is called before the first frame update
     
     [ContextMenu("TestIP")]

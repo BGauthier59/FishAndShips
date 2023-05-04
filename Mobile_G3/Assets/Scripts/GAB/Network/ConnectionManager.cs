@@ -39,7 +39,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         hostIp = GetIPv4AddressMobile();
         transport.SetConnectionData(hostIp, transport.ConnectionData.Port);
         NetworkManager.Singleton.StartHost();
-        return hostIp;
+        return StringUtils.NumberToLetterIP(hostIp);
     }
 
     public void ConnectAsClient(string ip)
@@ -51,7 +51,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         }
 
         Debug.Log(ip);
-        transport.SetConnectionData(ip, transport.ConnectionData.Port);
+        transport.SetConnectionData(StringUtils.LetterToNumberIP(ip), transport.ConnectionData.Port);
         NetworkManager.Singleton.StartClient();
     }
 
