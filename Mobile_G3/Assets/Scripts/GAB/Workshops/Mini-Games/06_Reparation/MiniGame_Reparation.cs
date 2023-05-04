@@ -120,7 +120,7 @@ public class MiniGame_Reparation : MiniGame
             percentage = 100f;
         }
 
-        percentageTexture.text = "Percentage of White" + percentage;
+        percentageTexture.text = "Percentage of White" + percentage.ToString("F2");
 
         // Retourner le pourcentage calculé
         return percentage;
