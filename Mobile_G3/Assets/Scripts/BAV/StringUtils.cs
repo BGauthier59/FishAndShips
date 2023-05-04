@@ -28,7 +28,17 @@ public static class StringUtils
             else if (segment.Length == 2)
             {
                 int firstTwoDigits = int.Parse(segment.Substring(0, 2));
-                output.Append(NumberToLetter[firstTwoDigits].ToString());
+                if (firstTwoDigits > 25)
+                {
+                    int firstDigit = int.Parse(segment.Substring(0, 1));
+                    int twoDigit = int.Parse(segment.Substring(1, 1));
+                    output.Append(NumberToLetter[firstDigit].ToString());
+                    output.Append(NumberToLetter[twoDigit].ToString());
+                }
+                else
+                {
+                    output.Append(NumberToLetter[firstTwoDigits].ToString());
+                }
                 output.Append(".");
             }
             else if (segment.Length == 1)
