@@ -12,8 +12,12 @@ public class ConvertIP : MonoBehaviour
     public string ipAdress; 
     private  string codeIpAdress;
 
+    
+    
     // Start is called before the first frame update
-    void Start()
+    
+    [ContextMenu("TestIP")]
+    void TestIP()
     {
         textIP.text = "IP : " + ipAdress;
         codeIpAdress = StringUtils.NumberToLetterIP(ipAdress);
