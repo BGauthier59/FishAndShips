@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ public class CinematicCanvasManager : MonoSingleton<CinematicCanvasManager>
         // Todo - cinématique d'introduction
         CanvasManager.instance.DisplayCanvas(CanvasType.IntroductionCinematicCanvas);
         cinematicAnimation.Play(introductionCinematicClip.name);
+        //Thread.Sleep((int)(introductionCinematicClip.length * 1000));
         await Task.Delay((int)(introductionCinematicClip.length * 1000));
         CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas, CanvasType.TimerCanvas);
     }

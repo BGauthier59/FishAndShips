@@ -219,6 +219,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         
         // Todo - check if connection was successful ?
         
+        
         MapTransition();
         ipText.text = $"IP: {ip}";
     }
