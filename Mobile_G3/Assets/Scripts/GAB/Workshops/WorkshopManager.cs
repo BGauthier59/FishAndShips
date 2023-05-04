@@ -22,6 +22,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public SwipeManager swipeManager;
     public CannonDragAndDropManager cannonDragAndDropManager;
     public MapSwipeManager mapSwipeManager;
+    public ReparationDragAndDropManager reparationDragAndDrop;
 
     #region Game Loop
 

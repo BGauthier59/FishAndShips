@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEditor;
@@ -571,15 +572,15 @@ public class GridEditor : EditorWindow
 
     private void CreateGridDeck(GameObject gridManagerObject, bool offsetForTheContainer)
     {
-        PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, offsetForTheContainer ? containerName : deckName);
+        PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, false,offsetForTheContainer ? containerName : deckName);
     } 
     
     private void CreateGridContainer(GameObject gridManagerObject)
     {
-        PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, containerName);
+        PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, true, containerName);
     }
     
-    private void PositionGridObject(GameObject gridObject, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool createLayer, bool updateDeckListElement, string name)
+    private void PositionGridObject(GameObject gridObject, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool createLayer, bool updateDeckListElement, bool holdType,string name)
     {
         Vector3 centerOffset = new Vector3(colsGrid / 2f - 0.5f, 0, rowsGrid / 2f - 0.5f) * cellSizeDeck;
         //Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
@@ -598,14 +599,15 @@ public class GridEditor : EditorWindow
             gridObject.GetComponent<LayerTileList>().layerTileData.Clear();
         }
         
-        for (int row = 0; row < rowsGrid; row++)
+        for (int col = 0; col < colsGrid; col++)
         {
-            for (int col = 0; col < colsGrid; col++)
+            for (int row = 0; row < rowsGrid; row++)
             {
                 //Create a tile
                 Tile tile = new Tile();
-                tile.name = name + " " + row + "," + col;
+                tile.name = name + " " + col + "," + row;
                 Vector3 positionGridObject = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid;
+                tile.coordinates = holdType ? new int2(col + colsGridDeck, row) :  new int2(col, row);
 
                 //Instantiate Prefab
                 if (prefab != null)
@@ -619,11 +621,12 @@ public class GridEditor : EditorWindow
                 
                 if (_gridManager.tilePrefab != null)
                 {
-                    _gridManager.tilePrefab.name = name + " " + row + "," + col;
+                    _gridManager.tilePrefab.name = tile.name;
                     _gridManager.tilePrefab.transform.position = positionGridObject;
                     _gridManager.tilePrefab.transform.rotation = randomRotation
                         ? Quaternion.Euler(0, Random.Range(-360, 360), 0)
                         : Quaternion.identity;
+                    
 
                     //Set the transform
                     if (updateDeckListElement)
@@ -659,7 +662,7 @@ public class GridEditor : EditorWindow
                             //Add Grid Walkable Component
                             _gridManager.tilePrefab.AddComponent<GridFloorWalkable>();
                             tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorWalkable>(); 
-                            _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition(row, col);
+                            _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition( holdType ? col + colsGridDeck : col, row);
                         }
                     }
 
@@ -668,7 +671,7 @@ public class GridEditor : EditorWindow
                 }
             }
             // Reset the offset for the next row
-            offset = Vector3.forward * (row + 1) * offsetObjectPositionZ;
+            offset = Vector3.forward * (col + 1) * offsetObjectPositionZ;
         }
         
         // Reset the index variable
@@ -745,8 +748,8 @@ public class GridEditor : EditorWindow
 
         _gridManager.xSize = rowsGridDeck;
         _gridManager.ySize = colsGridDeck;
-        PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, Vector3.zero, true, false, deckName);
-        PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetGridDeckPosition, true,false, containerName);
+        PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, Vector3.zero, true, false, false, deckName);
+        PositionGridObject(gridObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetGridDeckPosition, true,false, true, containerName);
         EditorUtility.SetDirty(gridObject);
     }
     
@@ -826,7 +829,7 @@ public class GridEditor : EditorWindow
             _gridManager.grid.RemoveAt(startIndex);
         }
 
-        PositionGridObject(gridObject, colsGrid, rowsGrid, bordersGrid, offsetGrid,false, !containerGrid, layerName);
+        PositionGridObject(gridObject, colsGrid, rowsGrid, bordersGrid, offsetGrid,false, !containerGrid, containerGrid, layerName);
         EditorUtility.SetDirty(gridObject);
     }
 
@@ -997,44 +1000,43 @@ public class GridEditor : EditorWindow
 
     void SwitchComponent(GameObject tileSelected, TileFloorType type, int id)
     {
-        var positionTile = tileSelected.transform.position;
         switch (type)
         {
             case TileFloorType.GridFloorBarrier:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBarrier>();
-                tileSelected.GetComponent<GridFloorBarrier>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBarrier>();
+                tileSelected.GetComponent<GridFloorBarrier>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorBouncePad:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBouncePad>();
-                tileSelected.GetComponent<GridFloorBouncePad>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBouncePad>();
+                tileSelected.GetComponent<GridFloorBouncePad>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorIce:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorIce>();
-                tileSelected.GetComponent<GridFloorIce>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorIce>();
+                tileSelected.GetComponent<GridFloorIce>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorPressurePlate:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorPressurePlate>();
-                tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
+                tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorStair:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorStair>();
-                tileSelected.GetComponent<GridFloorStair>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorStair>();
+                tileSelected.GetComponent<GridFloorStair>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorWalkable:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorWalkable>();
-                tileSelected.GetComponent<GridFloorWalkable>().SetPosition((int)positionTile.x, (int)positionTile.z);
                 _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                tileSelected.GetComponent<GridFloorWalkable>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorNonWalkable :
                 DestroyComponentForObject(tileSelected);
@@ -1066,6 +1068,27 @@ public class GridEditor : EditorWindow
         {
             SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
         }
+    }
+
+    private Component ReturnComponent(GameObject tileSelectedInScene)
+    {
+        Component[] components = {
+            tileSelectedInScene.GetComponent<GridFloorBarrier>(),
+            tileSelectedInScene.GetComponent<GridFloorBouncePad>(),
+            tileSelectedInScene.GetComponent<GridFloorIce>(),
+            tileSelectedInScene.GetComponent<GridFloorPressurePlate>(),
+            tileSelectedInScene.GetComponent<GridFloorStair>(),
+            tileSelectedInScene.GetComponent<GridFloorWalkable>()
+        };
+
+        foreach (Component component in components)
+        {
+            if (component != null)
+            {
+                return component;
+            }
+        }
+        return null;
     }
 
     public void DetectComponent(Component component, bool switchColor)
