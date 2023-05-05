@@ -78,7 +78,8 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
     {
         base.Enable(setupData);
         plane = new Plane(-WorkshopManager.instance.miniGameEnvironmentCamera.forward, data.planeOrigin.position);
-        currentPlank = data.draggablePlanks[UnityEngine.Random.Range(0, data.draggablePlanks.Length)];
+        currentPlankIndex = UnityEngine.Random.Range(0, data.draggablePlanks.Length);
+        currentPlank = data.draggablePlanks[currentPlankIndex];
         RefreshPlanks();
     }
 

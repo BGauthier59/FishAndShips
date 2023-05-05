@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
@@ -22,6 +23,12 @@ public class MiniGame_Reparation : MiniGame
     [SerializeField] [Range(0, 100)] private float minimumRateToRepair;
     private static readonly int TexHole = Shader.PropertyToID("_Tex_Hole");
 
+    private Vector3 plankInitPos;
+    
+    public override void OnNetworkSpawn()
+    {
+        plankInitPos = data.draggablePlanks[0].position;
+    }
     
     public override async void StartMiniGame()
     {
@@ -55,6 +62,11 @@ public class MiniGame_Reparation : MiniGame
 
     public override void Reset()
     {
+        foreach (var plank in data.draggablePlanks)
+        {
+            plank.position = plankInitPos;
+            plank.gameObject.SetActive(false);
+        }
     }
 
     private async void WallIsFixed()
@@ -66,7 +78,7 @@ public class MiniGame_Reparation : MiniGame
         ExitMiniGame(true);
     }
 
-    protected override async void ExitMiniGame(bool victory)
+    protected override void ExitMiniGame(bool victory)
     {
         base.ExitMiniGame(victory);
     }
