@@ -7,7 +7,7 @@ public class MiniGame_Shrimp : MiniGame
     [SerializeField] private ShrimpSwipeSetupData data;
 
     public Transform shrimpCollision, swipeTrail, planeOrigin;
-    public float shrimpCollisionSize, swordCollisionSize, posAngle;
+    public float shrimpCollisionSize, trueCollisionSize, swordCollisionSize, trueSwordSize, posAngle;
     public Vector2 lastPos;
     public bool validSwipe;
     public float topAngleCheck, botAngleCheck;
@@ -28,6 +28,8 @@ public class MiniGame_Shrimp : MiniGame
     {
         base.StartMiniGame();
         animation.Play(jump.name);
+        trueCollisionSize = shrimpCollisionSize * shrimpCollision.parent.lossyScale.x;
+        trueSwordSize = swordCollisionSize * shrimpCollision.parent.lossyScale.x;
 
         await Task.Delay(500);
         
@@ -44,12 +46,15 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void ExecuteMiniGame()
     {
+        Debug.DrawRay(shrimpCollision.position,Vector3.right * trueCollisionSize,Color.red);
+        Debug.DrawRay(shrimpCollision.position,Vector3.right * trueSwordSize,Color.green);
+        
         if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
         {
             if (validSwipe)
             {
                 if (Vector2.SqrMagnitude(WorkshopManager.instance.shrimpSwipeManager.startTouch -
-                                         shrimpCollision.position) < swordCollisionSize * swordCollisionSize)
+                                         shrimpCollision.position) < trueSwordSize * trueSwordSize)
                 {
                     validSwipe = false;
                 }
@@ -57,7 +62,7 @@ public class MiniGame_Shrimp : MiniGame
                 lastPos = Input.mousePosition;
 
                 if (Vector2.SqrMagnitude(Input.mousePosition - shrimpCollision.position) <
-                    shrimpCollisionSize * shrimpCollisionSize)
+                    trueCollisionSize * trueCollisionSize)
                 {
                     // si le swipe touche la crevette
                     if (!CompareSwipeAngle()) validSwipe = false;
@@ -69,7 +74,7 @@ public class MiniGame_Shrimp : MiniGame
                 }
 
                 else if (Vector2.SqrMagnitude(Input.mousePosition - shrimpCollision.position) <
-                         swordCollisionSize * swordCollisionSize)
+                         trueSwordSize * trueSwordSize)
                 {
                     if (!CompareSwipeAngle()) validSwipe = false;
                 }
