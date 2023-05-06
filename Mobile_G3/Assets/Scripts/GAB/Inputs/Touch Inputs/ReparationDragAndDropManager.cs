@@ -12,11 +12,12 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
 
     private Vector3 startTouch;
     private Vector3 currentTouch;
+    private Vector3 initPlankPos;
     private bool isDraging;
     private int currentPlankIndex;
 
     private Transform currentPlank;
-    
+
     public Action OnSetPlank;
 
     [UsedImplicitly]
@@ -27,11 +28,10 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
         if (ctx.started)
         {
             startTouch = currentTouch = Input.mousePosition;
-            
-            // Check end zone
+
+            if (Vector3.Distance(startTouch, data.plankStartPoint.position) > data.startRadius) return;
 
             isDraging = true;
-
         }
         else if (ctx.canceled)
         {
@@ -43,43 +43,53 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
     {
         if (isDraging)
         {
-            // Check if end zone if available
-            
-            OnSetPlank?.Invoke();
-            currentPlankIndex++;
-            if (currentPlankIndex == data.draggablePlanks.Length)
+            if (Vector3.Distance(currentTouch, data.plankAvailableEndPoint.position) > data.endRadius)
             {
-                currentPlankIndex = 0;
+                currentPlank.position = initPlankPos;
             }
-            currentPlank = data.draggablePlanks[currentPlankIndex];
-            RefreshPlanks();
+            else
+            {
+                OnSetPlank?.Invoke();
+                currentPlankIndex++;
+                if (currentPlankIndex == data.draggablePlanks.Length)
+                {
+                    currentPlankIndex = 0;
+                }
+
+                currentPlank = data.draggablePlanks[currentPlankIndex];
+                RefreshPlanks();
+            }
         }
-        
+
         startTouch = currentTouch = Vector3.zero;
         isDraging = false;
     }
 
+    private Ray ray;
+    private float enter;
     public void CalculateCurrentPlankPosition()
     {
         if (!isDraging) return;
 
         currentTouch = Input.mousePosition;
-        
-        Ray ray = inputCamera.ScreenPointToRay(Input.mousePosition);
-        
-        if (plane.Raycast(ray, out float enter))
+
+        ray = inputCamera.ScreenPointToRay(Input.mousePosition);
+
+        if (plane.Raycast(ray, out enter))
         {
             data.draggablePlanks[currentPlankIndex].position = ray.GetPoint(enter);
         }
     }
 
     private Plane plane;
+
     public override void Enable(ReparationDragAndDropManagerData setupData)
     {
         base.Enable(setupData);
         plane = new Plane(-WorkshopManager.instance.miniGameEnvironmentCamera.forward, data.planeOrigin.position);
         currentPlankIndex = UnityEngine.Random.Range(0, data.draggablePlanks.Length);
         currentPlank = data.draggablePlanks[currentPlankIndex];
+        initPlankPos = currentPlank.position;
         RefreshPlanks();
     }
 
@@ -94,7 +104,6 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
             }
         }
     }
-    
 }
 
 [Serializable]
