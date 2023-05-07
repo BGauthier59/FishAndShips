@@ -18,7 +18,6 @@ public class MiniGame_Reparation : MiniGame
     [SerializeField] private MeshRenderer renderer;
     
     public RenderTexture renderTexture;
-    public TMP_Text percentageTexture;
     public float precisionColor;
     [SerializeField] [Range(0, 100)] private float minimumRateToRepair;
     private static readonly int TexHole = Shader.PropertyToID("_Tex_Hole");
@@ -133,9 +132,7 @@ public class MiniGame_Reparation : MiniGame
         {
             percentage = 100f;
         }
-
-        percentageTexture.text = "Percentage of White" + percentage.ToString("F2");
-
+        
         // Retourner le pourcentage calculé
         return percentage;
     }

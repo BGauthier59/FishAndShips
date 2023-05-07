@@ -106,4 +106,18 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         // Todo - Le Host peut choisir de poursuivre la partie ou de couper ?
         // Todo - Le client, pendant ce temps, peut voir des trucs sur la partie, son titre, etc
     }
+
+    private bool isEveryoneDisconnected;
+    public void PlayerGetsDisconnected()
+    {
+        // Should stop game for everyone
+        StopGameClientRpc();
+    }
+
+    [ClientRpc]
+    private void StopGameClientRpc()
+    {
+        Debug.Log("A client got disconnected. disconnecting the client.");
+        NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+    }
 }

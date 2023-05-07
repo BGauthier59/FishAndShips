@@ -95,13 +95,24 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
     {
         var infoText = $"Client with ID {clientId} has been disconnected...";
         if (NetworkManager.Singleton.IsHost)
-            infoText += $", number of client(s): {NetworkManager.Singleton.ConnectedClients.Count} ";
+        {
+            if (GameManager.instance == null)
+            {
+                // Todo - Should stop game before starting GameManager
+            }
+            else
+            {
+                GameManager.instance.PlayerGetsDisconnected();
+            }
 
-        Debug.Log(infoText);
+            return;
+        }
+
+        // Afficher le message d'erreur ici
         
         NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-    }
+    } 
 
     #endregion
 
