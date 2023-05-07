@@ -173,10 +173,4 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
             EventsManager.instance.RemoveShrimp();
         }
     }
-
-    private bool IsActiveOnGrid()
-    {
-        if (!isActive.Value || isOccupied.Value || currentTile == null) return false;
-        return true;
-    }
 }

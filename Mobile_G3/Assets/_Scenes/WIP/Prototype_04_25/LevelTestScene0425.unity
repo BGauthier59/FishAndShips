@@ -10457,6 +10457,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2593875001303832714, guid: 981d3c16a1e6267458a17fc539db6f5d,
         type: 3}
+      propertyPath: damagePerSecond
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593875001303832714, guid: 981d3c16a1e6267458a17fc539db6f5d,
+        type: 3}
       propertyPath: DEBUG_GridManager
       value: 
       objectReference: {fileID: 2048135494}
@@ -15931,6 +15936,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593875001303832714, guid: 981d3c16a1e6267458a17fc539db6f5d,
+        type: 3}
+      propertyPath: damagePerSecond
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2593875001303832714, guid: 981d3c16a1e6267458a17fc539db6f5d,
         type: 3}
@@ -23092,6 +23102,22 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 128
       objectReference: {fileID: 0}
+    - target: {fileID: 1901295941, guid: 8ffd4dc55925b3b41bc8439da688ca1b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1901295941, guid: 8ffd4dc55925b3b41bc8439da688ca1b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1901295941, guid: 8ffd4dc55925b3b41bc8439da688ca1b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.976296
+      objectReference: {fileID: 0}
+    - target: {fileID: 1901295941, guid: 8ffd4dc55925b3b41bc8439da688ca1b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.21643962
+      objectReference: {fileID: 0}
     - target: {fileID: 3947346014406555194, guid: 8ffd4dc55925b3b41bc8439da688ca1b,
         type: 3}
       propertyPath: GlobalObjectIdHash
@@ -23152,6 +23178,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3947346014406555196, guid: 8ffd4dc55925b3b41bc8439da688ca1b,
+        type: 3}
+      propertyPath: referenceCanvas
+      value: 
+      objectReference: {fileID: 406740594}
     - target: {fileID: 3947346014406555197, guid: 8ffd4dc55925b3b41bc8439da688ca1b,
         type: 3}
       propertyPath: m_Name
@@ -23884,11 +23915,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1996715012}
     m_Modifications:
-    - target: {fileID: 7003109990335852311, guid: 6facb221cbb301c42b43b84bfd0fad7d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7003109990772616724, guid: 6facb221cbb301c42b43b84bfd0fad7d,
         type: 3}
       propertyPath: m_RootOrder

@@ -14,7 +14,10 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     [SerializeField] private AnimationClip indicatorClip, victoryClip;
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
-    [SerializeField] private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
+    private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
+
+    [SerializeField] private RectTransform referenceCanvas;
+    [SerializeField] private float canvasScaleFactor;
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public ShrimpSwipeManager shrimpSwipeManager;
@@ -32,6 +35,11 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         if (!NetworkManager.Singleton.IsHost) return;
         updatedWorkshop.Add(workshop);
         workshop.StartGameLoopHostOnly();
+    }
+
+    public void StartGameLoop()
+    {
+        canvasScaleFactor = referenceCanvas.lossyScale.x;
     }
 
     public void UpdateGameLoop()
@@ -214,5 +222,10 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public int GetVictoryAnimationLength()
     {
         return ((int) (victoryClip.length * 1000) - 100); // For async await only
+    }
+
+    public float GetCanvasFactor()
+    {
+        return canvasScaleFactor;
     }
 }

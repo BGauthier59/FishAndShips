@@ -217,4 +217,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         return playingPlayer;
     }
+    
+    protected bool IsActiveOnGrid()
+    {
+        if (!isActive.Value || isOccupied.Value || currentTile == null) return false;
+        return true;
+    }
 }

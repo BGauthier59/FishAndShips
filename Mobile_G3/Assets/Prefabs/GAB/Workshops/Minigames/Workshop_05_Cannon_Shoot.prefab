@@ -819,10 +819,10 @@ MonoBehaviour:
   debugWorkshop: {fileID: 0}
   data:
     startPoint: {fileID: 5625962282267282769}
-    startPointRadius: 100
+    startPointRadius: 200
     planeOrigin: {fileID: 7780690009730633983}
     endPoint: {fileID: 4263392099294727827}
-    endPointRadius: 100
+    endPointRadius: 150
     draggableItem: {fileID: 3941123951859615086}
     lerpSpeed: 5
     type: 0
@@ -921,7 +921,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 250, y: 125}
+  m_AnchoredPosition: {x: 177, y: 303}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6650860458509632035
@@ -1483,8 +1483,20 @@ PrefabInstance:
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
       propertyPath: m_fontSize
-      value: 43.25
+      value: 35.8
       objectReference: {fileID: 0}
+    - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
+        type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8960786dc56663b4a8d7ba2e553e469f,
+        type: 2}
+    - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
+        type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+        type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 667a648fd3738f848b14b48c6c00a93a, type: 3}
 --- !u!224 &6520027782687075312 stripped

@@ -46,3 +46,8 @@ public enum TileFilter
 {
     Walkable
 }
+
+public enum EndGameReason
+{
+    TimerOver, ShipDestroyed, GoalReached
+}

@@ -40,12 +40,14 @@ public class RudderCircularSwipeManager : MiniGameInput<RudderCircularSwipeSetup
         calculatedAngle = calculatedAngleAfterClamping = 0;
     }
 
-    public override void Enable(RudderCircularSwipeSetupData data)
+    public override void Enable(RudderCircularSwipeSetupData setupData)
     {
-        base.Enable(data);
+        base.Enable(setupData);
 
-        minMaxSqrMagnitude.x = math.pow(data.minMaxMagnitude.x, 2);
-        minMaxSqrMagnitude.y = math.pow(data.minMaxMagnitude.y, 2);
+        float scale = WorkshopManager.instance.GetCanvasFactor();
+
+        minMaxSqrMagnitude.x = math.pow(setupData.minMaxMagnitude.x * scale, 2);
+        minMaxSqrMagnitude.y = math.pow(setupData.minMaxMagnitude.y * scale, 2);
         Reset();
     }
 

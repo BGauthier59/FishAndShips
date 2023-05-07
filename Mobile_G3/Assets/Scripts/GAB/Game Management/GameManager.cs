@@ -32,6 +32,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         Debug.Log("Start game loop!");
         shipManager.StartGameLoop();
+        workshopManager.StartGameLoop();
         eventsManager.StartGameLoop();
         timerManager.StartGameLoop();
 
@@ -78,7 +79,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         timerManager.UpdateGameLoop();
     }
 
-    public void GameEnds(bool victory)
+    public void GameEnds(bool victory, EndGameReason reason)
     {
         // Host-side!
         if (!NetworkManager.Singleton.IsHost)
@@ -86,6 +87,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("No client should call GameEnds()");
             return;
         }
+        
+        Debug.LogWarning(reason.ToString());
         
         GameEndsClientRpc(victory);
     }

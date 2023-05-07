@@ -14,7 +14,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     [SerializeField] private Sprite plankIcon, bulletIcon;
     [SerializeField] private TMP_Text debugItemText;
     private (string minutes, string seconds) currentTimer;
-    
+
     public void SetTimerOnDisplay(float remainingTime)
     {
         currentTimer = ConvertFloatInMinutesAndSeconds(remainingTime);
@@ -38,7 +38,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
 
     public void SetLifeOnDisplay(int life, int maxLife)
     {
-        var ratio = life / maxLife;
+        var ratio = life / (float) maxLife;
         boatLifeSlider.value = ratio;
     }
 
@@ -56,7 +56,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
             InventoryObject.CannonBall => bulletIcon,
             _ => null
         };
-        
+
         debugItemText.text = item switch
         {
             InventoryObject.None => "None",

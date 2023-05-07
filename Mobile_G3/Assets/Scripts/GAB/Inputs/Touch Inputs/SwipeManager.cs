@@ -56,6 +56,13 @@ public class SwipeManager : MiniGameInput<SwipeData>
         startTouch = swipeDelta = Vector3.zero;
         isDraging = false;
     }
+
+    public override void Enable(SwipeData setupData)
+    {
+        base.Enable(setupData);
+        float scale = WorkshopManager.instance.GetCanvasFactor();
+        setupData.centralPointRadius *= scale;
+    }
 }
 
 [Serializable]

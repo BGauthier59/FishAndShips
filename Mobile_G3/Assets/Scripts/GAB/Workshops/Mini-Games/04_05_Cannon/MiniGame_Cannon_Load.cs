@@ -42,7 +42,7 @@ public class MiniGame_Cannon_Load : MiniGame
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
-        
+
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         SwitchState(CannonState.Step1);
     }

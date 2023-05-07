@@ -20,6 +20,9 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         base.Enable(setupData);
         plane = new Plane(-WorkshopManager.instance.miniGameEnvironmentCamera.forward, data.planeOrigin.position);
         data.draggableItem.gameObject.SetActive(false);
+        float scale = WorkshopManager.instance.GetCanvasFactor();
+        data.endPointRadius *= scale;
+        data.startPointRadius *= scale;
     }
 
     [UsedImplicitly]

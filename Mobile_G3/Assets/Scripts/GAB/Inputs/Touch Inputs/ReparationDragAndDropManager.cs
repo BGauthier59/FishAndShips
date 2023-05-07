@@ -86,6 +86,10 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
     public override void Enable(ReparationDragAndDropManagerData setupData)
     {
         base.Enable(setupData);
+        float scale = WorkshopManager.instance.GetCanvasFactor();
+        setupData.startRadius *= scale;
+        setupData.endRadius *= scale;
+        
         plane = new Plane(-WorkshopManager.instance.miniGameEnvironmentCamera.forward, data.planeOrigin.position);
         currentPlankIndex = UnityEngine.Random.Range(0, data.draggablePlanks.Length);
         currentPlank = data.draggablePlanks[currentPlankIndex];

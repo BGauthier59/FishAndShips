@@ -216,6 +216,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         this.underAttack.Value = underAttack;
     }
 
+    public void TakeDamage(int damage)
+    {
+        SetCurrentLifeServerRpc(currentBoatLife.Value - damage);
+    }
+
     #endregion
 
     #region Network
@@ -230,8 +235,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private void SetCurrentLifeServerRpc(int life)
     {
         if (life > maxLife) currentBoatSpeed.Value = maxLife;
-        else currentBoatLife.Value = life;
+        else currentBoatLife.Value = math.max(0, life);
         SetCurrentLifeClientRpc(currentBoatLife.Value);
+        if (currentBoatLife.Value == 0)
+            GameManager.instance.GameEnds(false,
+                EndGameReason.ShipDestroyed); // Todo - Shouldn't end the game, only stop ship for some time
     }
 
     [ClientRpc]

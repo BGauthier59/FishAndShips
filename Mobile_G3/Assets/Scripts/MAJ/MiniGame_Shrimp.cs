@@ -18,7 +18,7 @@ public class MiniGame_Shrimp : MiniGame
     public Animation animation;
 
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
-    
+
     private void Start()
     {
         plane = new Plane(miniGameCameraPosition - planeOrigin.position, planeOrigin.position);
@@ -28,11 +28,12 @@ public class MiniGame_Shrimp : MiniGame
     {
         base.StartMiniGame();
         animation.Play(jump.name);
-        trueCollisionSize = shrimpCollisionSize * shrimpCollision.parent.lossyScale.x;
-        trueSwordSize = swordCollisionSize * shrimpCollision.parent.lossyScale.x;
+        float scale = WorkshopManager.instance.GetCanvasFactor();
+        trueCollisionSize = shrimpCollisionSize * scale;
+        trueSwordSize = swordCollisionSize * scale;
 
         await Task.Delay(500);
-        
+
         SwitchSwords();
         lifePoints = baseLifePoints;
 
@@ -46,9 +47,6 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void ExecuteMiniGame()
     {
-        Debug.DrawRay(shrimpCollision.position,Vector3.right * trueCollisionSize,Color.red);
-        Debug.DrawRay(shrimpCollision.position,Vector3.right * trueSwordSize,Color.green);
-        
         if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
         {
             if (validSwipe)
@@ -104,13 +102,13 @@ public class MiniGame_Shrimp : MiniGame
     private async void KillShrimp()
     {
         // Todo - play animation
-        
+
         StopExecutingMiniGame();
         WorkshopManager.instance.shrimpSwipeManager.Disable();
-        
+
         WorkshopManager.instance.SetVictoryIndicator();
         await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
-        
+
         ExitMiniGame(true);
     }
 
