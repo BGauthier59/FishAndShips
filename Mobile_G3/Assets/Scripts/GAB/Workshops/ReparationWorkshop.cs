@@ -27,8 +27,6 @@ public class ReparationWorkshop : Workshop, IUpdateWorkshop
     protected override void RemoveWorkshopFromGrid()
     {
         // Called by every client when workshop is over
-        Debug.Log("Remove workshop from grid HHH");
-
         base.RemoveWorkshopFromGrid();
         if (Unity.Netcode.NetworkManager.Singleton.IsHost)
         {
@@ -40,7 +38,6 @@ public class ReparationWorkshop : Workshop, IUpdateWorkshop
     {
         while (WorkshopManager.instance == null)
         {
-            Debug.Log("Waiting...");
             await Task.Yield();
         }
 

@@ -30,7 +30,6 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     {
         while (WorkshopManager.instance == null)
         {
-            Debug.Log("Waiting...");
             await Task.Yield();
         }
 
@@ -89,7 +88,6 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
 
         if (availableTiles.Length == 0)
         {
-            Debug.LogWarning($"{name} has no available neighbour and can't move.");
             SetNewStationaryDuration();
             return;
         }
@@ -166,7 +164,6 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     protected override void RemoveWorkshopFromGrid()
     {
         // Called by every client when workshop is over
-        Debug.Log("Remove workshop from grid");
         base.RemoveWorkshopFromGrid();
         if (NetworkManager.Singleton.IsHost)
         {

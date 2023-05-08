@@ -104,7 +104,6 @@ public class StormEvent : RandomEvent
         // Check conditions
         if (EventsManager.instance.sailsWorkshop.isActive.Value)
         {
-            Debug.Log("Sails are already activated");
             return;
         }
         
