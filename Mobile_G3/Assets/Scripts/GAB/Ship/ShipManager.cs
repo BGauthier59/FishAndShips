@@ -26,7 +26,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     private NetworkVariable<bool> isInDangerousArea = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
-
+    
     [Header("Boat Parameters")] private NetworkVariable<float> rotationInDegreesPerSecond = new(0,
         NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
@@ -48,6 +48,10 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private LayerMask shrimpShipLayer;
     private NetworkVariable<bool> underAttack = new NetworkVariable<bool>();
 
+    private bool canRegenerate;
+    [SerializeField] private int regenerationPerSecond;
+    private float regenerationTimer;
+    
     [Header("Feedbacks")] [SerializeField] private Animation collisionWarningAnim;
     [SerializeField] private UnityEvent shootEvent;
     [SerializeField] private Transform shootVfxTransform;
@@ -81,6 +85,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         MoveOnMap();
         RotateOnMap();
         CheckCollisions();
+        if(canRegenerate) Regenerate();
     }
 
     Vector3 pos;
@@ -156,6 +161,18 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         EnterDangerZone();
     }
 
+    private void Regenerate()
+    {
+        if (!NetworkManager.Singleton.IsHost) return;
+
+        if (regenerationTimer >= 1)
+        {
+            regenerationTimer -= 1;
+            SetCurrentLifeServerRpc(currentBoatLife.Value + regenerationPerSecond);
+        }
+        else regenerationTimer += Time.deltaTime;
+    }
+
     private void EnterDangerZone()
     {
         isInDangerousArea.Value = true;
@@ -219,6 +236,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     public void TakeDamage(int damage)
     {
         SetCurrentLifeServerRpc(currentBoatLife.Value - damage);
+    }
+
+    public void SetRegenerationAbility(bool active)
+    {
+        canRegenerate = active;
     }
 
     #endregion

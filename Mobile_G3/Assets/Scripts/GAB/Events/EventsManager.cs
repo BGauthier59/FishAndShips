@@ -122,7 +122,6 @@ public class EventsManager : MonoSingleton<EventsManager>
 
     public bool IsFarEnoughFromLastAttack()
     {
-        Debug.Log((ShipManager.instance.GetShipPositionOnMap() - lastAttackPosition).sqrMagnitude);
         return (ShipManager.instance.GetShipPositionOnMap() - lastAttackPosition).sqrMagnitude >
                minSqrDistanceBetweenShrimpShipAttacks;
     }
@@ -153,11 +152,13 @@ public class EventsManager : MonoSingleton<EventsManager>
     public void AddHole()
     {
         currentHoleCount++;
+        ShipManager.instance.SetRegenerationAbility(false);
     }
 
     public void RemoveHole()
     {
         currentHoleCount--;
+        if(currentHoleCount == 0) ShipManager.instance.SetRegenerationAbility(true);
     }
 
     public int? GetReparationWorkshopIndex()

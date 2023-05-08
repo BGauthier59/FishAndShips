@@ -96,7 +96,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     [ClientRpc]
     private void GameEndsClientRpc(bool victory)
     {
-        Debug.Log("You won!!!");
         isRunning = false;
         GameEndsFeedback();
     }
