@@ -74,6 +74,7 @@ public class GridEditor : EditorWindow
     private GameObject _selectedObject;
     private GameObject _instantiatePrefab;
     private GameObject _layerFolder;
+    private GameObject _layerBarrier;
     
     private List<Tile> _listGridManagerTile;
     private Camera sceneCamera;
@@ -81,6 +82,7 @@ public class GridEditor : EditorWindow
     //Offset Position Handles
     public Vector3 offsetPrevPositionText = new Vector3(0f, 0.5f, 0f);
     public Vector3 offsetPrevPosButtonHandles = new Vector3(0f, 0.5f, 0f);
+    public Vector3 avoidBorderOfGrid = new Vector3(1f, 0, 1f);
     
     //TileFloorType
     private TileFloorType tyleFloorType;
@@ -113,8 +115,9 @@ public class GridEditor : EditorWindow
     private const string containerName = "Container";
     private const string gridDataPath = "Assets/GridData/";
     private const string gridPrefixSave = "GDM_";
+    private const string barriersName = "B_";
     private string folderPathForMinigame = "Assets/Prefabs/GAB/Workshops/Minigames";
-    private string folderPathForWorkshopObjects = "Assets/Prefabs/GAB/Workshops/WorkshopObjects";
+    private string folderPathForWorkshopObjects = "Assets/Prefabs/GAB/Workshops/WorkshopScripts";
     private string gridFinalNameSave;
     
     //Load Saving Parameter
@@ -130,6 +133,19 @@ public class GridEditor : EditorWindow
 
     private int index = 0;
     private int emptyFolderForRefresh = -1;
+    
+    //Create Stair 
+    private bool showStairsFolder;
+    private GameObject barrierPrefab;
+    private bool showAllBarrierTile;
+    private bool showButtonForStairs;
+    private GameObject barriersLayer;
+    private Vector3 buttonPosForBarrier;
+    private float offsetBarrierFromTile = 0.5f;
+    private float closedPosBarrier = 0.215f;
+    private float openPosBarrier = -0.4f;
+    private int tileIDToTchek = 0;
+
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -444,6 +460,34 @@ public class GridEditor : EditorWindow
         }
         
         EditorGUILayout.Space();
+        
+        showStairsFolder = EditorUtils.FoldoutShurikenStyle(showStairsFolder, "Show Stairs Parameter");
+        {
+            if (showStairsFolder)
+            {
+                barrierPrefab = (GameObject)EditorGUILayout.ObjectField("Barrier Grid", barrierPrefab, typeof(GameObject), false);
+                showAllBarrierTile = EditorGUILayout.Toggle("Preview All Grid Barriers", showAllBarrierTile);
+                if (showAllBarrierTile)
+                {
+                    duringSceneGui += PreviewAllGridBarrierTile;
+                }
+                else
+                {
+                    duringSceneGui -= PreviewAllGridBarrierTile;
+                }
+                showButtonForStairs = EditorGUILayout.Toggle("Preview Button Grid Barrier", showButtonForStairs);
+                if (showButtonForStairs)
+                {
+                    duringSceneGui += ShowButtonForPlacingBarriers;
+                }
+                else
+                {
+                    duringSceneGui -= ShowButtonForPlacingBarriers;
+                }
+            }
+        }
+        
+        EditorGUILayout.Space();
 
         showPreviewEditorSelect = EditorUtils.FoldoutShurikenStyle(showPreviewEditorSelect, "Show Preview Editor Parameter");
         if (showPreviewEditorSelect)
@@ -556,6 +600,7 @@ public class GridEditor : EditorWindow
         {
             case  0:
                 CreateGridDeck(gridObject, false);
+                CreateGridBarrier(gridObject);
                 break;
             
             case  1:
@@ -565,6 +610,7 @@ public class GridEditor : EditorWindow
             case 2:
                 CreateGridDeck(gridObject, false);
                 CreateGridDeck(gridObject, true);
+                CreateGridBarrier(gridObject);
                 break;
         }
         EditorUtility.SetDirty(gridObject);
@@ -573,12 +619,22 @@ public class GridEditor : EditorWindow
     private void CreateGridDeck(GameObject gridManagerObject, bool offsetForTheContainer)
     {
         PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, false,offsetForTheContainer ? containerName : deckName);
-    } 
-    
+    }
+
     private void CreateGridContainer(GameObject gridManagerObject)
     {
         PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, true, containerName);
     }
+    
+    private void CreateGridBarrier(GameObject gridManagerObject)
+    {
+        _layerBarrier = new GameObject();
+        _layerBarrier.name = barriersName + "_" + gridNameEnter;
+        _layerBarrier.transform.position = Vector3.zero;
+        _layerBarrier.transform.parent = gridManagerObject.transform;
+        _layerBarrier.AddComponent<BarrierList>();
+    }
+
     
     private void PositionGridObject(GameObject gridObject, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool createLayer, bool updateDeckListElement, bool holdType,string name)
     {
@@ -723,7 +779,7 @@ public class GridEditor : EditorWindow
                 cellSizeDeck * 0.5f, cellSizeDeck, Handles.RectangleHandleCap))
         {
             currentType = (TileFloorType)(((int)currentType + 1) % Enum.GetNames(typeof(TileFloorType)).Length);
-            SwitchComponent(_selectedObject, currentType, idTileList);
+            SwitchComponent(_selectedObject, currentType, true, idTileList);
         }
     }
 
@@ -925,6 +981,177 @@ public class GridEditor : EditorWindow
 
     #endregion
 
+    private void ShowButtonForPlacingBarriers(SceneView sceneView)
+    {
+        if (!Selection.activeGameObject) return;
+        if (!showButtonForStairs) return;
+        if (!sceneCamera) GetCameraScene(sceneView);
+        UpdateListTileManage();
+        if (CheckSelectedObjectIsInTheList()) return;
+        if (_selectedObject.GetComponent<GridFloorBarrier>() != null)
+        {
+            int2 coordinatesTile = new int2(_selectedObject.GetComponent<GridFloorBarrier>().positionX,
+                _selectedObject.GetComponent<GridFloorBarrier>().positionY);
+            // Calculate position and rotation of button
+            Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPrevPosButtonHandles.x,
+                offsetPrevPositionText.y, _selectedObject.transform.position.z + offsetPrevPosButtonHandles.z);
+            Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
+            
+            //Left
+            if (coordinatesTile.x > 0)
+            {
+                buttonPosForBarrier = buttonPos + Vector3.left * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentStairs(coordinatesTile, 0);
+                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Left", 0);
+                }
+            }
+            
+            //Right 
+            if (colsGridDeck > coordinatesTile.x)
+            {
+                buttonPosForBarrier = buttonPos + Vector3.right * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentStairs(coordinatesTile, 1);
+                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Right", 1);
+                }
+            }
+            
+            //Bottom
+            if (coordinatesTile.y > 0)
+            {
+                buttonPosForBarrier = buttonPos + Vector3.back * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentStairs(coordinatesTile, 2);
+                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Bottom", 2);
+                }
+            }
+
+            //Top
+            if (rowsGridDeck > coordinatesTile.y)
+            {
+                 buttonPosForBarrier = buttonPos + Vector3.forward * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentStairs(coordinatesTile, 3);
+                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Top", 3);
+                }
+            }
+        }
+    }
+
+    private void SpawnStairs(GameObject stairObject, Vector3 offset, int2 coordinates, bool rotate, string direction, int side)
+    {
+        _instantiatePrefab = (GameObject)PrefabUtility.InstantiatePrefab(stairObject);
+        PrefabUtility.UnpackPrefabInstance(_instantiatePrefab, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+        _instantiatePrefab.transform.position += offset;
+        _instantiatePrefab.transform.rotation = rotate ? Quaternion.Euler(0,90f,0) : Quaternion.identity;
+        _instantiatePrefab.name = "B_Tile" + coordinates.x + "," + coordinates.y + "_" + direction;
+        if (_instantiatePrefab.GetComponent<GridBarrier>() != null)
+        {
+            Vector3 posPrefabBarrier = _instantiatePrefab.transform.position;
+            _instantiatePrefab.GetComponent<GridBarrier>().closedPos = new Vector3(posPrefabBarrier.x, closedPosBarrier, posPrefabBarrier.z);
+            _instantiatePrefab.GetComponent<GridBarrier>().openPos = new Vector3(posPrefabBarrier.x, openPosBarrier, posPrefabBarrier.z);
+            switch (side)
+            {
+                //Left
+                case 0:
+                    _selectedObject.GetComponent<GridFloorBarrier>().leftBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    tileIDToTchek = CalculateTileID(coordinates, 0);
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().rightBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+                //Right
+                case 1:
+                    _selectedObject.GetComponent<GridFloorBarrier>().rightBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().leftBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+                //Bottom
+                case 2:
+                    _selectedObject.GetComponent<GridFloorBarrier>().bottomBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().topBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+                //Top
+                case 3:
+                    _selectedObject.GetComponent<GridFloorBarrier>().topBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().bottomBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+            }
+        }
+        _instantiatePrefab.transform.parent = _layerBarrier.transform;
+        _layerBarrier.GetComponent<BarrierList>().barrierData.Add(_instantiatePrefab);
+    }
+
+    private void GetAdjacentStairs(int2 tileCoordinates, int side)
+    {
+        tileIDToTchek = CalculateTileID(tileCoordinates, side);
+        int tileID = _listGridManagerTile[tileIDToTchek].coordinates.x * rowsGridDeck + _listGridManagerTile[tileIDToTchek].coordinates.y;
+        int2 oldCoordinates = new int2(_listGridManagerTile[tileIDToTchek].coordinates.x , _listGridManagerTile[tileIDToTchek].coordinates.y);
+        if (tileID != tileIDToTchek) return;
+        SwitchComponent(_listGridManagerTile[tileIDToTchek].transform.gameObject, TileFloorType.GridFloorBarrier, false);
+        _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().positionX = oldCoordinates.x;
+        _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().positionY = oldCoordinates.y;
+        _listGridManagerTile[tileIDToTchek].coordinates = oldCoordinates;
+        _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+    }
+
+    private int CalculateTileID(int2 tileCoordinates, int side)
+    {
+        int tileToTchek = 0;
+        switch (side)
+        {
+            //Left
+            case 0:
+                tileToTchek = (tileCoordinates.x - 1) * rowsGridDeck + tileCoordinates.y;
+                break;
+            //Right
+            case 1:
+                tileToTchek = (tileCoordinates.x + 1) * rowsGridDeck + tileCoordinates.y;
+                break;
+            //Bottom
+            case 2:
+                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y - 1);
+                break;
+            //Top
+            case 3:
+                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y + 1);
+                break;
+        }
+        return tileToTchek;
+    }
+
+    private void PreviewAllGridBarrierTile(SceneView sceneView)
+    {
+        GetCameraScene(sceneView);
+        if (!showAllBarrierTile) return;
+        foreach (var tile in _gridManager.grid)
+        {
+            DetectComponent(tile.floor, true);
+            if(tile.floor is GridFloorBarrier)
+            {
+                Debug.Log("There is a GridFloorBarrier");
+                Vector3 positionTile = tile.transform.position;
+                Handles.CubeHandleCap(
+                    0,
+                    positionTile,
+                    //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
+                    Quaternion.identity,
+                    HandleUtility.GetHandleSize(positionTile) * 0.2f,
+                    EventType.Repaint
+                );
+            }
+        }
+    }
+
     private void PreviewAllTileTypeHandles(SceneView sceneView)
     {
         GetCameraScene(sceneView);
@@ -998,32 +1225,44 @@ public class GridEditor : EditorWindow
         return false;
     }
 
-    void SwitchComponent(GameObject tileSelected, TileFloorType type, int id)
+    void SwitchComponent(GameObject tileSelected, TileFloorType type, bool useId = true, int id = 0)
     {
         switch (type)
         {
             case TileFloorType.GridFloorBarrier:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBarrier>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBarrier>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBarrier>();
+                }
                 tileSelected.GetComponent<GridFloorBarrier>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorBouncePad:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBouncePad>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBouncePad>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBouncePad>();
+                }
                 tileSelected.GetComponent<GridFloorBouncePad>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorIce:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorIce>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorIce>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorIce>();
+                }
                 tileSelected.GetComponent<GridFloorIce>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorPressurePlate:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorPressurePlate>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
+                }
                 tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorStair:
@@ -1035,7 +1274,10 @@ public class GridEditor : EditorWindow
             case TileFloorType.GridFloorWalkable:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorWalkable>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                }
                 tileSelected.GetComponent<GridFloorWalkable>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorNonWalkable :
