@@ -29,6 +29,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     private InventoryObject inventoryObject;
     private BoatSide currentSide;
 
+    private PlayerData playerData;
+
     private void Start()
     {
         playerName.OnValueChanged += OnNameChanged;
@@ -204,6 +206,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public void InitializeBounce()
     {
         ChangeTileInfos();
+
         canMove = false;
     }
 
