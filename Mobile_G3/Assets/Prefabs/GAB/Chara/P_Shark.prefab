@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8470071371227885549}
+  - component: {fileID: 8755311575576590590}
   m_Layer: 0
   m_Name: P_Shark
   m_TagString: Untagged
@@ -25,13 +26,29 @@ Transform:
   m_GameObject: {fileID: 1378966568116778718}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1243816072959904538}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8755311575576590590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378966568116778718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c70cbe8e4776a0e4e876b055a32ea4f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animation: {fileID: 2522162549978373185}
+  actionClip: {fileID: 7400000, guid: 1040686a07f2232418be4b4f74a00508, type: 2}
+  jumpClip: {fileID: 7400000, guid: 22dd62449ea79b240bef5e9a3769ab90, type: 2}
+  idleClip: {fileID: 7400000, guid: 1b9dddb98175f95458fc7c5e6086b337, type: 2}
 --- !u!1001 &1641655924849323249
 PrefabInstance:
   m_ObjectHideFlags: 0

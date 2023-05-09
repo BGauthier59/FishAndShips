@@ -93,7 +93,6 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
     private void OnClientDisconnectCallback(ulong clientId)
     {
-        var infoText = $"Client with ID {clientId} has been disconnected...";
         if (NetworkManager.Singleton.IsHost)
         {
             if (GameManager.instance == null)

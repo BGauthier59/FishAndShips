@@ -1,5 +1,6 @@
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerManager : NetworkBehaviour, IGridEntity
@@ -20,16 +21,18 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     [SerializeField] private Material[] materials;
 
     public float bounceDelay, bounceTimer;
-    public Vector3 previousPos,nextPos;
-    public bool canMove,isGliding;
-    public bool exitScreen,enterScreen;
+    public Vector3 previousPos, nextPos;
+    public bool canMove, isGliding;
+    public bool exitScreen, enterScreen;
     public AnimationCurve curve;
     public GameObject fxTest;
 
     private InventoryObject inventoryObject;
     private BoatSide currentSide;
 
+    [SerializeField] private PlayerData[] allPlayerData;
     private PlayerData playerData;
+    public int DEBUG_PlayerDataIndex; // Todo - set this value on main menu
 
     private void Start()
     {
@@ -41,17 +44,31 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public void StartGameLoop()
     {
+        // DEBUG - Set data
+        for (int i = 0; i < allPlayerData.Length; i++)
+        {
+            if (i == DEBUG_PlayerDataIndex)
+            {
+                allPlayerData[i].gameObject.SetActive(true);
+                playerData = allPlayerData[i];
+                continue;
+            }
+
+            allPlayerData[i].gameObject.SetActive(false);
+        }
+
         OnInputMove(1); // Init move (right)
         SetInventoryObject(InventoryObject.None);
-        Bounce();
+        InitializeBounce(transform.right);
     }
+
 
     public void UpdateGameLoop()
     {
         Controls();
-        if(!canMove) Bounce();
-        else if(exitScreen) ChangeScreen(false);
-        else if(enterScreen) ChangeScreen(true);
+        if (!canMove) Bounce();
+        else if (exitScreen) ChangeScreen(false);
+        else if (enterScreen) ChangeScreen(true);
     }
 
     #region Network
@@ -120,11 +137,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
                 xpos = gridPositionX.Value - 1;
                 break;
             default:
-                Debug.LogWarning($"Input move direction didn't move the player. It might be an error. Direction was {direction}");
+                Debug.LogWarning(
+                    $"Input move direction didn't move the player. It might be an error. Direction was {direction}");
                 break;
         }
 
-        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this,direction);
+        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this, direction);
     }
 
     private void Bounce()
@@ -136,34 +154,34 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             {
                 transform.position = Vector3.Lerp(previousPos, nextPos,
                                          1 - (bounceTimer / bounceDelay))
-                                     + Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));   
+                                     + Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
             }
             else
             {
-                transform.position = Vector3.Lerp(previousPos, nextPos, 1 - (bounceTimer / bounceDelay));  
+                transform.position = Vector3.Lerp(previousPos, nextPos, 1 - (bounceTimer / bounceDelay));
             }
+
+            transform.rotation = Quaternion.Lerp(oldRotation, nextRotation, 1 - (bounceTimer / bounceDelay));
         }
-        else
-        {
-            transform.position = nextPos;
-            canMove = true;
-            if (GridManager.instance) GridManager.instance.GetTile(positionX, positionY).GetFloor().OnLand(this);
-            bounceTimer = bounceDelay;
-        }
+        else EndBounce();
     }
-    
+
     private void ChangeScreen(bool enter)
     {
         if (bounceTimer > 0)
         {
             bounceTimer -= Time.deltaTime;
-            transform.localScale = enter ? Vector3.one * (1-(bounceTimer / bounceDelay)) :Vector3.one * (bounceTimer / bounceDelay);
+            transform.localScale =
+                enter ? Vector3.one * (1 - (bounceTimer / bounceDelay)) : Vector3.one * (bounceTimer / bounceDelay);
             transform.position = Vector3.Lerp(previousPos, nextPos, 1 - (bounceTimer / bounceDelay));
         }
         else
         {
             transform.localScale = Vector3.one;
-            transform.position = enter ? nextPos :GridManager.instance.GetTile(positionX, positionY).transform.position+  Vector3.up*0.4f;
+            transform.position =
+                enter
+                    ? nextPos
+                    : GridManager.instance.GetTile(positionX, positionY).transform.position + Vector3.up * 0.4f;
             if (GridManager.instance) GridManager.instance.GetTile(positionX, positionY).GetFloor().OnLand(this);
             bounceTimer = bounceDelay;
             exitScreen = enterScreen = false;
@@ -184,13 +202,15 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
         else
         {
-            GridFloorStair stairexit = GridManager.instance.GetTile(positionX,positionY).GetFloor() as GridFloorStair;
-            GridFloorStair stairenter = GridManager.instance.GetTile(gridPositionX.Value,gridPositionY.Value).GetFloor() as GridFloorStair;
+            GridFloorStair stairexit = GridManager.instance.GetTile(positionX, positionY).GetFloor() as GridFloorStair;
+            GridFloorStair stairenter =
+                GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).GetFloor() as GridFloorStair;
             if (!stairexit && !stairenter)
             {
                 previousPos = transform.position;
-                nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position + Vector3.up * 0.4f;
-                InitializeBounce();
+                nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
+                          Vector3.up * 0.4f;
+                InitializeBounce(nextPos - previousPos);
             }
             else if (stairenter != null)
             {
@@ -203,17 +223,43 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
     }
 
-    public void InitializeBounce()
+    private Quaternion oldRotation;
+    private Quaternion nextRotation;
+
+    public void InitializeBounce(Vector3 dir)
     {
         ChangeTileInfos();
-
+        oldRotation = transform.rotation;
+        nextRotation = SetRotation(-dir);
+        playerData.PlayJumpAnimation();
         canMove = false;
+    }
+
+    private Quaternion SetRotation(Vector3 direction)
+    {
+        if (direction.x > 0) return Quaternion.Euler(Vector3.up * 270);
+        if (direction.x < 0) return Quaternion.Euler(Vector3.up * 90);
+        if (direction.z > 0) return Quaternion.Euler(Vector3.up * 180);
+        if (direction.z < 0) return Quaternion.Euler(Vector3.zero);
+
+        return Quaternion.identity;
+    }
+
+    private void EndBounce()
+    {
+        transform.position = nextPos;
+        canMove = true;
+
+        if (GridManager.instance) GridManager.instance.GetTile(positionX, positionY).GetFloor().OnLand(this);
+        bounceTimer = bounceDelay;
+
+        playerData.PlayIdleAnimation();
     }
 
     public void SetInventoryObject(InventoryObject filling)
     {
         // Warning: might be set as None
-        
+
         inventoryObject = filling;
         if (IsOwner)
         {
@@ -225,7 +271,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     {
         return inventoryObject;
     }
-    
+
     public void ChangeTileInfos()
     {
         GridManager.instance.GetTile(positionX, positionY).SetTile();
@@ -233,7 +279,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         positionY = gridPositionY.Value;
         GridManager.instance.GetTile(positionX, positionY).SetTile(this);
     }
-    
+
     public void InitializeScreenChange()
     {
         ChangeTileInfos();
@@ -250,6 +296,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
                 nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position;
                 CameraManager.instance.MoveCamToDeck(this);
             }
+
             transform.position = nextPos;
         }
         else
@@ -257,14 +304,19 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
             if (localPlayer.positionX >= GridManager.instance.xSize)
             {
-                if (positionX >= GridManager.instance.xSize)nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position + Vector3.up * 0.8f;
-                else nextPos = GridManager.instance.GetOppositeTile(positionX, positionY).transform.position + Vector3.up * 0.8f;
+                if (positionX >= GridManager.instance.xSize)
+                    nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position + Vector3.up * 0.8f;
+                else
+                    nextPos = GridManager.instance.GetOppositeTile(positionX, positionY).transform.position +
+                              Vector3.up * 0.8f;
             }
             else
             {
-                if (positionX < GridManager.instance.xSize) nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position;
+                if (positionX < GridManager.instance.xSize)
+                    nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position;
                 else nextPos = GridManager.instance.GetOppositeTile(positionX, positionY).transform.position;
             }
+
             transform.position = nextPos;
         }
     }
@@ -273,12 +325,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     {
         currentSide = side;
     }
-    
+
     public BoatSide GetBoatSide()
     {
         return currentSide;
     }
-    
+
     /*public void ExitStair()
     {
         previousPos = transform.position;
@@ -320,7 +372,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             }
         }
     }*/
-    
+
     /*public void EnterStair()
     {
         previousPos = transform.position;
@@ -363,8 +415,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             }
         }
     }*/
-    
-    public void OnCollision(IGridEntity entity,int direction)
+
+    public void OnCollision(IGridEntity entity, int direction)
     {
         // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?
     }

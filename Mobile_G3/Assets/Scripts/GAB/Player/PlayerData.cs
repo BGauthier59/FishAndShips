@@ -1,15 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerData : MonoBehaviour
 {
-    public Animation animation;
+    [SerializeField] private Animation animation;
     
-    public AnimationClip actionClip, jumpClip, idleClip;
+    [SerializeField] private AnimationClip actionClip, jumpClip, idleClip;
 
     public void PlayActionAnimation()
     {
-        
+        animation.Play(actionClip.name);
+    }
+
+    public void PlayJumpAnimation()
+    {
+        animation.Play(jumpClip.name);
+    }
+
+    public void PlayIdleAnimation()
+    {
+        animation.Play(idleClip.name);
     }
 }
