@@ -2,6 +2,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerManager : NetworkBehaviour, IGridEntity
 {
@@ -25,8 +26,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public bool canMove, isGliding;
     public bool exitScreen, enterScreen;
     public AnimationCurve curve;
-    public GameObject fxTest;
-
+    [SerializeField] private UnityEvent bounceEvent;
+    
     private InventoryObject inventoryObject;
     private BoatSide currentSide;
 
@@ -254,6 +255,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         bounceTimer = bounceDelay;
 
         playerData.PlayIdleAnimation();
+        bounceEvent?.Invoke();
     }
 
     public void SetInventoryObject(InventoryObject filling)

@@ -46,9 +46,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animation: {fileID: 1283045330313584192}
-  actionClip: {fileID: 7400000, guid: 6ea25ac5e3f86b8418551b08fa7616c1, type: 2}
-  jumpClip: {fileID: 7400000, guid: 0e27ae6eba3520742a6d567ec4879bbc, type: 2}
-  idleClip: {fileID: 7400000, guid: 526a5a02f8c304e40acf78d6b8b35f88, type: 2}
+  actionClip: {fileID: 1827226128182048838, guid: 55726e1cfb0e18243b50918110e6d803,
+    type: 3}
+  jumpClip: {fileID: 5539831331247536789, guid: 55726e1cfb0e18243b50918110e6d803,
+    type: 3}
+  idleClip: {fileID: -3100369314251171874, guid: 55726e1cfb0e18243b50918110e6d803,
+    type: 3}
 --- !u!1001 &7753543610895791734
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -185,9 +188,9 @@ Animation:
   serializedVersion: 3
   m_Animation: {fileID: 0}
   m_Animations:
-  - {fileID: 7400000, guid: 526a5a02f8c304e40acf78d6b8b35f88, type: 2}
-  - {fileID: 7400000, guid: 6ea25ac5e3f86b8418551b08fa7616c1, type: 2}
-  - {fileID: 7400000, guid: 0e27ae6eba3520742a6d567ec4879bbc, type: 2}
+  - {fileID: -3100369314251171874, guid: 55726e1cfb0e18243b50918110e6d803, type: 3}
+  - {fileID: 1827226128182048838, guid: 55726e1cfb0e18243b50918110e6d803, type: 3}
+  - {fileID: 5539831331247536789, guid: 55726e1cfb0e18243b50918110e6d803, type: 3}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
