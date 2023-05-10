@@ -38,7 +38,7 @@ public class GridEditor : EditorWindow
     public bool randomRotation = false;
     //Bool for enabling debug Preview
     public bool showSpecificObjetPreview = false;
-    public bool showPreviewAllHandlesButton = false;
+    public bool showPreviewAllTilesIDAndType = false;
     
     //Show Preview Position 
     public bool showSpecificGridSize = false;
@@ -48,6 +48,7 @@ public class GridEditor : EditorWindow
     public bool showPreviewGridContainerPivot = false;
     
     public bool showPreviewAllTileTypeHandles = false;
+    public bool showPreviewDotLineStairs = false;
     
     
     public bool showPrevTileTypeName = false;
@@ -134,8 +135,8 @@ public class GridEditor : EditorWindow
     private int index = 0;
     private int emptyFolderForRefresh = -1;
     
-    //Create Stair 
-    private bool showStairsFolder;
+    //Create Barrier 
+    private bool showBarriersFolder;
     private GameObject barrierPrefab;
     private bool showAllBarrierTile;
     private bool showButtonForStairs;
@@ -145,7 +146,10 @@ public class GridEditor : EditorWindow
     private float closedPosBarrier = 0.215f;
     private float openPosBarrier = -0.4f;
     private int tileIDToTchek = 0;
-
+    private int _maxGridSize;
+    
+    //Create Stairs
+    private int stairs;
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -447,8 +451,8 @@ public class GridEditor : EditorWindow
         {
             if (showMiniGameFolder)
             {
-                GUILayout.Label("Workshop Minigames");
-                GUILayout.Label("Path : ");
+                EditorGUILayout.LabelField("Workshop Minigames");
+                EditorGUILayout.LabelField("Path : ");
                 folderPathForWorkshopObjects = EditorGUILayout.TextField(folderPathForWorkshopObjects);
                 if (GUILayout.Button("Load Minigames"))
                 {
@@ -461,11 +465,20 @@ public class GridEditor : EditorWindow
         
         EditorGUILayout.Space();
         
-        showStairsFolder = EditorUtils.FoldoutShurikenStyle(showStairsFolder, "Show Stairs Parameter");
+        showBarriersFolder = EditorUtils.FoldoutShurikenStyle(showBarriersFolder, "Show Barriers Parameter");
         {
-            if (showStairsFolder)
+            if (showBarriersFolder)
             {
                 barrierPrefab = (GameObject)EditorGUILayout.ObjectField("Barrier Grid", barrierPrefab, typeof(GameObject), false);
+                if (_layerBarrier != null)
+                {
+                    EditorGUILayout.HelpBox("You always have a layer Barrier", MessageType.Info);
+                }
+                if (GUILayout.Button("Create Barrier Layer"))
+                {
+                    CreateLayerBarrier(_gridManager.gameObject);
+                }
+                
                 showAllBarrierTile = EditorGUILayout.Toggle("Preview All Grid Barriers", showAllBarrierTile);
                 if (showAllBarrierTile)
                 {
@@ -475,6 +488,7 @@ public class GridEditor : EditorWindow
                 {
                     duringSceneGui -= PreviewAllGridBarrierTile;
                 }
+                
                 showButtonForStairs = EditorGUILayout.Toggle("Preview Button Grid Barrier", showButtonForStairs);
                 if (showButtonForStairs)
                 {
@@ -492,43 +506,11 @@ public class GridEditor : EditorWindow
         showPreviewEditorSelect = EditorUtils.FoldoutShurikenStyle(showPreviewEditorSelect, "Show Preview Editor Parameter");
         if (showPreviewEditorSelect)
         {
-            showPreviewAllTileTypeHandles = EditorGUILayout.Toggle("Preview All Type Tile", showPreviewAllTileTypeHandles);
-            if (showPreviewAllTileTypeHandles)
-            {
-                duringSceneGui += PreviewAllTileTypeHandles;
-            }
-            else
-            {
-                duringSceneGui -= PreviewAllTileTypeHandles;
-            }
-
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            showPrevTileTypeName = EditorGUILayout.Toggle("Tile Type Name", showPrevTileTypeName);
-            showPrevTileTypeID = EditorGUILayout.Toggle("Tile Type ID", showPrevTileTypeID);
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.EndHorizontal();
-            
-            if (showPrevTileTypeName || showPrevTileTypeID)
-            {
-                duringSceneGui += PreviewTileTypeName;
-            }
-            else
-            {
-                duringSceneGui -= PreviewTileTypeName;
-            }
-
-            showPreviewAllHandlesButton = EditorGUILayout.Toggle("All Handles Button", showPreviewAllHandlesButton);
-            if (showPreviewAllHandlesButton)
-            {
-                duringSceneGui += ShowAllHandlesButtonOfGrid;
-            }
-            else
-            {
-                duringSceneGui -= ShowAllHandlesButtonOfGrid;
-            }
-
-            showSpecificObjetPreview = EditorGUILayout.Toggle("Show Preview Selected", showSpecificObjetPreview);
+            //One Object
+            EditorGUILayout.LabelField("Selection for Only One Object : ");
+            showSpecificObjetPreview = EditorGUILayout.Toggle("Change Floor Type", showSpecificObjetPreview);
             if (showSpecificObjetPreview)
             {
                 duringSceneGui += ShowButtonForSelectedObject;
@@ -537,8 +519,52 @@ public class GridEditor : EditorWindow
             {
                 duringSceneGui -= ShowButtonForSelectedObject;
             }
-
-
+            showPrevTileTypeID = EditorGUILayout.Toggle("Tile Type ID", showPrevTileTypeID);
+            showPrevTileTypeName = EditorGUILayout.Toggle("Floor Type", showPrevTileTypeName);
+            if (showPrevTileTypeName || showPrevTileTypeID)
+            {
+                duringSceneGui += PreviewTileTypeName;
+            }
+            else
+            {
+                duringSceneGui -= PreviewTileTypeName;
+            }
+            
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical();
+            //Multiples Objects
+            EditorGUILayout.LabelField("Option for All Objects : ");
+            showPreviewAllTilesIDAndType = EditorGUILayout.Toggle("All Tile ID and Type", showPreviewAllTilesIDAndType);
+            if (showPreviewAllTilesIDAndType)
+            {
+                duringSceneGui += ShowAllTilesIDAndType;
+            }
+            else
+            {
+                duringSceneGui -= ShowAllTilesIDAndType;
+            }
+            
+            showPreviewAllTileTypeHandles = EditorGUILayout.Toggle("Preview All Type Tile", showPreviewAllTileTypeHandles);
+            if (showPreviewAllTileTypeHandles)
+            {
+                duringSceneGui += PreviewAllTileTypeHandles;
+            }
+            else
+            {
+                duringSceneGui -= PreviewAllTileTypeHandles;
+            } 
+            
+            showPreviewDotLineStairs = EditorGUILayout.Toggle("Preview Connection Between Stairs", showPreviewDotLineStairs);
+            if (showPreviewDotLineStairs)
+            {
+                duringSceneGui += DotLineScenes;
+            }
+            else
+            {
+                duringSceneGui -= DotLineScenes;
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
             UpdateListTileManage();
         }
 
@@ -556,6 +582,7 @@ public class GridEditor : EditorWindow
                 _colorGridElement.GridFloorPressurePlate = EditorGUILayout.ColorField("Color GridFloor Pressure Plate", _colorGridElement.GridFloorPressurePlate);
                 _colorGridElement.GridFloorStair = EditorGUILayout.ColorField("Color GridFloor Stair", _colorGridElement.GridFloorStair);
                 _colorGridElement.GridFloorWalkable = EditorGUILayout.ColorField("Color GridFloor Floor Walkable", _colorGridElement.GridFloorWalkable);
+                _colorGridElement.GridFloorNonWalkable = EditorGUILayout.ColorField("Color GridFloor Floor Not Walkable", _colorGridElement.GridFloorNonWalkable);
             }
             
             showOffsetPositionHandles = EditorUtils.FoldoutShurikenStyle(showOffsetPositionHandles, "Show Pos Offset For handles");
@@ -565,10 +592,10 @@ public class GridEditor : EditorWindow
                 offsetPrevPositionText = EditorGUILayout.Vector3Field("Offset Preview Position Text", offsetPrevPositionText);
             }
 
-            if (GUILayout.Button("Random Rotation Object"))
-            {
-                randomRotation = !randomRotation;
-            }
+            //if (GUILayout.Button("Random Rotation Object"))
+            //{
+            //    randomRotation = !randomRotation;
+            //}
         }
         
         UpdateListTileManage();
@@ -577,12 +604,16 @@ public class GridEditor : EditorWindow
     private void OnDestroy()
     {
          showSpecificObjetPreview = false;
-         showPreviewAllHandlesButton = false;
          showSpecificGridSize = false;
-         showPreviewAllTileTypeHandles = false;
+         showPreviewGridDeckPivot = false;
+
+         showAllBarrierTile = false;
+         showButtonForStairs = false;
          
-         showPrevTileTypeName = false;
          showPrevTileTypeID = false;
+         showPrevTileTypeName = false;
+         showPreviewAllTilesIDAndType = false;
+         showPreviewAllTileTypeHandles = false;
     }
 
     // Fonction pour créer la grille
@@ -600,7 +631,6 @@ public class GridEditor : EditorWindow
         {
             case  0:
                 CreateGridDeck(gridObject, false);
-                CreateGridBarrier(gridObject);
                 break;
             
             case  1:
@@ -609,24 +639,24 @@ public class GridEditor : EditorWindow
             
             case 2:
                 CreateGridDeck(gridObject, false);
-                CreateGridDeck(gridObject, true);
-                CreateGridBarrier(gridObject);
+                CreateGridDeck(gridObject, true, true);
                 break;
         }
         EditorUtility.SetDirty(gridObject);
     }
 
-    private void CreateGridDeck(GameObject gridManagerObject, bool offsetForTheContainer)
+    private void CreateGridDeck(GameObject gridManagerObject, bool offsetForTheContainer, bool holdType = false)
     {
-        PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, false,offsetForTheContainer ? containerName : deckName);
+        PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, holdType,offsetForTheContainer ? containerName : deckName);
     }
 
-    private void CreateGridContainer(GameObject gridManagerObject)
+    private void CreateGridContainer(GameObject gridManagerObject, bool holdType = false)
     {
-        PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, true, containerName);
+        PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, holdType, containerName);
     }
     
-    private void CreateGridBarrier(GameObject gridManagerObject)
+    
+    private void CreateLayerBarrier(GameObject gridManagerObject)
     {
         _layerBarrier = new GameObject();
         _layerBarrier.name = barriersName + "_" + gridNameEnter;
@@ -661,7 +691,7 @@ public class GridEditor : EditorWindow
             {
                 //Create a tile
                 Tile tile = new Tile();
-                tile.name = name + " " + col + "," + row;
+                tile.name = holdType ? name + " " + (col + colsGridDeck) + "," + row : name + " " + col + "," + row;
                 Vector3 positionGridObject = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid;
                 tile.coordinates = holdType ? new int2(col + colsGridDeck, row) :  new int2(col, row);
 
@@ -721,6 +751,12 @@ public class GridEditor : EditorWindow
                             _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition( holdType ? col + colsGridDeck : col, row);
                         }
                     }
+                    else
+                    {
+                        _gridManager.tilePrefab.AddComponent<GridFloorNotWalkable>();
+                        tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorNotWalkable>(); 
+                        _gridManager.tilePrefab.GetComponent<GridFloorNotWalkable>().SetPosition( holdType ? col + colsGridDeck : col, row);
+                    }
 
                     //Place in an empty folder
                     _gridManager.tilePrefab.transform.parent = createLayer ? _layerFolder.transform : gridObject.transform;
@@ -739,9 +775,9 @@ public class GridEditor : EditorWindow
         }
     }
 
-    private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
+    private void ShowAllTilesIDAndType(SceneView sceneView)
     {
-        if (!showPreviewAllHandlesButton) return;
+        if (!showPreviewAllTilesIDAndType) return;
 
         Vector3 centerOffset = new Vector3(colsGridDeck / 2f - 0.5f, 0, rowsGridDeck / 2f - 0.5f) * cellSizeDeck;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
@@ -917,6 +953,16 @@ public class GridEditor : EditorWindow
         }
     }
 
+    #region Stairs Barriers
+
+    void SpawnStairs()
+    {
+        
+    }
+
+    #endregion
+    
+
     #region Preview Grid Size as Handles for Deck and Container
 
     private void PreviewGridPivot(SceneView sceneView)
@@ -980,7 +1026,8 @@ public class GridEditor : EditorWindow
     
 
     #endregion
-
+    
+    #region Barrier field for spawning
     private void ShowButtonForPlacingBarriers(SceneView sceneView)
     {
         if (!Selection.activeGameObject) return;
@@ -1004,8 +1051,8 @@ public class GridEditor : EditorWindow
                 if (Handles.Button(buttonPosForBarrier, buttonRot,
                         cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
                 {
-                    GetAdjacentStairs(coordinatesTile, 0);
-                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Left", 0);
+                    GetAdjacentBarriers(coordinatesTile, 0);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Left", 0);
                 }
             }
             
@@ -1016,8 +1063,8 @@ public class GridEditor : EditorWindow
                 if (Handles.Button(buttonPosForBarrier, buttonRot,
                         cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
                 {
-                    GetAdjacentStairs(coordinatesTile, 1);
-                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Right", 1);
+                    GetAdjacentBarriers(coordinatesTile, 1);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Right", 1);
                 }
             }
             
@@ -1028,8 +1075,8 @@ public class GridEditor : EditorWindow
                 if (Handles.Button(buttonPosForBarrier, buttonRot,
                         cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
                 {
-                    GetAdjacentStairs(coordinatesTile, 2);
-                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Bottom", 2);
+                    GetAdjacentBarriers(coordinatesTile, 2);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Bottom", 2);
                 }
             }
 
@@ -1040,14 +1087,16 @@ public class GridEditor : EditorWindow
                 if (Handles.Button(buttonPosForBarrier, buttonRot,
                         cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
                 {
-                    GetAdjacentStairs(coordinatesTile, 3);
-                    SpawnStairs(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Top", 3);
+                    GetAdjacentBarriers(coordinatesTile, 3);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Top", 3);
                 }
             }
         }
     }
 
-    private void SpawnStairs(GameObject stairObject, Vector3 offset, int2 coordinates, bool rotate, string direction, int side)
+
+    
+    private void SpawnBarriers(GameObject stairObject, Vector3 offset, int2 coordinates, bool rotate, string direction, int side)
     {
         _instantiatePrefab = (GameObject)PrefabUtility.InstantiatePrefab(stairObject);
         PrefabUtility.UnpackPrefabInstance(_instantiatePrefab, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
@@ -1091,7 +1140,7 @@ public class GridEditor : EditorWindow
         _layerBarrier.GetComponent<BarrierList>().barrierData.Add(_instantiatePrefab);
     }
 
-    private void GetAdjacentStairs(int2 tileCoordinates, int side)
+    private void GetAdjacentBarriers(int2 tileCoordinates, int side)
     {
         tileIDToTchek = CalculateTileID(tileCoordinates, side);
         int tileID = _listGridManagerTile[tileIDToTchek].coordinates.x * rowsGridDeck + _listGridManagerTile[tileIDToTchek].coordinates.y;
@@ -1104,30 +1153,7 @@ public class GridEditor : EditorWindow
         _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
     }
 
-    private int CalculateTileID(int2 tileCoordinates, int side)
-    {
-        int tileToTchek = 0;
-        switch (side)
-        {
-            //Left
-            case 0:
-                tileToTchek = (tileCoordinates.x - 1) * rowsGridDeck + tileCoordinates.y;
-                break;
-            //Right
-            case 1:
-                tileToTchek = (tileCoordinates.x + 1) * rowsGridDeck + tileCoordinates.y;
-                break;
-            //Bottom
-            case 2:
-                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y - 1);
-                break;
-            //Top
-            case 3:
-                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y + 1);
-                break;
-        }
-        return tileToTchek;
-    }
+
 
     private void PreviewAllGridBarrierTile(SceneView sceneView)
     {
@@ -1173,7 +1199,34 @@ public class GridEditor : EditorWindow
             );
         }
     }
+    
+    #endregion
 
+    private int CalculateTileID(int2 tileCoordinates, int side)
+    {
+        int tileToTchek = 0;
+        switch (side)
+        {
+            //Left
+            case 0:
+                tileToTchek = (tileCoordinates.x - 1) * rowsGridDeck + tileCoordinates.y;
+                break;
+            //Right
+            case 1:
+                tileToTchek = (tileCoordinates.x + 1) * rowsGridDeck + tileCoordinates.y;
+                break;
+            //Bottom
+            case 2:
+                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y - 1);
+                break;
+            //Top
+            case 3:
+                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y + 1);
+                break;
+        }
+        return tileToTchek;
+    }
+    
     private void PreviewTileTypeName(SceneView sceneView)
     {
         if (!Selection.activeGameObject) return;
@@ -1225,7 +1278,7 @@ public class GridEditor : EditorWindow
         return false;
     }
 
-    void SwitchComponent(GameObject tileSelected, TileFloorType type, bool useId = true, int id = 0)
+    void SwitchComponent(GameObject tileSelected, TileFloorType type, bool useId = true, int id = 0, bool stairMode = false) 
     {
         switch (type)
         {
@@ -1268,7 +1321,21 @@ public class GridEditor : EditorWindow
             case TileFloorType.GridFloorStair:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorStair>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorStair>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorStair>();
+                    _maxGridSize = rowsGridDeck * colsGridDeck;
+                    if (id > _maxGridSize)
+                    {
+                        _listGridManagerTile[id - _maxGridSize].floor = tileSelected.GetComponent<GridFloorStair>();
+                        GetOppositeTileAndChangeType(id, -_maxGridSize);
+                    }
+                    else
+                    {
+                        _listGridManagerTile[id + _maxGridSize].floor = tileSelected.GetComponent<GridFloorStair>();
+                        GetOppositeTileAndChangeType(id, _maxGridSize);
+                    }
+                }
                 tileSelected.GetComponent<GridFloorStair>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorWalkable:
@@ -1277,14 +1344,77 @@ public class GridEditor : EditorWindow
                 if (useId)
                 {
                     _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                    if (id > _maxGridSize)
+                    {
+                        _listGridManagerTile[id - _maxGridSize].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                        GetOppositeTileAndChangeType(id, -_maxGridSize, false);
+                    }
+                    else
+                    {
+                        _listGridManagerTile[id + _maxGridSize].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                        GetOppositeTileAndChangeType(id, _maxGridSize, false);
+                    }
                 }
                 tileSelected.GetComponent<GridFloorWalkable>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorNonWalkable :
                 DestroyComponentForObject(tileSelected);
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                tileSelected.AddComponent<GridFloorNotWalkable>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorNotWalkable>();
+                }
+                tileSelected.GetComponent<GridFloorNotWalkable>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
         }
+    }
+
+    private void GetOppositeTileAndChangeType(int id, int maxGridSize, bool stair = true)
+    {
+        GameObject oppositeObject = _listGridManagerTile[id + maxGridSize].transform.gameObject;
+        DestroyComponentForObject(oppositeObject);
+        if (stair)
+        {
+            oppositeObject.AddComponent<GridFloorStair>();
+            oppositeObject.GetComponent<GridFloorStair>().SetPosition(_listGridManagerTile[id + maxGridSize].coordinates.x,
+                _listGridManagerTile[id + maxGridSize].coordinates.y); 
+        }
+        else
+        {
+            oppositeObject.AddComponent<GridFloorWalkable>();
+            oppositeObject.GetComponent<GridFloorWalkable>().SetPosition(_listGridManagerTile[id + maxGridSize].coordinates.x,
+                _listGridManagerTile[id + maxGridSize].coordinates.y); 
+        }
+
+    }
+
+    private void DotLineScenes(SceneView sceneView)
+    {
+        if (showPreviewDotLineStairs)
+        {
+            for (int i = 0; i < _listGridManagerTile.Count; i++)
+            {
+                if (_listGridManagerTile[i].floor is GridFloorStair)
+                {
+                    Vector3 tileBeginPos = _listGridManagerTile[i].transform.position;
+                    Vector3 tileBeginEnd = Vector3.zero;
+                    if (i > _maxGridSize)
+                    {
+                        tileBeginEnd = _listGridManagerTile[i - _maxGridSize].transform.position;
+                    }
+                    else
+                    {
+                        tileBeginEnd = _listGridManagerTile[i + _maxGridSize].transform.position;
+                    }
+                    Handles.DrawDottedLine(tileBeginPos, tileBeginEnd, 4.0f);
+                }
+            }
+        }
+    }
+
+    public void GetOppositeTile(GameObject oppositeObject, int id, int maxGridSize)
+    {
+        oppositeObject = _listGridManagerTile[id + maxGridSize].transform.gameObject;
     }
 
     private void DetectComponentOnSelectionObject(GameObject tileSelectedInScene, bool changeColor)
@@ -1295,7 +1425,9 @@ public class GridEditor : EditorWindow
             tileSelectedInScene.GetComponent<GridFloorIce>(),
             tileSelectedInScene.GetComponent<GridFloorPressurePlate>(),
             tileSelectedInScene.GetComponent<GridFloorStair>(),
-            tileSelectedInScene.GetComponent<GridFloorWalkable>()
+            tileSelectedInScene.GetComponent<GridFloorWalkable>(),
+            tileSelectedInScene.GetComponent<GridFloorNotWalkable>(),
+            
         };
         bool foundComponent = false;
         foreach (Component component in components)
@@ -1320,7 +1452,8 @@ public class GridEditor : EditorWindow
             tileSelectedInScene.GetComponent<GridFloorIce>(),
             tileSelectedInScene.GetComponent<GridFloorPressurePlate>(),
             tileSelectedInScene.GetComponent<GridFloorStair>(),
-            tileSelectedInScene.GetComponent<GridFloorWalkable>()
+            tileSelectedInScene.GetComponent<GridFloorWalkable>(),
+            tileSelectedInScene.GetComponent<GridFloorNotWalkable>()
         };
 
         foreach (Component component in components)
@@ -1343,6 +1476,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorBarrier);
                 }
+
                 return;
             }
             case GridFloorBouncePad:
@@ -1351,6 +1485,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorBouncePad);
                 }
+
                 return;
             }
             case GridFloorIce:
@@ -1359,6 +1494,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorIce);
                 }
+
                 return;
             }
             case GridFloorPressurePlate:
@@ -1367,6 +1503,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorPressurePlate);
                 }
+
                 return;
             }
             case GridFloorStair:
@@ -1375,6 +1512,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorStair);
                 }
+
                 return;
             }
             case GridFloorWalkable:
@@ -1383,9 +1521,18 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorWalkable);
                 }
+
                 return;
             }
-            
+
+            case GridFloorNotWalkable:
+            {
+                if (switchColor)
+                {
+                    SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
+                }
+                return;
+            }
             default:
                 SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
                 break;
@@ -1428,7 +1575,8 @@ public class GridEditor : EditorWindow
             tileSelected.GetComponent<GridFloorIce>(),
             tileSelected.GetComponent<GridFloorPressurePlate>(),
             tileSelected.GetComponent<GridFloorStair>(),
-            tileSelected.GetComponent<GridFloorWalkable>()
+            tileSelected.GetComponent<GridFloorWalkable>(),
+            tileSelected.GetComponent<GridFloorNotWalkable>()
         };
 
         foreach (Component component in components)
