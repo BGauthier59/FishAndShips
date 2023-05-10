@@ -57,7 +57,9 @@ MonoBehaviour:
   swipeTrail: {fileID: 5697173706094757353}
   planeOrigin: {fileID: 5697173705667714286}
   shrimpCollisionSize: 150
+  trueCollisionSize: 0
   swordCollisionSize: 280
+  trueSwordSize: 0
   posAngle: 0
   lastPos: {x: 0, y: 0}
   validSwipe: 1
@@ -464,7 +466,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: cfe187cb49368b842a5568aca8924932, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

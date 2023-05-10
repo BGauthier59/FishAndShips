@@ -40,7 +40,11 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
                 isDraging = true;
                 data.draggableItem.position = startTouch;
                 data.draggableItem.gameObject.SetActive(true);
-                if(data.type == CannonDragAndDropData.MiniGameType.Shoot) data.matchstickOnTable.SetActive(false);
+                if (data.type == CannonDragAndDropData.MiniGameType.Shoot)
+                {
+                    OnMatchstickFireStart?.Invoke();
+                    data.matchstickOnTable.SetActive(false);
+                }
             }
             else Reset();
         }
@@ -56,8 +60,12 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         isDraging = false;
         timer = 0;
         data.draggableItem.gameObject.SetActive(false);
-        
-        if(data.type == CannonDragAndDropData.MiniGameType.Shoot) data.matchstickOnTable.SetActive(true);
+
+        if (data.type == CannonDragAndDropData.MiniGameType.Shoot)
+        {
+            OnMatchstickFireStop?.Invoke();
+            data.matchstickOnTable.SetActive(true);
+        }
 
         if (data.type == CannonDragAndDropData.MiniGameType.Load &&
             Vector3.Distance(currentBulletPosScreenSpace, data.endPoint.position) < data.endPointRadius)
@@ -68,6 +76,9 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
 
     private Vector3 currentBulletPosScreenSpace;
     private Plane plane;
+
+    public Action OnMatchstickFireStop;
+    public Action OnMatchstickFireStart;
 
     public void CalculateBulletPosition()
     {
@@ -106,6 +117,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         if (plane.Raycast(ray, out float enter))
         {
             data.draggableItem.position = ray.GetPoint(enter);
+            data.vfxTransform.position = data.draggableItem.position;
         }
 
         currentSpeed = Vector3.Distance(lastTouch, currentTouch) / Time.deltaTime;
@@ -116,6 +128,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         if (timer >= data.matchstickDuration)
         {
             Debug.Log("Too long!");
+            OnMatchstickFireStop?.Invoke();
             Reset();
             return false;
         }
@@ -123,6 +136,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         if (currentSpeed > data.maxSpeed)
         {
             Debug.LogWarning("Too fast!");
+            OnMatchstickFireStop?.Invoke();
             Reset();
             return false;
         }
@@ -147,6 +161,7 @@ public struct CannonDragAndDropData
     [Header("Shoot")] public float maxSpeed;
     public float matchstickDuration;
     public GameObject matchstickOnTable;
+    public Transform vfxTransform;
 
     public enum MiniGameType
     {

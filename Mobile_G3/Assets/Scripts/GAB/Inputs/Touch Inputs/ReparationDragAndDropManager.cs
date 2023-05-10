@@ -57,6 +57,7 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
                 }
 
                 currentPlank = data.draggablePlanks[currentPlankIndex];
+                currentPlank.position = initPlankPos;
                 RefreshPlanks();
             }
         }

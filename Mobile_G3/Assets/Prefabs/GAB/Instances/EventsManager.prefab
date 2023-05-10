@@ -112,13 +112,26 @@ MonoBehaviour:
       m_Calls: []
   fireEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4505960945226804444}
+        m_TargetAssemblyTypeName: ShrimpShipAttackEvent, Assembly-CSharp
+        m_MethodName: PlayMortarAnim
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   getHitEvent:
     m_PersistentCalls:
       m_Calls: []
   cannonShootTargetedTile: {fileID: 8376799344871286446}
   shrimpTargetedTile: {fileID: 2109153131786482421}
   notWalkable: {fileID: 3699071092612923195}
+  mortarAnim: {fileID: 3768075611726452981}
   DEBUG_ShipLife: {fileID: 5681155279109986987}
 --- !u!114 &6126979554570275309
 MonoBehaviour:
@@ -279,13 +292,26 @@ MonoBehaviour:
       m_Calls: []
   fireEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 913933736702132406}
+        m_TargetAssemblyTypeName: ShrimpShipAttackEvent, Assembly-CSharp
+        m_MethodName: PlayMortarAnim
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   getHitEvent:
     m_PersistentCalls:
       m_Calls: []
   cannonShootTargetedTile: {fileID: 3288869100181563000}
   shrimpTargetedTile: {fileID: 4945233880758792739}
   notWalkable: {fileID: 3699071092612923195}
+  mortarAnim: {fileID: 7903486755005208611}
   DEBUG_ShipLife: {fileID: 1671876948675795581}
 --- !u!114 &4688909802771003816
 MonoBehaviour:
@@ -713,6 +739,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: ShrimpBoat
       objectReference: {fileID: 0}
+    - target: {fileID: 1652003464423519178, guid: 8007cd2174cd5ae4189056c94920e92d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3040605780828668375, guid: 8007cd2174cd5ae4189056c94920e92d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3544314430938932147, guid: 8007cd2174cd5ae4189056c94920e92d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8007cd2174cd5ae4189056c94920e92d, type: 3}
 --- !u!4 &1527685785115137330 stripped
@@ -766,6 +807,12 @@ Transform:
 --- !u!111 &5695038683760699497 stripped
 Animation:
   m_CorrespondingSourceObject: {fileID: 6323836581070391475, guid: 8007cd2174cd5ae4189056c94920e92d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1786258206037139674}
+  m_PrefabAsset: {fileID: 0}
+--- !u!111 &7903486755005208611 stripped
+Animation:
+  m_CorrespondingSourceObject: {fileID: 8459100454552303865, guid: 8007cd2174cd5ae4189056c94920e92d,
     type: 3}
   m_PrefabInstance: {fileID: 1786258206037139674}
   m_PrefabAsset: {fileID: 0}
@@ -865,6 +912,12 @@ Transform:
 --- !u!4 &2787119383451817640 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7459070984716007076, guid: 8007cd2174cd5ae4189056c94920e92d,
+    type: 3}
+  m_PrefabInstance: {fileID: 4696735190925172748}
+  m_PrefabAsset: {fileID: 0}
+--- !u!111 &3768075611726452981 stripped
+Animation:
+  m_CorrespondingSourceObject: {fileID: 8459100454552303865, guid: 8007cd2174cd5ae4189056c94920e92d,
     type: 3}
   m_PrefabInstance: {fileID: 4696735190925172748}
   m_PrefabAsset: {fileID: 0}

@@ -79,7 +79,8 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private UnityEvent getHitEvent;
     [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
     [SerializeField] private GridFloorNotWalkable notWalkable;
-
+    [SerializeField] private Animation mortarAnim;
+    
     public TMP_Text DEBUG_ShipLife;
 
     #endregion
@@ -339,6 +340,11 @@ public class ShrimpShipAttackEvent : RandomEvent
         targetedTile.SetTile(targetedTile.GetEntity(), walkable);
         reparationWorkshop.SetPosition(x, y);
         if (NetworkManager.Singleton.IsHost) reparationWorkshop.ActivateServerRpc();
+    }
+
+    public void PlayMortarAnim()
+    {
+        mortarAnim.Play(mortarAnim.clip.name);
     }
 
     #endregion

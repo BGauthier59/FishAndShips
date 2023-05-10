@@ -1094,8 +1094,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 6, y: 2.5, z: 3}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 6, y: 5, z: 3}
+  m_Center: {x: 0, y: 1.5, z: 0}
 --- !u!1 &3029957355586827526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1430,8 +1430,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3790856921734238470, guid: dc53edf0bc90bfa4ca6172e5d7eff9fe,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3790856921734238470, guid: dc53edf0bc90bfa4ca6172e5d7eff9fe,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.999337
+      objectReference: {fileID: 0}
+    - target: {fileID: 3790856921734238470, guid: dc53edf0bc90bfa4ca6172e5d7eff9fe,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.909223
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc53edf0bc90bfa4ca6172e5d7eff9fe, type: 3}
+--- !u!1 &2177960574892305136 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1382604722256621256, guid: dc53edf0bc90bfa4ca6172e5d7eff9fe,
+    type: 3}
+  m_PrefabInstance: {fileID: 943033745296901176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!111 &8459100454552303865
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2177960574892305136}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: c1ea3d4b88516934eb64609db68d288b, type: 2}
+  m_Animations:
+  - {fileID: 7400000, guid: c1ea3d4b88516934eb64609db68d288b, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!4 &2686746952767907217 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2909160637600424361, guid: dc53edf0bc90bfa4ca6172e5d7eff9fe,
