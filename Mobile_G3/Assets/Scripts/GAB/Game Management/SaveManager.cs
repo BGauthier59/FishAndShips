@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -11,8 +13,21 @@ public class SaveManager : MonoSingleton<SaveManager>
 
     private Encoding encoding = Encoding.UTF8;
 
+    [SerializeField] private SaveData currentData;
+
+    public override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(this);
+    }
+
     public void SaveDataOnMainDirectory<T>(T data)
     {
+        if (data is not global::SaveData)
+        {
+            Debug.LogWarning("You're saving a data that is not a SaveData class");
+        }
+        
         path = Application.persistentDataPath;
         SaveData(data);
     }
@@ -43,14 +58,30 @@ public class SaveManager : MonoSingleton<SaveManager>
             FileStream fileStream = new FileStream(filePath, FileMode.Open);
             XmlSerializer dataSerializer = new XmlSerializer(typeof(T));
 
-            var data = (T)dataSerializer.Deserialize(fileStream);
+            var data = (T) dataSerializer.Deserialize(fileStream);
             fileStream.Close();
-            
+
             Debug.Log("Data loaded!");
             return data;
         }
 
         Debug.LogWarning("Path doesn't exist!");
         return default;
+    }
+}
+
+[Serializable]
+public class SaveData
+{
+    public LevelData[] levelsData; // Stands for levels
+    public List<int> charactersData = new(); // Stands for characters index
+    public List<int> sailsData = new(); // Stands for sails index
+
+    [Serializable]
+    public struct LevelData
+    {
+        public bool isUnlocked;
+        public bool isWon;
+        public int starCount;
     }
 }
