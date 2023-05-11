@@ -28,6 +28,7 @@ public class MiniGame_Cannon_Shoot : MiniGame
         
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.cannonDragAndDropManager.Enable(data);
+        WorkshopManager.instance.StartMiniGameTutorial(3);
         StartExecutingMiniGame();
     }
 
