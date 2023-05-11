@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -78,6 +79,7 @@ public class GridEditor : EditorWindow
     private GameObject _layerBarrier;
     
     private List<Tile> _listGridManagerTile;
+    private List<GameObject> _listBarrierOnGrid;
     private Camera sceneCamera;
 
     //Offset Position Handles
@@ -139,7 +141,9 @@ public class GridEditor : EditorWindow
     private bool showBarriersFolder;
     private GameObject barrierPrefab;
     private bool showAllBarrierTile;
+    private bool showAllOpenBarrier;
     private bool showButtonForStairs;
+    private bool showButtonForBarriers;
     private GameObject barriersLayer;
     private Vector3 buttonPosForBarrier;
     private float offsetBarrierFromTile = 0.5f;
@@ -147,6 +151,8 @@ public class GridEditor : EditorWindow
     private float openPosBarrier = -0.4f;
     private int tileIDToTchek = 0;
     private int _maxGridSize;
+    public bool isOpen;
+    public GameObject _gridBarrier;
     
     //Create Stairs
     private int stairs;
@@ -186,8 +192,7 @@ public class GridEditor : EditorWindow
 
         //Create a path for saving
         gridFinalNameSave = gridPrefixSave + gridNameEnter;
-
-
+        
         //Properties 
         gridNameEnter = EditorGUILayout.TextField("Grid Manager", gridNameEnter);
         prefab = (GameObject)EditorGUILayout.ObjectField("Prefab", prefab, typeof(GameObject), false);
@@ -478,17 +483,11 @@ public class GridEditor : EditorWindow
                 {
                     CreateLayerBarrier(_gridManager.gameObject);
                 }
-                
-                showAllBarrierTile = EditorGUILayout.Toggle("Preview All Grid Barriers", showAllBarrierTile);
-                if (showAllBarrierTile)
-                {
-                    duringSceneGui += PreviewAllGridBarrierTile;
-                }
-                else
-                {
-                    duringSceneGui -= PreviewAllGridBarrierTile;
-                }
-                
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.BeginVertical();
+                //One Object
+                EditorGUILayout.LabelField("Selection for Only One Object : ");
+
                 showButtonForStairs = EditorGUILayout.Toggle("Preview Button Grid Barrier", showButtonForStairs);
                 if (showButtonForStairs)
                 {
@@ -498,6 +497,41 @@ public class GridEditor : EditorWindow
                 {
                     duringSceneGui -= ShowButtonForPlacingBarriers;
                 }
+                
+                showButtonForBarriers = EditorGUILayout.Toggle("Closed or Open Barrier", showButtonForBarriers);
+                if (showButtonForStairs)
+                {
+                    duringSceneGui += SelectedBarrierOpenOrClose;
+                }
+                else
+                {
+                    duringSceneGui -= SelectedBarrierOpenOrClose;
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.BeginVertical();
+                //Multiples Objects
+                EditorGUILayout.LabelField("Option for All Objects : ");
+                showAllBarrierTile = EditorGUILayout.Toggle("Preview All Grid Barriers", showAllBarrierTile);
+                if (showAllBarrierTile)
+                {
+                    duringSceneGui += PreviewAllGridBarrierTile;
+                }
+                else
+                {
+                    duringSceneGui -= PreviewAllGridBarrierTile;
+                } 
+                
+                showAllOpenBarrier = EditorGUILayout.Toggle("Change if close or not", showAllOpenBarrier);
+                if (showAllOpenBarrier)
+                {
+                    duringSceneGui += ShowAllBarriersButtonForOpen;
+                }
+                else
+                {
+                    duringSceneGui -= ShowAllBarriersButtonForOpen;
+                }
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndHorizontal();
             }
         }
         
@@ -659,7 +693,7 @@ public class GridEditor : EditorWindow
     private void CreateLayerBarrier(GameObject gridManagerObject)
     {
         _layerBarrier = new GameObject();
-        _layerBarrier.name = barriersName + "_" + gridNameEnter;
+        _layerBarrier.name = barriersName + gridNameEnter;
         _layerBarrier.transform.position = Vector3.zero;
         _layerBarrier.transform.parent = gridManagerObject.transform;
         _layerBarrier.AddComponent<BarrierList>();
@@ -954,11 +988,7 @@ public class GridEditor : EditorWindow
     }
 
     #region Stairs Barriers
-
-    void SpawnStairs()
-    {
-        
-    }
+    
 
     #endregion
     
@@ -1057,7 +1087,7 @@ public class GridEditor : EditorWindow
             }
             
             //Right 
-            if (colsGridDeck > coordinatesTile.x)
+            if (colsGridDeck -1  > coordinatesTile.x)
             {
                 buttonPosForBarrier = buttonPos + Vector3.right * offsetBarrierFromTile;
                 if (Handles.Button(buttonPosForBarrier, buttonRot,
@@ -1081,7 +1111,7 @@ public class GridEditor : EditorWindow
             }
 
             //Top
-            if (rowsGridDeck > coordinatesTile.y)
+            if (rowsGridDeck -1 > coordinatesTile.y)
             {
                  buttonPosForBarrier = buttonPos + Vector3.forward * offsetBarrierFromTile;
                 if (Handles.Button(buttonPosForBarrier, buttonRot,
@@ -1089,6 +1119,82 @@ public class GridEditor : EditorWindow
                 {
                     GetAdjacentBarriers(coordinatesTile, 3);
                     SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Top", 3);
+                }
+            }
+        }
+    }
+
+    public void SelectedBarrierOpenOrClose(SceneView sceneView)
+    {
+        if (!Selection.activeGameObject) return;
+        if (!sceneCamera) GetCameraScene(sceneView);
+        if (CheckSelectedBarrierIsInTheList()) return;
+        
+        Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPrevPosButtonHandles.x,
+            offsetPrevPositionText.y, _selectedObject.transform.position.z + offsetPrevPosButtonHandles.z);
+        Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
+        if (Handles.Button(buttonPos, buttonRot,
+                cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+        {
+            isOpen = _selectedObject.GetComponent<GridBarrier>().isClosed;
+            isOpen = !isOpen;
+            _selectedObject.GetComponent<GridBarrier>().isClosed = isOpen;
+        }
+    }
+
+    public void ShowAllBarriersButtonForOpen(SceneView sceneView)
+    {
+        if (!sceneCamera) GetCameraScene(sceneView);
+        _listBarrierOnGrid = _gridBarrier.GetComponent<BarrierList>().barrierData;
+        
+        foreach (var barrier in _listBarrierOnGrid)
+        {
+            Vector3 buttonPos = new Vector3(barrier.transform.position.x + offsetPrevPosButtonHandles.x,
+                offsetPrevPositionText.y, barrier.transform.position.z + offsetPrevPosButtonHandles.z);
+            Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
+            if (Handles.Button(buttonPos, buttonRot,
+                    cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+            {
+                isOpen = barrier.GetComponent<GridBarrier>().isClosed;
+                isOpen = !isOpen;
+                barrier.GetComponent<GridBarrier>().isClosed = isOpen;
+            }
+        }
+    }    
+    
+    public void ShowAllBarriersButtonAndDelete(SceneView sceneView)
+    {
+        if (!sceneCamera) GetCameraScene(sceneView);
+        _listBarrierOnGrid = _gridBarrier.GetComponent<BarrierList>().barrierData;
+        
+        foreach (var barrier in _listBarrierOnGrid)
+        {
+            Vector3 buttonPos = new Vector3(barrier.transform.position.x + offsetPrevPosButtonHandles.x,
+                offsetPrevPositionText.y, barrier.transform.position.z + offsetPrevPosButtonHandles.z);
+            Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
+            if (Handles.Button(buttonPos, buttonRot,
+                    cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+            {
+                float coordinatesX = barrier.GetComponent<GridBarrier>().closedPos.x;
+                float coordinatesY = barrier.GetComponent<GridBarrier>().closedPos.z;
+                DestroyImmediate(barrier);
+            }
+        }
+    }
+
+    public void UpdateAllPressurePlate()
+    {
+        foreach (var tilePressurePlate in _listGridManagerTile)
+        {
+            GridFloorPressurePlate gridPressurePlate = tilePressurePlate.transform.gameObject.GetComponent<GridFloorPressurePlate>();
+            if (tilePressurePlate.floor is GridFloorPressurePlate)
+            {
+                _listBarrierOnGrid = _gridBarrier.GetComponent<BarrierList>().barrierData;
+                gridPressurePlate.barriers = new GridBarrier[_listBarrierOnGrid.Count];
+                for (int i = 0; i < _listBarrierOnGrid.Count; i++)
+                {
+                    GridBarrier gridBarrier = _listBarrierOnGrid[i].GetComponent<GridBarrier>();
+                    gridPressurePlate.barriers[i] = gridBarrier;
                 }
             }
         }
@@ -1164,7 +1270,6 @@ public class GridEditor : EditorWindow
             DetectComponent(tile.floor, true);
             if(tile.floor is GridFloorBarrier)
             {
-                Debug.Log("There is a GridFloorBarrier");
                 Vector3 positionTile = tile.transform.position;
                 Handles.CubeHandleCap(
                     0,
@@ -1263,10 +1368,31 @@ public class GridEditor : EditorWindow
         _selectedObject = Selection.activeGameObject;
         bool isSelectedObjectInList = false;
         idTileList = 0;
-
         for (int i = 0; i < _listGridManagerTile.Count; i++)
         {
             if (_listGridManagerTile[i].name == _selectedObject.name)
+            {
+                idTileList = i;
+                isSelectedObjectInList = true;
+                break;
+            }
+        }
+
+        if (!isSelectedObjectInList) return true;
+        return false;
+    }
+
+    private bool CheckSelectedBarrierIsInTheList()
+    {
+        _selectedObject = Selection.activeGameObject;
+        bool isSelectedObjectInList = false;
+        _gridBarrier = GameObject.Find(barriersName + gridNameEnter);
+        _listBarrierOnGrid = _gridBarrier.GetComponent<BarrierList>().barrierData;
+        idTileList = 0;
+
+        for (int i = 0; i < _listBarrierOnGrid.Count; i++)
+        {
+            if (_listBarrierOnGrid[i].name == _selectedObject.name)
             {
                 idTileList = i;
                 isSelectedObjectInList = true;
@@ -1317,6 +1443,7 @@ public class GridEditor : EditorWindow
                     _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
                 }
                 tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
+                UpdateAllPressurePlate();
                 break;
             case TileFloorType.GridFloorStair:
                 DestroyComponentForObject(tileSelected);
