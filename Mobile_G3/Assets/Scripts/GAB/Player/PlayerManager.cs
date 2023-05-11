@@ -14,6 +14,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public NetworkVariable<int> gridPositionY = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
+    
+    public NetworkVariable<int> playerDataIndex = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner);
 
     public int positionX;
     public int positionY;
@@ -40,6 +43,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     private void Start()
     {
         playerName.OnValueChanged += OnNameChanged;
+        playerDataIndex.OnValueChanged += OnSkinChanged;
         gridPositionX.OnValueChanged += OnPositionChanged;
         gridPositionY.OnValueChanged += OnPositionChanged;
         SetBoatSide(BoatSide.Deck);
@@ -50,7 +54,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         // DEBUG - Set data
         for (int i = 0; i < allPlayerData.Length; i++)
         {
-            if (i == DEBUG_PlayerDataIndex)
+            if (i == playerDataIndex.Value)
             {
                 allPlayerData[i].gameObject.SetActive(true);
                 playerData = allPlayerData[i];
@@ -84,6 +88,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         {
             Debug.LogWarning("You've been connected!");
             playerName.Value = MainMenuManager.instance.pseudo;
+            playerDataIndex.Value = MainMenuManager.instance.skinId;
             SetPosition(positionX, positionY);
         }
 
@@ -100,7 +105,13 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     private void OnNameChanged(FixedString32Bytes previousName, FixedString32Bytes newName)
     {
         Debug.Log("Name value has changed");
-        MainMenuManager.instance.ClientGetConnected(OwnerClientId, newName.Value);
+        MainMenuManager.instance.ClientGetConnected(OwnerClientId, newName.Value,playerDataIndex.Value);
+    }
+    
+    private void OnSkinChanged(int previous, int next)
+    {
+        Debug.Log("Skin value has changed");
+        MainMenuManager.instance.ClientSkinChanged(OwnerClientId, next);
     }
 
     #endregion

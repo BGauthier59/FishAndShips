@@ -125,7 +125,7 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
         players.Add(playerId, manager);
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
-        MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value);
+        MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value,manager.playerDataIndex.Value);
     }
 
     public void RemovePlayerFromDictionary(ulong playerId)
