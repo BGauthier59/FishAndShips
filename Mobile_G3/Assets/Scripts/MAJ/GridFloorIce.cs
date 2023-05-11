@@ -27,7 +27,7 @@ public class GridFloorIce : MonoBehaviour, IGridFloor
     public void OnLand(IGridEntity entity)
     {
         PlayerManager player = entity as PlayerManager;
-        if (player && !player.isGliding) Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
+        //if (player && !player.isGliding) Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
         if (player != null) player.isGliding = true;
         switch (directionSaved)
         {

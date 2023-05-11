@@ -38,7 +38,7 @@ public class GridEditor : EditorWindow
     public bool randomRotation = false;
     //Bool for enabling debug Preview
     public bool showSpecificObjetPreview = false;
-    public bool showPreviewAllHandlesButton = false;
+    public bool showPreviewAllTilesIDAndType = false;
     
     //Show Preview Position 
     public bool showSpecificGridSize = false;
@@ -48,6 +48,7 @@ public class GridEditor : EditorWindow
     public bool showPreviewGridContainerPivot = false;
     
     public bool showPreviewAllTileTypeHandles = false;
+    public bool showPreviewDotLineStairs = false;
     
     
     public bool showPrevTileTypeName = false;
@@ -74,6 +75,7 @@ public class GridEditor : EditorWindow
     private GameObject _selectedObject;
     private GameObject _instantiatePrefab;
     private GameObject _layerFolder;
+    private GameObject _layerBarrier;
     
     private List<Tile> _listGridManagerTile;
     private Camera sceneCamera;
@@ -81,6 +83,7 @@ public class GridEditor : EditorWindow
     //Offset Position Handles
     public Vector3 offsetPrevPositionText = new Vector3(0f, 0.5f, 0f);
     public Vector3 offsetPrevPosButtonHandles = new Vector3(0f, 0.5f, 0f);
+    public Vector3 avoidBorderOfGrid = new Vector3(1f, 0, 1f);
     
     //TileFloorType
     private TileFloorType tyleFloorType;
@@ -113,8 +116,9 @@ public class GridEditor : EditorWindow
     private const string containerName = "Container";
     private const string gridDataPath = "Assets/GridData/";
     private const string gridPrefixSave = "GDM_";
+    private const string barriersName = "B_";
     private string folderPathForMinigame = "Assets/Prefabs/GAB/Workshops/Minigames";
-    private string folderPathForWorkshopObjects = "Assets/Prefabs/GAB/Workshops/WorkshopObjects";
+    private string folderPathForWorkshopObjects = "Assets/Prefabs/GAB/Workshops/WorkshopScripts";
     private string gridFinalNameSave;
     
     //Load Saving Parameter
@@ -130,6 +134,22 @@ public class GridEditor : EditorWindow
 
     private int index = 0;
     private int emptyFolderForRefresh = -1;
+    
+    //Create Barrier 
+    private bool showBarriersFolder;
+    private GameObject barrierPrefab;
+    private bool showAllBarrierTile;
+    private bool showButtonForStairs;
+    private GameObject barriersLayer;
+    private Vector3 buttonPosForBarrier;
+    private float offsetBarrierFromTile = 0.5f;
+    private float closedPosBarrier = 0.215f;
+    private float openPosBarrier = -0.4f;
+    private int tileIDToTchek = 0;
+    private int _maxGridSize;
+    
+    //Create Stairs
+    private int stairs;
 
     [MenuItem("Tools/Level Design/Grid Editor")]
     public static void ShowWindow()
@@ -431,8 +451,8 @@ public class GridEditor : EditorWindow
         {
             if (showMiniGameFolder)
             {
-                GUILayout.Label("Workshop Minigames");
-                GUILayout.Label("Path : ");
+                EditorGUILayout.LabelField("Workshop Minigames");
+                EditorGUILayout.LabelField("Path : ");
                 folderPathForWorkshopObjects = EditorGUILayout.TextField(folderPathForWorkshopObjects);
                 if (GUILayout.Button("Load Minigames"))
                 {
@@ -444,47 +464,53 @@ public class GridEditor : EditorWindow
         }
         
         EditorGUILayout.Space();
+        
+        showBarriersFolder = EditorUtils.FoldoutShurikenStyle(showBarriersFolder, "Show Barriers Parameter");
+        {
+            if (showBarriersFolder)
+            {
+                barrierPrefab = (GameObject)EditorGUILayout.ObjectField("Barrier Grid", barrierPrefab, typeof(GameObject), false);
+                if (_layerBarrier != null)
+                {
+                    EditorGUILayout.HelpBox("You always have a layer Barrier", MessageType.Info);
+                }
+                if (GUILayout.Button("Create Barrier Layer"))
+                {
+                    CreateLayerBarrier(_gridManager.gameObject);
+                }
+                
+                showAllBarrierTile = EditorGUILayout.Toggle("Preview All Grid Barriers", showAllBarrierTile);
+                if (showAllBarrierTile)
+                {
+                    duringSceneGui += PreviewAllGridBarrierTile;
+                }
+                else
+                {
+                    duringSceneGui -= PreviewAllGridBarrierTile;
+                }
+                
+                showButtonForStairs = EditorGUILayout.Toggle("Preview Button Grid Barrier", showButtonForStairs);
+                if (showButtonForStairs)
+                {
+                    duringSceneGui += ShowButtonForPlacingBarriers;
+                }
+                else
+                {
+                    duringSceneGui -= ShowButtonForPlacingBarriers;
+                }
+            }
+        }
+        
+        EditorGUILayout.Space();
 
         showPreviewEditorSelect = EditorUtils.FoldoutShurikenStyle(showPreviewEditorSelect, "Show Preview Editor Parameter");
         if (showPreviewEditorSelect)
         {
-            showPreviewAllTileTypeHandles = EditorGUILayout.Toggle("Preview All Type Tile", showPreviewAllTileTypeHandles);
-            if (showPreviewAllTileTypeHandles)
-            {
-                duringSceneGui += PreviewAllTileTypeHandles;
-            }
-            else
-            {
-                duringSceneGui -= PreviewAllTileTypeHandles;
-            }
-
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.BeginVertical();
-            showPrevTileTypeName = EditorGUILayout.Toggle("Tile Type Name", showPrevTileTypeName);
-            showPrevTileTypeID = EditorGUILayout.Toggle("Tile Type ID", showPrevTileTypeID);
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.EndHorizontal();
-            
-            if (showPrevTileTypeName || showPrevTileTypeID)
-            {
-                duringSceneGui += PreviewTileTypeName;
-            }
-            else
-            {
-                duringSceneGui -= PreviewTileTypeName;
-            }
-
-            showPreviewAllHandlesButton = EditorGUILayout.Toggle("All Handles Button", showPreviewAllHandlesButton);
-            if (showPreviewAllHandlesButton)
-            {
-                duringSceneGui += ShowAllHandlesButtonOfGrid;
-            }
-            else
-            {
-                duringSceneGui -= ShowAllHandlesButtonOfGrid;
-            }
-
-            showSpecificObjetPreview = EditorGUILayout.Toggle("Show Preview Selected", showSpecificObjetPreview);
+            //One Object
+            EditorGUILayout.LabelField("Selection for Only One Object : ");
+            showSpecificObjetPreview = EditorGUILayout.Toggle("Change Floor Type", showSpecificObjetPreview);
             if (showSpecificObjetPreview)
             {
                 duringSceneGui += ShowButtonForSelectedObject;
@@ -493,8 +519,52 @@ public class GridEditor : EditorWindow
             {
                 duringSceneGui -= ShowButtonForSelectedObject;
             }
-
-
+            showPrevTileTypeID = EditorGUILayout.Toggle("Tile Type ID", showPrevTileTypeID);
+            showPrevTileTypeName = EditorGUILayout.Toggle("Floor Type", showPrevTileTypeName);
+            if (showPrevTileTypeName || showPrevTileTypeID)
+            {
+                duringSceneGui += PreviewTileTypeName;
+            }
+            else
+            {
+                duringSceneGui -= PreviewTileTypeName;
+            }
+            
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.BeginVertical();
+            //Multiples Objects
+            EditorGUILayout.LabelField("Option for All Objects : ");
+            showPreviewAllTilesIDAndType = EditorGUILayout.Toggle("All Tile ID and Type", showPreviewAllTilesIDAndType);
+            if (showPreviewAllTilesIDAndType)
+            {
+                duringSceneGui += ShowAllTilesIDAndType;
+            }
+            else
+            {
+                duringSceneGui -= ShowAllTilesIDAndType;
+            }
+            
+            showPreviewAllTileTypeHandles = EditorGUILayout.Toggle("Preview All Type Tile", showPreviewAllTileTypeHandles);
+            if (showPreviewAllTileTypeHandles)
+            {
+                duringSceneGui += PreviewAllTileTypeHandles;
+            }
+            else
+            {
+                duringSceneGui -= PreviewAllTileTypeHandles;
+            } 
+            
+            showPreviewDotLineStairs = EditorGUILayout.Toggle("Preview Connection Between Stairs", showPreviewDotLineStairs);
+            if (showPreviewDotLineStairs)
+            {
+                duringSceneGui += DotLineScenes;
+            }
+            else
+            {
+                duringSceneGui -= DotLineScenes;
+            }
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.EndHorizontal();
             UpdateListTileManage();
         }
 
@@ -512,6 +582,7 @@ public class GridEditor : EditorWindow
                 _colorGridElement.GridFloorPressurePlate = EditorGUILayout.ColorField("Color GridFloor Pressure Plate", _colorGridElement.GridFloorPressurePlate);
                 _colorGridElement.GridFloorStair = EditorGUILayout.ColorField("Color GridFloor Stair", _colorGridElement.GridFloorStair);
                 _colorGridElement.GridFloorWalkable = EditorGUILayout.ColorField("Color GridFloor Floor Walkable", _colorGridElement.GridFloorWalkable);
+                _colorGridElement.GridFloorNonWalkable = EditorGUILayout.ColorField("Color GridFloor Floor Not Walkable", _colorGridElement.GridFloorNonWalkable);
             }
             
             showOffsetPositionHandles = EditorUtils.FoldoutShurikenStyle(showOffsetPositionHandles, "Show Pos Offset For handles");
@@ -521,10 +592,10 @@ public class GridEditor : EditorWindow
                 offsetPrevPositionText = EditorGUILayout.Vector3Field("Offset Preview Position Text", offsetPrevPositionText);
             }
 
-            if (GUILayout.Button("Random Rotation Object"))
-            {
-                randomRotation = !randomRotation;
-            }
+            //if (GUILayout.Button("Random Rotation Object"))
+            //{
+            //    randomRotation = !randomRotation;
+            //}
         }
         
         UpdateListTileManage();
@@ -533,12 +604,16 @@ public class GridEditor : EditorWindow
     private void OnDestroy()
     {
          showSpecificObjetPreview = false;
-         showPreviewAllHandlesButton = false;
          showSpecificGridSize = false;
-         showPreviewAllTileTypeHandles = false;
+         showPreviewGridDeckPivot = false;
+
+         showAllBarrierTile = false;
+         showButtonForStairs = false;
          
-         showPrevTileTypeName = false;
          showPrevTileTypeID = false;
+         showPrevTileTypeName = false;
+         showPreviewAllTilesIDAndType = false;
+         showPreviewAllTileTypeHandles = false;
     }
 
     // Fonction pour créer la grille
@@ -564,21 +639,32 @@ public class GridEditor : EditorWindow
             
             case 2:
                 CreateGridDeck(gridObject, false);
-                CreateGridDeck(gridObject, true);
+                CreateGridDeck(gridObject, true, true);
                 break;
         }
         EditorUtility.SetDirty(gridObject);
     }
 
-    private void CreateGridDeck(GameObject gridManagerObject, bool offsetForTheContainer)
+    private void CreateGridDeck(GameObject gridManagerObject, bool offsetForTheContainer, bool holdType = false)
     {
-        PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, false,offsetForTheContainer ? containerName : deckName);
-    } 
-    
-    private void CreateGridContainer(GameObject gridManagerObject)
-    {
-        PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, true, containerName);
+        PositionGridObject(gridManagerObject, colsGridDeck, rowsGridDeck, bordersGridDeck, offsetForTheContainer ? offsetGridDeckPosition : Vector3.zero, true,false, holdType,offsetForTheContainer ? containerName : deckName);
     }
+
+    private void CreateGridContainer(GameObject gridManagerObject, bool holdType = false)
+    {
+        PositionGridObject(gridManagerObject, colsGridContainer, rowsGridContainer, bordersGridContainer, offsetGridContainerPosition,true,false, holdType, containerName);
+    }
+    
+    
+    private void CreateLayerBarrier(GameObject gridManagerObject)
+    {
+        _layerBarrier = new GameObject();
+        _layerBarrier.name = barriersName + "_" + gridNameEnter;
+        _layerBarrier.transform.position = Vector3.zero;
+        _layerBarrier.transform.parent = gridManagerObject.transform;
+        _layerBarrier.AddComponent<BarrierList>();
+    }
+
     
     private void PositionGridObject(GameObject gridObject, int colsGrid, int rowsGrid, int bordersGrid, Vector3 offsetGrid, bool createLayer, bool updateDeckListElement, bool holdType,string name)
     {
@@ -605,7 +691,7 @@ public class GridEditor : EditorWindow
             {
                 //Create a tile
                 Tile tile = new Tile();
-                tile.name = name + " " + col + "," + row;
+                tile.name = holdType ? name + " " + (col + colsGridDeck) + "," + row : name + " " + col + "," + row;
                 Vector3 positionGridObject = new Vector3(col, 0, row) * cellSizeDeck - center + offset + offsetGrid;
                 tile.coordinates = holdType ? new int2(col + colsGridDeck, row) :  new int2(col, row);
 
@@ -665,6 +751,12 @@ public class GridEditor : EditorWindow
                             _gridManager.tilePrefab.GetComponent<GridFloorWalkable>().SetPosition( holdType ? col + colsGridDeck : col, row);
                         }
                     }
+                    else
+                    {
+                        _gridManager.tilePrefab.AddComponent<GridFloorNotWalkable>();
+                        tile.floor = _gridManager.tilePrefab.GetComponent<GridFloorNotWalkable>(); 
+                        _gridManager.tilePrefab.GetComponent<GridFloorNotWalkable>().SetPosition( holdType ? col + colsGridDeck : col, row);
+                    }
 
                     //Place in an empty folder
                     _gridManager.tilePrefab.transform.parent = createLayer ? _layerFolder.transform : gridObject.transform;
@@ -683,9 +775,9 @@ public class GridEditor : EditorWindow
         }
     }
 
-    private void ShowAllHandlesButtonOfGrid(SceneView sceneView)
+    private void ShowAllTilesIDAndType(SceneView sceneView)
     {
-        if (!showPreviewAllHandlesButton) return;
+        if (!showPreviewAllTilesIDAndType) return;
 
         Vector3 centerOffset = new Vector3(colsGridDeck / 2f - 0.5f, 0, rowsGridDeck / 2f - 0.5f) * cellSizeDeck;
         Vector3 center = useCenterOffset ? centerPosition + centerOffset : centerPosition;
@@ -723,7 +815,7 @@ public class GridEditor : EditorWindow
                 cellSizeDeck * 0.5f, cellSizeDeck, Handles.RectangleHandleCap))
         {
             currentType = (TileFloorType)(((int)currentType + 1) % Enum.GetNames(typeof(TileFloorType)).Length);
-            SwitchComponent(_selectedObject, currentType, idTileList);
+            SwitchComponent(_selectedObject, currentType, true, idTileList);
         }
     }
 
@@ -861,6 +953,16 @@ public class GridEditor : EditorWindow
         }
     }
 
+    #region Stairs Barriers
+
+    void SpawnStairs()
+    {
+        
+    }
+
+    #endregion
+    
+
     #region Preview Grid Size as Handles for Deck and Container
 
     private void PreviewGridPivot(SceneView sceneView)
@@ -924,6 +1026,157 @@ public class GridEditor : EditorWindow
     
 
     #endregion
+    
+    #region Barrier field for spawning
+    private void ShowButtonForPlacingBarriers(SceneView sceneView)
+    {
+        if (!Selection.activeGameObject) return;
+        if (!showButtonForStairs) return;
+        if (!sceneCamera) GetCameraScene(sceneView);
+        UpdateListTileManage();
+        if (CheckSelectedObjectIsInTheList()) return;
+        if (_selectedObject.GetComponent<GridFloorBarrier>() != null)
+        {
+            int2 coordinatesTile = new int2(_selectedObject.GetComponent<GridFloorBarrier>().positionX,
+                _selectedObject.GetComponent<GridFloorBarrier>().positionY);
+            // Calculate position and rotation of button
+            Vector3 buttonPos = new Vector3(_selectedObject.transform.position.x + offsetPrevPosButtonHandles.x,
+                offsetPrevPositionText.y, _selectedObject.transform.position.z + offsetPrevPosButtonHandles.z);
+            Quaternion buttonRot = Quaternion.LookRotation(sceneCamera.transform.forward, sceneCamera.transform.up);
+            
+            //Left
+            if (coordinatesTile.x > 0)
+            {
+                buttonPosForBarrier = buttonPos + Vector3.left * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentBarriers(coordinatesTile, 0);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Left", 0);
+                }
+            }
+            
+            //Right 
+            if (colsGridDeck > coordinatesTile.x)
+            {
+                buttonPosForBarrier = buttonPos + Vector3.right * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentBarriers(coordinatesTile, 1);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, true, "Right", 1);
+                }
+            }
+            
+            //Bottom
+            if (coordinatesTile.y > 0)
+            {
+                buttonPosForBarrier = buttonPos + Vector3.back * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentBarriers(coordinatesTile, 2);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Bottom", 2);
+                }
+            }
+
+            //Top
+            if (rowsGridDeck > coordinatesTile.y)
+            {
+                 buttonPosForBarrier = buttonPos + Vector3.forward * offsetBarrierFromTile;
+                if (Handles.Button(buttonPosForBarrier, buttonRot,
+                        cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
+                {
+                    GetAdjacentBarriers(coordinatesTile, 3);
+                    SpawnBarriers(barrierPrefab, buttonPosForBarrier, coordinatesTile, false, "Top", 3);
+                }
+            }
+        }
+    }
+
+
+    
+    private void SpawnBarriers(GameObject stairObject, Vector3 offset, int2 coordinates, bool rotate, string direction, int side)
+    {
+        _instantiatePrefab = (GameObject)PrefabUtility.InstantiatePrefab(stairObject);
+        PrefabUtility.UnpackPrefabInstance(_instantiatePrefab, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+        _instantiatePrefab.transform.position += offset;
+        _instantiatePrefab.transform.rotation = rotate ? Quaternion.Euler(0,90f,0) : Quaternion.identity;
+        _instantiatePrefab.name = "B_Tile" + coordinates.x + "," + coordinates.y + "_" + direction;
+        if (_instantiatePrefab.GetComponent<GridBarrier>() != null)
+        {
+            Vector3 posPrefabBarrier = _instantiatePrefab.transform.position;
+            _instantiatePrefab.GetComponent<GridBarrier>().closedPos = new Vector3(posPrefabBarrier.x, closedPosBarrier, posPrefabBarrier.z);
+            _instantiatePrefab.GetComponent<GridBarrier>().openPos = new Vector3(posPrefabBarrier.x, openPosBarrier, posPrefabBarrier.z);
+            switch (side)
+            {
+                //Left
+                case 0:
+                    _selectedObject.GetComponent<GridFloorBarrier>().leftBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    tileIDToTchek = CalculateTileID(coordinates, 0);
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().rightBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+                //Right
+                case 1:
+                    _selectedObject.GetComponent<GridFloorBarrier>().rightBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().leftBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+                //Bottom
+                case 2:
+                    _selectedObject.GetComponent<GridFloorBarrier>().bottomBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().topBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+                //Top
+                case 3:
+                    _selectedObject.GetComponent<GridFloorBarrier>().topBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+                    _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().bottomBarrier = _instantiatePrefab.GetComponent<GridBarrier>();
+                    break;
+            }
+        }
+        _instantiatePrefab.transform.parent = _layerBarrier.transform;
+        _layerBarrier.GetComponent<BarrierList>().barrierData.Add(_instantiatePrefab);
+    }
+
+    private void GetAdjacentBarriers(int2 tileCoordinates, int side)
+    {
+        tileIDToTchek = CalculateTileID(tileCoordinates, side);
+        int tileID = _listGridManagerTile[tileIDToTchek].coordinates.x * rowsGridDeck + _listGridManagerTile[tileIDToTchek].coordinates.y;
+        int2 oldCoordinates = new int2(_listGridManagerTile[tileIDToTchek].coordinates.x , _listGridManagerTile[tileIDToTchek].coordinates.y);
+        if (tileID != tileIDToTchek) return;
+        SwitchComponent(_listGridManagerTile[tileIDToTchek].transform.gameObject, TileFloorType.GridFloorBarrier, false);
+        _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().positionX = oldCoordinates.x;
+        _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>().positionY = oldCoordinates.y;
+        _listGridManagerTile[tileIDToTchek].coordinates = oldCoordinates;
+        _listGridManagerTile[tileIDToTchek].floor = _listGridManagerTile[tileIDToTchek].transform.gameObject.GetComponent<GridFloorBarrier>();
+    }
+
+
+
+    private void PreviewAllGridBarrierTile(SceneView sceneView)
+    {
+        GetCameraScene(sceneView);
+        if (!showAllBarrierTile) return;
+        foreach (var tile in _gridManager.grid)
+        {
+            DetectComponent(tile.floor, true);
+            if(tile.floor is GridFloorBarrier)
+            {
+                Debug.Log("There is a GridFloorBarrier");
+                Vector3 positionTile = tile.transform.position;
+                Handles.CubeHandleCap(
+                    0,
+                    positionTile,
+                    //Quaternion.LookRotation(Vector3.forward,  sceneCamera.transform.up),
+                    Quaternion.identity,
+                    HandleUtility.GetHandleSize(positionTile) * 0.2f,
+                    EventType.Repaint
+                );
+            }
+        }
+    }
 
     private void PreviewAllTileTypeHandles(SceneView sceneView)
     {
@@ -946,7 +1199,34 @@ public class GridEditor : EditorWindow
             );
         }
     }
+    
+    #endregion
 
+    private int CalculateTileID(int2 tileCoordinates, int side)
+    {
+        int tileToTchek = 0;
+        switch (side)
+        {
+            //Left
+            case 0:
+                tileToTchek = (tileCoordinates.x - 1) * rowsGridDeck + tileCoordinates.y;
+                break;
+            //Right
+            case 1:
+                tileToTchek = (tileCoordinates.x + 1) * rowsGridDeck + tileCoordinates.y;
+                break;
+            //Bottom
+            case 2:
+                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y - 1);
+                break;
+            //Top
+            case 3:
+                tileToTchek = tileCoordinates.x * rowsGridDeck + (tileCoordinates.y + 1);
+                break;
+        }
+        return tileToTchek;
+    }
+    
     private void PreviewTileTypeName(SceneView sceneView)
     {
         if (!Selection.activeGameObject) return;
@@ -998,51 +1278,143 @@ public class GridEditor : EditorWindow
         return false;
     }
 
-    void SwitchComponent(GameObject tileSelected, TileFloorType type, int id)
+    void SwitchComponent(GameObject tileSelected, TileFloorType type, bool useId = true, int id = 0, bool stairMode = false) 
     {
         switch (type)
         {
             case TileFloorType.GridFloorBarrier:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBarrier>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBarrier>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBarrier>();
+                }
                 tileSelected.GetComponent<GridFloorBarrier>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorBouncePad:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorBouncePad>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBouncePad>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorBouncePad>();
+                }
                 tileSelected.GetComponent<GridFloorBouncePad>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorIce:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorIce>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorIce>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorIce>();
+                }
                 tileSelected.GetComponent<GridFloorIce>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorPressurePlate:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorPressurePlate>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorPressurePlate>();
+                }
                 tileSelected.GetComponent<GridFloorPressurePlate>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorStair:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorStair>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorStair>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorStair>();
+                    _maxGridSize = rowsGridDeck * colsGridDeck;
+                    if (id > _maxGridSize)
+                    {
+                        _listGridManagerTile[id - _maxGridSize].floor = tileSelected.GetComponent<GridFloorStair>();
+                        GetOppositeTileAndChangeType(id, -_maxGridSize);
+                    }
+                    else
+                    {
+                        _listGridManagerTile[id + _maxGridSize].floor = tileSelected.GetComponent<GridFloorStair>();
+                        GetOppositeTileAndChangeType(id, _maxGridSize);
+                    }
+                }
                 tileSelected.GetComponent<GridFloorStair>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorWalkable:
                 DestroyComponentForObject(tileSelected);
                 tileSelected.AddComponent<GridFloorWalkable>();
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                    if (id > _maxGridSize)
+                    {
+                        _listGridManagerTile[id - _maxGridSize].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                        GetOppositeTileAndChangeType(id, -_maxGridSize, false);
+                    }
+                    else
+                    {
+                        _listGridManagerTile[id + _maxGridSize].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                        GetOppositeTileAndChangeType(id, _maxGridSize, false);
+                    }
+                }
                 tileSelected.GetComponent<GridFloorWalkable>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
             case TileFloorType.GridFloorNonWalkable :
                 DestroyComponentForObject(tileSelected);
-                _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorWalkable>();
+                tileSelected.AddComponent<GridFloorNotWalkable>();
+                if (useId)
+                {
+                    _listGridManagerTile[id].floor = tileSelected.GetComponent<GridFloorNotWalkable>();
+                }
+                tileSelected.GetComponent<GridFloorNotWalkable>().SetPosition(_listGridManagerTile[id].coordinates.x, _listGridManagerTile[id].coordinates.y);
                 break;
         }
+    }
+
+    private void GetOppositeTileAndChangeType(int id, int maxGridSize, bool stair = true)
+    {
+        GameObject oppositeObject = _listGridManagerTile[id + maxGridSize].transform.gameObject;
+        DestroyComponentForObject(oppositeObject);
+        if (stair)
+        {
+            oppositeObject.AddComponent<GridFloorStair>();
+            oppositeObject.GetComponent<GridFloorStair>().SetPosition(_listGridManagerTile[id + maxGridSize].coordinates.x,
+                _listGridManagerTile[id + maxGridSize].coordinates.y); 
+        }
+        else
+        {
+            oppositeObject.AddComponent<GridFloorWalkable>();
+            oppositeObject.GetComponent<GridFloorWalkable>().SetPosition(_listGridManagerTile[id + maxGridSize].coordinates.x,
+                _listGridManagerTile[id + maxGridSize].coordinates.y); 
+        }
+
+    }
+
+    private void DotLineScenes(SceneView sceneView)
+    {
+        if (showPreviewDotLineStairs)
+        {
+            for (int i = 0; i < _listGridManagerTile.Count; i++)
+            {
+                if (_listGridManagerTile[i].floor is GridFloorStair)
+                {
+                    Vector3 tileBeginPos = _listGridManagerTile[i].transform.position;
+                    Vector3 tileBeginEnd = Vector3.zero;
+                    if (i > _maxGridSize)
+                    {
+                        tileBeginEnd = _listGridManagerTile[i - _maxGridSize].transform.position;
+                    }
+                    else
+                    {
+                        tileBeginEnd = _listGridManagerTile[i + _maxGridSize].transform.position;
+                    }
+                    Handles.DrawDottedLine(tileBeginPos, tileBeginEnd, 4.0f);
+                }
+            }
+        }
+    }
+
+    public void GetOppositeTile(GameObject oppositeObject, int id, int maxGridSize)
+    {
+        oppositeObject = _listGridManagerTile[id + maxGridSize].transform.gameObject;
     }
 
     private void DetectComponentOnSelectionObject(GameObject tileSelectedInScene, bool changeColor)
@@ -1053,7 +1425,9 @@ public class GridEditor : EditorWindow
             tileSelectedInScene.GetComponent<GridFloorIce>(),
             tileSelectedInScene.GetComponent<GridFloorPressurePlate>(),
             tileSelectedInScene.GetComponent<GridFloorStair>(),
-            tileSelectedInScene.GetComponent<GridFloorWalkable>()
+            tileSelectedInScene.GetComponent<GridFloorWalkable>(),
+            tileSelectedInScene.GetComponent<GridFloorNotWalkable>(),
+            
         };
         bool foundComponent = false;
         foreach (Component component in components)
@@ -1078,7 +1452,8 @@ public class GridEditor : EditorWindow
             tileSelectedInScene.GetComponent<GridFloorIce>(),
             tileSelectedInScene.GetComponent<GridFloorPressurePlate>(),
             tileSelectedInScene.GetComponent<GridFloorStair>(),
-            tileSelectedInScene.GetComponent<GridFloorWalkable>()
+            tileSelectedInScene.GetComponent<GridFloorWalkable>(),
+            tileSelectedInScene.GetComponent<GridFloorNotWalkable>()
         };
 
         foreach (Component component in components)
@@ -1101,6 +1476,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorBarrier);
                 }
+
                 return;
             }
             case GridFloorBouncePad:
@@ -1109,6 +1485,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorBouncePad);
                 }
+
                 return;
             }
             case GridFloorIce:
@@ -1117,6 +1494,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorIce);
                 }
+
                 return;
             }
             case GridFloorPressurePlate:
@@ -1125,6 +1503,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorPressurePlate);
                 }
+
                 return;
             }
             case GridFloorStair:
@@ -1133,6 +1512,7 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorStair);
                 }
+
                 return;
             }
             case GridFloorWalkable:
@@ -1141,9 +1521,18 @@ public class GridEditor : EditorWindow
                 {
                     SwitchColorBaseOnComponent(TileFloorType.GridFloorWalkable);
                 }
+
                 return;
             }
-            
+
+            case GridFloorNotWalkable:
+            {
+                if (switchColor)
+                {
+                    SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
+                }
+                return;
+            }
             default:
                 SwitchColorBaseOnComponent(TileFloorType.GridFloorNonWalkable);
                 break;
@@ -1186,7 +1575,8 @@ public class GridEditor : EditorWindow
             tileSelected.GetComponent<GridFloorIce>(),
             tileSelected.GetComponent<GridFloorPressurePlate>(),
             tileSelected.GetComponent<GridFloorStair>(),
-            tileSelected.GetComponent<GridFloorWalkable>()
+            tileSelected.GetComponent<GridFloorWalkable>(),
+            tileSelected.GetComponent<GridFloorNotWalkable>()
         };
 
         foreach (Component component in components)

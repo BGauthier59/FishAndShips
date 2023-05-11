@@ -923,7 +923,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2909160637600424361}
   m_Layer: 0
-  m_Name: SM_ShrimpBoat
+  m_Name: P_ShrimpBoat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -936,7 +936,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2527850363269724947}
-  m_LocalRotation: {x: -0, y: -0.7026913, z: -0, w: 0.7114949}
+  m_LocalRotation: {x: 0, y: -0.7026935, z: 0, w: 0.7114928}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1990,7 +1990,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &5985407988889198218
 Transform:
@@ -2488,7 +2488,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &7985406528434090642
 Transform:
@@ -2571,7 +2571,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &7407621488079351401
 Transform:
@@ -2884,32 +2884,37 @@ PrefabInstance:
     - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.000000024542807
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.68605846
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000028741987
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.7275465
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -180
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -93.362
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5446852111071785178, guid: 1684e2157b44c92429f2de2ee31b5ae6,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3393587820843472054, guid: 1684e2157b44c92429f2de2ee31b5ae6,
         type: 3}
