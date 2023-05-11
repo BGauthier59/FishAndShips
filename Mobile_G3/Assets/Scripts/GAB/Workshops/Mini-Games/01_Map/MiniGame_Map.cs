@@ -74,8 +74,6 @@ public class MiniGame_Map : MiniGame
     private bool isRight;
     private bool IsRotationAlright()
     {
-        Debug.Log(Vector3.Dot(ship.right, rightDirection));
-        
         if (Vector3.Dot(ship.right, rightDirection) > collinearFactorThreshold)
         {
             if (!isRight)
