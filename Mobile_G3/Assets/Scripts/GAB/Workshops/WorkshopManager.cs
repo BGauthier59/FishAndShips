@@ -298,12 +298,6 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public void StartMiniGameTutorial(int index)
     {
-        if (currentIndex == index)
-        {
-            Debug.LogWarning("Already started");
-            return;
-        }
-
         currentIndex = index;
         isShowingTutorial = true;
         ExecuteMiniGameTutorial();
