@@ -8,11 +8,13 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenuManager : MonoSingleton<MainMenuManager>
 {
-    [SerializeField] private CanvasData[] canvasesData;
-
+    [SerializeField] private GameObject[] screenObjects;
+    [SerializeField] private GameObject slide;
+    [SerializeField] private Image[] slidesButtons;
     [SerializeField] private GameObject connectionDefaultPart;
     [SerializeField] private GameObject connectionClientPart;
     private string ipToConnect;
@@ -33,6 +35,11 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     [SerializeField] private GameObject[] playerIcons;
 
+
+    public int screen;
+    public bool connected;
+    
+
     [Serializable]
     private struct CanvasData
     {
@@ -42,16 +49,35 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public enum MenuScreen
     {
-        TitleScreen, Settings, Shop, Connection, Selection
+        TitleScreen, Settings, Shop, Play, Customizing
     }
     
-    #region Canvas Management
+    #region Transition Management
 
-    private void SetCurrentCanvas(MenuScreen type)
+    public void SetCurrentScreen(int newscreen)
     {
-        if (type == MenuScreen.Connection)
+        screen = newscreen;
+        switch (screen )
         {
-            TitleToOtherScreenTransition();
+            case 0:
+                
+                break;
+            case 1:
+                if (!connected)
+                {
+                    ChangeScreenObject(1);
+                }
+                else
+                {
+                    ChangeScreenObject(3);
+                }
+                break;
+            case 2:
+                ChangeScreenObject(5);
+                break;
+            case 3:
+                
+                break;
         }
     }
     
@@ -64,13 +90,37 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         await Task.Delay(700);
         cameraMenu.position = camPos[3].position;
         cameraMenu.rotation = camPos[3].rotation;
-        canvasesData[0].canvas.SetActive(false);
-        canvasesData[3].canvas.SetActive(true);
+        screen = 1;
+        screenObjects[0].SetActive(false);
+        screenObjects[1].SetActive(true);
+        slide.SetActive(true);
         StartFade(false, 0.7f);
         await Task.Delay(50);
         StartMovement(camPos[3], camPos[2],cameraMenu, 0.8f);
     }
+
+    public void ChangeScreenObject(int screenObj)
+    {
+        for (int i = 0; i < screenObjects.Length; i++)
+        {
+            screenObjects[i].SetActive(false);
+        }
+        screenObjects[screenObj].SetActive(true);
+        
+    }
     
+    public async void PlayTransition()
+    {
+        for (int i = 0; i < screenObjects.Length; i++)
+        {
+            screenObjects[i].SetActive(false);
+        }
+        StartFade(true, 0.7f);
+        await Task.Delay(800);
+        ConnectionManager.instance.gameState = GameState.Game;
+        NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single); 
+    }
+
     public async void ConnectionToClientTransition()
     {
         connectionDefaultPart.SetActive(false);
@@ -86,25 +136,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         
     }
     
-    public async void MapTransition()
-    {
-        canvasesData[3].canvas.SetActive(false);
-        StartMovement(camPos[2], camPos[8],cameraMenu, 0.8f);
-        await Task.Delay(800);
-        canvasesData[4].canvas.SetActive(true);
-        
-        
-    }
-    
-    public async void PlayTransition()
-    {
-        canvasesData[4].canvas.SetActive(false);
-        StartFade(true, 0.7f);
-        await Task.Delay(800);
-        ConnectionManager.instance.gameState = GameState.Game;
-        NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single); 
-    }
-
     #endregion
 
     private void Update()
@@ -121,6 +152,54 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             timerFade -= Time.deltaTime;
             if(fadeIn) fadeTransition.localPosition = new Vector3(Mathf.Lerp(-2200, 0, 1 - timerFade / delayFade), 0, 0);
             if(fadeOut) fadeTransition.localPosition = new Vector3(Mathf.Lerp(0, 2200, 1 - timerFade / delayFade), 0, 0);
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == screen)
+            {
+                slidesButtons[i].transform.localPosition = new Vector3(
+                    slidesButtons[i].transform.localPosition.x,
+                    Mathf.Lerp(slidesButtons[i].transform.localPosition.y, 20, Time.deltaTime * 5),
+                    slidesButtons[i].transform.localPosition.z);
+                slidesButtons[i].color = Color.Lerp(slidesButtons[i].color,Color.white,Time.deltaTime * 5 );
+            }
+            else
+            {
+                slidesButtons[i].transform.localPosition = new Vector3(
+                    slidesButtons[i].transform.localPosition.x,
+                    Mathf.Lerp(slidesButtons[i].transform.localPosition.y, 0, Time.deltaTime * 5),
+                    slidesButtons[i].transform.localPosition.z);
+                slidesButtons[i].color = Color.Lerp(slidesButtons[i].color,Color.grey,Time.deltaTime * 5 );
+            }
+        }
+        
+        switch (screen )
+        {
+            case 0:
+                cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[10].position,Time.deltaTime * 5);
+                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[10].rotation,Time.deltaTime * 5);
+                break;
+            case 1:
+                if (!connected)
+                {
+                    cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[2].position,Time.deltaTime * 5);
+                    cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[2].rotation,Time.deltaTime * 5);
+                }
+                else
+                {
+                    cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[8].position,Time.deltaTime * 5);
+                    cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[8].rotation,Time.deltaTime * 5);
+                }
+                break;
+            case 2:
+                cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[9].position,Time.deltaTime * 5);
+                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[9].rotation,Time.deltaTime * 5);
+                break;
+            case 3:
+                cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[11].position,Time.deltaTime * 5);
+                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[11].rotation,Time.deltaTime * 5);
+                break;
         }
     }
     
@@ -144,14 +223,14 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     private void Start()
     {
-        SetCurrentCanvas(MenuScreen.TitleScreen);
+        //SetCurrentScreen(MenuScreen.TitleScreen);
     }
 
     #region Main Screen
 
     public void OnPlayButton()
     {
-        SetCurrentCanvas(MenuScreen.Connection);
+        TitleToOtherScreenTransition();
     }
 
     public void OnSetName(string pseudo)
@@ -161,7 +240,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public void OnSettingsButton()
     {
-        SetCurrentCanvas(MenuScreen.Settings);
+        //SetCurrentScreen(MenuScreen.Settings);
     }
     
     public void OnQualitySettings(int setting)
@@ -182,7 +261,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public void OnShopButton()
     {
-        SetCurrentCanvas(MenuScreen.Shop);
+        //SetCurrentCanvas(MenuScreen.Shop);
     }
 
     #endregion
@@ -191,7 +270,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public void OnBackFromSettings()
     {
-        SetCurrentCanvas(MenuScreen.TitleScreen);
+        //SetCurrentCanvas(MenuScreen.TitleScreen);
     }
 
     #endregion
@@ -200,7 +279,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public void OnBackFromShop()
     {
-        SetCurrentCanvas(MenuScreen.TitleScreen);
+        //SetCurrentCanvas(MenuScreen.TitleScreen);
     }
 
     #endregion
@@ -210,7 +289,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public void OnBackFromConnection()
     {
         
-        SetCurrentCanvas(MenuScreen.TitleScreen);
+        //SetCurrentCanvas(MenuScreen.TitleScreen);
     }
 
     public void OnHostButton()
@@ -218,9 +297,9 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         var ip = ConnectionManager.instance.ConnectAsHost();
         
         // Todo - check if connection was successful ?
-        
-        
-        MapTransition();
+
+
+        connected = true;
         ipText.text = $"IP: {ip}";
     }
 
@@ -250,7 +329,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public void ClientJoinedSuccessfully()
     {
-        MapTransition();
+        connected = true;
         ipText.text = $"IP: {ipToConnect}";
     }
 
