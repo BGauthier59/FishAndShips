@@ -6,6 +6,7 @@ public class GridFloorWalkable : MonoBehaviour, IGridFloor
 {
     public int positionX;
     public int positionY;
+    public bool dontTargetThisTile;
     
     public void SetPosition(int posX, int posY)
     {
@@ -28,5 +29,10 @@ public class GridFloorWalkable : MonoBehaviour, IGridFloor
             //Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
             player.isGliding = false;
         }
+    }
+
+    public bool CanBeTargeted()
+    {
+        return !dontTargetThisTile;
     }
 }
