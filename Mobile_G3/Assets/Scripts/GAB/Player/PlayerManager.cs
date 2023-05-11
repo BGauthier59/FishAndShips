@@ -19,8 +19,10 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public int positionY;
 
     [SerializeField] private MeshRenderer renderer;
-    [SerializeField] private Material[] materials;
-
+    [SerializeField] private Color[] colors;
+    [SerializeField] private SpriteRenderer colorSprite;
+    [SerializeField] private Transform character;
+    
     public float bounceDelay, bounceTimer;
     public Vector3 previousPos, nextPos;
     public bool canMove, isGliding;
@@ -30,7 +32,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     
     private InventoryObject inventoryObject;
     private BoatSide currentSide;
-
+    
     [SerializeField] private PlayerData[] allPlayerData;
     private PlayerData playerData;
     public int DEBUG_PlayerDataIndex; // Todo - set this value on main menu
@@ -85,7 +87,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             SetPosition(positionX, positionY);
         }
 
-        renderer.material = materials[OwnerClientId];
+        colorSprite.color = colors[OwnerClientId];
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
     }
 
@@ -154,8 +156,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             if (!isGliding)
             {
                 transform.position = Vector3.Lerp(previousPos, nextPos,
-                                         1 - (bounceTimer / bounceDelay))
-                                     + Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
+                    1 - (bounceTimer / bounceDelay));
+                                    //+ Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
+                character.localPosition = Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
             }
             else
             {
