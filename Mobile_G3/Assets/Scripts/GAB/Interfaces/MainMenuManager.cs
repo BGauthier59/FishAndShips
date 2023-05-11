@@ -34,9 +34,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public TMP_Text textInputName,textInputIP;
 
     [SerializeField] private GameObject[] playerIcons;
+    [SerializeField] private PlayerFigures[] playerFigures;
+    [SerializeField] private GameObject[] customFigure;
+    
 
 
     public int screen;
+    public int skinId;
     public bool connected;
     
 
@@ -45,6 +49,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         public GameObject canvas;
         public MenuScreen type;
+    }
+    
+    [Serializable]
+    private struct PlayerFigures
+    {
+        public GameObject[] mapFigures;
     }
 
     public enum MenuScreen
@@ -60,11 +70,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         switch (screen )
         {
             case 0:
-                
+                ChangeScreenObject(4);
                 break;
             case 1:
                 if (!connected)
                 {
+                    if(connectionClientPart.activeSelf)ClientToConnectionTransition();
                     ChangeScreenObject(1);
                 }
                 else
@@ -76,7 +87,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 ChangeScreenObject(5);
                 break;
             case 3:
-                
+                ChangeScreenObject(6);
                 break;
         }
     }
@@ -133,6 +144,21 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         StartMovement(camPos[7], camPos[6],camPos[5], 0.5f);
         await Task.Delay(500);
         connectionClientPart.SetActive(true);
+        
+    }
+    
+    public async void ClientToConnectionTransition()
+    {
+        connectionClientPart.SetActive(false);
+        StartMovement(camPos[6], camPos[7],camPos[5], 0.5f);
+        await Task.Delay(550);
+        camPos[5].position = camPos[7].position;
+        camPos[4].position = camPos[7].position;
+        camPos[5].gameObject.SetActive(false);
+        camPos[4].gameObject.SetActive(true);
+        StartMovement(camPos[7], camPos[6],camPos[4], 0.5f);
+        await Task.Delay(500);
+        connectionDefaultPart.SetActive(true);
         
     }
     
@@ -238,11 +264,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         this.pseudo = pseudo;
     }
 
-    public void OnSettingsButton()
-    {
-        //SetCurrentScreen(MenuScreen.Settings);
-    }
-    
     public void OnQualitySettings(int setting)
     {
         switch (setting)
@@ -259,11 +280,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         }
     }
 
-    public void OnShopButton()
-    {
-        //SetCurrentCanvas(MenuScreen.Shop);
-    }
-
     #endregion
 
     #region Settings Screen
@@ -271,6 +287,22 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public void OnBackFromSettings()
     {
         //SetCurrentCanvas(MenuScreen.TitleScreen);
+    }
+
+    #endregion
+
+    #region Customisation Screen
+
+    public void OnChangeSkinForward()
+    {
+        skinId = (skinId + 1) % 3;
+        Debug.Log("SKIN N" + skinId);
+        if (connected) ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value = skinId;
+        for (int i = 0; i < customFigure.Length; i++)
+        {
+            if(i == skinId) customFigure[i].SetActive(true);
+            else customFigure[i].SetActive(false);
+        }
     }
 
     #endregion
@@ -286,12 +318,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     #region Connection Screen
 
-    public void OnBackFromConnection()
-    {
-        
-        //SetCurrentCanvas(MenuScreen.TitleScreen);
-    }
-
     public void OnHostButton()
     {
         var ip = ConnectionManager.instance.ConnectAsHost();
@@ -300,6 +326,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
 
         connected = true;
+        ChangeScreenObject(3);
         ipText.text = $"IP: {ip}";
     }
 
@@ -349,10 +376,22 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         
     }
 
-    public void ClientGetConnected(ulong id, string pseudo)
+    public void ClientGetConnected(ulong id, string pseudo,int skin)
     {
         playerIcons[(int) id].SetActive(true);
         playerIcons[(int) id].transform.GetChild(0).GetComponent<TMP_Text>().text = pseudo;
+        playerFigures[(int) id].mapFigures[skin].SetActive(true);
+    }
+    
+    public void ClientSkinChanged(ulong id, int skin)
+    {
+        int idInt = (int) id;
+        Debug.Log("Skin Changed for " + idInt + " at Skin " + skin);
+        for (int i = 0; i < playerFigures[idInt].mapFigures.Length; i++)
+        {
+            if(i == skin)playerFigures[idInt].mapFigures[i].SetActive(true);
+            else playerFigures[idInt].mapFigures[i].SetActive(false);
+        }
     }
     
 
