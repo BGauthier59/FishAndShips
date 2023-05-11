@@ -9,9 +9,4 @@ public class CompassBehaviour : MonoBehaviour
     {
         ship = ShipManager.instance;
     }
-
-    private void Update()
-    {
-        rotatingPart.localEulerAngles = (ship.GetShipAngle() + 90) * Vector3.up;
-    }
 }

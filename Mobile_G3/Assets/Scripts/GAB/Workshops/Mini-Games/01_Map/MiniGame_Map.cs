@@ -1,13 +1,15 @@
 using System;
 using System.Threading.Tasks;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MiniGame_Map : MiniGame
 {
     [SerializeField] private MapSwipeData data;
-    public float sizeRatio;
-    [SerializeField] private Transform map;
+    [SerializeField] private MiniGame_Rudder rudderMiniGame;
+
     [SerializeField] private Transform ship;
     [SerializeField] private Transform miniGameMap;
     private Vector3 shipPosition;
@@ -15,17 +17,30 @@ public class MiniGame_Map : MiniGame
     private float posY;
     private Vector3 initMapPos;
 
-    [SerializeField] private LineRenderer shipPath;
+    private float currentRotationPerSecond;
+    private Vector3 rightDirection;
 
-    [SerializeField] private SpriteRenderer[] stars;
+    [SerializeField] private float validationDuration;
+    private float timer;
+    [SerializeField] private float collinearFactorThreshold;
 
     [SerializeField] private Vector4 leftRightBottomTopBorders;
+    [SerializeField] private Island[] islands;
+    private Island currentIsland;
+    [SerializeField] private float spawnRadius;
+
+    [Serializable]
+    public struct Island
+    {
+        public Transform transform;
+        public string name;
+    }
 
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
-        SetRelativeMapPosition();
-        
+        SetupIslandAndRotation();
+
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.mapSwipeManager.Enable(data);
         StartExecutingMiniGame();
@@ -37,12 +52,44 @@ public class MiniGame_Map : MiniGame
         miniGameMapPosition += WorkshopManager.instance.mapSwipeManager.CalculateMoveDelta();
 
         if (miniGameMapPosition.x < leftRightBottomTopBorders.x) miniGameMapPosition.x = leftRightBottomTopBorders.x;
-        else if (miniGameMapPosition.x > leftRightBottomTopBorders.y) miniGameMapPosition.x = leftRightBottomTopBorders.y;
+        else if (miniGameMapPosition.x > leftRightBottomTopBorders.y)
+            miniGameMapPosition.x = leftRightBottomTopBorders.y;
 
         if (miniGameMapPosition.z < leftRightBottomTopBorders.z) miniGameMapPosition.z = leftRightBottomTopBorders.z;
-        else if (miniGameMapPosition.z > leftRightBottomTopBorders.w) miniGameMapPosition.z = leftRightBottomTopBorders.w;
+        else if (miniGameMapPosition.z > leftRightBottomTopBorders.w)
+            miniGameMapPosition.z = leftRightBottomTopBorders.w;
 
+        miniGameMapPosition.y = posY;
         miniGameMap.localPosition = miniGameMapPosition;
+
+        RotateShip();
+        if (IsRotationAlright()) SetCorrectRotation();
+    }
+
+    private void RotateShip()
+    {
+        ship.eulerAngles += Vector3.up * currentRotationPerSecond * 2 * Time.deltaTime;
+    }
+
+    private bool isRight;
+    private bool IsRotationAlright()
+    {
+        Debug.Log(Vector3.Dot(ship.right, rightDirection));
+        
+        if (Vector3.Dot(ship.right, rightDirection) > collinearFactorThreshold)
+        {
+            if (!isRight)
+            {
+                timer = 0;
+                isRight = true;
+            }
+            if (timer >= validationDuration) return true;
+            timer += Time.deltaTime;
+            return false;
+        }
+
+        isRight = false;
+        return false;
     }
 
     public override void Reset()
@@ -52,91 +99,63 @@ public class MiniGame_Map : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        WorkshopManager.instance.mapSwipeManager.Disable();
+        StopExecutingMiniGame();
         ExitMiniGame(false);
     }
 
-    protected override void ExitMiniGame(bool victory)
+    private void SetupIslandAndRotation()
     {
-        WorkshopManager.instance.mapSwipeManager.Disable();
+        posY = miniGameMap.localPosition.y;
+
+        currentIsland = islands[Random.Range(0, islands.Length)];
+        Vector3 pos;
+        foreach (var island in islands)
+        {
+            pos = ship.position + Random.insideUnitSphere * spawnRadius;
+            pos.y = ship.position.y;
+            island.transform.position = pos;
+        }
+
+        rightDirection = (currentIsland.transform.position - ship.position).normalized;
+
+        rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
+    }
+
+    private async void SetCorrectRotation()
+    {
+        rudderMiniGame.InitiateEndOfGameServerRpc(GetOtherPlayerId());
+
         StopExecutingMiniGame();
-        base.ExitMiniGame(victory);
+        WorkshopManager.instance.mapSwipeManager.Disable();
+        WorkshopManager.instance.SetVictoryIndicator();
+        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+
+        ExitMiniGame(true);
     }
 
-    public void Initialize()
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateShipRotationServerRpc(float rotation, ulong id)
     {
-        initMapPos = miniGameMap.position;
-        sizeRatio = map.localScale.x / ShipManager.instance.realMap.localScale.x;
-        posY = initMapPos.y;
-        SetRelativeMapPosition();
-        
-        OnGetStar += GetStar;
+        var parameters = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] {id}
+            }
+        };
 
-        /*
-        shipPath.positionCount = 2;
-        shipPath.SetPosition(0, ship.transform.position);
-
-        OnShipRotationChange += AddPointOnPath;
-        */
-    }
-
-    public void Refresh()
-    {
-        //SetRelativeMapPosition();
-        SetRelativeBoatPosition();
-        ship.eulerAngles = ShipManager.instance.GetShipAngle() * Vector3.up;
-    }
-
-    private void SetRelativeMapPosition()
-    {
-        miniGameMapPosition = -ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
-        miniGameMapPosition.z = miniGameMapPosition.y;
-        miniGameMapPosition.y = posY;
-
-        miniGameMap.localPosition = miniGameMapPosition;
-    }
-
-    private void SetRelativeBoatPosition()
-    {
-        shipPosition = ShipManager.instance.GetShipPositionOnMap() * sizeRatio;
-        shipPosition.z = shipPosition.y;
-        shipPosition.y = 0.01f; // We can hardcode Y value as it must be really close to 0
-
-        ship.localPosition = shipPosition;
-    }
-
-    #region Callbacks
-
-    public static Action OnShipRotationChange;
-    public static Action<byte> OnGetStar;
-
-    private void AddPointOnPath()
-    {
-        shipPath.SetPosition(shipPath.positionCount - 1, ship.transform.position);
-        shipPath.positionCount++;
-        shipPath.SetPosition(shipPath.positionCount - 1, ship.transform.position);
-    }
-
-    private void GetStar(byte index)
-    {
-        GetStarServerRpc(index);
-    }
-
-    #endregion
-
-    #region Network
-
-    [ServerRpc]
-    private void GetStarServerRpc(byte index)
-    {
-        GetStarClientRpc(index);
+        UpdateShipRotationClientRpc(rotation, parameters);
     }
 
     [ClientRpc]
-    private void GetStarClientRpc(byte index)
+    private void UpdateShipRotationClientRpc(float rotation, ClientRpcParams parameter)
     {
-        // Feedback get star
-        stars[index].color = Color.red;
+        currentRotationPerSecond = rotation;
     }
 
-    #endregion
+    private ulong GetOtherPlayerId()
+    {
+        return ((ConnectedWorkshop) WorkshopManager.instance.GetCurrentWorkshop()).GetOtherPlayerId();
+    }
 }

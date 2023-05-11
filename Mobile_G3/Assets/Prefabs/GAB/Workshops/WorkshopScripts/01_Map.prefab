@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8850682999484312558}
   - component: {fileID: 8850682999484312553}
-  - component: {fileID: 8850682999484312552}
+  - component: {fileID: 8850683000965041871}
   m_Layer: 0
   m_Name: 01_Map
   m_TagString: Untagged
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8850682999484312559}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &8850682999484312552
+--- !u!114 &8850683000965041871
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8850682999484312559}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0307a24b686bb2419c47ddc7ed68614, type: 3}
+  m_Script: {fileID: 11500000, guid: cbdeab22beb9bcc43baaa744ebc13053, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
@@ -71,8 +71,8 @@ MonoBehaviour:
     m_InternalValue: 0
   isActive:
     m_InternalValue: 0
-  isActiveByDefault: 1
-  enableMultiUsing: 1
+  isActiveByDefault: 0
+  enableMultiUsing: 0
   occupationRequireItem: 0
   requiredItem: 0
   activationEvent:
@@ -107,6 +107,10 @@ MonoBehaviour:
         m_CallState: 2
   workshopObjectOffset: {x: 0, y: 0, z: 0}
   DEBUG_GridManager: {fileID: 0}
+  other: {fileID: 0}
+  waitingMessage: Someone needs to go to the rudder!
+  currentPlayerId:
+    m_InternalValue: 5
 --- !u!1001 &372588850827250387
 PrefabInstance:
   m_ObjectHideFlags: 0
