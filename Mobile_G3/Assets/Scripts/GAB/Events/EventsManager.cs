@@ -18,12 +18,7 @@ public class EventsManager : MonoSingleton<EventsManager>
     private bool isShrimpShipCooldownOver;
 
     private float timerBetweenShrimpShipAttacks;
-
-    [SerializeField] private Vector3 lastAttackPosition;
-    [SerializeField] private float minDistanceBetweenShrimpShipAttacks;
-    private float minSqrDistanceBetweenShrimpShipAttacks;
-    private float currentSqrDistanceBetweenShrimpShipAttacks;
-
+    
     [SerializeField] private int maxShrimpInstantiatedCount, maxHoleInstantiatedCount;
     private int currentShrimpCount, currentHoleCount;
 
@@ -47,9 +42,6 @@ public class EventsManager : MonoSingleton<EventsManager>
     public void StartGameLoop()
     {
         if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
-        minSqrDistanceBetweenShrimpShipAttacks =
-            minDistanceBetweenShrimpShipAttacks * minDistanceBetweenShrimpShipAttacks;
-        lastAttackPosition = ShipManager.instance.GetShipPositionOnMap();
         OnEnterStorm = StartNewEvent;
         InitiateEventsManager();
     }
@@ -108,22 +100,6 @@ public class EventsManager : MonoSingleton<EventsManager>
     public void RemoveShrimp()
     {
         currentShrimpCount--;
-    }
-
-    public void SetLastAttackPos()
-    {
-        lastAttackPosition = ShipManager.instance.GetShipPositionOnMap();
-    }
-
-    public void ResetDistanceFromLastAttack()
-    {
-        currentSqrDistanceBetweenShrimpShipAttacks = 0;
-    }
-
-    public bool IsFarEnoughFromLastAttack()
-    {
-        return (ShipManager.instance.GetShipPositionOnMap() - lastAttackPosition).sqrMagnitude >
-               minSqrDistanceBetweenShrimpShipAttacks;
     }
 
     public int? GetShrimpWorkshopIndex()

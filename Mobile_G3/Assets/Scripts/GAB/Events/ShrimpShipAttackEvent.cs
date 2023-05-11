@@ -90,8 +90,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     public override bool CheckConditions()
     {
         if (ShipManager.instance.IsUnderAttack() ||
-            !EventsManager.instance.IsShrimpShipCooldownOver() ||
-            !EventsManager.instance.IsFarEnoughFromLastAttack()) return false;
+            !EventsManager.instance.IsShrimpShipCooldownOver()) return false;
 
         return true;
     }
@@ -102,7 +101,6 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         // Logic for Host
         base.StartEvent();
-        EventsManager.instance.SetLastAttackPos();
         ShipManager.instance.SetUnderAttack(true);
         //shipPosition.Value = point1.position;
         currentPoint = point1;
@@ -145,7 +143,6 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         EventsManager.instance.StartShrimpShipCooldown();
         ShipManager.instance.SetUnderAttack(false);
-        EventsManager.instance.ResetDistanceFromLastAttack();
     }
 
     [ClientRpc]

@@ -28,13 +28,14 @@ public class MiniGame_Sails : MiniGame
     public override void AssociatedWorkshopGetActivatedHostSide()
     {
         base.AssociatedWorkshopGetActivatedHostSide();
-        ShipManager.instance.SetSpeed(boatSpeedFactor);
+        // todo ?
+        //ShipManager.instance.SetSpeed(boatSpeedFactor);
     }
 
     public override void AssociatedWorkshopGetDeactivatedHostSide()
     {
         base.AssociatedWorkshopGetDeactivatedHostSide();
-        ShipManager.instance.SetSpeed(1);
+        //ShipManager.instance.SetSpeed(1);
     }
 
     public override async void StartMiniGame()
