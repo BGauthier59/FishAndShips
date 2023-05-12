@@ -48,11 +48,6 @@ public class SeriesWorkshop : Workshop
         activationEvents[index]?.Invoke();
     }
 
-    protected override void StartActivationDuration()
-    {
-        // DEBUG - todo 
-    }
-
     protected override void Deactivate(bool victory, ulong playerId = 5)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
@@ -73,11 +68,12 @@ public class SeriesWorkshop : Workshop
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
-            Activate();
+            //Activate();
+            //We don't stay activated any more
             return;
         }
-
-        Activate();
+        
+        //Activate(); We don't need that?
         ClientRpcParams parameters = new ClientRpcParams()
         {
             Send = new ClientRpcSendParams()

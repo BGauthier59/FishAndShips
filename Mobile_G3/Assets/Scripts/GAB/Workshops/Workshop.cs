@@ -128,6 +128,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         if (isActive.Value)
         {
             Debug.LogError("Can't activate a workshop that is already activated.");
+            // This happens with series workshop.
             return;
         }
 
@@ -140,7 +141,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     protected virtual async void StartActivationDuration()
     {
         // todo - test that on client
-        
+
         await Task.Delay((int) (1000 * activationDuration));
 
         while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
@@ -177,7 +178,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
-        SetOccupiedServerRpc(false);
         if (victory)
         {
             SetActiveServerRpc(false);
@@ -187,6 +187,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
                 RemoveWorkshopFromGridClientRpc();
             }
         }
+
+        SetOccupiedServerRpc(false);
     }
 
     [ClientRpc]

@@ -24,10 +24,12 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     #region Storms
 
     public ConnectedWorkshop sailsWorkshop;
-    public ConnectedWorkshop mapWorkshop;
 
     #endregion
-
+    
+    public ConnectedWorkshop mapWorkshop;
+    public SeriesWorkshop[] cannonWorkshops;
+    
     [SerializeField] private float durationBetweenEvents;
     [SerializeField] private RandomEvent[] allRandomEvents;
     [SerializeField] private RandomEvent lastEvent;
@@ -119,6 +121,26 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     public ReparationWorkshop GetReparationWorkshop(int index)
     {
         return reparationWorkshops[index];
+    }
+
+    #endregion
+
+    #region Cannon Macro-Management
+
+    public int[] GetCannonIndices()
+    {
+        List<int> availables = new List<int>();
+        for (int i = 0; i < cannonWorkshops.Length; i++)
+        {
+            if (cannonWorkshops[i].isActive.Value) continue;
+            availables.Add(i);
+        }
+
+        return availables.ToArray();
+    }
+    public SeriesWorkshop GetCannonWorkshop(int index)
+    {
+        return cannonWorkshops[index];
     }
 
     #endregion
