@@ -9,6 +9,9 @@ public class SwipeManager : MiniGameInput<SwipeData>
 
     private bool isDraging = false;
     private Vector3 startTouch, swipeDelta;
+    
+    private float swipeMagnitude = 125;
+    private float realSwipeMagnitude;
 
     public bool CalculateSwipe()
     {
@@ -22,7 +25,7 @@ public class SwipeManager : MiniGameInput<SwipeData>
         }
 
         // Check deadzone
-        if (swipeDelta.magnitude < 125) return false;
+        if (swipeDelta.magnitude < realSwipeMagnitude) return false;
 
         // Check direction
         var dot = Vector3.Dot(swipeDelta.normalized, data.rightDirection);
@@ -62,6 +65,7 @@ public class SwipeManager : MiniGameInput<SwipeData>
         base.Enable(setupData);
         float scale = WorkshopManager.instance.GetCanvasFactor();
         setupData.centralPointRadius *= scale;
+        realSwipeMagnitude = swipeMagnitude * scale;
     }
 }
 

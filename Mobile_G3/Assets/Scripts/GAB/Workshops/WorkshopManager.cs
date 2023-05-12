@@ -288,6 +288,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         await Task.Delay(200);
         swipeIndicatorTransform.gameObject.SetActive(false);
 
+        await Task.Delay(1000);
+
         if (isShowingTutorial) ExecuteMiniGameTutorial();
     }
 
@@ -305,6 +307,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         // 4 is Reparation
         // 5 is map
         // 6 is rudder
+        // 7 is Sails (left)
+        // 8 is Sails (right)
         
         currentIndex = index;
         isShowingTutorial = true;

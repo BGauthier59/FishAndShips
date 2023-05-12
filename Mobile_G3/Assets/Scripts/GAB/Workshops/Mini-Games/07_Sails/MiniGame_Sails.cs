@@ -63,6 +63,9 @@ public class MiniGame_Sails : MiniGame
 
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
+        if(IsFirstPlayer()) WorkshopManager.instance.StartMiniGameTutorial(7);
+        else WorkshopManager.instance.StartMiniGameTutorial(8);
+        
         WorkshopManager.instance.swipeManager.Enable(currentData);
         StartExecutingMiniGame();
     }
@@ -120,8 +123,6 @@ public class MiniGame_Sails : MiniGame
 
     private async void SailIsRaised()
     {
-        // Todo - play animation
-
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
