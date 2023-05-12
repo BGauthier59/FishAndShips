@@ -24,6 +24,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     #region Storms
 
     public ConnectedWorkshop sailsWorkshop;
+    public ConnectedWorkshop mapWorkshop;
 
     #endregion
 

@@ -60,7 +60,6 @@ public class StormEvent : RandomEvent
 
         // Host-side logic
         base.EndEvent();
-        Debug.Log("You exited a stormy area!");
     }
 
     [ClientRpc]

@@ -21,21 +21,16 @@ public class SaveManager : MonoSingleton<SaveManager>
         DontDestroyOnLoad(this);
     }
 
-    public void SaveDataOnMainDirectory<T>(T data)
+    public void SaveDataOnMainDirectory(SaveData data)
     {
-        if (data is not global::SaveData)
-        {
-            Debug.LogWarning("You're saving a data that is not a SaveData class");
-        }
-        
         path = Application.persistentDataPath;
-        SaveData(data);
+        SaveGameData(data);
     }
 
-    private void SaveData<T>(T data)
+    private void SaveGameData(SaveData data)
     {
-        StreamWriter streamWriter = new StreamWriter(Path.Combine(path, $"{typeof(T).Name}.xml"), false, encoding);
-        XmlSerializer dataSerializer = new XmlSerializer(typeof(T));
+        StreamWriter streamWriter = new StreamWriter(Path.Combine(path, $"{nameof(SaveData)}.xml"), false, encoding);
+        XmlSerializer dataSerializer = new XmlSerializer(typeof(SaveData));
 
         dataSerializer.Serialize(streamWriter, data);
         streamWriter.Close();
@@ -43,30 +38,36 @@ public class SaveManager : MonoSingleton<SaveManager>
         Debug.Log("Saved worked!");
     }
 
-    public T LoadDataFromDirectory<T>()
+    public SaveData LoadDataFromDirectory()
     {
         path = Application.persistentDataPath;
-        return LoadData<T>();
+        return LoadData();
     }
 
-    private T LoadData<T>()
+    private SaveData LoadData()
     {
-        filePath = Path.Combine(path, $"{typeof(T).Name}.xml");
+        filePath = Path.Combine(path, $"{nameof(SaveData)}.xml");
 
         if (File.Exists(filePath))
         {
             FileStream fileStream = new FileStream(filePath, FileMode.Open);
-            XmlSerializer dataSerializer = new XmlSerializer(typeof(T));
+            XmlSerializer dataSerializer = new XmlSerializer(typeof(SaveData));
 
-            var data = (T) dataSerializer.Deserialize(fileStream);
+            var data = (SaveData) dataSerializer.Deserialize(fileStream);
             fileStream.Close();
 
             Debug.Log("Data loaded!");
             return data;
         }
 
-        Debug.LogWarning("Path doesn't exist!");
-        return default;
+        Debug.Log("No data were found. Generate the default data.");
+
+        SaveData defaultData = new SaveData();
+        defaultData.levelsData[0].isUnlocked = true;
+        defaultData.charactersData = new List<int> {0, 1, 2, 3};
+        defaultData.sailsData = new List<int> {0};
+        
+        return defaultData;
     }
 }
 
@@ -78,10 +79,10 @@ public class SaveData
     public List<int> sailsData = new(); // Stands for sails index
 
     [Serializable]
-    public struct LevelData
+    public class LevelData
     {
-        public bool isUnlocked;
-        public bool isWon;
-        public int starCount;
+        public bool isUnlocked = false;
+        public bool isWon = false;
+        public int starCount = 0;
     }
 }

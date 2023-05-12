@@ -39,5 +39,5 @@ public class Level
     public bool isUnlocked;
     public bool isWon;
     public int starCount;
-    private LevelSO so;
+    public LevelSO so;
 }

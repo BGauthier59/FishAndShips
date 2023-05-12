@@ -159,7 +159,6 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         EndShrimpShipEventFeedbackClientRpc();
 
-        Debug.Log("leave");
         await MoveToWayPoint(wayPoints[1].position, wayPoints[2].position);
 
         base.EndEvent();
