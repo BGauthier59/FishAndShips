@@ -489,7 +489,9 @@ MonoBehaviour:
   stepNumber: 3
   myStep: {fileID: 7871366338954200766}
   cooldownTimer: {fileID: 7871366339706923784}
-  boatSpeedFactor: 0.5
+  sailsRenderers:
+  - {fileID: 6442765678723371039}
+  - {fileID: 3066449831959559828}
 --- !u!114 &7871366339262262980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1654,9 +1656,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc2027e41b8f00b46a8198e3d20e33e0, type: 3}
+--- !u!23 &3066449831959559828 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 5166334776881391140, guid: dc2027e41b8f00b46a8198e3d20e33e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 7871366340345485488}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5147685218665323197 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3048081071331672589, guid: dc2027e41b8f00b46a8198e3d20e33e0,
+    type: 3}
+  m_PrefabInstance: {fileID: 7871366340345485488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &6442765678723371039 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3771193786208667823, guid: dc2027e41b8f00b46a8198e3d20e33e0,
     type: 3}
   m_PrefabInstance: {fileID: 7871366340345485488}
   m_PrefabAsset: {fileID: 0}

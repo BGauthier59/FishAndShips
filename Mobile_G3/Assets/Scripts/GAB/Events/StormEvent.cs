@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -8,6 +9,7 @@ using Random = UnityEngine.Random;
 
 public class StormEvent : RandomEvent
 {
+    [SerializeField] private PosRot posRotStorm;
     [SerializeField] private UnityEvent enterStormEvent;
     [SerializeField] private UnityEvent exitStormEvent;
     [SerializeField] private int2 fireMinMaxCount;
@@ -31,6 +33,8 @@ public class StormEvent : RandomEvent
         
         GenerateSailsWorkshop();
         // todo - wait for fire mini-games
+
+        await Task.Delay(2000);
         
         EndEvent();
     }
@@ -51,6 +55,8 @@ public class StormEvent : RandomEvent
     [ClientRpc]
     private void StartStormEventFeedbackClientRpc()
     {
+        CameraManager.instance.SetCurrentDeckCameraPosRot(posRotStorm.pos, posRotStorm.rot);
+        CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
         enterStormEvent?.Invoke();
     }
     
@@ -65,6 +71,8 @@ public class StormEvent : RandomEvent
     [ClientRpc]
     private void EndStormEventFeedbackClientRpc()
     {
+        CameraManager.instance.ResetDeckPosRot();
+        CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
         exitStormEvent?.Invoke();
     }
 }
