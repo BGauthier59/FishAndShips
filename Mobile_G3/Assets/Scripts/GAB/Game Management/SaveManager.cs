@@ -21,7 +21,23 @@ public class SaveManager : MonoSingleton<SaveManager>
         DontDestroyOnLoad(this);
     }
 
-    public void SaveDataOnMainDirectory(SaveData data)
+    public void SetCurrentData()
+    {
+        currentData = LoadDataFromDirectory();
+        LevelManager.instance.RefreshLevels(currentData);
+    }
+
+    public void UpdateCurrentLevelData(SaveData.LevelData levelData, int levelIndex)
+    {
+        currentData.levelsData[levelIndex] = levelData;
+    }
+
+    public void SaveCurrentData()
+    {
+        SaveDataOnMainDirectory(currentData);
+    }
+
+    private void SaveDataOnMainDirectory(SaveData data)
     {
         path = Application.persistentDataPath;
         SaveGameData(data);
@@ -62,11 +78,20 @@ public class SaveManager : MonoSingleton<SaveManager>
 
         Debug.Log("No data were found. Generate the default data.");
 
-        SaveData defaultData = new SaveData();
+        SaveData defaultData = new SaveData
+        {
+            levelsData = new SaveData.LevelData[LevelManager.instance.allLevels.Length],
+            charactersData = new List<int> {0, 1, 2, 3},
+            sailsData = new List<int> {0}
+        };
+
+        for (int i = 0; i < defaultData.levelsData.Length; i++)
+        {
+            defaultData.levelsData[i] = new SaveData.LevelData();
+        }
+
         defaultData.levelsData[0].isUnlocked = true;
-        defaultData.charactersData = new List<int> {0, 1, 2, 3};
-        defaultData.sailsData = new List<int> {0};
-        
+
         return defaultData;
     }
 }
@@ -81,6 +106,13 @@ public class SaveData
     [Serializable]
     public class LevelData
     {
+        public LevelData()
+        {
+            isUnlocked = false;
+            isWon = false;
+            starCount = 0;
+        }
+        
         public bool isUnlocked = false;
         public bool isWon = false;
         public int starCount = 0;

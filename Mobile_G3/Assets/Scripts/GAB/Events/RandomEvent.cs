@@ -7,7 +7,6 @@ public abstract class RandomEvent : NetworkBehaviour
     public bool isRunning;
     public string startEventText;
     
-
     public abstract bool CheckConditions();
 
     public virtual void StartEvent()

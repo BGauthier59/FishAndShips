@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -22,9 +19,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private void Start()
     {
-        // Scene is loaded. We have to tell the server we're ready
-        // Todo - make sure we don't deal with RPCs before every client is spawned
-
         UpdateReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
     }
 
@@ -115,6 +109,11 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             return;
         }
 
+        if (victory)
+        {
+            LevelManager.instance.UpdateCurrentLevel(true, true, 3); // todo set star count
+        }
+
         Debug.LogWarning(reason.ToString());
 
         GameEndsClientRpc(victory);
@@ -131,7 +130,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
-
+        
         // Todo - Le Host peut choisir de poursuivre la partie ou de couper ?
         // Todo - Le client, pendant ce temps, peut voir des trucs sur la partie, son titre, etc
     }

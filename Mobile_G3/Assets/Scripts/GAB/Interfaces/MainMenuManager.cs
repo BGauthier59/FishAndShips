@@ -22,8 +22,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     [SerializeField] private TMP_Text ipText;
     public string pseudo;
     public string scene;
-    public float timerFade, delayFade,timerMove,delayMove;
-    public Transform fromPos, toPos,objectToMove;
+    public float timerFade, delayFade, timerMove, delayMove;
+    public Transform fromPos, toPos, objectToMove;
 
     public Transform cameraMenu;
 
@@ -31,26 +31,23 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition;
-    public TMP_Text textInputName,textInputIP,levelName,levelIndex;
+    public TMP_Text textInputName, textInputIP, levelName, levelIndex;
 
     [SerializeField] private GameObject[] playerIcons;
     [SerializeField] private PlayerFigures[] playerFigures;
     [SerializeField] private GameObject[] customFigure;
-    
-    
 
     public int screen;
     public int skinId;
     public bool connected;
     
-
     [Serializable]
     private struct CanvasData
     {
         public GameObject canvas;
         public MenuScreen type;
     }
-    
+
     [Serializable]
     private struct PlayerFigures
     {
@@ -59,15 +56,19 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public enum MenuScreen
     {
-        TitleScreen, Settings, Shop, Play, Customizing
+        TitleScreen,
+        Settings,
+        Shop,
+        Play,
+        Customizing
     }
-    
+
     #region Transition Management
 
     public void SetCurrentScreen(int newscreen)
     {
         screen = newscreen;
-        switch (screen )
+        switch (screen)
         {
             case 0:
                 ChangeScreenObject(4);
@@ -75,13 +76,14 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             case 1:
                 if (!connected)
                 {
-                    if(connectionClientPart.activeSelf)ClientToConnectionTransition();
+                    if (connectionClientPart.activeSelf) ClientToConnectionTransition();
                     ChangeScreenObject(1);
                 }
                 else
                 {
                     ChangeScreenObject(3);
                 }
+
                 break;
             case 2:
                 ChangeScreenObject(5);
@@ -91,11 +93,11 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 break;
         }
     }
-    
-    
+
+
     public async void TitleToOtherScreenTransition()
     {
-        StartMovement(camPos[0], camPos[1],cameraMenu, 0.7f);
+        StartMovement(camPos[0], camPos[1], cameraMenu, 0.7f);
         await Task.Delay(400);
         StartFade(true, 0.7f);
         await Task.Delay(700);
@@ -107,7 +109,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         slide.SetActive(true);
         StartFade(false, 0.7f);
         await Task.Delay(50);
-        StartMovement(camPos[3], camPos[2],cameraMenu, 0.8f);
+        StartMovement(camPos[3], camPos[2], cameraMenu, 0.8f);
     }
 
     public void ChangeScreenObject(int screenObj)
@@ -116,68 +118,79 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             screenObjects[i].SetActive(false);
         }
+
         screenObjects[screenObj].SetActive(true);
-        
     }
-    
+
     public async void PlayTransition()
     {
         for (int i = 0; i < screenObjects.Length; i++)
         {
             screenObjects[i].SetActive(false);
         }
+
         StartFade(true, 0.7f);
         await Task.Delay(800);
         ConnectionManager.instance.gameState = GameState.Game;
-        NetworkManager.Singleton.SceneManager.LoadScene(scene, LoadSceneMode.Single); 
+        
+        // todo - set current level
+        LevelManager.instance.StartLevel(0);
     }
 
     public async void ConnectionToClientTransition()
     {
         connectionDefaultPart.SetActive(false);
-        StartMovement(camPos[6], camPos[7],camPos[4], 0.5f);
+        StartMovement(camPos[6], camPos[7], camPos[4], 0.5f);
         await Task.Delay(550);
         camPos[4].position = camPos[7].position;
         camPos[5].position = camPos[7].position;
         camPos[4].gameObject.SetActive(false);
         camPos[5].gameObject.SetActive(true);
-        StartMovement(camPos[7], camPos[6],camPos[5], 0.5f);
+        StartMovement(camPos[7], camPos[6], camPos[5], 0.5f);
         await Task.Delay(500);
         connectionClientPart.SetActive(true);
-        
     }
-    
+
     public async void ClientToConnectionTransition()
     {
         connectionClientPart.SetActive(false);
-        StartMovement(camPos[6], camPos[7],camPos[5], 0.5f);
+        StartMovement(camPos[6], camPos[7], camPos[5], 0.5f);
         await Task.Delay(550);
         camPos[5].position = camPos[7].position;
         camPos[4].position = camPos[7].position;
         camPos[5].gameObject.SetActive(false);
         camPos[4].gameObject.SetActive(true);
-        StartMovement(camPos[7], camPos[6],camPos[4], 0.5f);
+        StartMovement(camPos[7], camPos[6], camPos[4], 0.5f);
         await Task.Delay(500);
         connectionDefaultPart.SetActive(true);
-        
     }
-    
+
     #endregion
+    
+    private void Start()
+    {
+        // Load data
+        SaveManager.instance.SetCurrentData();
+    }
 
     private void Update()
     {
         if (timerMove > 0)
         {
             timerMove -= Time.deltaTime;
-            objectToMove.position = Vector3.Lerp(fromPos.position,toPos.position,camCurve.Evaluate(1-timerMove/delayMove));
-            objectToMove.rotation = Quaternion.Lerp(fromPos.rotation,toPos.rotation,camCurve.Evaluate(1-timerMove/delayMove));
+            objectToMove.position = Vector3.Lerp(fromPos.position, toPos.position,
+                camCurve.Evaluate(1 - timerMove / delayMove));
+            objectToMove.rotation = Quaternion.Lerp(fromPos.rotation, toPos.rotation,
+                camCurve.Evaluate(1 - timerMove / delayMove));
         }
 
         if (timerFade > 0)
         {
             timerFade -= Time.deltaTime;
-            if(fadeIn) fadeTransition.localPosition = new Vector3(Mathf.Lerp(-2200, 0, 1 - timerFade / delayFade), 0, 0);
-            if(fadeOut) fadeTransition.localPosition = new Vector3(Mathf.Lerp(0, 2200, 1 - timerFade / delayFade), 0, 0);
+            if (fadeIn)
+                fadeTransition.localPosition = new Vector3(Mathf.Lerp(-2200, 0, 1 - timerFade / delayFade), 0, 0);
+            if (fadeOut)
+                fadeTransition.localPosition = new Vector3(Mathf.Lerp(0, 2200, 1 - timerFade / delayFade), 0, 0);
         }
 
         for (int i = 0; i < 4; i++)
@@ -188,7 +201,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                     slidesButtons[i].transform.localPosition.x,
                     Mathf.Lerp(slidesButtons[i].transform.localPosition.y, 20, Time.deltaTime * 5),
                     slidesButtons[i].transform.localPosition.z);
-                slidesButtons[i].color = Color.Lerp(slidesButtons[i].color,Color.white,Time.deltaTime * 5 );
+                slidesButtons[i].color = Color.Lerp(slidesButtons[i].color, Color.white, Time.deltaTime * 5);
             }
             else
             {
@@ -196,41 +209,41 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                     slidesButtons[i].transform.localPosition.x,
                     Mathf.Lerp(slidesButtons[i].transform.localPosition.y, 0, Time.deltaTime * 5),
                     slidesButtons[i].transform.localPosition.z);
-                slidesButtons[i].color = Color.Lerp(slidesButtons[i].color,Color.grey,Time.deltaTime * 5 );
+                slidesButtons[i].color = Color.Lerp(slidesButtons[i].color, Color.grey, Time.deltaTime * 5);
             }
         }
-        
-        switch (screen )
+
+        switch (screen)
         {
             case 0:
-                cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[10].position,Time.deltaTime * 5);
-                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[10].rotation,Time.deltaTime * 5);
+                cameraMenu.position = Vector3.Lerp(cameraMenu.position, camPos[10].position, Time.deltaTime * 5);
+                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation, camPos[10].rotation, Time.deltaTime * 5);
                 break;
             case 1:
                 if (!connected)
                 {
-                    cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[2].position,Time.deltaTime * 5);
-                    cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[2].rotation,Time.deltaTime * 5);
+                    cameraMenu.position = Vector3.Lerp(cameraMenu.position, camPos[2].position, Time.deltaTime * 5);
+                    cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation, camPos[2].rotation, Time.deltaTime * 5);
                 }
                 else
                 {
-                    cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[8].position,Time.deltaTime * 5);
-                    cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[8].rotation,Time.deltaTime * 5);
+                    cameraMenu.position = Vector3.Lerp(cameraMenu.position, camPos[8].position, Time.deltaTime * 5);
+                    cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation, camPos[8].rotation, Time.deltaTime * 5);
                 }
+
                 break;
             case 2:
-                cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[9].position,Time.deltaTime * 5);
-                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[9].rotation,Time.deltaTime * 5);
+                cameraMenu.position = Vector3.Lerp(cameraMenu.position, camPos[9].position, Time.deltaTime * 5);
+                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation, camPos[9].rotation, Time.deltaTime * 5);
                 break;
             case 3:
-                cameraMenu.position = Vector3.Lerp(cameraMenu.position,camPos[11].position,Time.deltaTime * 5);
-                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation,camPos[11].rotation,Time.deltaTime * 5);
+                cameraMenu.position = Vector3.Lerp(cameraMenu.position, camPos[11].position, Time.deltaTime * 5);
+                cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation, camPos[11].rotation, Time.deltaTime * 5);
                 break;
         }
     }
-    
-    
-    void StartMovement(Transform from,Transform to,Transform obj,float time)
+
+    void StartMovement(Transform from, Transform to, Transform obj, float time)
     {
         objectToMove = obj;
         fromPos = from;
@@ -238,20 +251,15 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         timerMove = time;
         delayMove = time;
     }
-    
-    void StartFade(bool isFadeIn,float time)
+
+    void StartFade(bool isFadeIn, float time)
     {
         fadeIn = isFadeIn;
         fadeOut = !isFadeIn;
         timerFade = time;
         delayFade = time;
     }
-
-    private void Start()
-    {
-        //SetCurrentScreen(MenuScreen.TitleScreen);
-    }
-
+    
     #region Main Screen
 
     public void OnPlayButton()
@@ -297,10 +305,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         skinId = (skinId + 1) % 3;
         Debug.Log("SKIN N" + skinId);
-        if (connected) ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value = skinId;
+        if (connected)
+            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
+                skinId;
         for (int i = 0; i < customFigure.Length; i++)
         {
-            if(i == skinId) customFigure[i].SetActive(true);
+            if (i == skinId) customFigure[i].SetActive(true);
             else customFigure[i].SetActive(false);
         }
     }
@@ -321,10 +331,9 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public void OnHostButton()
     {
         var ip = ConnectionManager.instance.ConnectAsHost();
-        
+
         // Todo - check if connection was successful ?
-
-
+        
         connected = true;
         ChangeScreenObject(3);
         ipText.text = $"IP: {ip}";
@@ -344,6 +353,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         textInputIP.text = ip;
     }
+
     public void OnSetPseudo(string pseudotext)
     {
         pseudo = pseudotext;
@@ -373,27 +383,25 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         }
 
         PlayTransition();
-        
     }
 
-    public void ClientGetConnected(ulong id, string pseudo,int skin)
+    public void ClientGetConnected(ulong id, string pseudo, int skin)
     {
         playerIcons[(int) id].SetActive(true);
         playerIcons[(int) id].transform.GetChild(0).GetComponent<TMP_Text>().text = pseudo;
         playerFigures[(int) id].mapFigures[skin].SetActive(true);
     }
-    
+
     public void ClientSkinChanged(ulong id, int skin)
     {
         int idInt = (int) id;
         Debug.Log("Skin Changed for " + idInt + " at Skin " + skin);
         for (int i = 0; i < playerFigures[idInt].mapFigures.Length; i++)
         {
-            if(i == skin)playerFigures[idInt].mapFigures[i].SetActive(true);
+            if (i == skin) playerFigures[idInt].mapFigures[i].SetActive(true);
             else playerFigures[idInt].mapFigures[i].SetActive(false);
         }
     }
-    
 
     #endregion
 }

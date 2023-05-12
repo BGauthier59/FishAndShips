@@ -500,7 +500,6 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 5ff422a4331c7c84798029e232df16ae, type: 3}
   renderer: {fileID: 2550670784453995386}
   renderTexture: {fileID: 8400000, guid: c79993c2eb339124eac8ac5568e2c61c, type: 2}
-  percentageTexture: {fileID: 0}
   precisionColor: 0.9
   minimumRateToRepair: 75
 --- !u!1 &2550670783856771297
@@ -927,6 +926,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MiniGameSetupCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3265542836827592564, guid: 667a648fd3738f848b14b48c6c00a93a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2550670783737883657}
+    - target: {fileID: 3265542836827592564, guid: 667a648fd3738f848b14b48c6c00a93a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnLeaveMiniGame
+      objectReference: {fileID: 0}
+    - target: {fileID: 3265542836827592564, guid: 667a648fd3738f848b14b48c6c00a93a,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: MiniGame_Reparation, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
