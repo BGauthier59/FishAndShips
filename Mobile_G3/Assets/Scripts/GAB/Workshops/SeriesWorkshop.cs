@@ -48,6 +48,11 @@ public class SeriesWorkshop : Workshop
         activationEvents[index]?.Invoke();
     }
 
+    protected override void StartActivationDuration()
+    {
+        // DEBUG - todo 
+    }
+
     protected override void Deactivate(bool victory, ulong playerId = 5)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();

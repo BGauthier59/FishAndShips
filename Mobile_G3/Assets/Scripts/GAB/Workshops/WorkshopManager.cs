@@ -259,12 +259,6 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     private async void ExecuteMiniGameTutorial()
     {
-        // 0 is Cannon / Load / Step 1
-        // 1 is Cannon / Load / Step 2
-        // 2 is Cannon / Load / Step 3
-        // 3 is Cannon / Shoot
-        // 4 is Reparation
-
         Vector3 p1, p2, p3, p4;
         var data = swipeTutorialData[currentIndex];
         p1 = data.p1.position;
@@ -304,6 +298,14 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public void StartMiniGameTutorial(int index)
     {
+        // 0 is Cannon / Load / Step 1
+        // 1 is Cannon / Load / Step 2
+        // 2 is Cannon / Load / Step 3
+        // 3 is Cannon / Shoot
+        // 4 is Reparation
+        // 5 is map
+        // 6 is rudder
+        
         currentIndex = index;
         isShowingTutorial = true;
         ExecuteMiniGameTutorial();

@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
     public int positionX, positionY;
     [SerializeField] protected Transform workshopObject;
     public MiniGame associatedMiniGame;
+
+    [SerializeField] private float activationDuration;
 
     public NetworkVariable<bool> isOccupied = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
@@ -98,7 +101,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
         currentTile = DEBUG_GridManager.GetTile(posX, posY);
         if (currentTile.transform == null) return;
-        
+
         MoveToNewTile(currentTile.transform.position + workshopObjectOffset);
     }
 
@@ -122,9 +125,36 @@ public class Workshop : NetworkBehaviour, IGridEntity
             Debug.LogError("This should not be called on client!");
         }
 
+        if (isActive.Value)
+        {
+            Debug.LogError("Can't activate a workshop that is already activated.");
+            return;
+        }
+
         SetActiveServerRpc(true);
         associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
         GetActivatedClientRpc();
+        StartActivationDuration();
+    }
+
+    protected virtual async void StartActivationDuration()
+    {
+        // todo - test that on client
+        
+        await Task.Delay((int) (1000 * activationDuration));
+
+        while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
+
+        await Task.Delay(100);
+        if (!isActive.Value)
+        {
+            Debug.LogWarning("You won workshop after timer is down. It's still supposed to be a victory.");
+            return; // Means workshop has been won
+        }
+
+        Debug.Log($"You lost {name}");
+        ShipManager.instance.TakeDamage(10);
+        Deactivate(true); // This is not a victory, only means to disable mini-game
     }
 
     [ClientRpc]

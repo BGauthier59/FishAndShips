@@ -3,16 +3,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class ReparationWorkshop : Workshop, IUpdateWorkshop
+public class ReparationWorkshop : Workshop
 {
-    [SerializeField] private int damagePerSecond;
     private float timer;
-    
-    private void Awake()
-    {
-        Setup();
-    }
-    
+
     public override void SetPosition(int posX, int posY)
     {
         if (currentTile == null)
@@ -32,32 +26,5 @@ public class ReparationWorkshop : Workshop, IUpdateWorkshop
         {
             EventsManager.instance.RemoveHole();
         }
-    }
-
-    public async void Setup()
-    {
-        while (WorkshopManager.instance == null)
-        {
-            await Task.Yield();
-        }
-
-        WorkshopManager.instance.AddUpdatedWorkshop(this);
-    }
-
-    public void StartGameLoopHostOnly()
-    {
-        // Does nothing?
-    }
-
-    public void UpdateGameLoopHostOnly()
-    {
-        if (!IsActiveOnGrid()) return;
-
-        if (timer >= 1)
-        {
-            timer -= 1;
-            ShipManager.instance.TakeDamage(damagePerSecond);
-        }
-        else timer += Time.deltaTime;
     }
 }

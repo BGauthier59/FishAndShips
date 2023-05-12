@@ -26,6 +26,7 @@ public class MiniGame_Rudder : MiniGame
         var angle = WorkshopManager.instance.rudderCircularSwipeManager.CalculateCircularSwipe();
         if (angle.HasValue)
         {
+            WorkshopManager.instance.StopMiniGameTutorial();
             nextValue = data.rudder.eulerAngles + Vector3.forward * angle.Value.eulerAngles;
             data.rudder.eulerAngles = nextValue;
 
@@ -77,6 +78,8 @@ public class MiniGame_Rudder : MiniGame
         questIndicator.text = $"{questStartText} {name}!";
         
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        
+        WorkshopManager.instance.StartMiniGameTutorial(6);
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
         StartExecutingMiniGame();
     }

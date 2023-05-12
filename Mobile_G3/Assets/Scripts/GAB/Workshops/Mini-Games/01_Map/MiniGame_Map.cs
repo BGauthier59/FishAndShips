@@ -42,15 +42,22 @@ public class MiniGame_Map : MiniGame
         SetupIslandAndRotation();
 
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        
+        WorkshopManager.instance.StartMiniGameTutorial(5);
         WorkshopManager.instance.mapSwipeManager.Enable(data);
         StartExecutingMiniGame();
     }
 
+    private Vector3 delta;
     public override void ExecuteMiniGame()
     {
         // Can move the map
-        miniGameMapPosition += WorkshopManager.instance.mapSwipeManager.CalculateMoveDelta();
-
+        delta = WorkshopManager.instance.mapSwipeManager.CalculateMoveDelta();
+        
+        if(delta != Vector3.zero) WorkshopManager.instance.StopMiniGameTutorial();
+        
+        miniGameMapPosition += delta;
+        
         if (miniGameMapPosition.x < leftRightBottomTopBorders.x) miniGameMapPosition.x = leftRightBottomTopBorders.x;
         else if (miniGameMapPosition.x > leftRightBottomTopBorders.y)
             miniGameMapPosition.x = leftRightBottomTopBorders.y;
