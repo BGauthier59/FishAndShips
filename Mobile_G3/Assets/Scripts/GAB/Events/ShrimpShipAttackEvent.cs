@@ -257,6 +257,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         cannonShootTargetedTile.gameObject.SetActive(false);
 
         ReparationWorkshop reparationWorkshop = EventsManager.instance.GetReparationWorkshop(index);
+        
+        reparationWorkshop.PlayExplosionEffect();
         targetedTile.SetTile(targetedTile.GetEntity(), walkable);
         reparationWorkshop.SetPosition(x, y);
         if (NetworkManager.Singleton.IsHost) reparationWorkshop.ActivateServerRpc();

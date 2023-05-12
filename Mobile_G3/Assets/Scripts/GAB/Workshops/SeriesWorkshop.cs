@@ -63,7 +63,7 @@ public class SeriesWorkshop : Workshop
         deactivationEvents[index]?.Invoke();
 
         currentMiniGameIndex.Value++;
-        if (currentMiniGameIndexSafe == nextMiniGames.Length)
+        if (currentMiniGameIndexSafe == nextMiniGames.Length || playerId == 6) // playerId == 6 is a trick to immediately stop Series Workshop
         {
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);

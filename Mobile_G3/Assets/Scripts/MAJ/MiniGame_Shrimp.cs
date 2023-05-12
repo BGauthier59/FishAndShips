@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class MiniGame_Shrimp : MiniGame
@@ -18,6 +19,7 @@ public class MiniGame_Shrimp : MiniGame
     public Animation animation;
 
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
+    [SerializeField] private UnityEvent hitFeedback;
 
     private void Start()
     {
@@ -94,6 +96,7 @@ public class MiniGame_Shrimp : MiniGame
 
     void DamageDealt()
     {
+        hitFeedback?.Invoke();
         lifePoints--;
         if (lifePoints <= 0) KillShrimp();
         SwitchSwords();

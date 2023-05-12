@@ -6,6 +6,7 @@ using UnityEngine;
 public class ReparationWorkshop : Workshop
 {
     private float timer;
+    [SerializeField] private ParticleSystem explosionFx;
 
     public override void SetPosition(int posX, int posY)
     {
@@ -26,5 +27,10 @@ public class ReparationWorkshop : Workshop
         {
             EventsManager.instance.RemoveHole();
         }
+    }
+
+    public void PlayExplosionEffect()
+    {
+        explosionFx.Play();
     }
 }

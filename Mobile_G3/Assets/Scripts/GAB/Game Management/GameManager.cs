@@ -31,10 +31,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             return;
         }
 
-        Debug.Log($"Client connected with ID {id}");
         hostReadyClientCount++;
         if (hostReadyClientCount != ConnectionManager.instance.players.Count) return;
-        Debug.Log("Ready to begin the game state!");
         InitializeGameLoopClientRpc();
     }
 

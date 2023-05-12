@@ -155,7 +155,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
         Debug.Log($"You lost {name}");
         ShipManager.instance.TakeDamage(10);
-        Deactivate(true); // This is not a victory, only means to disable mini-game
+        Deactivate(true, 6); // This is not a victory, only means to disable mini-game
+        // 6 as parameter is a trick for Series Workshop!
     }
 
     [ClientRpc]
