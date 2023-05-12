@@ -17,6 +17,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
     private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
+    [SerializeField] private Workshop[] allWorkshops;
 
     [SerializeField] private RectTransform referenceCanvas;
     [SerializeField] private float canvasScaleFactor;
@@ -57,6 +58,11 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public void StartGameLoop()
     {
         canvasScaleFactor = referenceCanvas.lossyScale.x;
+
+        foreach (var workshop in allWorkshops)
+        {
+            workshop.StartGameLoop();
+        }
     }
 
     public void UpdateGameLoop()

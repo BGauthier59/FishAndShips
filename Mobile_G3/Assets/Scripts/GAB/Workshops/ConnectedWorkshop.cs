@@ -8,21 +8,10 @@ public class ConnectedWorkshop : Workshop
     public NetworkVariable<ulong> currentPlayerId = new(5, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
 
-    public override void Start()
-    {
-        base.Start();
-        
-        // FOR DEBUG ONLY
-        InitializeActivation();
-    }
-
     public void InitializeActivation()
     {
-        if (!NetworkManager.Singleton.IsHost)
-        {
-            Debug.LogError("No client should call this method!");
-            return;
-        }
+        if (!NetworkManager.Singleton.IsHost) return;
+        
         Activate();
         other.Activate();
     }

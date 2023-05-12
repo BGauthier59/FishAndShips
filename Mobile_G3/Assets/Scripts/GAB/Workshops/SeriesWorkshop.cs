@@ -31,12 +31,6 @@ public class SeriesWorkshop : Workshop
         currentMiniGameIndex.OnValueChanged = OnServerModifyCurrentMiniGameIndex;
     }
 
-    public MiniGame GetCurrentMiniGame()
-    {
-        // Not safe to use it because of latency
-        return currentMiniGameIndex.Value == -1 ? associatedMiniGame : nextMiniGames[currentMiniGameIndex.Value];
-    }
-
     public MiniGame GetCurrentMiniGameSafe()
     {
         return currentMiniGameIndexSafe == -1 ? associatedMiniGame : nextMiniGames[currentMiniGameIndexSafe];

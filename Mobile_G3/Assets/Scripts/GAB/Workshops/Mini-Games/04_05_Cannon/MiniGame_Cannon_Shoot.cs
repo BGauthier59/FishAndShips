@@ -52,7 +52,7 @@ public class MiniGame_Cannon_Shoot : MiniGame
 
         inGameShootEvent?.Invoke();
         
-        ShipManager.instance.FireServerRpc(index);
+        //ShipManager.instance.FireServerRpc(index);
         
         WorkshopManager.instance.SetVictoryIndicator();
         await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());

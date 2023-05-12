@@ -15,39 +15,20 @@ public class ShrimpShipAttackEvent : RandomEvent
     #region Ship Behaviour
 
     [SerializeField] private PosRot cameraPos;
-    [SerializeField] private int totalLife;
-    private int currentLife;
 
     #endregion
 
-    #region Ship Displacement
+    [SerializeField] private Transform ship;
 
+    [SerializeField] private int2 shrimpsMinMaxCount, reparationMinMaxCount;
+
+    private int shrimpsCount, reparationCount, totalCount, count;
+
+    [SerializeField] private Transform[] wayPoints;
     [SerializeField] private float moveDuration;
-
-    [SerializeField] [Tooltip("WARNING! Don't edit this curve alone please.")]
-    private AnimationCurve moveLook;
-
-    [SerializeField] private float baseStationaryDuration;
-    private float currentStationaryDuration;
-    private float stationaryTimer;
-    private bool isMovingToNextPoint;
-    [SerializeField] private float randomStationaryDurationGap;
-
-    [SerializeField] private Transform point1;
-    [SerializeField] private Transform point2;
-    private Transform currentPoint;
-    private float distanceBetweenPoints;
-
-    [SerializeField] private Transform shrimpShip;
-
-    #endregion
 
     #region Fire Management
 
-    [SerializeField] private float baseFireCooldownDuration;
-    [SerializeField] private float randomFireCooldownDurationGap;
-    private float fireCooldownTimer;
-    private float currentFireCooldownDuration;
     [SerializeField] private float fireAnimationDuration;
     private bool isFiring;
 
@@ -59,10 +40,6 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #region Shrimps Management
 
-    [SerializeField] private float baseShrimpSpawnCooldownDuration;
-    [SerializeField] private float randomShrimpSpawnCooldownDurationGap;
-    private float currentShrimpSpawnCooldownDuration;
-    private float currentShrimpSpawnCooldownTimer;
     private bool isSpawningShrimp;
 
     [SerializeField] private Transform spawnShrimpOrigin;
@@ -74,14 +51,10 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #endregion
 
-    [Header("Feedbacks")] [SerializeField] private UnityEvent destructionEvent;
-    [SerializeField] private UnityEvent fireEvent;
-    [SerializeField] private UnityEvent getHitEvent;
+    [Header("Feedbacks")] [SerializeField] private UnityEvent fireEvent;
     [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
     [SerializeField] private GridFloorNotWalkable notWalkable;
     [SerializeField] private Animation mortarAnim;
-    
-    public TMP_Text DEBUG_ShipLife;
 
     #endregion
 
@@ -89,61 +62,109 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     public override bool CheckConditions()
     {
-        if (ShipManager.instance.IsUnderAttack() ||
-            !EventsManager.instance.IsShrimpShipCooldownOver()) return false;
+        if (!EventsManager.instance.CanInstantiateHole() && !EventsManager.instance.CanInstantiateHole())
+            return false;
 
         return true;
     }
 
-    public override void StartEvent()
+    public override async void StartEvent()
     {
         StartShrimpShipEventFeedbackClientRpc();
 
         // Logic for Host
         base.StartEvent();
-        ShipManager.instance.SetUnderAttack(true);
-        //shipPosition.Value = point1.position;
-        currentPoint = point1;
-        currentLife = totalLife;
-        SetNewStationaryDuration();
-        SetNewFireCooldownDuration();
-        SetNewShrimpSpawnCooldownDuration();
+        SetupWorkshops();
 
-        // for test only
-        DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
+        await MoveToWayPoint(wayPoints[0].position, wayPoints[1].position);
+
+        GenerateReparationWorkshops();
+        GenerateShrimpWorkshops();
+
+        await WaitForEveryWorkshopInstantiation();
+        EndEvent();
+    }
+
+    private void SetupWorkshops()
+    {
+        shrimpsCount = Random.Range(shrimpsMinMaxCount.x, shrimpsMinMaxCount.y);
+        reparationCount = Random.Range(reparationMinMaxCount.x, reparationMinMaxCount.y);
+        totalCount = shrimpsCount + reparationCount;
+        count = 0;
+    }
+
+    private async void GenerateReparationWorkshops()
+    {
+        int randomCooldown;
+        for (int i = 0; i < reparationCount; i++)
+        {
+            randomCooldown = Random.Range(300, 701);
+            await Task.Delay(randomCooldown);
+            if (await Fire()) continue;
+            break;
+        }
+
+        count += reparationCount;
+    }
+
+    private async void GenerateShrimpWorkshops()
+    {
+        int randomCooldown;
+        for (int i = 0; i < shrimpsCount; i++)
+        {
+            randomCooldown = Random.Range(300, 701);
+            await Task.Delay(randomCooldown);
+            if (await ComeAlongside()) continue;
+            break;
+        }
+
+        count += shrimpsCount;
+    }
+
+    private async Task WaitForEveryWorkshopInstantiation()
+    {
+        while (count != totalCount) await Task.Yield();
     }
 
     [ClientRpc]
     private void StartShrimpShipEventFeedbackClientRpc()
     {
-        SetYPos();
+        ship.gameObject.SetActive(true);
 
         cannonShootTargetedTile.SetParent(null);
         shrimpTargetedTile.SetParent(null);
 
-        shrimpShip.position = point1.position;
-        shrimpShip.gameObject.SetActive(true);
-
         CameraManager.instance.SetCurrentDeckCameraPosRot(cameraPos.pos, cameraPos.rot);
         CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
+
+        if (!NetworkManager.Singleton.IsHost) MoveToWayPoint(wayPoints[0].position, wayPoints[1].position);
     }
 
-    public override void ExecuteEvent()
+    private async Task MoveToWayPoint(Vector3 start, Vector3 end)
     {
-        // Host-side only
-        CheckStationaryTimer();
-        CheckShrimpSpawnTimer();
-        CheckFireTimer();
+        float timer = 0;
+        ship.position = start;
+
+        while (timer < moveDuration)
+        {
+            ship.position = Ex.CubicBezierCurve(start, start, end, end, timer / moveDuration);
+            await Task.Yield();
+            timer += Time.deltaTime;
+        }
+
+        ship.position = end;
     }
 
-    public override void EndEvent()
+    protected override async void EndEvent()
     {
         EndShrimpShipEventFeedbackClientRpc();
-        base.EndEvent();
 
-        EventsManager.instance.StartShrimpShipCooldown();
-        ShipManager.instance.SetUnderAttack(false);
+        Debug.Log("leave");
+        await MoveToWayPoint(wayPoints[1].position, wayPoints[2].position);
+
+        base.EndEvent();
     }
+    
 
     [ClientRpc]
     private void EndShrimpShipEventFeedbackClientRpc()
@@ -153,129 +174,32 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     private async void EndEventFeedback()
     {
-        destructionEvent?.Invoke();
+        if (!NetworkManager.Singleton.IsHost) await MoveToWayPoint(wayPoints[1].position, wayPoints[2].position);
+        else await Task.Delay((int) (moveDuration * 1000));
 
-        await Task.Delay(1000);
-
-        shrimpShip.gameObject.SetActive(false);
+        ship.gameObject.SetActive(false);
         CameraManager.instance.ResetDeckPosRot();
         CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
     }
 
     #endregion
 
-    #region Initialization
-
-    private void SetYPos()
-    {
-        var pos1 = point1.position;
-        var pos2 = point2.position;
-
-        pos1.y = pos2.y = shrimpShip.position.y;
-        point1.position = pos1;
-        point2.position = pos2;
-    }
-
-    #endregion
-
-    #region Displacement
-
-    private void SetNewStationaryDuration()
-    {
-        currentStationaryDuration = baseStationaryDuration +
-                                    Random.Range(-randomStationaryDurationGap, randomStationaryDurationGap);
-        stationaryTimer = 0;
-        isMovingToNextPoint = false;
-    }
-
-    private void CheckStationaryTimer()
-    {
-        if (isMovingToNextPoint) return;
-
-        if (stationaryTimer >= currentStationaryDuration)
-        {
-            MoveToOtherPoint();
-        }
-        else stationaryTimer += Time.deltaTime;
-    }
-
-    private async void MoveToOtherPoint()
-    {
-        stationaryTimer = 0;
-        isMovingToNextPoint = true;
-
-        var nextPoint = currentPoint == point1 ? point2 : point1;
-
-        MoveToOtherPointClientRpc(currentPoint.position, nextPoint.position);
-
-        await Task.Delay((int) (moveDuration * 1000));
-        currentPoint = nextPoint;
-
-        SetNewStationaryDuration();
-    }
-
-    [ClientRpc]
-    private void MoveToOtherPointClientRpc(Vector3 startPoint, Vector3 endPoint)
-    {
-        Move(startPoint, endPoint);
-    }
-
-    private async void Move(Vector3 start, Vector3 end)
-    {
-        var timer = 0f;
-        float ratio;
-        Vector3 nextPos;
-        while (timer < moveDuration)
-        {
-            await Task.Yield();
-            timer += Time.deltaTime;
-            ratio = timer / moveDuration;
-            nextPos = Vector3.Lerp(start, end, ratio);
-            //nextPos.x *= moveLook.Evaluate(ratio);
-            shrimpShip.position = nextPos;
-        }
-
-        shrimpShip.position = end;
-    }
-
-    #endregion
-
     #region Fire
 
-    private void SetNewFireCooldownDuration()
-    {
-        currentFireCooldownDuration = baseFireCooldownDuration +
-                                      Random.Range(-randomFireCooldownDurationGap, randomFireCooldownDurationGap);
-        fireCooldownTimer = 0;
-        isFiring = false;
-    }
-
-    private void CheckFireTimer()
-    {
-        if (isFiring) return;
-
-        if (fireCooldownTimer > currentFireCooldownDuration)
-        {
-            Fire();
-        }
-        else fireCooldownTimer += Time.deltaTime;
-    }
-
-    private async void Fire()
+    private async Task<bool> Fire()
     {
         if (!EventsManager.instance.CanInstantiateHole())
         {
-            SetNewFireCooldownDuration();
-            return;
+            Debug.Log("Couldn't spawn reparation");
+            return false;
         }
 
         // Select a tile that is alright
         Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
-
         if (targetedTile == null)
         {
-            SetNewFireCooldownDuration();
-            return;
+            Debug.Log("Couldn't spawn reparation");
+            return false;
         }
 
         EventsManager.instance.AddHole();
@@ -283,7 +207,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         if (!index.HasValue)
         {
             Debug.LogError("Should not happen. There's no workshop available but still tried to instantiate one.");
-            return;
+            return false;
         }
 
         isFiring = true;
@@ -299,7 +223,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         await Task.Delay((int) (fireAnimationDuration * 1000));
 
-        SetNewFireCooldownDuration();
+        return true;
     }
 
     [ClientRpc]
@@ -329,7 +253,7 @@ public class ShrimpShipAttackEvent : RandomEvent
             timer += Time.deltaTime;
             bullet.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / fireAnimationDuration);
         }
-        
+
         bullet.gameObject.SetActive(false);
         cannonShootTargetedTile.gameObject.SetActive(false);
 
@@ -348,40 +272,19 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #region InstantiateShrimp
 
-    private void SetNewShrimpSpawnCooldownDuration()
-    {
-        currentShrimpSpawnCooldownDuration = baseShrimpSpawnCooldownDuration +
-                                             Random.Range(-randomShrimpSpawnCooldownDurationGap,
-                                                 randomShrimpSpawnCooldownDurationGap);
-        currentShrimpSpawnCooldownTimer = 0;
-        isSpawningShrimp = false;
-    }
-
-    private void CheckShrimpSpawnTimer()
-    {
-        if (isSpawningShrimp) return;
-
-        if (currentShrimpSpawnCooldownTimer > currentShrimpSpawnCooldownDuration)
-        {
-            TrySpawnShrimpWorkshop();
-        }
-        else currentShrimpSpawnCooldownTimer += Time.deltaTime;
-    }
-
-    private async void TrySpawnShrimpWorkshop()
+    private async Task<bool> ComeAlongside()
     {
         if (!EventsManager.instance.CanInstantiateShrimpWorkshop())
         {
-            SetNewShrimpSpawnCooldownDuration();
-            return;
+            Debug.Log("Couldn't spawn shrimp");
+            return false;
         }
 
         Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
         if (targetedTile == null)
         {
             Debug.Log("Couldn't spawn shrimp");
-            SetNewShrimpSpawnCooldownDuration();
-            return;
+            return false;
         }
 
         EventsManager.instance.AddShrimp();
@@ -389,7 +292,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         if (!index.HasValue)
         {
             Debug.LogError("Should not happen. There's no workshop available but still tried to instantiate one.");
-            return;
+            return false;
         }
 
         isSpawningShrimp = true;
@@ -405,7 +308,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
         await Task.Delay((int) (spawnDuration * 1000));
 
-        SetNewShrimpSpawnCooldownDuration();
+        return true;
     }
 
     [ClientRpc]
@@ -445,33 +348,6 @@ public class ShrimpShipAttackEvent : RandomEvent
         targetedTile.SetTile(targetedTile.GetEntity(), walkable);
         shrimpWorkshop.SetPosition(coordX, coordY);
         if (NetworkManager.Singleton.IsHost) shrimpWorkshop.ActivateServerRpc();
-    }
-
-    #endregion
-
-    #region Life Management
-
-    [ContextMenu("Get hit")]
-    public void GetHit()
-    {
-        currentLife--;
-        GetHitFeedbackClientRpc();
-        DEBUG_ShipLife.text = $"{currentLife}/{totalLife}";
-
-        if (currentLife <= 0)
-        {
-            EndEvent();
-        }
-        else
-        {
-            if (!isMovingToNextPoint) MoveToOtherPoint();
-        }
-    }
-
-    [ClientRpc]
-    private void GetHitFeedbackClientRpc()
-    {
-        getHitEvent?.Invoke();
     }
 
     #endregion

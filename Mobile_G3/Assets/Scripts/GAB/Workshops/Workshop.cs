@@ -34,8 +34,12 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         isOccupied.OnValueChanged += OnSetOccupied;
         isActive.OnValueChanged += OnSetActivated;
-        InitializeWorkshop();
         SetPosition(positionX, positionY);
+    }
+
+    public void StartGameLoop()
+    {
+        InitializeWorkshop();
     }
 
     protected virtual void InitializeWorkshop()
@@ -74,30 +78,27 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void SetPosition(int posX, int posY)
     {
-        if (positionX == -1 && positionY == -1) // SetPosition was called on a workshop removed from grid. Must set positions here
+        if (positionX == -1 &&
+            positionY == -1) // SetPosition was called on a workshop removed from grid. Must set positions here
         {
-            if (posX != -1 && posY != -1) workshopObject.position = DEBUG_GridManager.GetTile(posX, posY).transform.position + workshopObjectOffset;
+            if (posX != -1 && posY != -1)
+                workshopObject.position =
+                    DEBUG_GridManager.GetTile(posX, posY).transform.position + workshopObjectOffset;
         }
-        
+
         positionX = posX;
         positionY = posY;
 
         if (posX == -1 && posY == -1)
         {
-            Debug.Log("You removed this workshop from grid!");
             workshopObject.position = Vector3.up * 100; // Pas propre mais pour l'instant c'est ok
             currentTile = null;
             return;
         }
 
         currentTile = DEBUG_GridManager.GetTile(posX, posY);
-        if (currentTile.transform == null)
-        {
-            Debug.LogWarning(
-                $"The workshop {name} is attached to a tile without any Transform. That might cause an error.");
-            return;
-        }
-
+        if (currentTile.transform == null) return;
+        
         MoveToNewTile(currentTile.transform.position + workshopObjectOffset);
     }
 
@@ -217,7 +218,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         return playingPlayer;
     }
-    
+
     protected bool IsActiveOnGrid()
     {
         if (!isActive.Value || isOccupied.Value || currentTile == null) return false;

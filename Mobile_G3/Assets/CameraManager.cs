@@ -1,5 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class CameraManager : MonoSingleton<CameraManager>
@@ -7,6 +9,9 @@ public class CameraManager : MonoSingleton<CameraManager>
     public Transform camera, holdTransform, deckTransform;
     [SerializeField] private PosRot currentDeckPosRot, currentHoldPosRot;
     private PosRot defaultDeckPosRot, defaultHoldPosRot;
+    [SerializeField] private Animation startEventAnim;
+    [SerializeField] private AnimationClip startEventClip;
+    [SerializeField] private TMP_Text startEventText;
     
     public void StartGameLoop()
     {
@@ -73,6 +78,16 @@ public class CameraManager : MonoSingleton<CameraManager>
     public void ResetHoldPosRot()
     {
         SetCurrentDeckCameraPosRot(defaultHoldPosRot.pos, defaultHoldPosRot.rot);
+    }
+
+    public async void PlayStartEventAnimation(string text)
+    {
+        Debug.Log("Animation!!!");
+        startEventText.text = text;
+        startEventAnim.gameObject.SetActive(true);
+        startEventAnim.Play(startEventClip.name);
+        await Task.Delay((int) (1000 * startEventClip.length));
+        startEventAnim.gameObject.SetActive(false);
     }
 }
 

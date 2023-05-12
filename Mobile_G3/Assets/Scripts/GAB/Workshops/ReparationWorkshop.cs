@@ -17,7 +17,7 @@ public class ReparationWorkshop : Workshop, IUpdateWorkshop
     {
         if (currentTile == null)
         {
-            Debug.Log("This workshop does not have any current tile, then didn't reset last tile");
+            //Debug.Log("This workshop does not have any current tile, then didn't reset last tile");
         }
         else currentTile.SetTile(null, currentTile.GetFloor());
 

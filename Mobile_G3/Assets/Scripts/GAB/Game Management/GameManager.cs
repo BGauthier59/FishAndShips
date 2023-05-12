@@ -17,8 +17,35 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private CameraManager cameraManager;
 
     private List<PlayerManager> players = new List<PlayerManager>();
+    private bool isClientReady;
+    private int hostReadyClientCount;
 
     private void Start()
+    {
+        // Scene is loaded. We have to tell the server we're ready
+        // Todo - make sure we don't deal with RPCs before every client is spawned
+
+        UpdateReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UpdateReadyStateServerRpc(ulong id)
+    {
+        if (ConnectionManager.instance.players[id] == null)
+        {
+            Debug.LogError("This client does not exist.");
+            return;
+        }
+
+        Debug.Log($"Client connected with ID {id}");
+        hostReadyClientCount++;
+        if (hostReadyClientCount != ConnectionManager.instance.players.Count) return;
+        Debug.Log("Ready to begin the game state!");
+        InitializeGameLoopClientRpc();
+    }
+
+    [ClientRpc]
+    private void InitializeGameLoopClientRpc()
     {
         StartGameLoop();
     }
@@ -69,7 +96,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
-        eventsManager.UpdateGameLoop();
+        //eventsManager.UpdateGameLoop();
 
         foreach (var player in players)
         {
@@ -87,12 +114,12 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("No client should call GameEnds()");
             return;
         }
-        
+
         Debug.LogWarning(reason.ToString());
-        
+
         GameEndsClientRpc(victory);
     }
-    
+
     [ClientRpc]
     private void GameEndsClientRpc(bool victory)
     {
@@ -104,12 +131,13 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
-        
+
         // Todo - Le Host peut choisir de poursuivre la partie ou de couper ?
         // Todo - Le client, pendant ce temps, peut voir des trucs sur la partie, son titre, etc
     }
 
     private bool isEveryoneDisconnected;
+
     public void PlayerGetsDisconnected()
     {
         // Should stop game for everyone
