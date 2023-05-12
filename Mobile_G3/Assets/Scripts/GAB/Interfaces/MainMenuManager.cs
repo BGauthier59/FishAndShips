@@ -31,13 +31,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition;
-    public TMP_Text textInputName,textInputIP;
+    public TMP_Text textInputName,textInputIP,levelName,levelIndex;
 
     [SerializeField] private GameObject[] playerIcons;
     [SerializeField] private PlayerFigures[] playerFigures;
     [SerializeField] private GameObject[] customFigure;
     
-
+    
 
     public int screen;
     public int skinId;
