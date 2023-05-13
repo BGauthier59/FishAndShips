@@ -45,6 +45,12 @@ public class SeriesWorkshop : Workshop
     {
         base.Activate();
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
+        SeriesWorkshopGetActivatedClientRpc(index);
+    }
+
+    [ClientRpc]
+    private void SeriesWorkshopGetActivatedClientRpc(int index)
+    {
         activationEvents[index]?.Invoke();
     }
 
@@ -63,7 +69,8 @@ public class SeriesWorkshop : Workshop
         deactivationEvents[index]?.Invoke();
 
         currentMiniGameIndex.Value++;
-        if (currentMiniGameIndexSafe == nextMiniGames.Length || playerId == 6) // playerId == 6 is a trick to immediately stop Series Workshop
+        if (currentMiniGameIndexSafe == nextMiniGames.Length ||
+            playerId == 6) // playerId == 6 is a trick to immediately stop Series Workshop
         {
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
@@ -72,7 +79,7 @@ public class SeriesWorkshop : Workshop
             //We don't stay activated any more
             return;
         }
-        
+
         //Activate(); We don't need that?
         ClientRpcParams parameters = new ClientRpcParams()
         {

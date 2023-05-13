@@ -12,6 +12,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     [Header("Level Parameters")] [SerializeField]
     private TutorialSO[] tutorials;
+
     [SerializeField] private int2[] initPlayerPositions = new int2[4];
 
     [Header("Instances")] private EventsManager eventsManager;
@@ -68,13 +69,13 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         }
 
         while (!isRunning.Value) await Task.Yield();
-        
+
         Debug.Log("Start game loop!");
         shipManager.StartGameLoop();
         workshopManager.StartGameLoop();
         eventsManager.StartGameLoop();
         timerManager.StartGameLoop();
-        
+
         for (int i = 0; i < players.Count; i++)
         {
             players[i].StartGameLoop(initPlayerPositions[i]);
@@ -175,7 +176,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private void StopGameClientRpc()
     {
         Debug.Log("A client got disconnected. disconnecting the client.");
-        
     }
 
     #endregion
@@ -185,7 +185,11 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
     {
         if (!needToClick) return;
-        if (ctx.started) EndTutorial();
+        if (ctx.started)
+        {
+            if (currentTutorialIndex == tutorialMaxIndex) EndTutorial();
+            else needTutorialRefresh = false;
+        }
     }
 
     public void StartTutorialHostSide(int index)
@@ -201,14 +205,25 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         DisplayTutorial(index);
     }
 
+    private int currentTutorialIndex, tutorialMaxIndex;
+    private bool needTutorialRefresh;
     private async void DisplayTutorial(int index)
     {
         Debug.LogWarning("You can't move any more");
-        TutorialSO data = tutorials[index];
+        TutorialSO currentTutorial = tutorials[index];
 
-        await TutorialManager.instance.DisplayTutorial(data);
+        tutorialMaxIndex = tutorials[index].tutorials.Length;
+        
+        for (int i = 0; i < tutorialMaxIndex; i++)
+        {
+            currentTutorialIndex = i;
+            await TutorialManager.instance.DisplayTutorial(currentTutorial, currentTutorialIndex);
+            needToClick = true;
+            needTutorialRefresh = true;
+            while (needTutorialRefresh) await Task.Yield();
+        }
 
-        needToClick = true;
+        currentTutorialIndex = tutorialMaxIndex;
     }
 
     private async void EndTutorial()

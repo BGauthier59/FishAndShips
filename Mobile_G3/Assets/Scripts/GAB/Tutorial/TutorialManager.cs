@@ -14,10 +14,10 @@ public class TutorialManager : MonoSingleton<TutorialManager>
     [SerializeField] private Image tutorialImage;
     [SerializeField] private TMP_Text tutorialText;
 
-    public async Task DisplayTutorial(TutorialSO data)
+    public async Task DisplayTutorial(TutorialSO data, int index)
     {
-        tutorialImage.sprite = data.image;
-        tutorialText.text = data.text;
+        tutorialImage.sprite = data.tutorials[index].image;
+        tutorialText.text = data.tutorials[index].text;
         
         displayTutorialAnim.gameObject.SetActive(true);
         displayTutorialAnim.Play(displayTutorialClip.name);
