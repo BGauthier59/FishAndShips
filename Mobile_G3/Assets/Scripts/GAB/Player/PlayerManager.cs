@@ -1,4 +1,5 @@
 using Unity.Collections;
+using Unity.Mathematics;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -49,7 +50,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         SetBoatSide(BoatSide.Deck);
     }
 
-    public void StartGameLoop()
+    public void StartGameLoop(int2 position)
     {
         // DEBUG - Set data
         for (int i = 0; i < allPlayerData.Length; i++)
@@ -64,9 +65,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             allPlayerData[i].gameObject.SetActive(false);
         }
 
-        OnInputMove(1); // Init move (right)
         SetInventoryObject(InventoryObject.None);
-        InitializeBounce(transform.right);
+        SetPosition(position.x, position.y);
     }
 
 

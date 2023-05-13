@@ -49,5 +49,5 @@ public enum TileFilter
 
 public enum EndGameReason
 {
-    TimerOver, ShipDestroyed, GoalReached
+    TimerOver, ShipDestroyed
 }

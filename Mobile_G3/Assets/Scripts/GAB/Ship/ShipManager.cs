@@ -34,19 +34,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void UpdateGameLoop()
     {
-        if(canRegenerate) Regenerate();
-    }
-
-    private void Regenerate()
-    {
-        if (!NetworkManager.Singleton.IsHost) return;
-
-        if (regenerationTimer >= 1)
-        {
-            regenerationTimer -= 1;
-            SetCurrentLifeServerRpc(currentBoatLife.Value + regenerationPerSecond);
-        }
-        else regenerationTimer += Time.deltaTime;
+        
     }
 
     #endregion
