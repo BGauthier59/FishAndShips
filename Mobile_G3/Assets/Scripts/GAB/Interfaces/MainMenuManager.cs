@@ -21,9 +21,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     [SerializeField] private TMP_Text ipText;
     public string pseudo;
-    public string scene;
-    public float timerFade, delayFade, timerMove, delayMove;
-    public Transform fromPos, toPos, objectToMove;
+    private float timerFade, delayFade, timerMove, delayMove;
+    private Transform fromPos, toPos, objectToMove;
 
     public Transform cameraMenu;
 
@@ -40,7 +39,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public int screen;
     public int skinId;
     public bool connected;
-    
+
     [Serializable]
     private struct CanvasData
     {
@@ -63,11 +62,34 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         Customizing
     }
 
+    private void Start()
+    {
+        // Load data
+        SaveManager.instance.SetCurrentData();
+
+        switch (SceneLoaderManager.instance.GetGlobalSceneState())
+        {
+            case SceneLoaderManager.SceneState.MainMenuFirstTime:
+                ConnectionManager.instance.Setup();
+                break;
+            
+            case SceneLoaderManager.SceneState.MainMenuAlreadyConnected:
+                // Set correct scene
+                Debug.Log("We are alreayd connected! Must set scene in the right way!");
+                connected = true;
+                SetCurrentScreen(1);
+                ConnectionToClientTransition();
+                slide.SetActive(true);
+
+                break;
+        }
+    }
+
     #region Transition Management
 
-    public void SetCurrentScreen(int newscreen)
+    public void SetCurrentScreen(int newScreen)
     {
-        screen = newscreen;
+        screen = newScreen;
         switch (screen)
         {
             case 0:
@@ -79,10 +101,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                     if (connectionClientPart.activeSelf) ClientToConnectionTransition();
                     ChangeScreenObject(1);
                 }
-                else
-                {
-                    ChangeScreenObject(3);
-                }
+                else ChangeScreenObject(3);
 
                 break;
             case 2:
@@ -94,8 +113,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         }
     }
 
-
-    public async void TitleToOtherScreenTransition()
+    private async void TitleToOtherScreenTransition()
     {
         StartMovement(camPos[0], camPos[1], cameraMenu, 0.7f);
         await Task.Delay(400);
@@ -112,7 +130,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         StartMovement(camPos[3], camPos[2], cameraMenu, 0.8f);
     }
 
-    public void ChangeScreenObject(int screenObj)
+    private void ChangeScreenObject(int screenObj)
     {
         for (int i = 0; i < screenObjects.Length; i++)
         {
@@ -122,7 +140,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         screenObjects[screenObj].SetActive(true);
     }
 
-    public async void PlayTransition()
+    private async void PlayTransition()
     {
         for (int i = 0; i < screenObjects.Length; i++)
         {
@@ -132,12 +150,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         StartFade(true, 0.7f);
         await Task.Delay(800);
         ConnectionManager.instance.gameState = GameState.Game;
-        
+
         // todo - set current level
         LevelManager.instance.StartLevel(0);
     }
 
-    public async void ConnectionToClientTransition()
+    private async void ConnectionToClientTransition()
     {
         connectionDefaultPart.SetActive(false);
         StartMovement(camPos[6], camPos[7], camPos[4], 0.5f);
@@ -151,7 +169,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         connectionClientPart.SetActive(true);
     }
 
-    public async void ClientToConnectionTransition()
+    private async void ClientToConnectionTransition()
     {
         connectionClientPart.SetActive(false);
         StartMovement(camPos[6], camPos[7], camPos[5], 0.5f);
@@ -166,12 +184,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     }
 
     #endregion
-    
-    private void Start()
-    {
-        // Load data
-        SaveManager.instance.SetCurrentData();
-    }
 
     private void Update()
     {
@@ -259,7 +271,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         timerFade = time;
         delayFade = time;
     }
-    
+
     #region Main Screen
 
     public void OnPlayButton()
@@ -333,7 +345,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         var ip = ConnectionManager.instance.ConnectAsHost();
 
         // Todo - check if connection was successful ?
-        
+
         connected = true;
         ChangeScreenObject(3);
         ipText.text = $"IP: {ip}";

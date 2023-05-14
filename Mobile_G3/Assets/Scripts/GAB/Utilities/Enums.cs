@@ -16,7 +16,7 @@ public enum PoolType
 
 public enum CanvasType
 {
-    None, IntroductionCinematicCanvas, WorkshopCanvas, ControlCanvas, TimerCanvas, EndCinematicCanvas
+    None, IntroductionCinematicCanvas, WorkshopCanvas, ControlCanvas, TimerCanvas, EndCinematicCanvas, EndGame, ConnectionCanvas
 }
 
 public enum InventoryObject

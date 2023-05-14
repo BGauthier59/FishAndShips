@@ -22,8 +22,10 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    public void Setup()
     {
+        Debug.Log("Refresh Connection Manager");
+        players.Clear();
         transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport;
         SetConnectionCallback();
     }
@@ -93,25 +95,16 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
     private void OnClientDisconnectCallback(ulong clientId)
     {
-        if (NetworkManager.Singleton.IsHost)
+        //Debug.LogError("Client disconnected!");
+        if (clientId == NetworkManager.Singleton.LocalClientId)
         {
-            if (GameManager.instance == null)
-            {
-                // Todo - Should stop game before starting GameManager
-            }
-            else
-            {
-                GameManager.instance.PlayerGetsDisconnected();
-            }
+            Debug.LogError("This is me!");
 
-            return;
+
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
         }
-
-        // Afficher le message d'erreur ici
-        
-        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnectedCallback;
-        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-    } 
+    }
 
     #endregion
 
@@ -125,7 +118,8 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
         players.Add(playerId, manager);
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
-        MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value,manager.playerDataIndex.Value);
+        MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value,
+            manager.playerDataIndex.Value);
     }
 
     public void RemovePlayerFromDictionary(ulong playerId)
@@ -146,8 +140,8 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         {
             if (kvp.Value.IsOwner) return kvp.Value;
         }
+
         Debug.LogWarning("Didn't find your player. This should not happen");
         return null;
     }
 }
-

@@ -15,7 +15,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public NetworkVariable<int> gridPositionY = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
-    
+
     public NetworkVariable<int> playerDataIndex = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
 
@@ -26,17 +26,17 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     [SerializeField] private Color[] colors;
     [SerializeField] private SpriteRenderer colorSprite;
     [SerializeField] private Transform character;
-    
+
     public float bounceDelay, bounceTimer;
     public Vector3 previousPos, nextPos;
     public bool canMove, isGliding;
     public bool exitScreen, enterScreen;
     public AnimationCurve curve;
     [SerializeField] private UnityEvent bounceEvent;
-    
+
     private InventoryObject inventoryObject;
     private BoatSide currentSide;
-    
+
     [SerializeField] private PlayerData[] allPlayerData;
     private PlayerData playerData;
     public int DEBUG_PlayerDataIndex; // Todo - set this value on main menu
@@ -53,6 +53,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public void StartGameLoop(int2 position)
     {
         // DEBUG - Set data
+        gameObject.SetActive(false);
         for (int i = 0; i < allPlayerData.Length; i++)
         {
             if (i == playerDataIndex.Value)
@@ -98,16 +99,37 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public override void OnNetworkDespawn()
     {
-        if (IsOwner) Debug.LogWarning("You've been disconnected");
+        Debug.Log("Client disconnected network despawn!");
+
+        if (SceneLoaderManager.instance.GetGlobalSceneState() == SceneLoaderManager.SceneState.InGameLevel)
+        {
+            if (IsOwner)
+            {
+                Debug.Log("It's me");
+                CanvasManager.instance.DisplayCanvas(CanvasType.ConnectionCanvas);
+            }
+
+            // Disconnection in scene
+            if (NetworkManager.Singleton.IsHost)
+            {
+                GameManager.instance.PlayersGetDisconnected();
+            }
+        }
+        else
+        {
+            // Todo - implement disconnection in menu
+            Debug.LogWarning("Must be implemented soon");
+        }
+
         ConnectionManager.instance.RemovePlayerFromDictionary(OwnerClientId);
     }
 
     private void OnNameChanged(FixedString32Bytes previousName, FixedString32Bytes newName)
     {
         Debug.Log("Name value has changed");
-        MainMenuManager.instance.ClientGetConnected(OwnerClientId, newName.Value,playerDataIndex.Value);
+        MainMenuManager.instance.ClientGetConnected(OwnerClientId, newName.Value, playerDataIndex.Value);
     }
-    
+
     private void OnSkinChanged(int previous, int next)
     {
         Debug.Log("Skin value has changed");
@@ -168,7 +190,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             {
                 transform.position = Vector3.Lerp(previousPos, nextPos,
                     1 - (bounceTimer / bounceDelay));
-                                    //+ Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
+                //+ Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
                 character.localPosition = Vector3.up * curve.Evaluate(1 - (bounceTimer / bounceDelay));
             }
             else
@@ -262,6 +284,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     private void EndBounce()
     {
+        gameObject.SetActive(true); // Pas super propre mais ça sert pour le premier saut
+
         transform.position = nextPos;
         canMove = true;
 

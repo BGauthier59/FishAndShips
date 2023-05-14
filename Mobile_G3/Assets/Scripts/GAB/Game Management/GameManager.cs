@@ -9,6 +9,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 {
     private NetworkVariable<bool> isRunning = new NetworkVariable<bool>();
 
+    [SerializeField] private int mainMenuIndex;
+
     [Header("Level Parameters")] [SerializeField]
     private TutorialSO[] tutorials;
 
@@ -26,6 +28,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private bool needToClick;
     private int hostReadyForTutorialClientCount;
+
+    private NetworkVariable<bool> isGameCancelledBecauseOfDisconnection = new NetworkVariable<bool>();
 
     #region Start Game Loop
 
@@ -59,6 +63,11 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         LinkInstance();
         cameraManager.StartGameLoop();
 
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].StartGameLoop(initPlayerPositions[i]);
+        }
+
         await CinematicCanvasManager.instance.IntroductionCinematic();
 
         if (NetworkManager.Singleton.IsHost)
@@ -74,11 +83,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         workshopManager.StartGameLoop();
         eventsManager.StartGameLoop();
         timerManager.StartGameLoop();
-
-        for (int i = 0; i < players.Count; i++)
-        {
-            players[i].StartGameLoop(initPlayerPositions[i]);
-        }
     }
 
     private void LinkInstance()
@@ -124,7 +128,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     #region End Game Loop
 
-    public void GameEnds(bool victory, EndGameReason reason)
+    public void GameEnds(bool victory)
     {
         // Host-side!
         if (!NetworkManager.Singleton.IsHost)
@@ -133,12 +137,15 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             return;
         }
 
+        if (!isRunning.Value)
+        {
+            Debug.LogError("Should not end while running. Might be an error.");
+        }
+
         if (victory)
         {
             LevelManager.instance.UpdateCurrentLevel(true, true, 3); // todo set star count
         }
-
-        Debug.LogWarning(reason.ToString());
 
         isRunning.Value = false;
         GameEndsClientRpc(victory);
@@ -147,34 +154,38 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     [ClientRpc]
     private void GameEndsClientRpc(bool victory)
     {
-        GameEndsFeedback();
+        GameEndsFeedback(victory);
     }
 
-    private async void GameEndsFeedback()
+    private async void GameEndsFeedback(bool victory)
     {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
 
-        // Todo - Le Host peut choisir de poursuivre la partie ou de couper ?
-        // Todo - Le client, pendant ce temps, peut voir des trucs sur la partie, son titre, etc
+        canvasManager.DisplayCanvas(CanvasType.EndGame);
+        EndOfGameCanvasManager.instance.SetupCanvas(NetworkManager.Singleton.IsHost, victory);
     }
 
     #endregion
 
     #region Disconnection Management
 
-    public void PlayerGetsDisconnected()
+    public void PlayersGetDisconnected()
     {
-        // Should stop game for everyone
+        if (isGameCancelledBecauseOfDisconnection.Value)
+        {
+            Debug.Log("Already cancelled");
+            return;
+        }
+
+        isGameCancelledBecauseOfDisconnection.Value = true;
         isRunning.Value = false;
-        StopGameClientRpc();
         NetworkManager.Singleton.Shutdown();
     }
 
-    [ClientRpc]
-    private void StopGameClientRpc()
+    public bool IsGameCancelledBecauseOfDisconnection()
     {
-        Debug.Log("A client got disconnected. disconnecting the client.");
+        return isGameCancelledBecauseOfDisconnection.Value;
     }
 
     #endregion
@@ -206,13 +217,14 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private int currentTutorialIndex, tutorialMaxIndex;
     private bool needTutorialRefresh;
+
     private async void DisplayTutorial(int index)
     {
         Debug.LogWarning("You can't move any more");
         TutorialSO currentTutorial = tutorials[index];
 
         tutorialMaxIndex = tutorials[index].tutorials.Length;
-        
+
         for (int i = 0; i < tutorialMaxIndex; i++)
         {
             currentTutorialIndex = i;

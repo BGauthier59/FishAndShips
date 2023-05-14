@@ -9,6 +9,7 @@ public class NetworkMonoSingleton<T> : NetworkBehaviour where T : Component
     {
         if (instance != null && instance != this)
         {
+            Debug.LogError($"Should not happen {gameObject.name}");
             DestroyImmediate(instance.gameObject);
             return;
         }

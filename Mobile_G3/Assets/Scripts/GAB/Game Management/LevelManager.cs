@@ -21,7 +21,8 @@ public class LevelManager : MonoSingleton<LevelManager>
         currentLevel = index;
         var level = allLevels[index];
         // Start level with name stocked in SO
-        NetworkManager.Singleton.SceneManager.LoadScene(level.so.sceneName, LoadSceneMode.Single);
+        //NetworkManager.Singleton.SceneManager.LoadScene(level.so.sceneName, LoadSceneMode.Single);
+        SceneLoaderManager.instance.LoadLevelScene(level.so.sceneName);
     }
 
     public void UpdateCurrentLevel(bool unlocked, bool victory, int starCount)
