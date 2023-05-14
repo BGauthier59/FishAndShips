@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7756993808719398624}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -106,10 +106,24 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 7461723751233629025}
+        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  alertAnim: {fileID: 7461723751233629025}
+  alertClip: {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
   workshopObjectOffset: {x: 0, y: 0, z: 0}
   DEBUG_GridManager: {fileID: 0}
   other: {fileID: 0}
-  waitingMessage: Waiting for Sails 2
+  waitingMessage: Someone needs to go the other Sail!
   currentPlayerId:
     m_InternalValue: 5
 --- !u!1001 &3812295670873290256
@@ -137,7 +151,7 @@ PrefabInstance:
     - target: {fileID: 6863941526321105956, guid: 273bc96d398c9d94993fcf546e216972,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 6
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 6863941526321105956, guid: 273bc96d398c9d94993fcf546e216972,
         type: 3}
@@ -194,6 +208,12 @@ PrefabInstance:
 --- !u!1 &2614775493084320267 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1202024335780963355, guid: 273bc96d398c9d94993fcf546e216972,
+    type: 3}
+  m_PrefabInstance: {fileID: 3812295670873290256}
+  m_PrefabAsset: {fileID: 0}
+--- !u!111 &7461723751233629025 stripped
+Animation:
+  m_CorrespondingSourceObject: {fileID: 6010793129081920881, guid: 273bc96d398c9d94993fcf546e216972,
     type: 3}
   m_PrefabInstance: {fileID: 3812295670873290256}
   m_PrefabAsset: {fileID: 0}

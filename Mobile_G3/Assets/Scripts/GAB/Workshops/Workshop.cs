@@ -31,6 +31,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     [Header("Feedbacks")] [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
+    [SerializeField] private Animation alertAnim;
+    [SerializeField] private AnimationClip alertClip;
     [SerializeField] private Vector3 workshopObjectOffset;
 
     public virtual void Start()
@@ -140,16 +142,18 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     protected virtual async void StartActivationDuration()
     {
-        // todo - test that on client
-
-        await Task.Delay((int) (1000 * activationDuration));
+        float duration = (int) (1000 * activationDuration);
+        
+        await Task.Delay((int) (duration * .75f));
+        alertAnim.Play(alertClip.name);
+        await Task.Delay((int) (duration * .25f));
 
         while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
 
         await Task.Delay(100);
         if (!isActive.Value)
         {
-            Debug.LogWarning("You won workshop after timer is down. It's still supposed to be a victory.");
+            Debug.LogWarning("You won workshop after timer is over. It's still supposed to be a victory.");
             return; // Means workshop has been won
         }
 

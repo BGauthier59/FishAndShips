@@ -106,6 +106,20 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 520425787100290876}
+        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  alertAnim: {fileID: 520425787100290876}
+  alertClip: {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
   workshopObjectOffset: {x: 0, y: 0.5, z: 0}
   DEBUG_GridManager: {fileID: 0}
   nextMiniGames:
@@ -227,6 +241,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a76717032589b74ea395c55c842d2c1, type: 3}
+--- !u!111 &520425787100290876 stripped
+Animation:
+  m_CorrespondingSourceObject: {fileID: 2577911004021206751, guid: 5a76717032589b74ea395c55c842d2c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2665700076698071523}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &982348067129972869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2980389288581212518, guid: 5a76717032589b74ea395c55c842d2c1,

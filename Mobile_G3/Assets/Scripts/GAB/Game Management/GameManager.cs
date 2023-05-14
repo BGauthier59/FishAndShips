@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 
 public class GameManager : NetworkMonoSingleton<GameManager>
 {
-    //public bool isRunning;
     private NetworkVariable<bool> isRunning = new NetworkVariable<bool>();
 
     [Header("Level Parameters")] [SerializeField]
@@ -249,6 +248,12 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         hostReadyForTutorialClientCount++;
         if (hostReadyForTutorialClientCount != ConnectionManager.instance.players.Count) return;
+        FinishTutorial();
+    }
+
+    private async void FinishTutorial()
+    {
+        await Task.Delay(500);
         isRunning.Value = true;
     }
 
