@@ -64,9 +64,8 @@ public class SeriesWorkshop : Workshop
             return;
         }
 
-        deactivationEvent?.Invoke();
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
-        deactivationEvents[index]?.Invoke();
+        SeriesWorkshopGetDeactivatedClientRpc(index);
 
         currentMiniGameIndex.Value++;
         if (currentMiniGameIndexSafe == nextMiniGames.Length ||
@@ -89,6 +88,13 @@ public class SeriesWorkshop : Workshop
             }
         };
         InitiateWorkshopInteractionClientRpc(currentMiniGameIndex.Value, parameters);
+    }
+    
+    [ClientRpc]
+    private void SeriesWorkshopGetDeactivatedClientRpc(int index)
+    {
+        deactivationEvent?.Invoke();
+        deactivationEvents[index]?.Invoke();
     }
 
     [ClientRpc]
