@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
     public int positionX, positionY;
     [SerializeField] protected Transform workshopObject;
     public MiniGame associatedMiniGame;
+
+    [SerializeField] private float activationDuration;
 
     public NetworkVariable<bool> isOccupied = new(false, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Server);
@@ -28,14 +31,20 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     [Header("Feedbacks")] [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
+    [SerializeField] private Animation alertAnim;
+    [SerializeField] private AnimationClip alertClip;
     [SerializeField] private Vector3 workshopObjectOffset;
 
     public virtual void Start()
     {
         isOccupied.OnValueChanged += OnSetOccupied;
         isActive.OnValueChanged += OnSetActivated;
-        InitializeWorkshop();
         SetPosition(positionX, positionY);
+    }
+
+    public void StartGameLoop()
+    {
+        InitializeWorkshop();
     }
 
     protected virtual void InitializeWorkshop()
@@ -74,29 +83,26 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     public virtual void SetPosition(int posX, int posY)
     {
-        if (positionX == -1 && positionY == -1) // SetPosition was called on a workshop removed from grid. Must set positions here
+        if (positionX == -1 &&
+            positionY == -1) // SetPosition was called on a workshop removed from grid. Must set positions here
         {
-            if (posX != -1 && posY != -1) workshopObject.position = DEBUG_GridManager.GetTile(posX, posY).transform.position + workshopObjectOffset;
+            if (posX != -1 && posY != -1)
+                workshopObject.position =
+                    DEBUG_GridManager.GetTile(posX, posY).transform.position + workshopObjectOffset;
         }
-        
+
         positionX = posX;
         positionY = posY;
 
         if (posX == -1 && posY == -1)
         {
-            Debug.Log("You removed this workshop from grid!");
             workshopObject.position = Vector3.up * 100; // Pas propre mais pour l'instant c'est ok
             currentTile = null;
             return;
         }
 
         currentTile = DEBUG_GridManager.GetTile(posX, posY);
-        if (currentTile.transform == null)
-        {
-            Debug.LogWarning(
-                $"The workshop {name} is attached to a tile without any Transform. That might cause an error.");
-            return;
-        }
+        if (currentTile.transform == null) return;
 
         MoveToNewTile(currentTile.transform.position + workshopObjectOffset);
     }
@@ -121,9 +127,40 @@ public class Workshop : NetworkBehaviour, IGridEntity
             Debug.LogError("This should not be called on client!");
         }
 
+        if (isActive.Value)
+        {
+            Debug.LogError("Can't activate a workshop that is already activated.");
+            // This happens with series workshop.
+            return;
+        }
+
         SetActiveServerRpc(true);
         associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
         GetActivatedClientRpc();
+        StartActivationDuration();
+    }
+
+    protected virtual async void StartActivationDuration()
+    {
+        float duration = (int) (1000 * activationDuration);
+        
+        await Task.Delay((int) (duration * .75f));
+        alertAnim.Play(alertClip.name);
+        await Task.Delay((int) (duration * .25f));
+
+        while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
+
+        await Task.Delay(100);
+        if (!isActive.Value)
+        {
+            Debug.LogWarning("You won workshop after timer is over. It's still supposed to be a victory.");
+            return; // Means workshop has been won
+        }
+
+        Debug.Log($"You lost {name}");
+        ShipManager.instance.TakeDamage(10);
+        Deactivate(true, 6); // This is not a victory, only means to disable mini-game
+        // 6 as parameter is a trick for Series Workshop!
     }
 
     [ClientRpc]
@@ -146,7 +183,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
-        SetOccupiedServerRpc(false);
         if (victory)
         {
             SetActiveServerRpc(false);
@@ -156,6 +192,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
                 RemoveWorkshopFromGridClientRpc();
             }
         }
+
+        SetOccupiedServerRpc(false);
     }
 
     [ClientRpc]
@@ -217,7 +255,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         return playingPlayer;
     }
-    
+
     protected bool IsActiveOnGrid()
     {
         if (!isActive.Value || isOccupied.Value || currentTile == null) return false;

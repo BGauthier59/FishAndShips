@@ -77,19 +77,25 @@ public class MiniGame_Cannon_Load : MiniGame
             case CannonState.Step1:
                 WorkshopManager.instance.swipeManager.Enable(step1data);
                 StartExecutingMiniGame();
+                WorkshopManager.instance.StartMiniGameTutorial(0);
                 break;
             
             case CannonState.Step2:
                 WorkshopManager.instance.swipeManager.Disable();
+                WorkshopManager.instance.StopMiniGameTutorial();
                 cannonAnim.Play(cannonIsComing.name);
                 await Task.Delay(1000);
                 WorkshopManager.instance.cannonDragAndDropManager.Enable(step2data);
                 WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint += OnBulletWellPlaced;
+                WorkshopManager.instance.StartMiniGameTutorial(1);
                 break;
             
             case CannonState.Step3:
                 WorkshopManager.instance.cannonDragAndDropManager.Disable();
                 WorkshopManager.instance.swipeManager.Enable(step3data);
+                WorkshopManager.instance.StopMiniGameTutorial();
+                await Task.Delay(100);
+                WorkshopManager.instance.StartMiniGameTutorial(2);
                 break;
         }
 

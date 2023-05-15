@@ -1,5 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class CameraManager : MonoSingleton<CameraManager>
@@ -7,6 +9,9 @@ public class CameraManager : MonoSingleton<CameraManager>
     public Transform camera, holdTransform, deckTransform;
     [SerializeField] private PosRot currentDeckPosRot, currentHoldPosRot;
     private PosRot defaultDeckPosRot, defaultHoldPosRot;
+    [SerializeField] private Animation startEventAnim;
+    [SerializeField] private AnimationClip startEventClip;
+    [SerializeField] private TMP_Text startEventText;
     
     public void StartGameLoop()
     {
@@ -48,7 +53,7 @@ public class CameraManager : MonoSingleton<CameraManager>
         };
     }
 
-    public void SetZoomToCurrentCameraPosRot(BoatSide side, float smoothTime)
+    public async void SetZoomToCurrentCameraPosRot(BoatSide side, float smoothTime)
     {
         // Only affects players that are on correct side
         var clientPlayer = ConnectionManager.instance.GetClientPlayer();
@@ -60,9 +65,21 @@ public class CameraManager : MonoSingleton<CameraManager>
         
         PosRot current = side == BoatSide.Deck ? currentDeckPosRot : currentHoldPosRot;
         
-        // Todo - replace DOMove & DORotate by something else (must be cancelled if we reach the other side while moving camera)
-        transform.DOMove(current.pos, smoothTime);
-        transform.DORotate(current.rot, smoothTime);
+        Vector3 startPos = transform.position;
+        Vector3 startEul = transform.eulerAngles;
+        
+        float timer = 0;
+        float ratio;
+        while (timer < smoothTime)
+        {
+            if (clientPlayer.GetBoatSide() != side) return;
+            
+            ratio = timer / smoothTime;
+            transform.position = Vector3.Lerp(startPos, current.pos, ratio);
+            transform.eulerAngles = Vector3.Slerp(startEul, current.rot, ratio);
+            await Task.Yield();
+            timer += Time.deltaTime;
+        }
     }
 
     public void ResetDeckPosRot()
@@ -73,6 +90,15 @@ public class CameraManager : MonoSingleton<CameraManager>
     public void ResetHoldPosRot()
     {
         SetCurrentDeckCameraPosRot(defaultHoldPosRot.pos, defaultHoldPosRot.rot);
+    }
+
+    public async void PlayStartEventAnimation(string text)
+    {
+        startEventText.text = text;
+        startEventAnim.gameObject.SetActive(true);
+        startEventAnim.Play(startEventClip.name);
+        await Task.Delay((int) (1000 * startEventClip.length));
+        startEventAnim.gameObject.SetActive(false);
     }
 }
 

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7310696703931975358}
+  - component: {fileID: 6645875683129021291}
   m_Layer: 0
   m_Name: ActivatedIcon
   m_TagString: Untagged
@@ -32,6 +33,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!111 &6645875683129021291
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2305340507278010881}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations:
+  - {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &5538211400566806933
 GameObject:
   m_ObjectHideFlags: 0
@@ -90,7 +107,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f, type: 2}
+  - {fileID: 1847499838602395391, guid: 93293886ffd82db439e7b82d8c24a0e1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -134,8 +151,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: '!'
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8960786dc56663b4a8d7ba2e553e469f, type: 2}
-  m_sharedMaterial: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+  m_fontAsset: {fileID: 11400000, guid: 93293886ffd82db439e7b82d8c24a0e1, type: 2}
+  m_sharedMaterial: {fileID: 1847499838602395391, guid: 93293886ffd82db439e7b82d8c24a0e1,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -160,8 +177,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 5
-  m_fontSizeBase: 5
+  m_fontSize: 7
+  m_fontSizeBase: 7
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

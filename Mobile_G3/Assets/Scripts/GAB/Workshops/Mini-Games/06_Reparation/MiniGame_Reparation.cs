@@ -38,6 +38,7 @@ public class MiniGame_Reparation : MiniGame
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.reparationDragAndDrop.Enable(data);
+        WorkshopManager.instance.StartMiniGameTutorial(4);
         StartExecutingMiniGame();
     }
 

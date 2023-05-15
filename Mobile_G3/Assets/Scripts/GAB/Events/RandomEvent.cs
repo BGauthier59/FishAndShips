@@ -1,19 +1,20 @@
+using Unity.Mathematics;
 using Unity.Netcode;
+using UnityEngine;
 
 public abstract class RandomEvent : NetworkBehaviour
 {
     public bool isRunning;
-
+    public string startEventText;
+    
     public abstract bool CheckConditions();
 
     public virtual void StartEvent()
     {
         isRunning = true;
     }
-
-    public abstract void ExecuteEvent();
-
-    public virtual void EndEvent()
+    
+    protected virtual void EndEvent()
     {
         isRunning = false;
         EventsManager.instance.EndEvent(this);

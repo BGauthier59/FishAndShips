@@ -1,117 +1,78 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using Random = UnityEngine.Random;
 
 public class StormEvent : RandomEvent
 {
-    #region Variables
-
-    #region Sails Management
-
-    [SerializeField] private float baseSailsActivationDuration;
-    [SerializeField] private float randomSailsActivationGap;
-    private float sailsActivationTimer;
-    private float currentSailsActivationDuration;
-    private bool isActivatingSails;
-
-    #endregion
-
-    [Header("Feedbacks")] [SerializeField] private UnityEvent enterStormEvent;
+    [SerializeField] private PosRot posRotStorm;
+    [SerializeField] private UnityEvent enterStormEvent;
     [SerializeField] private UnityEvent exitStormEvent;
-    [SerializeField] private UnityEvent sailsGetActivatedEvent;
-    
-    #endregion
+    [SerializeField] private int2 fireMinMaxCount;
+    private int fireCount, count;
 
-    public override void StartEvent()
+    #region Main Methods
+
+    public override bool CheckConditions()
+    {
+        if (EventsManager.instance.sailsWorkshop.isActive.Value) return false;
+        return true;
+    }
+
+    public override async void StartEvent()
     {
         StartStormEventFeedbackClientRpc();
 
         // Host-side logic
         base.StartEvent();
-        SetNewSailsActivationDuration();
-        Debug.Log("You entered a stormy area!");
-    }
-    
-    [ClientRpc]
-    private void StartStormEventFeedbackClientRpc()
-    {
-        enterStormEvent?.Invoke();
-    }
-
-    public override bool CheckConditions()
-    {
-        // This is not fully random, then no need to check any condition
-        return true;
-    }
-
-    public override void ExecuteEvent()
-    {
-        // Host-side only
-        CheckSailsActivationTimer();
-    }
-
-    public override void EndEvent()
-    {
-        EndStormEventFeedbackClientRpc();
+        SetupEvent();
         
-        // Host-side logic
-        base.EndEvent();
-        Debug.Log("You exited a stormy area!");
-    }
-    
-    [ClientRpc]
-    private void EndStormEventFeedbackClientRpc()
-    {
-        exitStormEvent?.Invoke();
-    }
+        GenerateSailsWorkshop();
+        // todo - wait for fire mini-games
 
-    #region Sails Management
-
-    private void SetNewSailsActivationDuration()
-    {
-        currentSailsActivationDuration = baseSailsActivationDuration +
-                                         Random.Range(-randomSailsActivationGap, randomSailsActivationGap);
-        sailsActivationTimer = 0;
-        isActivatingSails = false;
-    }
-
-    private void CheckSailsActivationTimer()
-    {
-        if (isActivatingSails) return;
-
-        if (sailsActivationTimer > currentSailsActivationDuration)
-        {
-            TryActivateSails();
-        }
-        else sailsActivationTimer += Time.deltaTime;
-    }
-
-    [ClientRpc]
-    private void ActivateSailsFeedbackClientRpc()
-    {
-        sailsGetActivatedEvent?.Invoke();
-
-        // Pas le feedback du workshop, mais plutôt un truc global comme du vent fort qui souffle
-        Debug.Log("Sails are activated");
-    }
-
-    private void TryActivateSails()
-    {
-        SetNewSailsActivationDuration();
-
-        // Check conditions
-        if (EventsManager.instance.sailsWorkshop.isActive.Value)
-        {
-            return;
-        }
+        await Task.Delay(2000);
         
-        ActivateSailsFeedbackClientRpc();
+        EndEvent();
+    }
 
-        EventsManager.instance.sailsWorkshop
-            .InitializeActivation(); // Special method for connected workshops to activate both
+    private void SetupEvent()
+    {
+        fireCount = Random.Range(fireMinMaxCount.x, fireMinMaxCount.y);
+        count = 0;
+    }
+
+    private void GenerateSailsWorkshop()
+    {
+        EventsManager.instance.sailsWorkshop.InitializeActivation();
     }
 
     #endregion
+
+    [ClientRpc]
+    private void StartStormEventFeedbackClientRpc()
+    {
+        CameraManager.instance.SetCurrentDeckCameraPosRot(posRotStorm.pos, posRotStorm.rot);
+        CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
+        enterStormEvent?.Invoke();
+    }
+    
+    protected override void EndEvent()
+    {
+        EndStormEventFeedbackClientRpc();
+
+        // Host-side logic
+        base.EndEvent();
+    }
+
+    [ClientRpc]
+    private void EndStormEventFeedbackClientRpc()
+    {
+        CameraManager.instance.ResetDeckPosRot();
+        CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
+        exitStormEvent?.Invoke();
+    }
 }

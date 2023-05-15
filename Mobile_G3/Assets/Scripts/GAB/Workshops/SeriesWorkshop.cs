@@ -31,12 +31,6 @@ public class SeriesWorkshop : Workshop
         currentMiniGameIndex.OnValueChanged = OnServerModifyCurrentMiniGameIndex;
     }
 
-    public MiniGame GetCurrentMiniGame()
-    {
-        // Not safe to use it because of latency
-        return currentMiniGameIndex.Value == -1 ? associatedMiniGame : nextMiniGames[currentMiniGameIndex.Value];
-    }
-
     public MiniGame GetCurrentMiniGameSafe()
     {
         return currentMiniGameIndexSafe == -1 ? associatedMiniGame : nextMiniGames[currentMiniGameIndexSafe];
@@ -51,6 +45,12 @@ public class SeriesWorkshop : Workshop
     {
         base.Activate();
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
+        SeriesWorkshopGetActivatedClientRpc(index);
+    }
+
+    [ClientRpc]
+    private void SeriesWorkshopGetActivatedClientRpc(int index)
+    {
         activationEvents[index]?.Invoke();
     }
 
@@ -64,21 +64,22 @@ public class SeriesWorkshop : Workshop
             return;
         }
 
-        deactivationEvent?.Invoke();
         var index = currentMiniGameIndexSafe == -1 ? 0 : currentMiniGameIndexSafe + 1;
-        deactivationEvents[index]?.Invoke();
+        SeriesWorkshopGetDeactivatedClientRpc(index);
 
         currentMiniGameIndex.Value++;
-        if (currentMiniGameIndexSafe == nextMiniGames.Length)
+        if (currentMiniGameIndexSafe == nextMiniGames.Length ||
+            playerId == 6) // playerId == 6 is a trick to immediately stop Series Workshop
         {
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
-            Activate();
+            //Activate();
+            //We don't stay activated any more
             return;
         }
 
-        Activate();
+        //Activate(); We don't need that?
         ClientRpcParams parameters = new ClientRpcParams()
         {
             Send = new ClientRpcSendParams()
@@ -87,6 +88,13 @@ public class SeriesWorkshop : Workshop
             }
         };
         InitiateWorkshopInteractionClientRpc(currentMiniGameIndex.Value, parameters);
+    }
+    
+    [ClientRpc]
+    private void SeriesWorkshopGetDeactivatedClientRpc(int index)
+    {
+        deactivationEvent?.Invoke();
+        deactivationEvents[index]?.Invoke();
     }
 
     [ClientRpc]

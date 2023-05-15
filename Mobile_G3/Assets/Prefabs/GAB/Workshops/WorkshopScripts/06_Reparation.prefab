@@ -67,6 +67,7 @@ MonoBehaviour:
   positionY: -1
   workshopObject: {fileID: 2479732158805567858}
   associatedMiniGame: {fileID: 0}
+  activationDuration: 20
   isOccupied:
     m_InternalValue: 0
   isActive:
@@ -105,9 +106,23 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  workshopObjectOffset: {x: 0, y: 0, z: 0}
+      - m_Target: {fileID: 2816267573030584766}
+        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  alertAnim: {fileID: 2816267573030584766}
+  alertClip: {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
+  workshopObjectOffset: {x: -0.02, y: 0.08, z: 0}
   DEBUG_GridManager: {fileID: 0}
-  damagePerSecond: 1
+  explosionFx: {fileID: 5614157343706354191}
 --- !u!1001 &8941683867424193591
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -180,6 +195,18 @@ PrefabInstance:
 --- !u!4 &2479732158805567858 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6809153845870925125, guid: 415674ee673ff794c82bf73a72a74519,
+    type: 3}
+  m_PrefabInstance: {fileID: 8941683867424193591}
+  m_PrefabAsset: {fileID: 0}
+--- !u!111 &2816267573030584766 stripped
+Animation:
+  m_CorrespondingSourceObject: {fileID: 6557903468266814857, guid: 415674ee673ff794c82bf73a72a74519,
+    type: 3}
+  m_PrefabInstance: {fileID: 8941683867424193591}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5614157343706354191 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3602387403541343800, guid: 415674ee673ff794c82bf73a72a74519,
     type: 3}
   m_PrefabInstance: {fileID: 8941683867424193591}
   m_PrefabAsset: {fileID: 0}

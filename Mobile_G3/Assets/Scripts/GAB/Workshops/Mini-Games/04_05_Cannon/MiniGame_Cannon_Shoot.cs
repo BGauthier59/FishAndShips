@@ -10,13 +10,25 @@ public class MiniGame_Cannon_Shoot : MiniGame
     private byte index;
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent inGameShootEvent;
+    [SerializeField] private ParticleSystem fireStart, fireStop;
     
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
+        WorkshopManager.instance.cannonDragAndDropManager.OnMatchstickFireStart = () =>
+        {
+            fireStart.Play();
+            fireStop.Stop();
+        };
+        WorkshopManager.instance.cannonDragAndDropManager.OnMatchstickFireStop = () =>
+        {
+            fireStart.Stop();
+            fireStop.Play();
+        };
         
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.cannonDragAndDropManager.Enable(data);
+        WorkshopManager.instance.StartMiniGameTutorial(3);
         StartExecutingMiniGame();
     }
 
@@ -40,7 +52,7 @@ public class MiniGame_Cannon_Shoot : MiniGame
 
         inGameShootEvent?.Invoke();
         
-        ShipManager.instance.FireServerRpc(index);
+        //ShipManager.instance.FireServerRpc(index);
         
         WorkshopManager.instance.SetVictoryIndicator();
         await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());

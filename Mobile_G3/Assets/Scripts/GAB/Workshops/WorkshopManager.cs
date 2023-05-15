@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,9 +17,12 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
     private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
+    [SerializeField] private Workshop[] allWorkshops;
 
     [SerializeField] private RectTransform referenceCanvas;
     [SerializeField] private float canvasScaleFactor;
+
+    [SerializeField] private Transform swipeIndicatorTransform;
 
     [Header("TEMPORARY")] public RudderCircularSwipeManager rudderCircularSwipeManager;
     public ShrimpSwipeManager shrimpSwipeManager;
@@ -26,6 +31,19 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public CannonDragAndDropManager cannonDragAndDropManager;
     public MapSwipeManager mapSwipeManager;
     public ReparationDragAndDropManager reparationDragAndDrop;
+
+    [SerializeField] private MiniGameSwipeIndicatorPoints[] swipeTutorialData;
+
+    [Serializable]
+    public struct MiniGameSwipeIndicatorPoints
+    {
+        public string DEBUG_name;
+        public Transform p1;
+        public Transform p2;
+        public Transform p3;
+        public Transform p4;
+        public float swipeDuration;
+    }
 
     #region Game Loop
 
@@ -40,6 +58,11 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public void StartGameLoop()
     {
         canvasScaleFactor = referenceCanvas.lossyScale.x;
+
+        foreach (var workshop in allWorkshops)
+        {
+            workshop.StartGameLoop();
+        }
     }
 
     public void UpdateGameLoop()
@@ -199,6 +222,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     #endregion
 
+    #region Animations & Tutorial
+
     public void SetGameIndicator(string text)
     {
         miniGameIndicatorText.text = text;
@@ -228,4 +253,67 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     {
         return canvasScaleFactor;
     }
+
+    private bool isShowingTutorial;
+    private int currentIndex = -1;
+
+    private async void ExecuteMiniGameTutorial()
+    {
+        Vector3 p1, p2, p3, p4;
+        var data = swipeTutorialData[currentIndex];
+        p1 = data.p1.position;
+        p2 = data.p2.position;
+        p3 = data.p3.position;
+        p4 = data.p4.position;
+
+        swipeIndicatorTransform.position = Ex.CubicBezierCurve(p1, p2, p3, p4, 0);
+        swipeIndicatorTransform.gameObject.SetActive(true);
+
+        await Task.Delay(200);
+
+        float timer = 0;
+        while (timer < data.swipeDuration)
+        {
+            swipeIndicatorTransform.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / data.swipeDuration);
+            await Task.Yield();
+            timer += Time.deltaTime;
+            if (!isShowingTutorial)
+            {
+                swipeIndicatorTransform.gameObject.SetActive(false);
+                return;
+            }
+        }
+
+        swipeIndicatorTransform.position = Ex.CubicBezierCurve(p1, p2, p3, p4, 1);
+        await Task.Delay(200);
+        swipeIndicatorTransform.gameObject.SetActive(false);
+
+        await Task.Delay(1000);
+
+        if (isShowingTutorial) ExecuteMiniGameTutorial();
+    }
+
+    public void StopMiniGameTutorial()
+    {
+        isShowingTutorial = false;
+    }
+
+    public void StartMiniGameTutorial(int index)
+    {
+        // 0 is Cannon / Load / Step 1
+        // 1 is Cannon / Load / Step 2
+        // 2 is Cannon / Load / Step 3
+        // 3 is Cannon / Shoot
+        // 4 is Reparation
+        // 5 is map
+        // 6 is rudder
+        // 7 is Sails (left)
+        // 8 is Sails (right)
+        
+        currentIndex = index;
+        isShowingTutorial = true;
+        ExecuteMiniGameTutorial();
+    }
+
+    #endregion
 }

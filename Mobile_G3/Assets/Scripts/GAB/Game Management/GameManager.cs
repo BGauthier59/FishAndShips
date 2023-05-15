@@ -1,13 +1,20 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class GameManager : NetworkMonoSingleton<GameManager>
 {
-    public bool isRunning;
+    private NetworkVariable<bool> isRunning = new NetworkVariable<bool>();
+
+    [SerializeField] private int mainMenuIndex;
+
+    [Header("Level Parameters")] [SerializeField]
+    private TutorialSO[] tutorials;
+
+    [SerializeField] private int2[] initPlayerPositions = new int2[4];
 
     [Header("Instances")] private EventsManager eventsManager;
     private WorkshopManager workshopManager;
@@ -17,8 +24,36 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private CameraManager cameraManager;
 
     private List<PlayerManager> players = new List<PlayerManager>();
+    private int hostReadyClientCount;
+
+    private bool needToClick;
+    private int hostReadyForTutorialClientCount;
+
+    private NetworkVariable<bool> isGameCancelledBecauseOfDisconnection = new NetworkVariable<bool>();
+
+    #region Start Game Loop
 
     private void Start()
+    {
+        UpdateReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UpdateReadyStateServerRpc(ulong id)
+    {
+        if (ConnectionManager.instance.players[id] == null)
+        {
+            Debug.LogError("This client does not exist.");
+            return;
+        }
+
+        hostReadyClientCount++;
+        if (hostReadyClientCount != ConnectionManager.instance.players.Count) return;
+        InitializeGameLoopClientRpc();
+    }
+
+    [ClientRpc]
+    private void InitializeGameLoopClientRpc()
     {
         StartGameLoop();
     }
@@ -28,20 +63,26 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         LinkInstance();
         cameraManager.StartGameLoop();
 
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].StartGameLoop(initPlayerPositions[i]);
+        }
+
         await CinematicCanvasManager.instance.IntroductionCinematic();
+
+        if (NetworkManager.Singleton.IsHost)
+        {
+            if (tutorials.Length != 0) StartTutorialHostSide(0);
+            else isRunning.Value = true;
+        }
+
+        while (!isRunning.Value) await Task.Yield();
 
         Debug.Log("Start game loop!");
         shipManager.StartGameLoop();
         workshopManager.StartGameLoop();
         eventsManager.StartGameLoop();
         timerManager.StartGameLoop();
-
-        foreach (var player in players)
-        {
-            player.StartGameLoop();
-        }
-
-        isRunning = true;
     }
 
     private void LinkInstance()
@@ -59,9 +100,13 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         }
     }
 
+    #endregion
+
+    #region Update Game Loop
+
     public void Update()
     {
-        if (!isRunning) return;
+        if (!isRunning.Value) return;
         UpdateGameLoop();
     }
 
@@ -69,7 +114,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
-        eventsManager.UpdateGameLoop();
+        //eventsManager.UpdateGameLoop();
 
         foreach (var player in players)
         {
@@ -79,7 +124,11 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         timerManager.UpdateGameLoop();
     }
 
-    public void GameEnds(bool victory, EndGameReason reason)
+    #endregion
+
+    #region End Game Loop
+
+    public void GameEnds(bool victory)
     {
         // Host-side!
         if (!NetworkManager.Singleton.IsHost)
@@ -87,39 +136,138 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("No client should call GameEnds()");
             return;
         }
-        
-        Debug.LogWarning(reason.ToString());
-        
+
+        if (!isRunning.Value)
+        {
+            Debug.LogError("Should not end while running. Might be an error.");
+        }
+
+        if (victory)
+        {
+            LevelManager.instance.UpdateCurrentLevel(true, true, 3); // todo set star count
+        }
+
+        isRunning.Value = false;
         GameEndsClientRpc(victory);
     }
-    
+
     [ClientRpc]
     private void GameEndsClientRpc(bool victory)
     {
-        isRunning = false;
-        GameEndsFeedback();
+        GameEndsFeedback(victory);
     }
 
-    private async void GameEndsFeedback()
+    private async void GameEndsFeedback(bool victory)
     {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
-        
-        // Todo - Le Host peut choisir de poursuivre la partie ou de couper ?
-        // Todo - Le client, pendant ce temps, peut voir des trucs sur la partie, son titre, etc
+
+        canvasManager.DisplayCanvas(CanvasType.EndGame);
+        EndOfGameCanvasManager.instance.SetupCanvas(NetworkManager.Singleton.IsHost, victory);
     }
 
-    private bool isEveryoneDisconnected;
-    public void PlayerGetsDisconnected()
+    #endregion
+
+    #region Disconnection Management
+
+    public void PlayersGetDisconnected()
     {
-        // Should stop game for everyone
-        StopGameClientRpc();
+        if (isGameCancelledBecauseOfDisconnection.Value)
+        {
+            Debug.Log("Already cancelled");
+            return;
+        }
+
+        isGameCancelledBecauseOfDisconnection.Value = true;
+        isRunning.Value = false;
+        NetworkManager.Singleton.Shutdown();
+    }
+
+    public bool IsGameCancelledBecauseOfDisconnection()
+    {
+        return isGameCancelledBecauseOfDisconnection.Value;
+    }
+
+    #endregion
+
+    #region Tutorial Management
+
+    public void OnTapOnScreen(InputAction.CallbackContext ctx)
+    {
+        if (!needToClick) return;
+        if (ctx.started)
+        {
+            if (currentTutorialIndex == tutorialMaxIndex) EndTutorial();
+            else needTutorialRefresh = false;
+        }
+    }
+
+    public void StartTutorialHostSide(int index)
+    {
+        hostReadyForTutorialClientCount = 0;
+        isRunning.Value = false;
+        StartTutorialClientRpc(index);
     }
 
     [ClientRpc]
-    private void StopGameClientRpc()
+    private void StartTutorialClientRpc(int index)
     {
-        Debug.Log("A client got disconnected. disconnecting the client.");
-        NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
+        DisplayTutorial(index);
     }
+
+    private int currentTutorialIndex, tutorialMaxIndex;
+    private bool needTutorialRefresh;
+
+    private async void DisplayTutorial(int index)
+    {
+        Debug.LogWarning("You can't move any more");
+        TutorialSO currentTutorial = tutorials[index];
+
+        tutorialMaxIndex = tutorials[index].tutorials.Length;
+
+        for (int i = 0; i < tutorialMaxIndex; i++)
+        {
+            currentTutorialIndex = i;
+            await TutorialManager.instance.DisplayTutorial(currentTutorial, currentTutorialIndex);
+            needToClick = true;
+            needTutorialRefresh = true;
+            while (needTutorialRefresh) await Task.Yield();
+        }
+
+        currentTutorialIndex = tutorialMaxIndex;
+    }
+
+    private async void EndTutorial()
+    {
+        needToClick = false;
+
+        await TutorialManager.instance.DisableTutorial();
+
+        // Send to server that we're done
+        UpdateTutorialReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void UpdateTutorialReadyStateServerRpc(ulong id)
+    {
+        if (ConnectionManager.instance.players[id] == null)
+        {
+            Debug.LogError("This client does not exist.");
+            return;
+        }
+
+        Debug.LogWarning(ConnectionManager.instance.players.Count);
+
+        hostReadyForTutorialClientCount++;
+        if (hostReadyForTutorialClientCount != ConnectionManager.instance.players.Count) return;
+        FinishTutorial();
+    }
+
+    private async void FinishTutorial()
+    {
+        await Task.Delay(500);
+        isRunning.Value = true;
+    }
+
+    #endregion
 }

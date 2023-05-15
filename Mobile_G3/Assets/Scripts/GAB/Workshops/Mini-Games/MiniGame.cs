@@ -28,6 +28,7 @@ public abstract class MiniGame : NetworkBehaviour
 
     protected void StopExecutingMiniGame()
     {
+        WorkshopManager.instance.StopMiniGameTutorial();
         isRunning = false;
     }
 

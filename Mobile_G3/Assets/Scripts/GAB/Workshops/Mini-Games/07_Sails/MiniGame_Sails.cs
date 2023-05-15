@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using TMPro;
+using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -23,23 +24,21 @@ public class MiniGame_Sails : MiniGame
     public TMP_Text myStep;
     public TMP_Text cooldownTimer;
 
-    [SerializeField] private float boatSpeedFactor;
+    [SerializeField] private MeshRenderer[] sailsRenderers;
+    private bool canSwipe;
+    private static readonly int Ratio = Shader.PropertyToID("_Ratio");
 
     public override void AssociatedWorkshopGetActivatedHostSide()
     {
         base.AssociatedWorkshopGetActivatedHostSide();
-        ShipManager.instance.SetSpeed(boatSpeedFactor);
-    }
-
-    public override void AssociatedWorkshopGetDeactivatedHostSide()
-    {
-        base.AssociatedWorkshopGetDeactivatedHostSide();
-        ShipManager.instance.SetSpeed(1);
+        SetSailShaderServerRpc(0);
     }
 
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
+        //SetSailRenderers(0, 1);
+
         var connectedWorkshop = WorkshopManager.instance.GetCurrentWorkshop() as ConnectedWorkshop;
         if (connectedWorkshop == null)
         {
@@ -61,15 +60,44 @@ public class MiniGame_Sails : MiniGame
             leftRope.SetActive(false);
         }
 
-        
+
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
+        if(IsFirstPlayer()) WorkshopManager.instance.StartMiniGameTutorial(7);
+        else WorkshopManager.instance.StartMiniGameTutorial(8);
+        
         WorkshopManager.instance.swipeManager.Enable(currentData);
         StartExecutingMiniGame();
     }
 
+    private async void SetSailRenderers(float ratioValue, float duration)
+    {
+        canSwipe = false;
+        float currentValue = sailsRenderers[0].material.GetFloat(Ratio);
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            foreach (var rd in sailsRenderers)
+            {
+                rd.material.SetFloat(Ratio, math.lerp(currentValue, ratioValue, timer / duration));
+            }
+
+            await Task.Yield();
+            timer += Time.deltaTime;
+        }
+
+        foreach (var rd in sailsRenderers)
+        {
+            rd.material.SetFloat(Ratio, ratioValue);
+        }
+
+        canSwipe = true;
+    }
+
     public override void ExecuteMiniGame()
     {
+        if (!canSwipe) return;
         if (WorkshopManager.instance.swipeManager.CalculateSwipe() && currentStep < stepNumber)
         {
             currentStep++;
@@ -95,8 +123,6 @@ public class MiniGame_Sails : MiniGame
 
     private async void SailIsRaised()
     {
-        // Todo - play animation
-        
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
@@ -145,9 +171,10 @@ public class MiniGame_Sails : MiniGame
     {
         Debug.Log($"Other is at step {step}. You're at step {currentStep}");
         myStep.text = currentStep.ToString();
-        
+
         if (step == currentStep)
         {
+            SetSailShaderServerRpc(step);
             SetCooldownServerRpc(false);
             if (step == stepNumber)
             {
@@ -159,6 +186,18 @@ public class MiniGame_Sails : MiniGame
         {
             SetCooldownServerRpc(true);
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetSailShaderServerRpc(byte step)
+    {
+        SetSailShaderClientRpc(step);
+    }
+
+    [ClientRpc]
+    private void SetSailShaderClientRpc(byte step)
+    {
+        SetSailRenderers(step / (float) stepNumber, .5f);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -206,9 +245,8 @@ public class MiniGame_Sails : MiniGame
     private void ResetSailClientRpc(ClientRpcParams parameters)
     {
         // Both players see their sail reset
-        Debug.Log("I've been reset to 0");
         currentStep = 0;
-
+        SetSailRenderers(0, .5f);
         myStep.text = currentStep.ToString();
     }
 

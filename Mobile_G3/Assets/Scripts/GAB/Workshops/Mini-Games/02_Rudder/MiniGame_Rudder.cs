@@ -7,17 +7,16 @@ using UnityEngine;
 public class MiniGame_Rudder : MiniGame
 {
     [SerializeField] private RudderCircularSwipeSetupData data;
+    [SerializeField] private MiniGame_Map mapMiniGame;
 
-    private float currentRotationPerSecond;
+    private float currentRotation;
     [SerializeField] private float2 minMaxRotationPerSecond;
-    
-    public override async void StartMiniGame()
+    [SerializeField] private TMP_Text questIndicator;
+    [SerializeField] private string questStartText;
+
+    public override void StartMiniGame()
     {
-        base.StartMiniGame();
-        
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
-        WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
-        StartExecutingMiniGame();
+        // Map mini-game starts Rudder mini-game
     }
 
     private Vector3 nextValue;
@@ -27,6 +26,7 @@ public class MiniGame_Rudder : MiniGame
         var angle = WorkshopManager.instance.rudderCircularSwipeManager.CalculateCircularSwipe();
         if (angle.HasValue)
         {
+            WorkshopManager.instance.StopMiniGameTutorial();
             nextValue = data.rudder.eulerAngles + Vector3.forward * angle.Value.eulerAngles;
             data.rudder.eulerAngles = nextValue;
 
@@ -34,21 +34,10 @@ public class MiniGame_Rudder : MiniGame
                 ? math.lerp(.5, 1, angle.Value.degrees / data.maxRotationDegree)
                 : math.lerp(0.5, 0, math.abs(angle.Value.degrees) / data.maxRotationDegree);
 
-            currentRotationPerSecond = math.lerp(minMaxRotationPerSecond.y, minMaxRotationPerSecond.x, (float) ratio);
-            ShipManager.instance.SetRotation(currentRotationPerSecond);
-        }
-    }
+            currentRotation = math.lerp(minMaxRotationPerSecond.y, minMaxRotationPerSecond.x, (float) ratio);
 
-    protected override async void ExitMiniGame(bool victory)
-    {
-        StopExecutingMiniGame();
-        WorkshopManager.instance.rudderCircularSwipeManager.Disable();
-        SetRudderRotationServerRpc(data.rudder.eulerAngles.z);
-        
-        WorkshopManager.instance.SetVictoryIndicator();
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
-        
-        base.ExitMiniGame(victory);
+            mapMiniGame.UpdateShipRotationServerRpc(currentRotation, GetOtherPlayerId());
+        }
     }
 
     public override void Reset()
@@ -58,12 +47,75 @@ public class MiniGame_Rudder : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        StopExecutingMiniGame();
+        WorkshopManager.instance.rudderCircularSwipeManager.Disable();
         ExitMiniGame(false);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetRudderRotationServerRpc(float angle)
+    public void InitiateStartOfGameServerRpc(ulong id, string name)
     {
-        data.rudder.eulerAngles = Vector3.forward * angle;
+        var parameters = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] {id}
+            }
+        };
+        InitiateStartOfGameClientRpc(name, parameters);
+    }
+
+    [ClientRpc]
+    private void InitiateStartOfGameClientRpc(string name, ClientRpcParams parameters)
+    {
+        StartMiniGameNetwork(name);
+    }
+
+    private async void StartMiniGameNetwork(string name)
+    {
+        base.StartMiniGame();
+
+        questIndicator.text = $"{questStartText} {name}!";
+        
+        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        
+        WorkshopManager.instance.StartMiniGameTutorial(6);
+        WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
+        StartExecutingMiniGame();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void InitiateEndOfGameServerRpc(ulong id)
+    {
+        var parameters = new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] {id}
+            }
+        };
+
+        InitiateEndOfGameClientRpc(parameters);
+    }
+
+    [ClientRpc]
+    private void InitiateEndOfGameClientRpc(ClientRpcParams parameter)
+    {
+        RudderIsSet();
+    }
+
+    private async void RudderIsSet()
+    {
+        StopExecutingMiniGame();
+        WorkshopManager.instance.mapSwipeManager.Disable();
+        WorkshopManager.instance.SetVictoryIndicator();
+        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+
+        ExitMiniGame(true);
+    }
+
+    private ulong GetOtherPlayerId()
+    {
+        return ((ConnectedWorkshop) WorkshopManager.instance.GetCurrentWorkshop()).GetOtherPlayerId();
     }
 }

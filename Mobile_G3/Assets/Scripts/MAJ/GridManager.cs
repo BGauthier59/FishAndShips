@@ -51,6 +51,7 @@ public class GridManager : MonoSingleton<GridManager>
             Debug.LogError("Tile is not in list. Should not happen.");
             return null;
         }
+
         return grid[index];
     }
 
@@ -78,8 +79,10 @@ public class GridManager : MonoSingleton<GridManager>
                 Debug.LogWarning("Didn't find any tile after trying 100 times. Returns null.");
                 return null;
             }
-        } while (targetedTile == null || targetedTile.GetEntity() != null ||
-                 targetedTile.GetFloor() is not GridFloorWalkable);
+        } while (targetedTile == null || 
+                 targetedTile.GetEntity() != null ||
+                 targetedTile.GetFloor() is not GridFloorWalkable ||
+                 !((GridFloorWalkable) targetedTile.GetFloor()).CanBeTargeted());
 
         return targetedTile;
     }
@@ -92,11 +95,11 @@ public class GridManager : MonoSingleton<GridManager>
         Tile leftTile = GetNeighbourTile(-1, 0);
         Tile upTile = GetNeighbourTile(0, 1);
         Tile downTile = GetNeighbourTile(0, -1);
-        
-        if(rightTile != null) tiles.Add(rightTile);
-        if(leftTile != null) tiles.Add(leftTile);
-        if(upTile != null) tiles.Add(upTile);
-        if(downTile != null) tiles.Add(downTile);
+
+        if (rightTile != null) tiles.Add(rightTile);
+        if (leftTile != null) tiles.Add(leftTile);
+        if (upTile != null) tiles.Add(upTile);
+        if (downTile != null) tiles.Add(downTile);
 
         Tile GetNeighbourTile(int xOffset, int yOffset)
         {
@@ -113,12 +116,12 @@ public class GridManager : MonoSingleton<GridManager>
 
         foreach (var tile in tileToFilter)
         {
-            if (tile.GetEntity() != null) continue; 
+            if (tile.GetEntity() != null) continue;
             foreach (var filter in filters)
             {
                 if (filter == TileFilter.Walkable)
                 {
-                    if(tile.GetFloor() is GridFloorWalkable) filteredTiles.Add(tile);
+                    if (tile.GetFloor() is GridFloorWalkable) filteredTiles.Add(tile);
                 }
             }
         }

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1333987098108680105}
   - component: {fileID: 1333987098108680104}
-  - component: {fileID: 1333987098108680111}
+  - component: {fileID: 1333987099315905221}
   m_Layer: 0
   m_Name: 02_Rudder
   m_TagString: Untagged
@@ -50,7 +50,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &1333987098108680111
+--- !u!114 &1333987099315905221
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1333987098108680106}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0307a24b686bb2419c47ddc7ed68614, type: 3}
+  m_Script: {fileID: 11500000, guid: cbdeab22beb9bcc43baaa744ebc13053, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
@@ -67,11 +67,12 @@ MonoBehaviour:
   positionY: 3
   workshopObject: {fileID: 1333987099322388907}
   associatedMiniGame: {fileID: 0}
+  activationDuration: 20
   isOccupied:
     m_InternalValue: 0
   isActive:
     m_InternalValue: 0
-  isActiveByDefault: 1
+  isActiveByDefault: 0
   enableMultiUsing: 0
   occupationRequireItem: 0
   requiredItem: 0
@@ -105,8 +106,26 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  workshopObjectOffset: {x: 0.15, y: 0, z: 0}
+      - m_Target: {fileID: 1150499462767932331}
+        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  alertAnim: {fileID: 1150499462767932331}
+  alertClip: {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
+  workshopObjectOffset: {x: 0, y: 0, z: 0}
   DEBUG_GridManager: {fileID: 0}
+  other: {fileID: 0}
+  waitingMessage: Someone needs to go to the Map!
+  currentPlayerId:
+    m_InternalValue: 5
 --- !u!1001 &3223706627268652961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -124,6 +143,21 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4140846453755473313, guid: a3f59f7a974674f41a70976933b1a545,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140846453755473313, guid: a3f59f7a974674f41a70976933b1a545,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140846453755473313, guid: a3f59f7a974674f41a70976933b1a545,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4485495249505566213, guid: a3f59f7a974674f41a70976933b1a545,
         type: 3}
       propertyPath: m_Name
@@ -137,7 +171,7 @@ PrefabInstance:
     - target: {fileID: 4485495249505566218, guid: a3f59f7a974674f41a70976933b1a545,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.15
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4485495249505566218, guid: a3f59f7a974674f41a70976933b1a545,
         type: 3}
@@ -186,6 +220,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3f59f7a974674f41a70976933b1a545, type: 3}
+--- !u!111 &1150499462767932331 stripped
+Animation:
+  m_CorrespondingSourceObject: {fileID: 2543281662798912522, guid: a3f59f7a974674f41a70976933b1a545,
+    type: 3}
+  m_PrefabInstance: {fileID: 3223706627268652961}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1333987099322388907 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4485495249505566218, guid: a3f59f7a974674f41a70976933b1a545,
