@@ -143,28 +143,29 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("Should not end while running. Might be an error.");
         }
 
+        var starCount = shipManager.EvaluateStarScore();
         if (victory)
         {
-            LevelManager.instance.UpdateCurrentLevel(true, true, 3); // todo set star count
+            LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
         }
 
         isRunning.Value = false;
-        GameEndsClientRpc(victory);
+        GameEndsClientRpc(victory, starCount);
     }
 
     [ClientRpc]
-    private void GameEndsClientRpc(bool victory)
+    private void GameEndsClientRpc(bool victory, int starCount)
     {
-        GameEndsFeedback(victory);
+        GameEndsFeedback(victory, starCount);
     }
 
-    private async void GameEndsFeedback(bool victory)
+    private async void GameEndsFeedback(bool victory, int starCount)
     {
         Debug.Log("End of game!");
         await CinematicCanvasManager.instance.EndCinematic();
 
         canvasManager.DisplayCanvas(CanvasType.EndGame);
-        EndOfGameCanvasManager.instance.SetupCanvas(NetworkManager.Singleton.IsHost, victory);
+        EndOfGameCanvasManager.instance.SetupCanvas(NetworkManager.Singleton.IsHost, victory, starCount);
     }
 
     #endregion

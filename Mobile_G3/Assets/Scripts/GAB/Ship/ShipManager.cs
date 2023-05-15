@@ -21,6 +21,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     [SerializeField] private UnityEvent shootEvent;
     [SerializeField] private Transform shootVfxTransform;
 
+    [SerializeField] private int3 starScores;
+
     #region Ship Behaviour
 
     public void StartGameLoop()
@@ -43,12 +45,8 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     
     public void TakeDamage(int damage)
     {
+        // Host only
         SetCurrentLifeServerRpc(currentBoatLife.Value - damage);
-    }
-
-    public void SetRegenerationAbility(bool active)
-    {
-        canRegenerate = active;
     }
 
     #endregion
@@ -80,4 +78,14 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     
 
     #endregion
+
+    public int EvaluateStarScore()
+    {
+        var score = currentBoatLife.Value;
+        var count = 0;
+        if (score > starScores.x) count++;
+        if (score >= starScores.y) count++;
+        if (score >= starScores.z) count++;
+        return count;
+    }
 }
