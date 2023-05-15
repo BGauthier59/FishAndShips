@@ -135,7 +135,8 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         
         while (moveTimer < moveDuration)
         {
-            workshopObject.position = Vector3.Lerp(oldPosition, newPosition, ratio) +
+            workshopObject.position =
+                Vector3.Lerp(oldPosition, newPosition, ratio) +
                                       (Vector3.up * moveAmplitudeY.Evaluate(ratio));
             workshopObject.rotation = Quaternion.Lerp(oldRotation, nextRotation, ratio);
             await Task.Yield();
@@ -143,7 +144,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
             ratio = moveTimer / moveDuration;
         }
 
-        workshopObject.position = newPosition;
+        workshopObject.position = feedbackTransform.position = newPosition;
         
         var random = Random.Range(0, 3);
         if (random == 1) animation.Play(idle1.name);
