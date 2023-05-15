@@ -151,6 +151,11 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         
         await Task.Delay((int) (1000 * durationBetweenEvents));
 
+        if (!GameManager.instance.IsGameRunning())
+        {
+            Debug.Log("Can't start any event");
+            return;
+        }
         do
         {
             tempEvent = allRandomEvents[Random.Range(0, allRandomEvents.Length)];

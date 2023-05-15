@@ -271,5 +271,10 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         isRunning.Value = true;
     }
 
+    public bool IsGameRunning()
+    {
+        return isRunning.Value || !isGameCancelledBecauseOfDisconnection.Value;
+    }
+
     #endregion
 }
