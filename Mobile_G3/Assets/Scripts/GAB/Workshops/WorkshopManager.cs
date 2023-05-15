@@ -94,6 +94,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
             if (workshop.GetCurrentPlayer().GetInventoryObject() != requiredItem.Value)
             {
                 Debug.LogWarning("You don't owe the required item!");
+                workshop.PlayRequiredItemInvalid();
                 return;
             }
         }

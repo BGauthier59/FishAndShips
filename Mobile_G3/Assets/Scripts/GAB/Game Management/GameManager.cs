@@ -79,6 +79,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         while (!isRunning.Value) await Task.Yield();
 
         Debug.Log("Start game loop!");
+        GridControlManager.instance.StartGameLoop();
         shipManager.StartGameLoop();
         workshopManager.StartGameLoop();
         eventsManager.StartGameLoop();
