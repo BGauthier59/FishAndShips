@@ -30,7 +30,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
         if (NetworkManager.Singleton.IsHost)
         {
             SetCurrentLifeServerRpc(maxLife);
-            SetStarCountClientRpc(0);
+            //SetStarCountClientRpc(0);
         }
     }
 
@@ -66,12 +66,6 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private void SetCurrentLifeClientRpc(int life)
     {
         MainCanvasManager.instance.SetLifeOnDisplay(life, maxLife);
-    }
-
-    [ClientRpc]
-    private void SetStarCountClientRpc(int count)
-    {
-        MainCanvasManager.instance.SetStarOnDisplay(count);
     }
 
     #endregion

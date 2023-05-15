@@ -32,6 +32,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [Header("Feedbacks")] [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
     [SerializeField] protected UnityEvent winEvent;
+    [SerializeField] protected UnityEvent loseEvent;
     [SerializeField] private Animation alertAnim;
     [SerializeField] private AnimationClip alertClip;
     [SerializeField] private Vector3 workshopObjectOffset;
@@ -148,7 +149,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     protected virtual async void StartActivationDuration()
     {
         float duration = (int) (1000 * activationDuration);
-        
+
         await Task.Delay((int) (duration * .75f));
         alertAnim.Play(alertClip.name);
         await Task.Delay((int) (duration * .25f));
@@ -165,7 +166,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         Debug.Log($"You lost {name}");
         ShipManager.instance.TakeDamage(10);
         Deactivate(true, 6); // This is not a victory, only means to disable mini-game
-        // 6 as parameter is a trick for Series Workshop!
+        // 6 as parameter is a trick for Series Workshop and loss management!
     }
 
     [ClientRpc]
@@ -191,7 +192,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
         if (victory)
         {
             SetActiveServerRpc(false);
-            GetDeactivatedClientRpc();
+            GetDeactivatedClientRpc(playerId !=
+                                    6); // If playerId is 6, it means the workshop has been lost because of timer
             if (type == WorkshopType.Temporary)
             {
                 RemoveWorkshopFromGridClientRpc();
@@ -202,9 +204,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
     }
 
     [ClientRpc]
-    private void GetDeactivatedClientRpc()
+    private void GetDeactivatedClientRpc(bool victory)
     {
-        winEvent?.Invoke();
+        if (victory) winEvent?.Invoke();
+        else loseEvent?.Invoke();
         deactivationEvent?.Invoke();
     }
 
