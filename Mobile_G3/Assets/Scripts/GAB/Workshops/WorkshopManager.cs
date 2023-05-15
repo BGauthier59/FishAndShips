@@ -33,7 +33,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public ReparationDragAndDropManager reparationDragAndDrop;
 
     [SerializeField] private MiniGameSwipeIndicatorPoints[] swipeTutorialData;
-
+    
     [Serializable]
     public struct MiniGameSwipeIndicatorPoints
     {

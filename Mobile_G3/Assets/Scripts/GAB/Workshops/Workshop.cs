@@ -31,11 +31,13 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     [Header("Feedbacks")] [SerializeField] protected UnityEvent activationEvent;
     [SerializeField] protected UnityEvent deactivationEvent;
+    [SerializeField] protected UnityEvent winEvent;
     [SerializeField] private Animation alertAnim;
     [SerializeField] private AnimationClip alertClip;
     [SerializeField] private Vector3 workshopObjectOffset;
     [SerializeField] private Animation requiredItemAnim;
     [SerializeField] private AnimationClip requiredItemClip;
+    [SerializeField] protected Transform feedbackTransform;
 
     public virtual void Start()
     {
@@ -89,7 +91,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
             positionY == -1) // SetPosition was called on a workshop removed from grid. Must set positions here
         {
             if (posX != -1 && posY != -1)
-                workshopObject.position =
+                workshopObject.position = feedbackTransform.position =
                     DEBUG_GridManager.GetTile(posX, posY).transform.position + workshopObjectOffset;
         }
 
@@ -113,6 +115,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         // Set workshop position, might be override to allow animations if they are needed
         workshopObject.position = newPosition;
+        feedbackTransform.position = newPosition;
         currentTile.SetTile(this, currentTile.GetFloor());
     }
 
@@ -201,6 +204,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [ClientRpc]
     private void GetDeactivatedClientRpc()
     {
+        winEvent?.Invoke();
         deactivationEvent?.Invoke();
     }
 
