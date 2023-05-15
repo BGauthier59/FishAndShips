@@ -28,9 +28,10 @@ public class MiniGame_Map : MiniGame
     [SerializeField] private Island[] islands;
     private Island currentIsland;
     [SerializeField] private float spawnRadius;
+    [SerializeField] private float minDistanceFromPlayer;
 
     [Serializable]
-    public struct Island
+    public class Island
     {
         public Transform transform;
         public string name;
@@ -39,25 +40,26 @@ public class MiniGame_Map : MiniGame
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
-        SetupIslandAndRotation();
+        await SetupIslandAndRotation();
 
         await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
-        
+
         WorkshopManager.instance.StartMiniGameTutorial(5);
         WorkshopManager.instance.mapSwipeManager.Enable(data);
         StartExecutingMiniGame();
     }
 
     private Vector3 delta;
+
     public override void ExecuteMiniGame()
     {
         // Can move the map
         delta = WorkshopManager.instance.mapSwipeManager.CalculateMoveDelta();
-        
-        if(delta != Vector3.zero) WorkshopManager.instance.StopMiniGameTutorial();
-        
+
+        if (delta != Vector3.zero) WorkshopManager.instance.StopMiniGameTutorial();
+
         miniGameMapPosition += delta;
-        
+
         if (miniGameMapPosition.x < leftRightBottomTopBorders.x) miniGameMapPosition.x = leftRightBottomTopBorders.x;
         else if (miniGameMapPosition.x > leftRightBottomTopBorders.y)
             miniGameMapPosition.x = leftRightBottomTopBorders.y;
@@ -79,6 +81,7 @@ public class MiniGame_Map : MiniGame
     }
 
     private bool isRight;
+
     private bool IsRotationAlright()
     {
         if (Vector3.Dot(ship.right, rightDirection) > collinearFactorThreshold)
@@ -88,6 +91,7 @@ public class MiniGame_Map : MiniGame
                 timer = 0;
                 isRight = true;
             }
+
             if (timer >= validationDuration) return true;
             timer += Time.deltaTime;
             return false;
@@ -109,8 +113,9 @@ public class MiniGame_Map : MiniGame
         ExitMiniGame(false);
     }
 
-    private void SetupIslandAndRotation()
+    private async Task SetupIslandAndRotation()
     {
+        // WARNING! This operation can be very long?
         posY = miniGameMap.localPosition.y;
 
         currentIsland = islands[Random.Range(0, islands.Length)];
@@ -122,8 +127,34 @@ public class MiniGame_Map : MiniGame
             island.transform.position = pos;
         }
 
-        rightDirection = (currentIsland.transform.position - ship.position).normalized;
+        Vector3 randomPos;
+        float dot;
+        float distance;
+        foreach (var island in islands)
+        {
+            do
+            {
+                // Set random position
+                randomPos = Random.insideUnitCircle * spawnRadius;
+                randomPos.z = randomPos.y;
+                randomPos.y = 0;
+                island.transform.position = ship.position + randomPos;
+                
+                // Set right direction for current island
+                if (island == currentIsland)
+                    rightDirection = (currentIsland.transform.position - ship.position).normalized;
+                
+                // Make sure dot product is not right at the beginning of the game
+                dot = Vector3.Dot(ship.right, rightDirection);
 
+                // Calculate distance between island and ship
+                distance = Vector3.Distance(ship.position, island.transform.position);
+
+                await Task.Yield();
+
+            } while (distance < minDistanceFromPlayer || (island == currentIsland && dot >= collinearFactorThreshold));
+        }
+        
         rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
     }
 
