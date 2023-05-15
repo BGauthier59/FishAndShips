@@ -29,15 +29,17 @@ public class LevelManager : MonoSingleton<LevelManager>
     {
         var current = allLevels[currentLevel];
         current.isWon = victory;
-        current.starCount = starCount;
+
+        if (current.starCount < starCount)
+            current.starCount = starCount; // We only save data if star count is greater than before
 
         SaveData.LevelData data = new SaveData.LevelData()
         {
             isUnlocked = unlocked,
             isWon = victory,
-            starCount = starCount
+            starCount = current.starCount
         };
-        
+
         SaveManager.instance.UpdateCurrentLevelData(data, currentLevel);
 
         if (currentLevel + 1 == allLevels.Length)
@@ -46,19 +48,19 @@ public class LevelManager : MonoSingleton<LevelManager>
             SaveManager.instance.SaveCurrentData();
             return;
         }
-        
+
         var next = allLevels[currentLevel + 1];
         next.isUnlocked = true;
         next.isWon = false;
         next.starCount = 0;
-        
+
         SaveData.LevelData dataNext = new SaveData.LevelData()
         {
             isUnlocked = true,
             isWon = false,
             starCount = 0
         };
-        
+
         SaveManager.instance.UpdateCurrentLevelData(dataNext, currentLevel + 1);
         SaveManager.instance.SaveCurrentData();
     }

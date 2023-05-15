@@ -24,7 +24,7 @@ public class TimerManager : MonoSingleton<TimerManager>
             if (currentDuration <= -1)
             {
                 currentDuration = 0;
-                if(NetworkManager.Singleton.IsHost) GameManager.instance.GameEnds(false);
+                if(NetworkManager.Singleton.IsHost) GameManager.instance.GameEnds(true);
             }
             else MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
         }

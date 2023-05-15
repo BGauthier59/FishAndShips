@@ -22,13 +22,13 @@ public class TutorialManager : MonoSingleton<TutorialManager>
         displayTutorialAnim.gameObject.SetActive(true);
         displayTutorialAnim.Play(displayTutorialClip.name);
 
-        await Task.Delay((int) (1000 * displayTutorialClip.length));
+        await Task.Delay((int) (500 * displayTutorialClip.length));
     }
 
     public async Task DisableTutorial()
     {
         displayTutorialAnim.Play(disableTutorialClip.name);
-        await Task.Delay((int) (1000 * disableTutorialClip.length));
+        await Task.Delay((int) (500 * disableTutorialClip.length));
 
         displayTutorialAnim.gameObject.SetActive(false);
     }

@@ -98,13 +98,11 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     public void AddHole()
     {
         currentHoleCount++;
-        ShipManager.instance.SetRegenerationAbility(false);
     }
 
     public void RemoveHole()
     {
         currentHoleCount--;
-        if (currentHoleCount == 0) ShipManager.instance.SetRegenerationAbility(true);
     }
 
     public int? GetReparationWorkshopIndex()
@@ -149,8 +147,15 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
     private async void TryGenerateNewRandomEvent()
     {
+        // Todo - prevent events if game is over
+        
         await Task.Delay((int) (1000 * durationBetweenEvents));
 
+        if (!GameManager.instance.IsGameRunning())
+        {
+            Debug.Log("Can't start any event");
+            return;
+        }
         do
         {
             tempEvent = allRandomEvents[Random.Range(0, allRandomEvents.Length)];

@@ -9,8 +9,14 @@ public class GridControlManager : MonoSingleton<GridControlManager>
 {
     public bool upKeyPressed,downKeyPressed,leftKeyPressed,rightKeyPressed;
     public RectTransform[] buttons;
+    private bool isActive;
 
-    public void OnKeyPressed(int key)
+    public void StartGameLoop()
+    {
+        isActive = true;
+    }
+    
+    private void OnKeyPressed(int key)
     {
         switch (key)
         {
@@ -32,6 +38,8 @@ public class GridControlManager : MonoSingleton<GridControlManager>
     [UsedImplicitly]
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
     {
+        if (!isActive) return;
+        
         if (ctx.started)
         {
             TapOnScreen(Input.mousePosition);

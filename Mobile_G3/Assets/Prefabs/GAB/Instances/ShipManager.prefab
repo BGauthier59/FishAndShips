@@ -51,36 +51,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55fb60a4ab61730459c608278a9d04c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  realMap: {fileID: 0}
-  boatTransformOnMap: {fileID: 0}
-  mapPosition: {x: 0, y: 0, z: 0}
-  leftRightBottomTopBorder:
-    x: -16
-    y: 16
-    z: -9
-    w: 9
-  previewPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  previewPointsCalculatedParent: {fileID: 0}
-  previewPointsCalculatingParent: {fileID: 0}
-  mapMiniGame: {fileID: 0}
-  boatCollisionRayOrigin: {fileID: 0}
-  boatCollisionLayerMask:
-    serializedVersion: 2
-    m_Bits: 256
-  referenceBoatSpeed: 0.2
-  distanceBetweenPreviewPoints: 1
   maxLife: 100
-  previewPointsLocalScale: {x: 0.1, y: 0.1, z: 1}
-  previewPointsEulerAngles: {x: 90, y: 0, z: 0}
-  rotationGapToWritePointOnLine: 10
-  collisionDetectionRayLength: 2
   leftTopCannonOrigin: {fileID: 5050849415955258208}
   rightTopCannonOrigin: {fileID: 7982148310747907259}
   leftBottomCannonOrigin: {fileID: 3563568449140171990}
@@ -89,7 +60,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   regenerationPerSecond: 1
-  collisionWarningAnim: {fileID: 3763730948434318675}
   shootEvent:
     m_PersistentCalls:
       m_Calls:
@@ -106,15 +76,10 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   shootVfxTransform: {fileID: 2029206151532585684}
-  enterDangerZoneEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  exitDangerZoneEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  collideEvent:
-    m_PersistentCalls:
-      m_Calls: []
+  starScores:
+    x: 25
+    y: 50
+    z: 75
 --- !u!114 &391967020182770581
 MonoBehaviour:
   m_ObjectHideFlags: 0

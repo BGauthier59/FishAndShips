@@ -8,7 +8,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
     private NetworkVariable<int> currentBoatLife = new NetworkVariable<int>();
     [SerializeField] private int maxLife;
-    
+
     [SerializeField]
     private Transform leftTopCannonOrigin, rightTopCannonOrigin, leftBottomCannonOrigin, rightBottomCannonOrigin;
 
@@ -17,9 +17,11 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private bool canRegenerate;
     [SerializeField] private int regenerationPerSecond;
     private float regenerationTimer;
-    
+
     [SerializeField] private UnityEvent shootEvent;
     [SerializeField] private Transform shootVfxTransform;
+
+    [SerializeField] private int3 starScores;
 
     #region Ship Behaviour
 
@@ -34,28 +36,22 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     public void UpdateGameLoop()
     {
-        
     }
 
     #endregion
 
     #region Data Setter
-    
+
     public void TakeDamage(int damage)
     {
+        // Host only
         SetCurrentLifeServerRpc(currentBoatLife.Value - damage);
-    }
-
-    public void SetRegenerationAbility(bool active)
-    {
-        canRegenerate = active;
     }
 
     #endregion
 
     #region Network
 
- 
     [ServerRpc(RequireOwnership = true)]
     private void SetCurrentLifeServerRpc(int life)
     {
@@ -77,7 +73,18 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         MainCanvasManager.instance.SetStarOnDisplay(count);
     }
-    
 
     #endregion
+
+    public int EvaluateStarScore()
+    {
+        var score = currentBoatLife.Value;
+        Debug.Log($"Ship life value was {score}");
+
+        var count = 0;
+        if (score >= starScores.x) count++;
+        if (score >= starScores.y) count++;
+        if (score >= starScores.z) count++;
+        return count;
+    }
 }

@@ -34,6 +34,8 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [SerializeField] private Animation alertAnim;
     [SerializeField] private AnimationClip alertClip;
     [SerializeField] private Vector3 workshopObjectOffset;
+    [SerializeField] private Animation requiredItemAnim;
+    [SerializeField] private AnimationClip requiredItemClip;
 
     public virtual void Start()
     {
@@ -249,6 +251,12 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         if (!occupationRequireItem) return null;
         return requiredItem;
+    }
+
+    public void PlayRequiredItemInvalid()
+    {
+        if (requiredItemAnim.isPlaying) return;
+        requiredItemAnim.Play(requiredItemClip.name);
     }
 
     public PlayerManager GetCurrentPlayer()
