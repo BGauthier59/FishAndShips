@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -77,7 +78,7 @@ public class MiniGame_Rudder : MiniGame
 
         questIndicator.text = $"{questStartText} {name}!";
         
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         
         WorkshopManager.instance.StartMiniGameTutorial(6);
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
@@ -109,7 +110,7 @@ public class MiniGame_Rudder : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.mapSwipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
 
         ExitMiniGame(true);
     }

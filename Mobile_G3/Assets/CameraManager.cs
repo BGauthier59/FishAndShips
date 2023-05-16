@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -77,7 +78,7 @@ public class CameraManager : MonoSingleton<CameraManager>
             ratio = timer / smoothTime;
             transform.position = Vector3.Lerp(startPos, current.pos, ratio);
             transform.eulerAngles = Vector3.Slerp(startEul, current.rot, ratio);
-            await Task.Yield();
+            await UniTask.Yield();
             timer += Time.deltaTime;
         }
     }
@@ -97,7 +98,7 @@ public class CameraManager : MonoSingleton<CameraManager>
         startEventText.text = text;
         startEventAnim.gameObject.SetActive(true);
         startEventAnim.Play(startEventClip.name);
-        await Task.Delay((int) (1000 * startEventClip.length));
+        await UniTask.Delay((int) (1000 * startEventClip.length));
         startEventAnim.gameObject.SetActive(false);
     }
 }

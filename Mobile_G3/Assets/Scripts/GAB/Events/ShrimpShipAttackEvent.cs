@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using TMPro;
 using Unity.Mathematics;
@@ -99,7 +100,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         for (int i = 0; i < reparationCount; i++)
         {
             randomCooldown = Random.Range(300, 701);
-            await Task.Delay(randomCooldown);
+            await UniTask.Delay(randomCooldown);
             if (await Fire()) continue;
             break;
         }
@@ -113,7 +114,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         for (int i = 0; i < shrimpsCount; i++)
         {
             randomCooldown = Random.Range(300, 701);
-            await Task.Delay(randomCooldown);
+            await UniTask.Delay(randomCooldown);
             if (await ComeAlongside()) continue;
             break;
         }
@@ -121,9 +122,9 @@ public class ShrimpShipAttackEvent : RandomEvent
         count += shrimpsCount;
     }
 
-    private async Task WaitForEveryWorkshopInstantiation()
+    private async UniTask WaitForEveryWorkshopInstantiation()
     {
-        while (count != totalCount) await Task.Yield();
+        while (count != totalCount) await UniTask.Yield();
     }
 
     [ClientRpc]
@@ -140,7 +141,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         if (!NetworkManager.Singleton.IsHost) MoveToWayPoint(wayPoints[0].position, wayPoints[1].position);
     }
 
-    private async Task MoveToWayPoint(Vector3 start, Vector3 end)
+    private async UniTask MoveToWayPoint(Vector3 start, Vector3 end)
     {
         float timer = 0;
         ship.position = start;
@@ -148,7 +149,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         while (timer < moveDuration)
         {
             ship.position = Ex.CubicBezierCurve(start, start, end, end, timer / moveDuration);
-            await Task.Yield();
+            await UniTask.Yield();
             timer += Time.deltaTime;
         }
 
@@ -185,7 +186,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #region Fire
 
-    private async Task<bool> Fire()
+    private async UniTask<bool> Fire()
     {
         if (!EventsManager.instance.CanInstantiateHole())
         {
@@ -220,7 +221,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         int2 coord = targetedTile.GetTilePos();
         FireFeedbackClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
 
-        await Task.Delay((int) (fireAnimationDuration * 1000));
+        await UniTask.Delay((int) (fireAnimationDuration * 1000));
 
         return true;
     }
@@ -248,7 +249,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         var timer = 0f;
         while (timer < fireAnimationDuration)
         {
-            await Task.Yield();
+            await UniTask.Yield();
             timer += Time.deltaTime;
             bullet.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / fireAnimationDuration);
         }
@@ -273,7 +274,7 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     #region InstantiateShrimp
 
-    private async Task<bool> ComeAlongside()
+    private async UniTask<bool> ComeAlongside()
     {
         if (!EventsManager.instance.CanInstantiateShrimpWorkshop())
         {
@@ -307,7 +308,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         int2 coord = targetedTile.GetTilePos();
         SpawnShrimpClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
 
-        await Task.Delay((int) (spawnDuration * 1000));
+        await UniTask.Delay((int) (spawnDuration * 1000));
 
         return true;
     }

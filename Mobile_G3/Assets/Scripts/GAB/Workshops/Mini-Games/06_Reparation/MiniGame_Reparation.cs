@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -35,7 +36,7 @@ public class MiniGame_Reparation : MiniGame
         SetupHole();
         WorkshopManager.instance.reparationDragAndDrop.OnSetPlank = CheckPlanks;
 
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.reparationDragAndDrop.Enable(data);
         WorkshopManager.instance.StartMiniGameTutorial(4);
@@ -74,7 +75,7 @@ public class MiniGame_Reparation : MiniGame
         WorkshopManager.instance.reparationDragAndDrop.Disable();
         StopExecutingMiniGame();
         WorkshopManager.instance.SetVictoryIndicator();
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         ExitMiniGame(true);
     }
 

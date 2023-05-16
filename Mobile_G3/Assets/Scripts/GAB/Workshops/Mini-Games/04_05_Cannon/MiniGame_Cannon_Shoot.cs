@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,7 +27,7 @@ public class MiniGame_Cannon_Shoot : MiniGame
             fireStop.Play();
         };
         
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.cannonDragAndDropManager.Enable(data);
         WorkshopManager.instance.StartMiniGameTutorial(3);
         StartExecutingMiniGame();
@@ -55,7 +56,7 @@ public class MiniGame_Cannon_Shoot : MiniGame
         //ShipManager.instance.FireServerRpc(index);
         
         WorkshopManager.instance.SetVictoryIndicator();
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         
         ExitMiniGame(true);
     }

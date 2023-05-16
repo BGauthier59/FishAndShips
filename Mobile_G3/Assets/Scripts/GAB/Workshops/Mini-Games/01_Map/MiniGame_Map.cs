@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -42,7 +43,7 @@ public class MiniGame_Map : MiniGame
         base.StartMiniGame();
         await SetupIslandAndRotation();
 
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.StartMiniGameTutorial(5);
         WorkshopManager.instance.mapSwipeManager.Enable(data);
@@ -113,7 +114,7 @@ public class MiniGame_Map : MiniGame
         ExitMiniGame(false);
     }
 
-    private async Task SetupIslandAndRotation()
+    private async UniTask SetupIslandAndRotation()
     {
         // WARNING! This operation can be very long?
         posY = miniGameMap.localPosition.y;
@@ -150,7 +151,7 @@ public class MiniGame_Map : MiniGame
                 // Calculate distance between island and ship
                 distance = Vector3.Distance(ship.position, island.transform.position);
 
-                await Task.Yield();
+                await UniTask.Yield();
 
             } while (distance < minDistanceFromPlayer || (island == currentIsland && dot >= collinearFactorThreshold));
         }
@@ -165,7 +166,7 @@ public class MiniGame_Map : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.mapSwipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
 
         ExitMiniGame(true);
     }

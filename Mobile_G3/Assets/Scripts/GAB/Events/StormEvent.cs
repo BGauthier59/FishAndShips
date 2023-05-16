@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -34,7 +35,7 @@ public class StormEvent : RandomEvent
         GenerateSailsWorkshop();
         // todo - wait for fire mini-games
 
-        await Task.Delay(2000);
+        await UniTask.Delay(2000);
         
         EndEvent();
     }

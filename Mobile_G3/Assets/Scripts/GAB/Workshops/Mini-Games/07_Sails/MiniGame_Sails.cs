@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -61,18 +62,17 @@ public class MiniGame_Sails : MiniGame
         }
 
 
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
-        if(IsFirstPlayer()) WorkshopManager.instance.StartMiniGameTutorial(7);
+        if (IsFirstPlayer()) WorkshopManager.instance.StartMiniGameTutorial(7);
         else WorkshopManager.instance.StartMiniGameTutorial(8);
-        
+
         WorkshopManager.instance.swipeManager.Enable(currentData);
         StartExecutingMiniGame();
     }
 
     private async void SetSailRenderers(float ratioValue, float duration)
     {
-        canSwipe = false;
         float currentValue = sailsRenderers[0].material.GetFloat(Ratio);
         float timer = 0f;
 
@@ -83,7 +83,7 @@ public class MiniGame_Sails : MiniGame
                 rd.material.SetFloat(Ratio, math.lerp(currentValue, ratioValue, timer / duration));
             }
 
-            await Task.Yield();
+            await UniTask.Yield();
             timer += Time.deltaTime;
         }
 
@@ -97,15 +97,16 @@ public class MiniGame_Sails : MiniGame
 
     public override void ExecuteMiniGame()
     {
+        if (IsFirstPlayer() && isCooldown.Value) CheckTimer();
+
         if (!canSwipe) return;
         if (WorkshopManager.instance.swipeManager.CalculateSwipe() && currentStep < stepNumber)
         {
             currentStep++;
             myStep.text = currentStep.ToString();
+            canSwipe = false;
             SetSailStateServerRpc(GetOtherPlayerId(), currentStep);
         }
-
-        if (IsFirstPlayer() && isCooldown.Value) CheckTimer();
     }
 
     private void CheckTimer()
@@ -126,7 +127,7 @@ public class MiniGame_Sails : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         ExitMiniGame(true);
     }
 

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -76,7 +77,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             else isRunning.Value = true;
         }
 
-        while (!isRunning.Value) await Task.Yield();
+        while (!isRunning.Value) await UniTask.Yield();
 
         Debug.Log("Start game loop!");
         GridControlManager.instance.StartGameLoop();
@@ -233,7 +234,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             await TutorialManager.instance.DisplayTutorial(currentTutorial, currentTutorialIndex);
             needToClick = true;
             needTutorialRefresh = true;
-            while (needTutorialRefresh) await Task.Yield();
+            while (needTutorialRefresh) await UniTask.Yield();
         }
 
         currentTutorialIndex = tutorialMaxIndex;
@@ -267,7 +268,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private async void FinishTutorial()
     {
-        await Task.Delay(500);
+        await UniTask.Delay(500);
         isRunning.Value = true;
     }
 

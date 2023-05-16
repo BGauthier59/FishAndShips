@@ -8,7 +8,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
-public class ConnectionManager : MonoSingleton<ConnectionManager>
+public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
 {
     private string hostIp;
     public Dictionary<ulong, PlayerManager> players = new();
@@ -40,7 +40,11 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
 
         hostIp = GetIPv4AddressMobile();
         transport.SetConnectionData(hostIp, transport.ConnectionData.Port);
-        NetworkManager.Singleton.StartHost();
+        bool done = NetworkManager.Singleton.StartHost();
+        if (!done)
+        {
+            Debug.Log("Connection failed.");
+        }
         return StringUtils.NumberToLetterIP(hostIp);
     }
 
@@ -49,12 +53,32 @@ public class ConnectionManager : MonoSingleton<ConnectionManager>
         if (NetworkManager.Singleton.IsClient)
         {
             Debug.LogWarning("Already client!");
+            if (transport.ConnectionData.Address == ip)
+            {
+                Debug.LogWarning("Same IP. Don't reconnect");
+                return;
+            }
+            Debug.LogWarning("Ask for disconnection!");
+
+            AskForDisconnectionServerRpc(NetworkManager.Singleton.LocalClientId);
             return;
         }
 
         Debug.Log(ip);
         transport.SetConnectionData(StringUtils.LetterToNumberIP(ip), transport.ConnectionData.Port);
-        NetworkManager.Singleton.StartClient();
+        bool done = NetworkManager.Singleton.StartClient();
+        if (!done)
+        {
+            Debug.Log("Connection failed.");
+        }
+    }
+
+    [ServerRpc]
+    private void AskForDisconnectionServerRpc(ulong id)
+    {
+        Debug.LogWarning("Server disconnects client");
+
+        NetworkManager.Singleton.DisconnectClient(id);
     }
 
     private void SetConnectionCallback()

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
+using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -30,7 +31,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     {
         while (WorkshopManager.instance == null)
         {
-            await Task.Yield();
+            await UniTask.Yield();
         }
 
         WorkshopManager.instance.AddUpdatedWorkshop(this);
@@ -139,7 +140,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
                 Vector3.Lerp(oldPosition, newPosition, ratio) +
                                       (Vector3.up * moveAmplitudeY.Evaluate(ratio));
             workshopObject.rotation = Quaternion.Lerp(oldRotation, nextRotation, ratio);
-            await Task.Yield();
+            await UniTask.Yield();
             moveTimer += Time.deltaTime;
             ratio = moveTimer / moveDuration;
         }

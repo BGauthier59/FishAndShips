@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -149,7 +150,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     {
         // Todo - prevent events if game is over
         
-        await Task.Delay((int) (1000 * durationBetweenEvents));
+        await UniTask.Delay((int) (1000 * durationBetweenEvents));
 
         if (!GameManager.instance.IsGameRunning())
         {
@@ -159,12 +160,12 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         do
         {
             tempEvent = allRandomEvents[Random.Range(0, allRandomEvents.Length)];
-            await Task.Yield();
+            await UniTask.Yield();
             // While loop in async methods should not be a problem as long as we await for Task.Yield()
         } while (!tempEvent.CheckConditions() || tempEvent == lastEvent);
 
         StartEventFeedbackClientRpc(tempEvent.startEventText);
-        await Task.Delay(2500);
+        await UniTask.Delay(2500);
         lastEvent = tempEvent;
         StartNewEvent(tempEvent);
     }

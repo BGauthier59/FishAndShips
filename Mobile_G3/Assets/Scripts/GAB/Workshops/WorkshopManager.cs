@@ -311,6 +311,13 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         // 7 is Sails (left)
         // 8 is Sails (right)
         
+        // 9 is shrimp from left
+        // 10 is shrimp from right
+        // 11 is shrimp from bottom left
+        // 12 is shrimp from bottom right
+        // 13 is shrimp from top left
+        // 14 is shrimp from top right
+        
         currentIndex = index;
         isShowingTutorial = true;
         ExecuteMiniGameTutorial();

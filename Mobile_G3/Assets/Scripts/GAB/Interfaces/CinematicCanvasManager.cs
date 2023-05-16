@@ -1,5 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class CinematicCanvasManager : MonoSingleton<CinematicCanvasManager>
@@ -8,7 +9,7 @@ public class CinematicCanvasManager : MonoSingleton<CinematicCanvasManager>
     [SerializeField] private AnimationClip introductionCinematicClip;
     [SerializeField] private AnimationClip endCinematicClip;
 
-    public async Task IntroductionCinematic()
+    public async UniTask IntroductionCinematic()
     {
         // Todo - cinématique d'introduction
         CanvasManager.instance.DisplayCanvas(CanvasType.IntroductionCinematicCanvas);
@@ -18,7 +19,7 @@ public class CinematicCanvasManager : MonoSingleton<CinematicCanvasManager>
         CanvasManager.instance.DisplayCanvas(CanvasType.ControlCanvas, CanvasType.TimerCanvas);
     }
 
-    public async Task EndCinematic()
+    public async UniTask EndCinematic()
     {
         // Todo - cinématique de fin
         CanvasManager.instance.DisplayCanvas(CanvasType.EndCinematicCanvas);

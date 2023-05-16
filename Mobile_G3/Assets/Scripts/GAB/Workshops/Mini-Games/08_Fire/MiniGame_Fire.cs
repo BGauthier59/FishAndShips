@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class MiniGame_Fire : MiniGame
@@ -20,7 +21,7 @@ public class MiniGame_Fire : MiniGame
         base.StartMiniGame();
         
         // Enables Gyroscope
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.gyroscopeManager.Enable(data);
         StartExecutingMiniGame();
     }

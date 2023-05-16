@@ -113,6 +113,4 @@ public static class StringUtils
 
         return output.ToString().TrimEnd('.');
     }
-
-
 }

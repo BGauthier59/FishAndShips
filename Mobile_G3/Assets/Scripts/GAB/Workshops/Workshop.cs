@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -109,6 +110,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         currentTile = DEBUG_GridManager.GetTile(posX, posY);
         if (currentTile.transform == null)
         {
+            // Set feedback position for workshops that are not on a tile
             feedbackTransform.position = workshopObject.position;
             return;
         }
@@ -154,13 +156,14 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         float duration = (int) (1000 * activationDuration);
 
-        await Task.Delay((int) (duration * .75f));
+        await UniTask.Delay((int) (duration * .75f));
         alertAnim.Play(alertClip.name);
-        await Task.Delay((int) (duration * .25f));
+        await UniTask.Delay((int) (duration * .25f));
 
         while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
 
-        await Task.Delay(100);
+        await UniTask.Delay(100);
+        //await Task.Delay(100);
         if (!isActive.Value)
         {
             Debug.LogWarning("You won workshop after timer is over. It's still supposed to be a victory.");
