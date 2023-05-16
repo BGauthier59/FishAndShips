@@ -54,11 +54,11 @@ public class SeriesWorkshop : Workshop
         activationEvents[index]?.Invoke();
     }
 
-    protected override void Deactivate(bool victory, ulong playerId = 5)
+    protected override void Deactivate(bool? victory, ulong? playerId)
     {
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
 
-        if (!victory)
+        if (victory.HasValue && !victory.Value)
         {
             SetOccupiedServerRpc(false);
             return;
@@ -84,12 +84,12 @@ public class SeriesWorkshop : Workshop
         {
             Send = new ClientRpcSendParams()
             {
-                TargetClientIds = new ulong[] {playerId}
+                TargetClientIds = new ulong[] {playerId.Value}
             }
         };
         InitiateWorkshopInteractionClientRpc(currentMiniGameIndex.Value, parameters);
     }
-    
+
     [ClientRpc]
     private void SeriesWorkshopGetDeactivatedClientRpc(int index)
     {

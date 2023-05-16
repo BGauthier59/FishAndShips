@@ -110,6 +110,8 @@ public class MiniGame_Rudder : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.mapSwipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
+        
+        Debug.Log("???");
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
 
         ExitMiniGame(true);

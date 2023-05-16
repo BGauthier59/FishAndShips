@@ -172,8 +172,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
         Debug.Log($"You lost {name}");
         ShipManager.instance.TakeDamage(10);
-        Deactivate(true, 6); // This is not a victory, only means to disable mini-game
-        // 6 as parameter is a trick for Series Workshop and loss management!
+        Deactivate(null, null); // This is not a victory, only means to disable mini-game
     }
 
     [ClientRpc]
@@ -183,12 +182,12 @@ public class Workshop : NetworkBehaviour, IGridEntity
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void DeactivateServerRpc(bool victory, ulong playerId = 5)
+    public void DeactivateServerRpc(bool victory, ulong playerId)
     {
         Deactivate(victory, playerId);
     }
 
-    protected virtual void Deactivate(bool victory, ulong playerId = 5)
+    protected virtual void Deactivate(bool? victory, ulong? playerId)
     {
         if (!NetworkManager.Singleton.IsHost)
         {
@@ -196,11 +195,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
-        if (victory)
+        if (!victory.HasValue || victory.Value) // If victory is null, it means the workshop has been lost because of timer
         {
             SetActiveServerRpc(false);
-            GetDeactivatedClientRpc(playerId !=
-                                    6); // If playerId is 6, it means the workshop has been lost because of timer
+            GetDeactivatedClientRpc(victory.HasValue);
             if (type == WorkshopType.Temporary)
             {
                 RemoveWorkshopFromGridClientRpc();

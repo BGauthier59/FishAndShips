@@ -7,12 +7,7 @@ public class DEBUG_Disconnection : NetworkBehaviour
 {
     public void Disconnect()
     {
-        DisconnectServerRpc(NetworkManager.Singleton.LocalClientId);
+       NetworkManager.Singleton.Shutdown();
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void DisconnectServerRpc(ulong id)
-    {
-        NetworkManager.Singleton.DisconnectClient(id);
-    }
 }

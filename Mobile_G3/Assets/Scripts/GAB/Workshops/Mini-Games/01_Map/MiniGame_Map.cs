@@ -104,7 +104,7 @@ public class MiniGame_Map : MiniGame
 
     public override void Reset()
     {
-        // Should not be reset
+        isRight = false;
     }
 
     public override void OnLeaveMiniGame()

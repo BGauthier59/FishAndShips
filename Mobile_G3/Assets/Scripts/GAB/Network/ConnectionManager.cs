@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -45,40 +46,33 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
         {
             Debug.Log("Connection failed.");
         }
+
         return StringUtils.NumberToLetterIP(hostIp);
     }
 
-    public void ConnectAsClient(string ip)
+    public async void ConnectAsClient(string ip)
     {
         if (NetworkManager.Singleton.IsClient)
         {
-            Debug.LogWarning("Already client!");
-            if (transport.ConnectionData.Address == ip)
-            {
-                Debug.LogWarning("Same IP. Don't reconnect");
-                return;
-            }
             Debug.LogWarning("Ask for disconnection!");
 
-            AskForDisconnectionServerRpc(NetworkManager.Singleton.LocalClientId);
+            NetworkManager.Singleton.Shutdown();
+            await UniTask.Delay(1000); // Pas propre ?
+        }
+
+        transport.SetConnectionData(StringUtils.LetterToNumberIP(ip), transport.ConnectionData.Port);
+
+        if(!transport.ConnectionData.ServerEndPoint.IsValid)
+        {
+            Debug.Log("It seems the IP is not correct. We don't connect");
             return;
         }
 
-        Debug.Log(ip);
-        transport.SetConnectionData(StringUtils.LetterToNumberIP(ip), transport.ConnectionData.Port);
         bool done = NetworkManager.Singleton.StartClient();
         if (!done)
         {
             Debug.Log("Connection failed.");
         }
-    }
-
-    [ServerRpc]
-    private void AskForDisconnectionServerRpc(ulong id)
-    {
-        Debug.LogWarning("Server disconnects client");
-
-        NetworkManager.Singleton.DisconnectClient(id);
     }
 
     private void SetConnectionCallback()

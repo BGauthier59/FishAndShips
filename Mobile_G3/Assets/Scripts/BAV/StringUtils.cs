@@ -100,6 +100,7 @@ public static class StringUtils
     public static string LetterToNumberIP(string inputString)
     {
         StringBuilder output = new StringBuilder();
+        if (inputString == null) return "0";
 
         string[] segments = inputString.Split('.');
         foreach (string segment in segments)
