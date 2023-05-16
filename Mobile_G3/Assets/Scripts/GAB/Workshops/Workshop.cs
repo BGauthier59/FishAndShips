@@ -107,7 +107,11 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         currentTile = DEBUG_GridManager.GetTile(posX, posY);
-        if (currentTile.transform == null) return;
+        if (currentTile.transform == null)
+        {
+            feedbackTransform.position = workshopObject.position;
+            return;
+        }
 
         MoveToNewTile(currentTile.transform.position + workshopObjectOffset);
     }
