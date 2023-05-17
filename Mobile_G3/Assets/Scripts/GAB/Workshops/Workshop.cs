@@ -171,7 +171,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         Debug.Log($"You lost {name}");
-        ShipManager.instance.TakeDamage(10);
+        ShipManager.instance.TakeDamage(5);
         Deactivate(null, null); // This is not a victory, only means to disable mini-game
     }
 
