@@ -20,6 +20,7 @@ public class MiniGame_Shrimp : MiniGame
 
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
     [SerializeField] private UnityEvent hitFeedback;
+    
 
     private void Start()
     {
@@ -51,7 +52,20 @@ public class MiniGame_Shrimp : MiniGame
     {
         if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
         {
-            if (validSwipe)
+            if (Vector2.SqrMagnitude(Input.mousePosition - shrimpCollision.position) <
+                trueCollisionSize * trueCollisionSize && Vector2.SqrMagnitude(lastPos - (Vector2)shrimpCollision.position) >
+                trueCollisionSize * trueCollisionSize )
+            {
+                // Collision
+                Debug.Log("Collision");
+                if (CompareSwipeAngle((Vector2) Input.mousePosition - lastPos))
+                {
+                    DamageDealt();
+                } 
+            }
+            lastPos = Input.mousePosition;
+            
+            /*if (validSwipe)
             {
                 if (Vector2.SqrMagnitude(WorkshopManager.instance.shrimpSwipeManager.startTouch -
                                          shrimpCollision.position) < trueSwordSize * trueSwordSize)
@@ -78,7 +92,7 @@ public class MiniGame_Shrimp : MiniGame
                 {
                     if (!CompareSwipeAngle()) validSwipe = false;
                 }
-            }
+            }*/
 
             ray = inputCamera.ScreenPointToRay(Input.mousePosition);
             swipeTrail.gameObject.SetActive(true);
@@ -134,31 +148,37 @@ public class MiniGame_Shrimp : MiniGame
         else animation.Play(idle3.name);
     }
 
-    bool CompareSwipeAngle()
+    bool CompareSwipeAngle(Vector2 dir)
     {
-        posAngle = Vector2.SignedAngle(Vector2.up, Input.mousePosition - shrimpCollision.position);
+        Vector2 angle = Vector2.zero;
+        
         switch (missingSwordNb)
         {
             case 0:
-                if (posAngle < 0 && posAngle > -topAngleCheck) return true;
+                angle = new Vector2(1, 1.7f);
                 break;
             case 1:
-                if (posAngle < -topAngleCheck && posAngle > -botAngleCheck) return true;
+                angle = new Vector2(1, 0);
                 break;
             case 2:
-                if (posAngle < -botAngleCheck && posAngle > -180) return true;
+                angle = new Vector2(1, -1.7f);
                 break;
             case 3:
-                if (posAngle > 0 && posAngle < topAngleCheck) return true;
+                angle = new Vector2(-1, 1.7f);
                 break;
             case 4:
-                if (posAngle > topAngleCheck && posAngle < botAngleCheck) return true;
+                angle = new Vector2(-1, 0);
                 break;
             case 5:
-                if (posAngle > botAngleCheck && posAngle < 180) return true;
+                angle = new Vector2(-1, -1.7f);
                 break;
         }
 
+        Debug.DrawRay(new Vector3(960,540,0),angle.normalized*200,Color.green,5);
+        Debug.DrawRay(new Vector3(960,540,0),dir.normalized * 200,Color.red,5);
+        float dot = Vector2.Dot(-angle.normalized, dir.normalized);
+Debug.Log("Dot " + dot);
+        if (dot > 0.8f) return true;
         return false;
     }
 
