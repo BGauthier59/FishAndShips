@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2319516132571045148
+--- !u!114 &-3440000104921422629
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -20,8 +20,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Mat_HDR 9
-  m_Shader: {fileID: -6465566751694194690, guid: 34e26bda9189a8248851de7ee272fd07,
+  m_Name: Mat_exclamation
+  m_Shader: {fileID: -6465566751694194690, guid: c6a628c3387fc474f8521297a52c91f1,
     type: 3}
   m_ValidKeywords:
   - _SWITCH_CHANNEL_R
@@ -54,6 +54,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Boost_HDR: 1
+    - _ParticleDuration: 5
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SWITCH_CHANNEL: 0
