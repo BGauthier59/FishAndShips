@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 796707535199279312}
   - component: {fileID: 8107773526601535296}
   - component: {fileID: 8908066224684693524}
-  m_Layer: 0
-  m_Name: MINI JEU EN-COUR
+  m_Layer: 11
+  m_Name: VFX_ActivationWorkshop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,9 +25,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1924043453390197716}
-  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 2.512, z: 3.391}
-  m_LocalScale: {x: 1, y: 1.0000002, z: 1.0000002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5901318783764695745}
@@ -4825,7 +4825,7 @@ GameObject:
   - component: {fileID: 9014034832710720647}
   - component: {fileID: 3331418310151928338}
   - component: {fileID: 8733872940508516343}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Attention timed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4841,7 +4841,7 @@ Transform:
   m_GameObject: {fileID: 5402383606661881639}
   m_LocalRotation: {x: -0.0011617242, y: -0.00023663332, z: -0.0023215238, w: 0.99999666}
   m_LocalPosition: {x: 0, y: 0, z: 0.248}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 796707535199279312}
@@ -4855,7 +4855,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5402383606661881639}
   serializedVersion: 8
-  lengthInSec: 15
+  lengthInSec: 20
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -4930,7 +4930,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 15
+      scalar: 20
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -10010,7 +10010,7 @@ GameObject:
   - component: {fileID: 5901318783764695745}
   - component: {fileID: 5901318783764695751}
   - component: {fileID: 5901318783764695744}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Attention start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10026,7 +10026,7 @@ Transform:
   m_GameObject: {fileID: 5901318783764695746}
   m_LocalRotation: {x: -0.0011617242, y: -0.00023663332, z: -0.0023215238, w: 0.99999666}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 796707535199279312}

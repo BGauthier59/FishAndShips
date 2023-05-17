@@ -80,10 +80,10 @@ MonoBehaviour:
   activationEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5490934030756956865}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 5259788180784679052}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -95,20 +95,8 @@ MonoBehaviour:
   deactivationEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5490934030756956865}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1150499462767932331}
-        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
+      - m_Target: {fileID: 5259788180784679052}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
         m_MethodName: Stop
         m_Mode: 1
         m_Arguments:
@@ -149,8 +137,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  alertAnim: {fileID: 1150499462767932331}
-  alertClip: {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
   workshopObjectOffset: {x: 0, y: 0, z: 0}
   requiredItemAnim: {fileID: 0}
   requiredItemClip: {fileID: 0}
@@ -287,21 +273,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3f59f7a974674f41a70976933b1a545, type: 3}
---- !u!111 &1150499462767932331 stripped
-Animation:
-  m_CorrespondingSourceObject: {fileID: 2543281662798912522, guid: a3f59f7a974674f41a70976933b1a545,
-    type: 3}
-  m_PrefabInstance: {fileID: 3223706627268652961}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1333987099322388907 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4485495249505566218, guid: a3f59f7a974674f41a70976933b1a545,
     type: 3}
   m_PrefabInstance: {fileID: 3223706627268652961}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &5490934030756956865 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6957884885532206432, guid: a3f59f7a974674f41a70976933b1a545,
+--- !u!198 &5259788180784679052 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7224457025954228013, guid: a3f59f7a974674f41a70976933b1a545,
     type: 3}
   m_PrefabInstance: {fileID: 3223706627268652961}
   m_PrefabAsset: {fileID: 0}

@@ -80,10 +80,10 @@ MonoBehaviour:
   activationEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4970916516812875350}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 6518791610877817269}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -95,20 +95,8 @@ MonoBehaviour:
   deactivationEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4970916516812875350}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 520425787100290876}
-        m_TargetAssemblyTypeName: UnityEngine.Animation, UnityEngine
+      - m_Target: {fileID: 6518791610877817269}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
         m_MethodName: Stop
         m_Mode: 1
         m_Arguments:
@@ -149,8 +137,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  alertAnim: {fileID: 520425787100290876}
-  alertClip: {fileID: 7400000, guid: 5b8955fa77fc4e24d8a5bc5b6661dff9, type: 2}
   workshopObjectOffset: {x: 0, y: 0.5, z: 0}
   requiredItemAnim: {fileID: 5683201698715563390}
   requiredItemClip: {fileID: 7400000, guid: 0e3d3977ff072e74f807c36ac1fc3f51, type: 2}
@@ -308,27 +294,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a76717032589b74ea395c55c842d2c1, type: 3}
---- !u!111 &520425787100290876 stripped
-Animation:
-  m_CorrespondingSourceObject: {fileID: 2577911004021206751, guid: 5a76717032589b74ea395c55c842d2c1,
-    type: 3}
-  m_PrefabInstance: {fileID: 2665700076698071523}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &982348067129972869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2980389288581212518, guid: 5a76717032589b74ea395c55c842d2c1,
     type: 3}
   m_PrefabInstance: {fileID: 2665700076698071523}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &4970916516812875350 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6918169100402366389, guid: 5a76717032589b74ea395c55c842d2c1,
-    type: 3}
-  m_PrefabInstance: {fileID: 2665700076698071523}
-  m_PrefabAsset: {fileID: 0}
 --- !u!111 &5683201698715563390 stripped
 Animation:
   m_CorrespondingSourceObject: {fileID: 7647307661897598109, guid: 5a76717032589b74ea395c55c842d2c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2665700076698071523}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &6518791610877817269 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 9117852413791486038, guid: 5a76717032589b74ea395c55c842d2c1,
     type: 3}
   m_PrefabInstance: {fileID: 2665700076698071523}
   m_PrefabAsset: {fileID: 0}

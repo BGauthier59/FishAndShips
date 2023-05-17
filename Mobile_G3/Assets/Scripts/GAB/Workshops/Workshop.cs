@@ -34,8 +34,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
     [SerializeField] protected UnityEvent deactivationEvent;
     [SerializeField] protected UnityEvent winEvent;
     [SerializeField] protected UnityEvent loseEvent;
-    [SerializeField] private Animation alertAnim;
-    [SerializeField] private AnimationClip alertClip;
     [SerializeField] private Vector3 workshopObjectOffset;
     [SerializeField] private Animation requiredItemAnim;
     [SerializeField] private AnimationClip requiredItemClip;
@@ -156,9 +154,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         float duration = (int) (1000 * activationDuration);
 
-        await UniTask.Delay((int) (duration * .75f));
-        alertAnim.Play(alertClip.name);
-        await UniTask.Delay((int) (duration * .25f));
+        await UniTask.Delay((int) (duration));
 
         while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
 
