@@ -35,7 +35,7 @@ public class MiniGame_Rudder : MiniGame
                 ? math.lerp(.5, 1, angle.Value.degrees / data.maxRotationDegree)
                 : math.lerp(0.5, 0, math.abs(angle.Value.degrees) / data.maxRotationDegree);
 
-            currentRotation = math.lerp(minMaxRotationPerSecond.y, minMaxRotationPerSecond.x, (float) ratio);
+            currentRotation = math.lerp(minMaxRotationPerSecond.x, minMaxRotationPerSecond.y, (float) ratio);
 
             mapMiniGame.UpdateShipRotationServerRpc(currentRotation, GetOtherPlayerId());
         }
@@ -111,7 +111,6 @@ public class MiniGame_Rudder : MiniGame
         WorkshopManager.instance.mapSwipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
         
-        Debug.Log("???");
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
 
         ExitMiniGame(true);
