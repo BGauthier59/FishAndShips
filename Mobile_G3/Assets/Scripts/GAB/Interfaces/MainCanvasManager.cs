@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class MainCanvasManager : MonoSingleton<MainCanvasManager>
 {
     [SerializeField] private TMP_Text timerText;
-    [SerializeField] private Slider boatLifeSlider;
+    [SerializeField] private Image boatLifeSlider;
     [SerializeField] private TMP_Text starText;
     [SerializeField] private Image itemImage;
     [SerializeField] private Sprite plankIcon, bulletIcon;
@@ -39,7 +39,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     public void SetLifeOnDisplay(int life, int maxLife)
     {
         var ratio = life / (float) maxLife;
-        boatLifeSlider.value = ratio;
+        boatLifeSlider.fillAmount = ratio;
     }
 
     public void SetStarOnDisplay(int count)
