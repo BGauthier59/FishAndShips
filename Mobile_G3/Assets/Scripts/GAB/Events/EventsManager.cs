@@ -9,68 +9,122 @@ using Random = UnityEngine.Random;
 
 public class EventsManager : NetworkMonoSingleton<EventsManager>
 {
-    [SerializeField] private float durationBetweenRandomEventGenerationTry;
-    private float timerBetweenRandomEventGenerationTry;
-
-    #region Shrimp ships main variables
-
-    [SerializeField] private int maxShrimpInstantiatedCount, maxHoleInstantiatedCount;
-    private int currentShrimpCount, currentHoleCount;
+    [SerializeField] private EventDataSO data;
 
     [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
     [SerializeField] private ReparationWorkshop[] reparationWorkshops;
-
-    #endregion
-
-    #region Storms
-
+    public SeriesWorkshop[] cannonWorkshops;
+    public ConnectedWorkshop mapWorkshop;
     public ConnectedWorkshop sailsWorkshop;
 
-    #endregion
-    
-    public ConnectedWorkshop mapWorkshop;
-    public SeriesWorkshop[] cannonWorkshops;
-    
-    [SerializeField] private float durationBetweenEvents;
-    [SerializeField] private RandomEvent[] allRandomEvents;
-    [SerializeField] private RandomEvent lastEvent;
     private bool isRunning;
 
-    #region Main Methods
+    [SerializeField] private RandomEvent[] softEvents;
+    [SerializeField] private RandomEvent[] hardEvents;
+
+    private RandomEvent lastSoftEvent;
+    private RandomEvent lastHardEvent;
+
+    private float durationBeforeNextEvent, timer;
+    private uint softEventCount, totalEventRunningCount;
+
+    private bool checkTimer;
+
+    [SerializeField] private GridFloorNotWalkable notWalkable;
 
     public void StartGameLoop()
     {
-        if (!NetworkManager.Singleton.IsHost) return; // Manage by Host only!
-        TryGenerateNewRandomEvent();
+        // Récupérer les data du SO
+
+        if (!data)
+        {
+            Debug.LogError("No data found!");
+            return;
+        }
+
+        SetNewDuration();
     }
 
-    private void StartNewEvent(RandomEvent randomEvent)
+    private void SetNewDuration()
     {
-        randomEvent.StartEvent();
+        timer = 0;
+        durationBeforeNextEvent = data.timerBetweenEvents +
+                                  Random.Range(-data.randomTimerGapBetweenEvents, data.randomTimerGapBetweenEvents);
+        checkTimer = true;
     }
 
-    public void EndEvent(RandomEvent randomEvent)
+    public void UpdateGameLoop()
     {
-        TryGenerateNewRandomEvent();
+        if (!checkTimer) return;
+
+        if (timer >= durationBeforeNextEvent)
+        {
+            StartNewEvent();
+        }
+        else timer += Time.deltaTime;
     }
-    
-    #endregion
+
+    public bool waitingForInstantiating;
+
+    private async void StartNewEvent()
+    {
+        checkTimer = false;
+        waitingForInstantiating = true;
+
+        RandomEvent nextEvent;
+        if (softEventCount == data.hardEventsFrequency)
+        {
+            // Hard event
+
+            do
+            {
+                nextEvent = hardEvents[Random.Range(0, hardEvents.Length)];
+                await UniTask.DelayFrame(0);
+            } while (nextEvent == lastHardEvent || !nextEvent.CheckConditions());
+
+            lastHardEvent = nextEvent;
+            softEventCount = 0;
+
+            StartEventFeedbackClientRpc(nextEvent.startEventText);
+            await UniTask.Delay(2500);
+            if (!GameManager.instance.IsGameRunning()) return;
+        }
+        else
+        {
+            // Soft event
+
+            do
+            {
+                nextEvent = softEvents[Random.Range(0, softEvents.Length)];
+                await UniTask.DelayFrame(0);
+            } while (nextEvent == lastSoftEvent || !nextEvent.CheckConditions());
+
+            lastSoftEvent = nextEvent;
+            softEventCount++;
+        }
+
+        waitingForInstantiating = false;
+
+        nextEvent.StartEvent();
+        SetNewDuration();
+    }
+
+    [ClientRpc]
+    private void StartEventFeedbackClientRpc(string message)
+    {
+        CameraManager.instance.PlayStartEventAnimation(message);
+    }
 
     #region Shrimp ship Macro-Management
 
     public bool CanInstantiateShrimpWorkshop()
     {
-        return currentShrimpCount < maxShrimpInstantiatedCount;
-    }
+        foreach (var shrimp in shrimpWorkshops)
+        {
+            if (!shrimp.isActive.Value) return true;
+        }
 
-    public void AddShrimp()
-    {
-        currentShrimpCount++;
-    }
-
-    public void RemoveShrimp()
-    {
-        currentShrimpCount--;
+        return false;
     }
 
     public int? GetShrimpWorkshopIndex()
@@ -86,24 +140,17 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
     public ShrimpWorkshop GetShrimpWorkshop(int index)
     {
-        // WARNING! The index must be the one sent by Host as currentShrimpCount is not modified on clients
-
         return shrimpWorkshops[index];
     }
 
     public bool CanInstantiateHole()
     {
-        return currentHoleCount < maxHoleInstantiatedCount;
-    }
+        foreach (var reparation in reparationWorkshops)
+        {
+            if (!reparation.isActive.Value) return true;
+        }
 
-    public void AddHole()
-    {
-        currentHoleCount++;
-    }
-
-    public void RemoveHole()
-    {
-        currentHoleCount--;
+        return false;
     }
 
     public int? GetReparationWorkshopIndex()
@@ -137,6 +184,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
         return availables.ToArray();
     }
+
     public SeriesWorkshop GetCannonWorkshop(int index)
     {
         return cannonWorkshops[index];
@@ -144,35 +192,8 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
     #endregion
 
-    private RandomEvent tempEvent;
-
-    private async void TryGenerateNewRandomEvent()
+    public GridFloorNotWalkable GetNotWalkable()
     {
-        // Todo - prevent events if game is over
-        
-        await UniTask.Delay((int) (1000 * durationBetweenEvents));
-
-        if (!GameManager.instance.IsGameRunning())
-        {
-            Debug.Log("Can't start any event");
-            return;
-        }
-        do
-        {
-            tempEvent = allRandomEvents[Random.Range(0, allRandomEvents.Length)];
-            await UniTask.Yield();
-            // While loop in async methods should not be a problem as long as we await for Task.Yield()
-        } while (!tempEvent.CheckConditions() || tempEvent == lastEvent);
-
-        StartEventFeedbackClientRpc(tempEvent.startEventText);
-        await UniTask.Delay(2500);
-        lastEvent = tempEvent;
-        StartNewEvent(tempEvent);
-    }
-
-    [ClientRpc]
-    private void StartEventFeedbackClientRpc(string message)
-    {
-        CameraManager.instance.PlayStartEventAnimation(message);
+        return notWalkable;
     }
 }

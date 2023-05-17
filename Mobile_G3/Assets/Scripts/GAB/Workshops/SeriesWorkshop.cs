@@ -69,17 +69,14 @@ public class SeriesWorkshop : Workshop
 
         currentMiniGameIndex.Value++;
         if (currentMiniGameIndexSafe == nextMiniGames.Length ||
-            playerId == 6) // playerId == 6 is a trick to immediately stop Series Workshop
+            !victory.HasValue) // playerId == 6 is a trick to immediately stop Series Workshop
         {
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
             SetOccupiedServerRpc(false);
-            //Activate();
-            //We don't stay activated any more
             return;
         }
 
-        //Activate(); We don't need that?
         ClientRpcParams parameters = new ClientRpcParams()
         {
             Send = new ClientRpcSendParams()

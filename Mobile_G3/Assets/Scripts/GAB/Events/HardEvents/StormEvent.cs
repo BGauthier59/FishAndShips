@@ -29,7 +29,6 @@ public class StormEvent : RandomEvent
         StartStormEventFeedbackClientRpc();
 
         // Host-side logic
-        base.StartEvent();
         SetupEvent();
         
         GenerateSailsWorkshop();
@@ -64,9 +63,6 @@ public class StormEvent : RandomEvent
     protected override void EndEvent()
     {
         EndStormEventFeedbackClientRpc();
-
-        // Host-side logic
-        base.EndEvent();
     }
 
     [ClientRpc]

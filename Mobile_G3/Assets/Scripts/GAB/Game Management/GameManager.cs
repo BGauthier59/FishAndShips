@@ -116,7 +116,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
-        //eventsManager.UpdateGameLoop();
+        eventsManager.UpdateGameLoop();
 
         foreach (var player in players)
         {
@@ -141,7 +141,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         if (!isRunning.Value)
         {
-            Debug.LogError("Should not end while running. Might be an error.");
+            Debug.LogError("Should not end while running. Maybe two connected workshops were lost.");
         }
 
         var starCount = shipManager.EvaluateStarScore();

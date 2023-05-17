@@ -23,10 +23,6 @@ public class ReparationWorkshop : Workshop
     {
         // Called by every client when workshop is over
         base.RemoveWorkshopFromGrid();
-        if (Unity.Netcode.NetworkManager.Singleton.IsHost)
-        {
-            EventsManager.instance.RemoveHole();
-        }
     }
 
     public void PlayExplosionEffect()

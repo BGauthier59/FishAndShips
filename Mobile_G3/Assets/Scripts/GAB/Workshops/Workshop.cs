@@ -141,7 +141,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
         if (isActive.Value)
         {
-            Debug.LogError("Can't activate a workshop that is already activated.");
+            Debug.LogError($"Can't activate a workshop that is already activated. Happened for {name}");
             // This happens with series workshop.
             return;
         }

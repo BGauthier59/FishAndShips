@@ -29,11 +29,6 @@ public class ConnectedWorkshop : Workshop
 
     public ulong GetOtherPlayerId()
     {
-        if (other.currentPlayerId.Value > 4)
-        {
-            Debug.LogWarning("Not valid player id!");
-            return 0;
-        }
         return other.currentPlayerId.Value;
     }
 

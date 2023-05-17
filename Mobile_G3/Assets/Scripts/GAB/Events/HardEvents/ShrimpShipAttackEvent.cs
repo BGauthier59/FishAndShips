@@ -54,7 +54,6 @@ public class ShrimpShipAttackEvent : RandomEvent
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent fireEvent;
     [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
-    [SerializeField] private GridFloorNotWalkable notWalkable;
     [SerializeField] private Animation mortarAnim;
 
     #endregion
@@ -74,7 +73,6 @@ public class ShrimpShipAttackEvent : RandomEvent
         StartShrimpShipEventFeedbackClientRpc();
 
         // Logic for Host
-        base.StartEvent();
         SetupWorkshops();
 
         await MoveToWayPoint(wayPoints[0].position, wayPoints[1].position);
@@ -161,8 +159,6 @@ public class ShrimpShipAttackEvent : RandomEvent
         EndShrimpShipEventFeedbackClientRpc();
 
         await MoveToWayPoint(wayPoints[1].position, wayPoints[2].position);
-
-        base.EndEvent();
     }
     
 
@@ -175,7 +171,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     private async void EndEventFeedback()
     {
         if (!NetworkManager.Singleton.IsHost) await MoveToWayPoint(wayPoints[1].position, wayPoints[2].position);
-        else await Task.Delay((int) (moveDuration * 1000));
+        else await UniTask.Delay((int) (moveDuration * 1000));
 
         ship.gameObject.SetActive(false);
         CameraManager.instance.ResetDeckPosRot();
@@ -202,7 +198,6 @@ public class ShrimpShipAttackEvent : RandomEvent
             return false;
         }
 
-        EventsManager.instance.AddHole();
         int? index = EventsManager.instance.GetReparationWorkshopIndex();
         if (!index.HasValue)
         {
@@ -239,7 +234,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         cannonShootTargetedTile.gameObject.SetActive(true);
         var targetedTile = GridManager.instance.GetTile(x, y);
         var walkable = targetedTile.GetFloor();
-        targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
+        targetedTile.SetTile(targetedTile.GetEntity(), EventsManager.instance.GetNotWalkable());
 
         cannonShootTargetedTile.position = p4;
 
@@ -289,7 +284,6 @@ public class ShrimpShipAttackEvent : RandomEvent
             return false;
         }
 
-        EventsManager.instance.AddShrimp();
         int? index = EventsManager.instance.GetShrimpWorkshopIndex();
         if (!index.HasValue)
         {
@@ -329,14 +323,14 @@ public class ShrimpShipAttackEvent : RandomEvent
         shrimpTargetedTile.position = p4;
         Tile targetedTile = GridManager.instance.GetTile(coordX, coordY);
         var walkable = targetedTile.GetFloor();
-        targetedTile.SetTile(targetedTile.GetEntity(), notWalkable);
+        targetedTile.SetTile(targetedTile.GetEntity(), EventsManager.instance.GetNotWalkable());
 
         spawningShrimpAnim.Play(spawningShrimpJump.name);
 
         var timer = 0f;
         while (timer < spawnDuration)
         {
-            await Task.Yield();
+            await UniTask.Yield();
             timer += Time.deltaTime;
             spawningShrimp.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / spawnDuration);
         }
