@@ -141,16 +141,15 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         if (!isRunning.Value)
         {
-            Debug.LogError("Should not end while running. Maybe two connected workshops were lost.");
-        }
-
-        var starCount = shipManager.EvaluateStarScore();
-        if (victory)
-        {
-            LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
+            Debug.LogWarning("Should not end while running. Maybe two connected workshops were lost.");
+            return;
         }
 
         isRunning.Value = false;
+
+        var starCount = shipManager.EvaluateStarScore();
+        if (victory) LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
+        
         GameEndsClientRpc(victory, starCount);
     }
 
