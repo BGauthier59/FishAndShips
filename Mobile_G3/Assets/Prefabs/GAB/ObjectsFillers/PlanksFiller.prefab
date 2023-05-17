@@ -46,6 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filling: 2
+  glowyRenderers:
+  - {fileID: 7963303556021821243}
+  - {fileID: 7963303557798993460}
+  - {fileID: 7963303557794573980}
 --- !u!1 &8467798729757923021
 GameObject:
   m_ObjectHideFlags: 0
@@ -77,7 +81,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8737761479031776342}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 3.014, y: -70.788, z: 542.214}
 --- !u!33 &5289373503223940050
 MeshFilter:
@@ -141,7 +145,7 @@ GameObject:
   - component: {fileID: 5289373503715929073}
   - component: {fileID: 7963303556021821243}
   m_Layer: 0
-  m_Name: SM_Plank_02 (2)
+  m_Name: GlowyPlanks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,13 +158,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8467798730381639406}
-  m_LocalRotation: {x: 0.4529255, y: 0.41402677, z: -0.5018702, w: 0.6095627}
-  m_LocalPosition: {x: -0.4090925, y: 0.1920031, z: 0.6458987}
-  m_LocalScale: {x: 0.62510705, y: 0.6251069, z: 0.62510705}
+  m_LocalRotation: {x: 0.45292547, y: 0.41402674, z: -0.50187016, w: 0.6095627}
+  m_LocalPosition: {x: -0.4090926, y: 0.19200315, z: 0.6458988}
+  m_LocalScale: {x: 0.6251072, y: 0.625107, z: 0.6251073}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8737761479031776342}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 75.409, y: 11.478, z: 289.954}
 --- !u!33 &5289373503715929073
 MeshFilter:
@@ -190,7 +194,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8290782892783832528, guid: 7def7abd9873d894e8699730da210518, type: 3}
+  - {fileID: 2100000, guid: 405268630b14a8a44be06c63e645ef54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -307,7 +311,7 @@ GameObject:
   - component: {fileID: 5289373502332459606}
   - component: {fileID: 7963303557794573980}
   m_Layer: 0
-  m_Name: SM_Plank_02 (4)
+  m_Name: GlowyPlanks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -320,13 +324,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8467798730724904777}
-  m_LocalRotation: {x: -0.03863032, y: -0.018738057, z: 0.95741594, w: 0.28550172}
-  m_LocalPosition: {x: 0.085, y: 0.09, z: 0.653}
-  m_LocalScale: {x: 0.62510705, y: 0.6251069, z: 0.62510705}
+  m_LocalRotation: {x: -0.038630333, y: -0.01873806, z: 0.95741594, w: 0.28550175}
+  m_LocalPosition: {x: 0.085000075, y: 0.08999962, z: 0.6530002}
+  m_LocalScale: {x: 0.62510705, y: 0.6251069, z: 0.62510693}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8737761479031776342}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0.792, y: -4.858, z: 506.75702}
 --- !u!33 &5289373502332459606
 MeshFilter:
@@ -356,7 +360,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8290782892783832528, guid: 7def7abd9873d894e8699730da210518, type: 3}
+  - {fileID: 2100000, guid: 405268630b14a8a44be06c63e645ef54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -390,7 +394,7 @@ GameObject:
   - component: {fileID: 5289373502336822014}
   - component: {fileID: 7963303557798993460}
   m_Layer: 0
-  m_Name: SM_Plank_02 (3)
+  m_Name: GlowyPlanks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -403,13 +407,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8467798730745659361}
-  m_LocalRotation: {x: 0.32363084, y: -0.5398242, z: 0.16859472, w: 0.7585703}
-  m_LocalPosition: {x: 0.472, y: -0.242, z: 0.622}
-  m_LocalScale: {x: 0.62510705, y: 0.6251069, z: 0.62510705}
+  m_LocalRotation: {x: 0.32363075, y: -0.5398242, z: 0.16859473, w: 0.7585703}
+  m_LocalPosition: {x: 0.47200018, y: -0.24199982, z: 0.62200016}
+  m_LocalScale: {x: 0.6251071, y: 0.6251069, z: 0.6251071}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8737761479031776342}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 42.3, y: -73.691, z: 352.728}
 --- !u!33 &5289373502336822014
 MeshFilter:
@@ -439,7 +443,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 8290782892783832528, guid: 7def7abd9873d894e8699730da210518, type: 3}
+  - {fileID: 2100000, guid: 405268630b14a8a44be06c63e645ef54, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -492,10 +496,10 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9135686776275717370}
+  - {fileID: 9135686775049145463}
   - {fileID: 9135686775406519380}
   - {fileID: 9135686776242398555}
   - {fileID: 9135686776238429683}
-  - {fileID: 9135686775049145463}
   m_Father: {fileID: 3827620356513535117}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -86.38, y: 162.819, z: -72.087}

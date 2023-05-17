@@ -7,6 +7,20 @@ public class ReparationWorkshop : Workshop
 {
     private float timer;
     [SerializeField] private ParticleSystem explosionFx;
+    
+    public override void Start()
+    {
+        base.Start();
+        isActive.OnValueChanged = OnSetActive;
+    }
+
+    private void OnSetActive(bool _, bool current)
+    {
+        Debug.Log("Set active for reparation");
+
+        if (current) WorkshopManager.instance.StartPlankFillersGlow();
+        else WorkshopManager.instance.EndPlankFillersGlow();
+    }
 
     public override void SetPosition(int posX, int posY)
     {
@@ -17,12 +31,6 @@ public class ReparationWorkshop : Workshop
         else currentTile.SetTile(null, currentTile.GetFloor());
 
         base.SetPosition(posX, posY);
-    }
-    
-    protected override void RemoveWorkshopFromGrid()
-    {
-        // Called by every client when workshop is over
-        base.RemoveWorkshopFromGrid();
     }
 
     public void PlayExplosionEffect()

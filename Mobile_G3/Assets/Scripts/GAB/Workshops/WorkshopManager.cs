@@ -34,6 +34,9 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     [SerializeField] private MiniGameSwipeIndicatorPoints[] swipeTutorialData;
 
+    [SerializeField] private GridEntity_InventoryFiller[] bulletsFillers;
+    [SerializeField] private GridEntity_InventoryFiller[] plankFillers;
+
     [Serializable]
     public struct MiniGameSwipeIndicatorPoints
     {
@@ -321,6 +324,56 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         currentIndex = index;
         isShowingTutorial = true;
         ExecuteMiniGameTutorial();
+    }
+
+    #endregion
+
+    #region Fillers
+
+    private int bulletFillersCount;
+
+    public void StartBulletFillersGlow()
+    {
+        bulletFillersCount++;
+        if (bulletFillersCount > 1) return;
+        foreach (var filler in bulletsFillers)
+        {
+            filler.SetGlow(true);
+        }
+    }
+
+    public void EndBulletFillersGlow()
+    {
+        if (bulletFillersCount == 0) return;
+        bulletFillersCount--;
+        if (bulletFillersCount != 0) return;
+        foreach (var filler in bulletsFillers)
+        {
+            filler.SetGlow(false);
+        }
+    }
+
+    private int plankFillersCount;
+
+    public void StartPlankFillersGlow()
+    {
+        plankFillersCount++;
+        if (plankFillersCount > 1) return;
+        foreach (var filler in plankFillers)
+        {
+            filler.SetGlow(true);
+        }
+    }
+
+    public void EndPlankFillersGlow()
+    {
+        if (plankFillersCount == 0) return;
+        plankFillersCount--;
+        if (plankFillersCount != 0) return;
+        foreach (var filler in plankFillers)
+        {
+            filler.SetGlow(false);
+        }
     }
 
     #endregion

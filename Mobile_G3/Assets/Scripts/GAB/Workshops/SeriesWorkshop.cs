@@ -28,7 +28,15 @@ public class SeriesWorkshop : Workshop
     public override void Start()
     {
         base.Start();
+        isActive.OnValueChanged = OnSetActive;
         currentMiniGameIndex.OnValueChanged = OnServerModifyCurrentMiniGameIndex;
+    }
+
+    private void OnSetActive(bool _, bool current)
+    {
+        Debug.Log("Set active for cannon");
+        if(current) WorkshopManager.instance.StartBulletFillersGlow();
+        else WorkshopManager.instance.EndBulletFillersGlow();
     }
 
     public MiniGame GetCurrentMiniGameSafe()
