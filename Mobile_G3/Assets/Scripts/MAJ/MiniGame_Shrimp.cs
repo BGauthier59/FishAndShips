@@ -20,7 +20,7 @@ public class MiniGame_Shrimp : MiniGame
 
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
     [SerializeField] private UnityEvent hitFeedback;
-    
+
 
     private void Start()
     {
@@ -53,18 +53,20 @@ public class MiniGame_Shrimp : MiniGame
         if (WorkshopManager.instance.shrimpSwipeManager.isDragging)
         {
             if (Vector2.SqrMagnitude(Input.mousePosition - shrimpCollision.position) <
-                trueCollisionSize * trueCollisionSize && Vector2.SqrMagnitude(lastPos - (Vector2)shrimpCollision.position) >
-                trueCollisionSize * trueCollisionSize )
+                trueCollisionSize * trueCollisionSize &&
+                Vector2.SqrMagnitude(lastPos - (Vector2) shrimpCollision.position) >
+                trueCollisionSize * trueCollisionSize)
             {
                 // Collision
                 Debug.Log("Collision");
                 if (CompareSwipeAngle((Vector2) Input.mousePosition - lastPos))
                 {
                     DamageDealt();
-                } 
+                }
             }
+
             lastPos = Input.mousePosition;
-            
+
             /*if (validSwipe)
             {
                 if (Vector2.SqrMagnitude(WorkshopManager.instance.shrimpSwipeManager.startTouch -
@@ -112,13 +114,17 @@ public class MiniGame_Shrimp : MiniGame
     {
         hitFeedback?.Invoke();
         lifePoints--;
-        if (lifePoints <= 0) KillShrimp();
+        if (lifePoints <= 0)
+        {
+            KillShrimp();
+            return;
+        }
         SwitchSwords();
     }
 
     private async void KillShrimp()
     {
-        // Todo - play animation
+        animation.Play(flip.name);
 
         StopExecutingMiniGame();
         WorkshopManager.instance.shrimpSwipeManager.Disable();
@@ -131,6 +137,8 @@ public class MiniGame_Shrimp : MiniGame
 
     async void SwitchSwords()
     {
+        //WorkshopManager.instance.StopMiniGameTutorial();
+
         animation.Play(flip.name);
         await Task.Delay(160);
         missingSwordNb = Random.Range(0, 6);
@@ -140,7 +148,30 @@ public class MiniGame_Shrimp : MiniGame
             else swords[i].SetActive(true);
         }
 
+
         await Task.Delay(160);
+
+        switch (missingSwordNb)
+        {
+            case 0:
+                WorkshopManager.instance.StartMiniGameTutorial(14);
+                break;
+            case 1:
+                WorkshopManager.instance.StartMiniGameTutorial(10);
+                break;
+            case 2:
+                WorkshopManager.instance.StartMiniGameTutorial(12);
+                break;
+            case 3:
+                WorkshopManager.instance.StartMiniGameTutorial(13);
+                break;
+            case 4:
+                WorkshopManager.instance.StartMiniGameTutorial(9);
+                break;
+            case 5:
+                WorkshopManager.instance.StartMiniGameTutorial(11);
+                break;
+        }
 
         var random = Random.Range(0, 3);
         if (random == 1) animation.Play(idle1.name);
@@ -151,7 +182,7 @@ public class MiniGame_Shrimp : MiniGame
     bool CompareSwipeAngle(Vector2 dir)
     {
         Vector2 angle = Vector2.zero;
-        
+
         switch (missingSwordNb)
         {
             case 0:
@@ -174,10 +205,10 @@ public class MiniGame_Shrimp : MiniGame
                 break;
         }
 
-        Debug.DrawRay(new Vector3(960,540,0),angle.normalized*200,Color.green,5);
-        Debug.DrawRay(new Vector3(960,540,0),dir.normalized * 200,Color.red,5);
+        Debug.DrawRay(new Vector3(960, 540, 0), angle.normalized * 200, Color.green, 5);
+        Debug.DrawRay(new Vector3(960, 540, 0), dir.normalized * 200, Color.red, 5);
         float dot = Vector2.Dot(-angle.normalized, dir.normalized);
-Debug.Log("Dot " + dot);
+        Debug.Log("Dot " + dot);
         if (dot > 0.8f) return true;
         return false;
     }

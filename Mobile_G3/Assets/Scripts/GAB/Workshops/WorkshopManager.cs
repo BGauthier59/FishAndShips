@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -260,11 +261,15 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     private bool isShowingTutorial;
     private int currentIndex = -1;
+    private int askedIndex;
 
     private async void ExecuteMiniGameTutorial()
     {
-        Vector3 p1, p2, p3, p4;
-        var data = swipeTutorialData[currentIndex];
+        if (isShowingTutorial) return;
+
+        isShowingTutorial = true;
+
+        data = swipeTutorialData[currentIndex];
         p1 = data.p1.position;
         p2 = data.p2.position;
         p3 = data.p3.position;
@@ -273,34 +278,49 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         swipeIndicatorTransform.position = Ex.CubicBezierCurve(p1, p2, p3, p4, 0);
         swipeIndicatorTransform.gameObject.SetActive(true);
 
-        await Task.Delay(200);
+        await UniTask.Delay(200);
 
         float timer = 0;
         while (timer < data.swipeDuration)
         {
             swipeIndicatorTransform.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / data.swipeDuration);
-            await Task.Yield();
+            await UniTask.Yield();
             timer += Time.deltaTime;
-            if (!isShowingTutorial)
-            {
-                swipeIndicatorTransform.gameObject.SetActive(false);
-                return;
-            }
         }
 
         swipeIndicatorTransform.position = Ex.CubicBezierCurve(p1, p2, p3, p4, 1);
-        await Task.Delay(200);
+        await UniTask.Delay(200);
         swipeIndicatorTransform.gameObject.SetActive(false);
+        await UniTask.Delay(1000);
+        
+        if (askForStopTutorial)
+        {
+            isShowingTutorial = false;
+            askForStopTutorial = false;
+            return;
+        }
 
-        await Task.Delay(1000);
+        if (askForStartTutorial)
+        {
+            currentIndex = askedIndex;
+            askForStartTutorial = false;
+        }
 
-        if (isShowingTutorial) ExecuteMiniGameTutorial();
+        isShowingTutorial = false;
+
+        ExecuteMiniGameTutorial();
     }
 
     public void StopMiniGameTutorial()
     {
-        isShowingTutorial = false;
+        if (!isShowingTutorial) return;
+        askForStopTutorial = true;
     }
+
+    Vector3 p1, p2, p3, p4;
+    private MiniGameSwipeIndicatorPoints data;
+    private bool askForStartTutorial;
+    private bool askForStopTutorial;
 
     public void StartMiniGameTutorial(int index)
     {
@@ -321,9 +341,16 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         // 13 is shrimp from top left
         // 14 is shrimp from top right
 
-        currentIndex = index;
-        isShowingTutorial = true;
-        ExecuteMiniGameTutorial();
+        if (isShowingTutorial)
+        {
+            askForStartTutorial = true;
+            askedIndex = index;
+        }
+        else
+        {
+            currentIndex = index;
+            ExecuteMiniGameTutorial();
+        }
     }
 
     #endregion
