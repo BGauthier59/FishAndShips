@@ -1,12 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -20,31 +24,46 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     private string ipToConnect;
 
     [SerializeField] private TMP_Text ipText;
-    public string pseudo;
     private float timerFade, delayFade, timerMove, delayMove;
     private Transform fromPos, toPos, objectToMove;
 
     public Transform cameraMenu;
+    public Camera cam;
 
     public Transform[] camPos;
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition;
     public TMP_Text textInputName, textInputIP, levelName, levelIndex;
+    [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
     [SerializeField] private PlayerFigures[] playerFigures;
     [SerializeField] private GameObject[] customFigure;
 
+    public string pseudo;
     public int screen;
     public int skinId;
     public bool connected;
+    public int levelId;
+    
+    public Vector3 startTouch;
+    public bool isDragging,isOnMap,isOnLevel;
+    public float startPosLevels;
+    public Transform levelsTransform,startButton,returnButton;
+    public GameObject levelScreen;
+    public float minX,maxX,forcemultiplier,timeOfTap;
+    public LayerMask mask;
+    public Color starLockedColor;
+    public Animation mapTransition;
 
     [Serializable]
-    private struct CanvasData
+    public struct LevelIcon
     {
-        public GameObject canvas;
-        public MenuScreen type;
+        public Transform button;
+        public TMP_Text text;
+        public Material[] stars;
+        public MeshRenderer[] renderers;
     }
 
     [Serializable]
@@ -66,7 +85,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         // Load data
         SaveManager.instance.SetCurrentData();
-
+        SetupStars();
+        
         switch (SceneLoaderManager.instance.GetGlobalSceneState())
         {
             case SceneLoaderManager.SceneState.MainMenuFirstTime:
@@ -82,6 +102,23 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 slide.SetActive(true);
 
                 break;
+        }
+    }
+
+    void SetupStars()
+    {
+        for (int i = 1; i < levelButtons.Length; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                levelButtons[i].stars[j] = new Material(levelButtons[i].renderers[j].material);
+                levelButtons[i].renderers[j].material = levelButtons[i].stars[j];
+                if (LevelManager.instance.allLevels[i].starCount > j)
+                {
+                    levelButtons[i].stars[j].SetColor("_Color",Color.white);
+                }
+                else levelButtons[i].stars[j].SetColor("_Color",starLockedColor);
+            }
         }
     }
 
@@ -101,7 +138,14 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                     if (connectionClientPart.activeSelf) ClientToConnectionTransition();
                     ChangeScreenObject(1);
                 }
-                else ChangeScreenObject(3);
+                else
+                {
+                    for (int i = 0; i < screenObjects.Length; i++)
+                    {
+                        screenObjects[i].SetActive(false);
+                    }
+                    
+                }
 
                 break;
             case 2:
@@ -115,6 +159,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     private async void TitleToOtherScreenTransition()
     {
+        screenObjects[0].SetActive(false);
         StartMovement(camPos[0], camPos[1], cameraMenu, 0.7f);
         await Task.Delay(400);
         StartFade(true, 0.7f);
@@ -122,7 +167,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         cameraMenu.position = camPos[3].position;
         cameraMenu.rotation = camPos[3].rotation;
         screen = 1;
-        screenObjects[0].SetActive(false);
         screenObjects[1].SetActive(true);
         slide.SetActive(true);
         StartFade(false, 0.7f);
@@ -150,9 +194,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         StartFade(true, 0.7f);
         await Task.Delay(800);
         ConnectionManager.instance.gameState = GameState.Game;
-
-        // todo - set current level
-        LevelManager.instance.StartLevel(0);
+        
+        LevelManager.instance.StartLevel(levelId);
     }
 
     private async void ConnectionToClientTransition()
@@ -253,6 +296,29 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 cameraMenu.rotation = Quaternion.Lerp(cameraMenu.rotation, camPos[11].rotation, Time.deltaTime * 5);
                 break;
         }
+
+        if (connected && screen == 1)
+        {
+            for (int i = 0; i < levelButtons.Length; i++)
+            {
+                if (levelButtons[i].button.position.x < 137 || levelButtons[i].button.position.x > 138.9f)
+                {
+                    levelButtons[i].text.color = Color.Lerp(levelButtons[i].text.color,new Color(0, 0, 0, 0),Time.deltaTime*8);
+                }
+                else
+                {
+                    levelButtons[i].text.color = Color.Lerp(levelButtons[i].text.color,Color.white, Time.deltaTime*8);
+                }
+            }
+
+            if (isDragging)
+            {
+                float movement = Input.mousePosition.x - startTouch.x;
+                levelsTransform.position = new Vector3(Mathf.Clamp(startPosLevels + (movement / ((float) Screen.width / 2))*forcemultiplier,minX,maxX), levelsTransform.position.y, levelsTransform.position.z);
+                
+
+            }
+        }
     }
 
     void StartMovement(Transform from, Transform to, Transform obj, float time)
@@ -326,6 +392,21 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             else customFigure[i].SetActive(false);
         }
     }
+    
+    public void OnChangeSkinBackward()
+    {
+        skinId = skinId - 1;
+        if (skinId < 0) skinId = 2;
+        Debug.Log("SKIN N" + skinId);
+        if (connected)
+            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
+                skinId;
+        for (int i = 0; i < customFigure.Length; i++)
+        {
+            if (i == skinId) customFigure[i].SetActive(true);
+            else customFigure[i].SetActive(false);
+        }
+    }
 
     #endregion
 
@@ -346,8 +427,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
         // Todo - check if connection was successful ?
 
+        for (int i = 0; i < screenObjects.Length; i++)
+        {
+            screenObjects[i].SetActive(false);
+        }
+        
         connected = true;
-        ChangeScreenObject(3);
+        
         ipText.text = $"IP: {ip}";
     }
 
@@ -379,6 +465,10 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public void ClientJoinedSuccessfully()
     {
         connected = true;
+        for (int i = 0; i < screenObjects.Length; i++)
+        {
+            screenObjects[i].SetActive(false);
+        }
         ipText.text = $"IP: {ipToConnect}";
     }
 
@@ -395,6 +485,25 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         }
 
         PlayTransition();
+    }
+    
+    public async void OnReturnButton()
+    {
+        isOnLevel = false;
+        mapTransition.Play("LevelToMapTransition");
+        await Task.Delay(500);
+        isOnMap = true;
+    }
+
+    public async void OnLevelSelected(int level)
+    {
+        isOnMap = false;
+        mapTransition.Play("MapToLevelTransition");
+        levelId = level;
+        levelIndex.text = LevelManager.instance.allLevels[levelId].so.levelName;
+        levelName.text = LevelManager.instance.allLevels[levelId].so.levelDescription;
+        await Task.Delay(500);
+        isOnLevel = true;
     }
 
     public void ClientGetConnected(ulong id, string pseudo, int skin)
@@ -414,6 +523,59 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             else playerFigures[idInt].mapFigures[i].SetActive(false);
         }
     }
+
+    #endregion
+
+    #region Controls
+
+    [UsedImplicitly]
+    public void OnTapOnScreen(InputAction.CallbackContext ctx)
+    {
+        
+        Debug.Log("Oui");
+        if (ctx.started)
+        {
+            startTouch = Input.mousePosition;
+            isDragging = true;
+            startPosLevels = levelsTransform.transform.position.x;
+            timeOfTap = Time.time;
+        }
+        else if (ctx.canceled)
+        {
+            isDragging = false;
+            if (Time.time - timeOfTap < 0.2f)
+            {
+                OnClick();
+            }
+        }
+    }
+
+    void OnClick()
+    {
+        if (connected && screen == 1)
+        {
+            Ray ray = cam.ScreenPointToRay(startTouch);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, mask))
+            {
+                if (isOnMap)
+                {
+                    for (int i = 0; i < levelButtons.Length; i++)
+                    {
+                        if (levelButtons[i].button == hit.transform)
+                        {
+                            OnLevelSelected(i);
+                        }
+                    }   
+                }
+                else if (isOnLevel)
+                {
+                    if(startButton == hit.transform) OnStartButton();
+                    else if(returnButton == hit.transform) OnReturnButton();
+                }
+            }
+        }
+    }
+    
 
     #endregion
 }
