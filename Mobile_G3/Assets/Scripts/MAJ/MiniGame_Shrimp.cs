@@ -130,6 +130,8 @@ public class MiniGame_Shrimp : MiniGame
         WorkshopManager.instance.shrimpSwipeManager.Disable();
 
         WorkshopManager.instance.SetVictoryIndicator();
+        HonorificManager.instance.AddHonorific(Honorifics.HeadChef);
+
         await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
 
         ExitMiniGame(true);

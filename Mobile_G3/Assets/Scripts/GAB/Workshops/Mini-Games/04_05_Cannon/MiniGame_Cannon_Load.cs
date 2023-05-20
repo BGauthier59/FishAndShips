@@ -114,6 +114,7 @@ public class MiniGame_Cannon_Load : MiniGame
         cannonAnim.Play(cannonIsReady.name);
         
         WorkshopManager.instance.SetVictoryIndicator();
+
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         
         ExitMiniGame(true);

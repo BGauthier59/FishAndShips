@@ -75,6 +75,7 @@ public class MiniGame_Reparation : MiniGame
         WorkshopManager.instance.reparationDragAndDrop.Disable();
         StopExecutingMiniGame();
         WorkshopManager.instance.SetVictoryIndicator();
+        HonorificManager.instance.AddHonorific(Honorifics.Carpenter);
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         ExitMiniGame(true);
     }

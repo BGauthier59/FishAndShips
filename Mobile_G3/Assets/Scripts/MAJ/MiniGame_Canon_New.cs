@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -85,7 +86,7 @@ public class MiniGame_Canon_New : MiniGame
     public async void Shoot()
     {
         canonballAnim.Play("CanonShoot");
-        await Task.Delay(500);
+        await UniTask.Delay(500);
         if (Mathf.Abs(cameraCanon.eulerAngles.y - shipParent.eulerAngles.y) < 7)
         {
             impact.Play();
@@ -93,13 +94,13 @@ public class MiniGame_Canon_New : MiniGame
             StopExecutingMiniGame();
             WorkshopManager.instance.shrimpSwipeManager.Disable();
             WorkshopManager.instance.gyroscopeManager.Disable();
-            await Task.Delay(800);
+            await UniTask.Delay(800);
             WorkshopManager.instance.SetVictoryIndicator();
-            await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
-
+            HonorificManager.instance.AddHonorific(Honorifics.Gunner);
+            await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
             ExitMiniGame(true);
         }
-        await Task.Delay(200);
+        await UniTask.Delay(200);
         canShoot = true;
     }
 

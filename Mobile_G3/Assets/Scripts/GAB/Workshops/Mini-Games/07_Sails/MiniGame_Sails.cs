@@ -127,6 +127,7 @@ public class MiniGame_Sails : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
+        HonorificManager.instance.AddHonorific(Honorifics.TeamSpirit);
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         ExitMiniGame(true);
     }

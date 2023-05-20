@@ -35,6 +35,7 @@ public abstract class MiniGame : NetworkBehaviour
     protected virtual void ExitMiniGame(bool victory)
     {
         Reset();
+        if (victory) HonorificManager.instance.AddHonorific(Honorifics.Captain);
         WorkshopManager.instance.ExitMiniGame(victory);
         miniGameObject.SetActive(false);
     }

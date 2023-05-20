@@ -140,11 +140,11 @@ public class MiniGame_Map : MiniGame
                 randomPos.z = randomPos.y;
                 randomPos.y = 0;
                 island.transform.position = ship.position + randomPos;
-                
+
                 // Set right direction for current island
                 if (island == currentIsland)
                     rightDirection = (currentIsland.transform.position - ship.position).normalized;
-                
+
                 // Make sure dot product is not right at the beginning of the game
                 dot = Vector3.Dot(ship.right, rightDirection);
 
@@ -152,10 +152,9 @@ public class MiniGame_Map : MiniGame
                 distance = Vector3.Distance(ship.position, island.transform.position);
 
                 await UniTask.Yield();
-
             } while (distance < minDistanceFromPlayer || (island == currentIsland && dot >= collinearFactorThreshold));
         }
-        
+
         rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
     }
 
@@ -166,8 +165,9 @@ public class MiniGame_Map : MiniGame
         StopExecutingMiniGame();
         WorkshopManager.instance.mapSwipeManager.Disable();
         WorkshopManager.instance.SetVictoryIndicator();
-        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        HonorificManager.instance.AddHonorific(Honorifics.Explorer, Honorifics.TeamSpirit);
 
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
         ExitMiniGame(true);
     }
 
