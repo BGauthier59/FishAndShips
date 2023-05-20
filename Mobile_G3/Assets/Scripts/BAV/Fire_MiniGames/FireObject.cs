@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class FireObject : MonoBehaviour
 {
-    public int firePowerCount = 200;
+    public int firePowerCount = 10;
     public FireSize fireSize;
     private float decreaseSpeed;
     public bool canBeFilled;
@@ -17,7 +17,7 @@ public class FireObject : MonoBehaviour
 
     public void Start()
     {
-        SetFireStart(); 
+        FireStat();
         currentValue = firePowerCount;
         countdownTimer = firePowerCount;
     }

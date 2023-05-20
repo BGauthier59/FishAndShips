@@ -80,6 +80,7 @@ public class MiniGame_Canon_New : MiniGame
              cameraCanon.rotation = Quaternion.Euler(0,Mathf.Lerp(eulerY,gyroValue,Time.deltaTime*5),0);
         }
 
+        
     }
 
     public async void Shoot()
