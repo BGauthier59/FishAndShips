@@ -712,19 +712,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniGameName: 01
+  isRunning: 0
   miniGameObject: {fileID: 132799167}
+  miniGameCameraPosition: {x: 0, y: 0, z: 0}
+  miniGameCameraEulerAngles: {x: 0, y: 0, z: 0}
+  indicatorGame: 
+  debugWorkshop: {fileID: 0}
   data:
     centralPoint: {fileID: 1622433237}
     minMaxMagnitude:
       x: 3
       y: 5
-    rotatingPointRd: {fileID: 482140682}
-    availableZone: {fileID: 1705675795}
-    unavailableCenterZone: {fileID: 1230403136}
-    circleCountText: {fileID: 907382337}
-    countToWin: 10
-  duration: 10
-  timerText: {fileID: 1921334354}
+    rudder: {fileID: 0}
+    leftSide: {fileID: 0}
+    maxRotationDegree: 0
+    minimumAngleToRotate: 0
+  mapMiniGame: {fileID: 0}
+  minMaxRotationPerSecond:
+    x: 0
+    y: 0
+  questIndicator: {fileID: 0}
+  questStartText: 
 --- !u!1 &138370143
 GameObject:
   m_ObjectHideFlags: 0
@@ -1700,6 +1708,7 @@ GameObject:
   m_Component:
   - component: {fileID: 768985198}
   - component: {fileID: 768985197}
+  - component: {fileID: 768985199}
   m_Layer: 0
   m_Name: MiniGameManager
   m_TagString: Untagged
@@ -1719,9 +1728,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 672fce77707589b4f9b0dcf0bb595015, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  popUpMiniGame: {fileID: 587000244}
-  circularSwipeManager: {fileID: 602492026}
+  currentMiniGame: {fileID: 0}
+  miniGameEnvironmentCamera: {fileID: 0}
+  miniGameIndicatorAnim: {fileID: 0}
+  victoryIndicatorAnimation: {fileID: 0}
+  indicatorClip: {fileID: 0}
+  victoryClip: {fileID: 0}
+  miniGameIndicatorText: {fileID: 0}
+  allWorkshops: []
+  referenceCanvas: {fileID: 0}
+  canvasScaleFactor: 0
+  swipeIndicatorTransform: {fileID: 0}
+  rudderCircularSwipeManager: {fileID: 0}
+  shrimpSwipeManager: {fileID: 0}
   gyroscopeManager: {fileID: 602492029}
+  swipeManager: {fileID: 0}
+  cannonDragAndDropManager: {fileID: 0}
+  mapSwipeManager: {fileID: 0}
+  reparationDragAndDrop: {fileID: 0}
+  swipeTutorialData: []
 --- !u!4 &768985198
 Transform:
   m_ObjectHideFlags: 0
@@ -1737,6 +1762,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &768985199
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 768985196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 4110968200
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &906908356
 GameObject:
   m_ObjectHideFlags: 0

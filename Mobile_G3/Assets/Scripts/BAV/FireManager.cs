@@ -2,28 +2,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class FireManager : MonoBehaviour
 {
     [Header("Manager Spawner")]
-    public GameObject spawnPointPrefab;
+    public GameObject firePrefab;
     public int numberOfSpawnPoints;
     public float radius;
     public Vector3 centerPosition;
     public float rectHeight;
-    public List<Transform> spawnPoints = new List<Transform>();
+    public List<Transform> firePoints = new List<Transform>();
     public Transform layerPoint;
+    public float startingAngle;
 
     [Header("Manager Mini Games")] 
+    public List<Transform> pointGate; //0 => can be Filled, Increment Index, 1 => Filled the Left, 2=> Can't be filled
     public GameObject bucket;
     public float speed;
-    private Quaternion baseRotationObject = Quaternion.Euler(0,0,-90f);
-    private Quaternion actualRotation;
+    private Quaternion baseRotationObject = Quaternion.Euler(0f,0f,0f);
+    private float actualRotationX;
     public bool isLeft;
     public Vector2 minMaxOrientation = new Vector2(-135f, -45f);
-    public GameObject leftObject;
-    public GameObject rightObject;
-    
+
     // The two points that define the rectangular area
 
     [Header("Gizmos")] 
@@ -34,9 +35,101 @@ public class FireManager : MonoBehaviour
     
 
     private float distance;
-    private Transform pointToTchek;
     private Vector3 _midpoint;
+    public int currentIndex = 1;
 
+    public int previousIndex;
+    // Set a threshold value to determine if the point has passed the specific position
+    public float positionThreshold = 0.1f;
+
+    void Start()
+    {
+        currentIndex = 1;
+        enableAreaRectangleGizmos = true;
+        
+        // Instantiate the spawn points
+        for (int i = 0; i < numberOfSpawnPoints; i++)
+        {
+            float angle = ((360f / numberOfSpawnPoints) * i +  startingAngle) * Mathf.Deg2Rad;
+            float x = radius * Mathf.Cos(angle);
+            float z = radius * Mathf.Sin(angle);
+        
+            Vector3 spawnPosition = new Vector3(x, 0f, z) + centerPosition;
+            GameObject spawnPointObject = Instantiate(firePrefab, spawnPosition, Quaternion.identity, transform);
+            
+            spawnPointObject.transform.parent = layerPoint.transform;
+            firePoints.Add(spawnPointObject.transform);
+        }
+        bucket.transform.rotation = baseRotationObject;
+    }
+    
+
+    public void Update()
+    {
+        layerPoint.localRotation  *= Quaternion.Euler(0f,speed * Time.deltaTime,0f);
+        DetectRotation(bucket);
+        actualRotationX = Mathf.Lerp(minMaxOrientation.x, minMaxOrientation.y, debugRotation);
+        bucket.transform.rotation = Quaternion.Euler( actualRotationX, -90f,0f);
+        
+        IncrementIndex();
+        UpdateFillAmount();
+        FillGivenIndex();
+    }
+    
+    void IncrementIndex()
+    {
+        float distanceToSpecificPoint = Vector3.Distance(firePoints[currentIndex].position, pointGate[1].position);
+        if (distanceToSpecificPoint <= positionThreshold)
+        {
+            currentIndex++;
+            if (currentIndex >= firePoints.Count)
+            {
+                currentIndex = 0;
+            }
+        }
+    }
+    
+    void UpdateFillAmount()
+    {
+        foreach (var firePoint in firePoints)
+        {
+            float distanceToFirstGate = Vector3.Distance(firePoint.position, pointGate[0].position);
+            if (distanceToFirstGate <= positionThreshold)
+            {
+                firePoint.GetComponent<FireObject>().canBeFilled = true;
+            }
+
+            float distanceToEndGate = Vector3.Distance(firePoint.position, pointGate[2].position);
+            if (distanceToEndGate <= positionThreshold)
+            {
+                firePoint.GetComponent<FireObject>().canBeFilled = false;
+            }
+        }
+    }
+
+    void FillGivenIndex()
+    {
+        previousIndex = currentIndex - 1;
+        if (previousIndex < 0)
+        {
+            previousIndex = firePoints.Count - 1;
+        }
+        firePoints[currentIndex].GetComponent<FireObject>().isFilled = !isLeft;
+        firePoints[previousIndex].GetComponent<FireObject>().isFilled = isLeft;
+    }
+    
+    public void DetectRotation(GameObject obj)
+    {
+        if (minMaxOrientation.x <  actualRotationX && actualRotationX < -90f) 
+        {
+            isLeft = false;
+        }
+        if (minMaxOrientation.y > actualRotationX && actualRotationX > -90f)
+        {
+            isLeft = true;
+        }
+    }
+    
     void OnDrawGizmos()
     {
         Vector3 objPosition = centerPosition + transform.position;
@@ -54,6 +147,16 @@ public class FireManager : MonoBehaviour
                 Gizmos.color = Color.blue;
                 Gizmos.DrawSphere(spawnPosition + offsetGizmos, 0.1f);
             }
+            
+            // First Point
+            float angle = startingAngle * Mathf.Deg2Rad;
+            float x1 = radius * Mathf.Cos(angle);
+            float z1 = radius * Mathf.Sin(angle);
+
+            Vector3 spawnFirstPoint = new Vector3(x1, 0f, z1) + centerPosition;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(spawnFirstPoint, 0.2f);
         }
         // Draw the circle as a Gizmo
         if (enableAreaRectangleGizmos)
@@ -61,12 +164,20 @@ public class FireManager : MonoBehaviour
             for (int i = 0; i < numberOfSpawnPoints; i++)
             {
                 // Draw the rectangular area between this spawn point and the next one
-                Transform nextSpawnPoint = spawnPoints[(i + 1) % numberOfSpawnPoints];
-                DrawRectBetweenSpawnPoints(spawnPoints[i], nextSpawnPoint);
+                Transform nextSpawnPoint = firePoints[(i + 1) % numberOfSpawnPoints];
+                DrawRectBetweenSpawnPoints(firePoints[i], nextSpawnPoint);
                 Gizmos.color = Color.red;
                 Gizmos.DrawSphere(_midpoint + offsetGizmos + objPosition, 0.1f);
             }
         }
+        
+        //Point Gate Gizmos
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(pointGate[0].position, positionThreshold);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(pointGate[1].position, positionThreshold);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(pointGate[2].position, positionThreshold);
     }
     
     void DrawRectBetweenSpawnPoints(Transform spawnPoint1, Transform spawnPoint2)
@@ -97,96 +208,4 @@ public class FireManager : MonoBehaviour
         Gizmos.DrawWireCube(Vector3.zero, size);
         Gizmos.matrix = oldMatrix;
     }
-    
-    void Start()
-    {
-        enableAreaRectangleGizmos = true;
-        // Instantiate the spawn points
-        for (int i = 0; i < numberOfSpawnPoints; i++)
-        {
-            float angle = i * (360f / numberOfSpawnPoints) * Mathf.Deg2Rad;
-            float x = radius * Mathf.Cos(angle);
-            float z = radius * Mathf.Sin(angle);
-        
-            Vector3 spawnPosition = new Vector3(x, 0f, z) + centerPosition;
-            GameObject spawnPointObject = Instantiate(spawnPointPrefab, spawnPosition, Quaternion.identity, transform);
-            
-            spawnPointObject.transform.parent = layerPoint.transform;
-            spawnPoints.Add(spawnPointObject.transform);
-        }
-        bucket.transform.rotation = baseRotationObject;
-    }
-
-    public void Update()
-    {
-        layerPoint.localRotation  *= Quaternion.Euler(0f,speed * Time.deltaTime,0f);
-        DetectRotation(bucket);
-        bucket.transform.localRotation = Quaternion.Euler( Mathf.Lerp(minMaxOrientation.x, minMaxOrientation.y, debugRotation), -90f,0f);
-        Debug.Log(bucket.transform.localRotation);
-    }
-    
-    // Check if a point is within a rectangular area
-    bool IsWithinRect(Vector3 point, Vector3 midpoint, float distance, float height)
-    {
-        // Calculate the width of the rectangular area
-        float width = Mathf.Sqrt(Mathf.Pow(distance, 2f) - Mathf.Pow(height, 2f));
-    
-        // Calculate the bounds of the rectangular area
-        float minX = midpoint.x - width / 2f;
-        float maxX = midpoint.x + width / 2f;
-        float minY = midpoint.y - height / 2f;
-        float maxY = midpoint.y + height /2f;
-       // Check if the point is within the bounds
-        return (point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY);
-    }
-
-    public void DetectRotation(GameObject obj)
-    {
-        actualRotation = bucket.transform.localRotation;
-        float actualRotationX = actualRotation.x * Mathf.Deg2Rad;
-        Debug.Log(actualRotationX);
-        if (actualRotationX < -90f && minMaxOrientation.y <actualRotationX)
-        {
-            isLeft = false;
-        }
-        else if (actualRotationX > -90f && minMaxOrientation.x < actualRotationX)
-        {
-            isLeft = true;
-        }
-    }
-    
-    //void Start()
-    //{
-    //    float angleBetweenSpawnPoints = 360f / numberOfSpawnPoints;
-    //
-    //    for (int i = 0; i < numberOfSpawnPoints; i++)
-    //    {
-    //        float x = radius * Mathf.Cos(angleBetweenSpawnPoints * i * Mathf.Deg2Rad);
-    //        float z = radius * Mathf.Sin(angleBetweenSpawnPoints * i * Mathf.Deg2Rad);
-    //
-    //        Vector3 spawnPosition = new Vector3(x, 0f, z) + centerPosition;
-    //        GameObject spawnPoint = Instantiate(spawnPointPrefab, spawnPosition, Quaternion.identity);
-    //        // Calculate the midpoint between the two points
-    //        Vector3 midpoint = (rectPoint1 + rectPoint2) / 2f;
-    //
-    //        // Calculate the distance between the two points
-    //        float distance = Vector3.Distance(rectPoint1, rectPoint2);
-    //
-    //        // Check if the spawned object is within the rectangular area
-    //        if (IsWithinRect(spawnPosition, midpoint, distance, rectHeight))
-    //        {
-    //            // Calculate the angle between the center position and the spawn point
-    //            Vector3 directionToCenter = centerPosition - spawnPosition;
-    //            float angleToCenter = Mathf.Atan2(directionToCenter.y, directionToCenter.x) * Mathf.Rad2Deg;
-    //
-    //            // Set the rotation of the spawned object to face towards the center of the circle
-    //            spawnPoint.transform.rotation = Quaternion.Euler(new Vector3(0f, 0f, angleToCenter));
-    //        }
-    //        else
-    //        {
-    //            // If the spawned object is not within the rectangular area, destroy it
-    //            Destroy(spawnPoint);
-    //        }
-    //    }
-    //}
 }
