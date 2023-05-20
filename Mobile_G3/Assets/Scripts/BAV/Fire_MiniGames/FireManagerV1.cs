@@ -19,7 +19,7 @@ public class FireManagerV1 : MonoBehaviour
     public List<Transform> pointGate; //0 => can be Filled, Increment Index, 1 => Filled the Left, 2=> Can't be filled
     public GameObject woodSupport;
     private float actualRotationY;
-    public Vector2 minMaxOrientation = new Vector2(-135f, -45f);
+    public Vector2 minMaxOrientation = new Vector2(-180f, 180f);
 
     // The two points that define the rectangular area
 
@@ -57,19 +57,35 @@ public class FireManagerV1 : MonoBehaviour
 
     public void Update()
     {
-        float currentGyro = GetGyroRotation().eulerAngles.y;
-        float move = currentGyro - gyroStart;
-        gyroValue += move * gyroSpeed;
-        gyroStart = currentGyro;
-        gyroValue = Mathf.Clamp(gyroValue, -180, 180);
-        Debug.Log(gyroValue);
+        // Get the current rotation value from the gyroscope
+        Vector3 currentGyro = GetGyroRotation().eulerAngles;
 
-        float eulerY = layerPoint.eulerAngles.y < 180 ? layerPoint.eulerAngles.y : layerPoint.eulerAngles.y - 360;
-        //layerPoint.rotation = Quaternion.Euler(0,Mathf.Lerp(eulerY,gyroValue,Time.deltaTime*5),0);
-        //actualRotationY = Mathf.Lerp(minMaxOrientation.x, minMaxOrientation.y, debugRotation);
-        woodSupport.transform.rotation = Quaternion.Euler( -90f,Mathf.Lerp(eulerY,gyroValue,Time.deltaTime*5) ,0f);
-        layerPoint.transform.rotation = Quaternion.Euler(0f, Mathf.Lerp(eulerY,gyroValue,Time.deltaTime*5), 0f);
+        // Calculate the rotation amount based on the change in gyro value
+        float rotationAmount = currentGyro.z - gyroStart;
+
+        // Update the gyro start value for the next frame
+        gyroStart = currentGyro.z;
+
+        // Calculate the rotation speed based on the tilt angle
+        float tiltAngle = Mathf.Abs(gyroValue - minMaxOrientation.x);
+        float rotationSpeed = Mathf.Lerp(gyroSpeed, gyroSpeed * 2f, tiltAngle / Mathf.Abs(minMaxOrientation.x - minMaxOrientation.y));
+    
+        //// Apply maximum speed limit
+        //rotationSpeed = Mathf.Clamp(rotationSpeed, gyroSpeed, 20f);
+
+        // Add the rotation amount to the overall gyro value
+        gyroValue += rotationAmount * rotationSpeed * Time.deltaTime;
+
+        // Clamp the gyro value within the specific range
+        gyroValue = Mathf.Clamp(gyroValue, minMaxOrientation.x, minMaxOrientation.y);
+
+        // Apply the gyro rotation to the object
+        layerPoint.transform.rotation = Quaternion.Euler(0f, gyroValue, 0f);
+        woodSupport.transform.rotation = Quaternion.Euler(-90f, gyroValue, 0f);
+
         FillGivenIndex();
+        Debug.Log(gyroValue + "GyroValue");
+        Debug.Log(rotationSpeed  + "Speed");
     }
     
     void FillGivenIndex()
