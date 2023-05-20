@@ -147,7 +147,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         SetActiveServerRpc(true);
         associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
         GetActivatedClientRpc();
-        StartActivationDuration();
+        if(activationDuration > 0) StartActivationDuration();
     }
 
     protected virtual async void StartActivationDuration()
