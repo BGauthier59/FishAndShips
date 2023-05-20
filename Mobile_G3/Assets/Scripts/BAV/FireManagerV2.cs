@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class FireManager : MonoBehaviour
+public class FireManagerV2 : MonoBehaviour
 {
     [Header("Manager Spawner")]
     public GameObject firePrefab;
@@ -54,13 +54,14 @@ public class FireManager : MonoBehaviour
             float x = radius * Mathf.Cos(angle);
             float z = radius * Mathf.Sin(angle);
         
-            Vector3 spawnPosition = new Vector3(x, 0f, z) + centerPosition;
+            Vector3 spawnPosition = new Vector3(x, 0f, z) + layerPoint.transform.position  + centerPosition;
             GameObject spawnPointObject = Instantiate(firePrefab, spawnPosition, Quaternion.identity, transform);
-            
+
             spawnPointObject.transform.parent = layerPoint.transform;
             firePoints.Add(spawnPointObject.transform);
         }
         bucket.transform.rotation = baseRotationObject;
+        
     }
     
 

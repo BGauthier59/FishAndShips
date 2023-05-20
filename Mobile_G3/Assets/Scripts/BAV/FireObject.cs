@@ -11,7 +11,7 @@ public class FireObject : MonoBehaviour
     private float decreaseSpeed;
     public bool canBeFilled;
     public bool isFilled;
-    
+
     public float currentValue;
     public float countdownTimer;
 
@@ -42,33 +42,37 @@ public class FireObject : MonoBehaviour
     {
         int randomIndex = Random.Range(0, Enum.GetValues(typeof(FireSize)).Length);
         fireSize = (FireSize)randomIndex;
-
         FireStat();
     }
 
     void Update()
     {
-        if (canBeFilled && isFilled)
+        if (isFilled)
         {
             countdownTimer -= Time.deltaTime;
             if (countdownTimer <= 0f)
             {
                 currentValue = 0;
                 countdownTimer = 0;
+                GetComponent<MeshRenderer>().material.color = Color.black;
                 Debug.Log("Finish");
             }
             else
             {
                 currentValue = Mathf.Lerp(0f, firePowerCount, countdownTimer / firePowerCount);
+                GetComponent<MeshRenderer>().material.color = Color.blue;
             }
         }
-    }
-
-    public void FireDeath(int index)
-    {
-        if (firePowerCount <= 0)
+        else
         {
-            index++;
+            if (currentValue <= 0)
+            {
+                GetComponent<MeshRenderer>().material.color = Color.black;
+            }
+            else
+            {
+                GetComponent<MeshRenderer>().material.color = Color.red;
+            }
         }
     }
 }
