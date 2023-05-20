@@ -14,7 +14,15 @@ public class MiniGame_Fire : MiniGame
      */
     
     [SerializeField] private GyroscopeSetupData data;
+    [SerializeField] private FireGyroscopeSetupData fireData;
     [SerializeField] private float damagePerSecond;
+    
+    private Vector3 fireInitPos;
+    
+    public override void OnNetworkSpawn()
+    {
+        fireInitPos = fireData.fireSizeType[0].position;
+    }
 
     public override async void StartMiniGame()
     {
@@ -24,6 +32,11 @@ public class MiniGame_Fire : MiniGame
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         WorkshopManager.instance.gyroscopeManager.Enable(data);
         StartExecutingMiniGame();
+    }
+
+    private void SetupHole()
+    {
+        
     }
     
     public override void AssociatedWorkshopGetActivatedHostSide()
@@ -35,7 +48,7 @@ public class MiniGame_Fire : MiniGame
 
     public override void ExecuteMiniGame()
     {
-        // 
+        //  
     }
 
     public override void Reset()
