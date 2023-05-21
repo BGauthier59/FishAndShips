@@ -18,19 +18,22 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     [SerializeField] private int2[] initPlayerPositions = new int2[4];
 
     [Header("Instances")] private EventsManager eventsManager;
+    private TutorialEventManager tutorialEventManager;
     private WorkshopManager workshopManager;
     private ShipManager shipManager;
     private CanvasManager canvasManager;
     private TimerManager timerManager;
     private CameraManager cameraManager;
-
-    private List<PlayerManager> players = new List<PlayerManager>();
+    [SerializeField] private bool isTutorialLevel;
+        
+    public List<PlayerManager> players = new List<PlayerManager>();
     private int hostReadyClientCount;
 
     private bool needToClick;
     private int hostReadyForTutorialClientCount;
 
     private NetworkVariable<bool> isGameCancelledBecauseOfDisconnection = new NetworkVariable<bool>();
+    
 
     #region Start Game Loop
 
@@ -83,23 +86,35 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         GridControlManager.instance.StartGameLoop();
         shipManager.StartGameLoop();
         workshopManager.StartGameLoop();
-        eventsManager.StartGameLoop();
-        timerManager.StartGameLoop();
+        if (isTutorialLevel) tutorialEventManager.StartGameLoop();
+        else
+        {
+            eventsManager.StartGameLoop();
+            timerManager.StartGameLoop();
+        }
     }
 
     private void LinkInstance()
     {
-        eventsManager = EventsManager.instance;
-        workshopManager = WorkshopManager.instance;
-        shipManager = ShipManager.instance;
-        canvasManager = CanvasManager.instance;
-        timerManager = TimerManager.instance;
-        cameraManager = CameraManager.instance;
-
         foreach (var kvp in ConnectionManager.instance.players)
         {
             players.Add(kvp.Value);
         }
+        
+        if (isTutorialLevel)
+        {
+            tutorialEventManager = TutorialEventManager.instance;
+            tutorialEventManager.playerNb = players.Count;
+        }
+        else
+        {
+            timerManager = TimerManager.instance;
+            eventsManager = EventsManager.instance;
+        }
+        workshopManager = WorkshopManager.instance;
+        shipManager = ShipManager.instance;
+        canvasManager = CanvasManager.instance;
+        cameraManager = CameraManager.instance;
     }
 
     #endregion
@@ -116,14 +131,15 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
-        eventsManager.UpdateGameLoop();
+        if (isTutorialLevel) tutorialEventManager.UpdateGameLoop();
+        else eventsManager.UpdateGameLoop();
 
         foreach (var player in players)
         {
             player.UpdateGameLoop();
         }
 
-        timerManager.UpdateGameLoop();
+        if (!isTutorialLevel) timerManager.UpdateGameLoop();
     }
 
     #endregion
