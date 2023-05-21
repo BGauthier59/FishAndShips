@@ -297,6 +297,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         {
             isShowingTutorial = false;
             askForStopTutorial = false;
+            askForStartTutorial = false;
             return;
         }
 

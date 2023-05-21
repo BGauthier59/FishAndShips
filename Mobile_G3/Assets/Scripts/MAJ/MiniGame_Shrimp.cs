@@ -10,8 +10,6 @@ public class MiniGame_Shrimp : MiniGame
     public Transform shrimpCollision, swipeTrail, planeOrigin;
     public float shrimpCollisionSize, trueCollisionSize, swordCollisionSize, trueSwordSize, posAngle;
     public Vector2 lastPos;
-    public bool validSwipe;
-    public float topAngleCheck, botAngleCheck;
     public int missingSwordNb, lifePoints, baseLifePoints;
     public GameObject[] swords;
     [SerializeField] private Camera inputCamera;
@@ -58,7 +56,6 @@ public class MiniGame_Shrimp : MiniGame
                 trueCollisionSize * trueCollisionSize)
             {
                 // Collision
-                Debug.Log("Collision");
                 if (CompareSwipeAngle((Vector2) Input.mousePosition - lastPos))
                 {
                     DamageDealt();
@@ -66,35 +63,6 @@ public class MiniGame_Shrimp : MiniGame
             }
 
             lastPos = Input.mousePosition;
-
-            /*if (validSwipe)
-            {
-                if (Vector2.SqrMagnitude(WorkshopManager.instance.shrimpSwipeManager.startTouch -
-                                         shrimpCollision.position) < trueSwordSize * trueSwordSize)
-                {
-                    validSwipe = false;
-                }
-
-                lastPos = Input.mousePosition;
-
-                if (Vector2.SqrMagnitude(Input.mousePosition - shrimpCollision.position) <
-                    trueCollisionSize * trueCollisionSize)
-                {
-                    // si le swipe touche la crevette
-                    if (!CompareSwipeAngle()) validSwipe = false;
-                    else
-                    {
-                        DamageDealt();
-                        validSwipe = false;
-                    }
-                }
-
-                else if (Vector2.SqrMagnitude(Input.mousePosition - shrimpCollision.position) <
-                         trueSwordSize * trueSwordSize)
-                {
-                    if (!CompareSwipeAngle()) validSwipe = false;
-                }
-            }*/
 
             ray = inputCamera.ScreenPointToRay(Input.mousePosition);
             swipeTrail.gameObject.SetActive(true);
@@ -105,7 +73,6 @@ public class MiniGame_Shrimp : MiniGame
         }
         else
         {
-            validSwipe = true;
             swipeTrail.gameObject.SetActive(false);
         }
     }
@@ -206,9 +173,7 @@ public class MiniGame_Shrimp : MiniGame
                 angle = new Vector2(-1, -1.7f);
                 break;
         }
-
-        Debug.DrawRay(new Vector3(960, 540, 0), angle.normalized * 200, Color.green, 5);
-        Debug.DrawRay(new Vector3(960, 540, 0), dir.normalized * 200, Color.red, 5);
+        
         float dot = Vector2.Dot(-angle.normalized, dir.normalized);
         if (dot > 0.8f) return true;
         return false;
@@ -221,7 +186,6 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void Reset()
     {
-        validSwipe = false;
         lastPos = Vector2.zero;
         posAngle = 0;
         swipeTrail.gameObject.SetActive(false);
