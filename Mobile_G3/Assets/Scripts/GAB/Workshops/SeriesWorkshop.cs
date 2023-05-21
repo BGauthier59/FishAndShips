@@ -14,9 +14,6 @@ public class SeriesWorkshop : Workshop
     [Tooltip("For next mini-games only")] [SerializeField]
     private InventoryObject[] requiredItems;
 
-    [SerializeField] [Range(0, 3)] [Tooltip("0 is top left, 1 is top right, 2 is bottom left, 3 is bottom right")]
-    private byte cannonIndex;
-
     [Tooltip(
         "WARNING! Index 0 is associatedMiniGame. Otherwise follows list indices. Activation events is for every mini-games")]
     [SerializeField]
@@ -77,10 +74,11 @@ public class SeriesWorkshop : Workshop
 
         currentMiniGameIndex.Value++;
         if (currentMiniGameIndexSafe == nextMiniGames.Length ||
-            !victory.HasValue) // playerId == 6 is a trick to immediately stop Series Workshop
+            !victory.HasValue) // If victory is null, it means the workshop has been lost because of timer
         {
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
+            GetDeactivatedClientRpc(victory.HasValue);
             SetOccupiedServerRpc(false);
             return;
         }
@@ -98,7 +96,7 @@ public class SeriesWorkshop : Workshop
     [ClientRpc]
     private void SeriesWorkshopGetDeactivatedClientRpc(int index)
     {
-        deactivationEvent?.Invoke();
+        //deactivationEvent?.Invoke();
         deactivationEvents[index]?.Invoke();
     }
 
@@ -116,10 +114,5 @@ public class SeriesWorkshop : Workshop
         if (requiredItems.Length == 0) return null;
 
         return requiredItems[currentMiniGameIndexSafe];
-    }
-
-    public byte GetCannonIndex()
-    {
-        return cannonIndex;
     }
 }

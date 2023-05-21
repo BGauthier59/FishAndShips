@@ -205,7 +205,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     }
 
     [ClientRpc]
-    private void GetDeactivatedClientRpc(bool victory)
+    protected void GetDeactivatedClientRpc(bool victory)
     {
         if (victory) winEvent?.Invoke();
         else loseEvent?.Invoke();

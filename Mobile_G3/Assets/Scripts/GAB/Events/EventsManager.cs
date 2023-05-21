@@ -13,7 +13,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
     [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
     [SerializeField] private ReparationWorkshop[] reparationWorkshops;
-    public NewCanonWorkshop[] cannonWorkshops;
+    public SeriesWorkshop[] cannonWorkshops;
     public ConnectedWorkshop mapWorkshop;
     public ConnectedWorkshop sailsWorkshop;
 
@@ -185,7 +185,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         return availables.ToArray();
     }
 
-    public NewCanonWorkshop GetCannonWorkshop(int index)
+    public SeriesWorkshop GetCannonWorkshop(int index)
     {
         return cannonWorkshops[index];
     }

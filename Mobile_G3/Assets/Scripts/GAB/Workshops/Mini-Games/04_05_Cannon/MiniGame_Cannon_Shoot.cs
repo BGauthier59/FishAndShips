@@ -8,7 +8,6 @@ using UnityEngine.Events;
 public class MiniGame_Cannon_Shoot : MiniGame
 {
     [SerializeField] private CannonDragAndDropData data;
-    private byte index;
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent inGameShootEvent;
     [SerializeField] private ParticleSystem fireStart, fireStop;
@@ -39,11 +38,6 @@ public class MiniGame_Cannon_Shoot : MiniGame
         {
             Fire();
         }
-    }
-
-    public override void TransferDataFromWorkshopWhenMiniGameStarts(Workshop workshop)
-    {
-        index = ((SeriesWorkshop) workshop).GetCannonIndex();
     }
 
     private async void Fire()

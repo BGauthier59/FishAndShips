@@ -20,7 +20,8 @@ public class StormEvent : RandomEvent
 
     public override bool CheckConditions()
     {
-        if (EventsManager.instance.sailsWorkshop.isActive.Value) return false;
+        if (EventsManager.instance.sailsWorkshop != null &&
+            EventsManager.instance.sailsWorkshop.isActive.Value) return false;
         return true;
     }
 
@@ -30,12 +31,12 @@ public class StormEvent : RandomEvent
 
         // Host-side logic
         SetupEvent();
-        
+
         GenerateSailsWorkshop();
         // todo - wait for fire mini-games
 
         await UniTask.Delay(2000);
-        
+
         EndEvent();
     }
 
@@ -47,6 +48,7 @@ public class StormEvent : RandomEvent
 
     private void GenerateSailsWorkshop()
     {
+        if (EventsManager.instance.sailsWorkshop == null) return;
         EventsManager.instance.sailsWorkshop.InitializeActivation();
     }
 
@@ -59,7 +61,7 @@ public class StormEvent : RandomEvent
         CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
         enterStormEvent?.Invoke();
     }
-    
+
     protected override void EndEvent()
     {
         EndStormEventFeedbackClientRpc();
