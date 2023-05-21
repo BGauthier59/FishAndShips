@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
 {
     [SerializeField] private GameObject[] hostButtons, clientButtons;
-    [SerializeField] private Image[] stars;
+    [SerializeField] private GameObject[] stars;
+    [SerializeField] private GameObject[] victoryObjects, defeatObjects;
 
     public void SetupCanvas(bool isHost, bool victory, int starCount)
     {
@@ -17,17 +18,20 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
         else
             foreach (var go in hostButtons)
                 go.SetActive(false);
-
-        Debug.Log($"Star count: {starCount}");
-
+        
+        foreach (var go in victoryObjects) go.SetActive(victory);
+        foreach (var go in defeatObjects) go.SetActive(!victory);
+        
+        foreach (var star in stars) star.SetActive(false);
+        
         if (victory)
         {
             for (int i = 0; i < starCount; i++)
             {
-                stars[i].color = Color.white;
+                stars[i].SetActive(true);
             }
         }
-        
+
         // Todo - show titles
     }
 
