@@ -86,7 +86,7 @@ public class MiniGame_Cannon_Load : MiniGame
                 cannonAnim.Play(cannonIsComing.name);
                 await UniTask.Delay(1000);
                 WorkshopManager.instance.cannonDragAndDropManager.Enable(step2data);
-                WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint += OnBulletWellPlaced;
+                WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint = OnBulletWellPlaced;
                 WorkshopManager.instance.StartMiniGameTutorial(1);
                 break;
             
@@ -103,7 +103,12 @@ public class MiniGame_Cannon_Load : MiniGame
 
     private void OnBulletWellPlaced()
     {
-        WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint -= OnBulletWellPlaced;
+        if (currentState != CannonState.Step2)
+        {
+            Debug.LogError($"Should not invoke this when on {currentState}");
+            return;
+        }
+        WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint = null;
         SwitchState(CannonState.Step3);
     }
 

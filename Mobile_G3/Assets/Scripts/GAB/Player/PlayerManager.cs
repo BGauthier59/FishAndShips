@@ -45,8 +45,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     {
         playerName.OnValueChanged += OnNameChanged;
         playerDataIndex.OnValueChanged += OnSkinChanged;
-        gridPositionX.OnValueChanged += OnPositionChanged;
-        gridPositionY.OnValueChanged += OnPositionChanged;
+        
         SetBoatSide(BoatSide.Deck);
     }
 
@@ -67,6 +66,11 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
 
         SetInventoryObject(InventoryObject.None);
+        
+        // Pas propre mais seul moyen actuel d'éviter un pb en début de partie:
+        SetPosition(position.x, -1);
+        gridPositionX.OnValueChanged += OnPositionChanged;
+        gridPositionY.OnValueChanged += OnPositionChanged;
         SetPosition(position.x, position.y);
     }
 
@@ -90,7 +94,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             Debug.LogWarning("You've been connected!");
             playerName.Value = MainMenuManager.instance.pseudo;
             playerDataIndex.Value = MainMenuManager.instance.skinId;
-            SetPosition(positionX, positionY);
+            //SetPosition(positionX, positionY);
         }
 
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
@@ -234,6 +238,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     private void OnPositionChanged(int previous, int next)
     {
+        Debug.Log(gridPositionX.Value +  " " + gridPositionY.Value);
         if (GridManager.instance == null)
         {
             Debug.LogWarning("No Grid Manager");
@@ -267,8 +272,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
     }
 
-    private Quaternion oldRotation;
-    private Quaternion nextRotation;
+    private Quaternion oldRotation = Quaternion.identity;
+    private Quaternion nextRotation = Quaternion.identity;
 
     public void InitializeBounce(Vector3 dir)
     {

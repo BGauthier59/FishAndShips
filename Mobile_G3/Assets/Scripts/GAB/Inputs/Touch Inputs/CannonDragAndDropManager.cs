@@ -20,6 +20,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         base.Enable(setupData);
         plane = new Plane(-WorkshopManager.instance.miniGameEnvironmentCamera.forward, data.planeOrigin.position);
         data.draggableItem.gameObject.SetActive(false);
+        data.draggableItem.position = Vector3.zero;
         float scale = WorkshopManager.instance.GetCanvasFactor();
         data.endPointRadius *= scale;
         data.startPointRadius *= scale;
@@ -82,6 +83,12 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
 
     public void CalculateBulletPosition()
     {
+        if (!isActive)
+        {
+            Debug.LogError("Should not be calculated.");
+            return;
+        }
+        
         if (!isDraging) return;
         
         lastTouch = currentTouch;
