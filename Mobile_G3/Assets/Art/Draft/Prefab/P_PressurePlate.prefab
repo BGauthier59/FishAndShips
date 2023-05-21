@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 5694785581291484365}
   - component: {fileID: 8694246106687224680}
   - component: {fileID: 6867107129241292706}
+  - component: {fileID: 7535512031026605957}
   m_Layer: 0
-  m_Name: P_PressurePlate_01
+  m_Name: P_PressurePlate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,3 +84,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7535512031026605957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921345862352072311}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ddabd5b50b3cf7459d3a267c9751451, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  positionX: 0
+  positionY: 0
+  barriers: []
