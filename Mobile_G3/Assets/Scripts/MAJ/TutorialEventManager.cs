@@ -52,7 +52,7 @@ public class TutorialEventManager : NetworkMonoSingleton<TutorialEventManager>
                 instructionText.text = "Defeat all shrimps";
                 break;
             case 1:
-                instructionText.text = "Pout out all fires";
+                instructionText.text = "Put out all fires";
                 break;
             case 2:
                 instructionText.text = "Repair all holes";
