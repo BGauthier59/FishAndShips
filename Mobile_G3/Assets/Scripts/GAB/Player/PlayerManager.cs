@@ -238,7 +238,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     private void OnPositionChanged(int previous, int next)
     {
-        Debug.Log(gridPositionX.Value +  " " + gridPositionY.Value);
         if (GridManager.instance == null)
         {
             Debug.LogWarning("No Grid Manager");

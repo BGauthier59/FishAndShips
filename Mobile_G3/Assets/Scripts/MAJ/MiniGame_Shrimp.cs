@@ -210,7 +210,6 @@ public class MiniGame_Shrimp : MiniGame
         Debug.DrawRay(new Vector3(960, 540, 0), angle.normalized * 200, Color.green, 5);
         Debug.DrawRay(new Vector3(960, 540, 0), dir.normalized * 200, Color.red, 5);
         float dot = Vector2.Dot(-angle.normalized, dir.normalized);
-        Debug.Log("Dot " + dot);
         if (dot > 0.8f) return true;
         return false;
     }
