@@ -12,6 +12,7 @@ using UnityEngine;
 public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
 {
     private string hostIp;
+    public string code;
     public Dictionary<ulong, PlayerManager> players = new();
     private UnityTransport transport;
     private string ipToConnect;
@@ -46,8 +47,8 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
         {
             Debug.Log("Connection failed.");
         }
-
-        return StringUtils.NumberToLetterIP(hostIp);
+        code = StringUtils.NumberToLetterIP(hostIp);
+        return code;
     }
 
     public async void ConnectAsClient(string ip)
@@ -61,7 +62,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
         }
 
         transport.SetConnectionData(StringUtils.LetterToNumberIP(ip), transport.ConnectionData.Port);
-
+        code = ip;
         if(!transport.ConnectionData.ServerEndPoint.IsValid)
         {
             Debug.Log("It seems the IP is not correct. We don't connect");
