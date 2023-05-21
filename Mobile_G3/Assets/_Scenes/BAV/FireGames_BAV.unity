@@ -1561,13 +1561,15 @@ MonoBehaviour:
   - {fileID: 743581065718106105}
   - {fileID: 7331933705460029070}
   woodSupport: {fileID: 1445407079}
-  minMaxOrientation: {x: -135, y: -45}
+  totalFire: 0
   debugRotation: 0.5
   offsetGizmos: {x: 0, y: 0.5, z: 0}
   positionThreshold: 0.1
   gyroStart: 0
   gyroSpeed: 4
   gyroValue: 0
+  increasedRotationSpeed: 5
+  minMaxGyro: 360
 --- !u!1001 &1477207020371325953
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1603,32 +1605,32 @@ PrefabInstance:
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: -0.009872698
       objectReference: {fileID: 0}
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.7071068
+      value: 0.009872698
       objectReference: {fileID: 0}
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.70703787
       objectReference: {fileID: 0}
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0.70703787
       objectReference: {fileID: 0}
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 181.6
       objectReference: {fileID: 0}
     - target: {fileID: 3001158106437438622, guid: a9d75541d75418d4481896bbfe25e04a,
         type: 3}

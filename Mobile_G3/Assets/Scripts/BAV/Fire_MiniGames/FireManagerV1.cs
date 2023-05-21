@@ -19,7 +19,7 @@ public class FireManagerV1 : MonoBehaviour
     public List<Transform> pointGate; //0 => can be Filled, Increment Index, 1 => Filled the Left, 2=> Can't be filled
     public GameObject woodSupport;
     private float actualRotationY;
-    public Vector2 minMaxOrientation = new Vector2(-180f, 180f);
+    public int totalFire;
 
     // The two points that define the rectangular area
 
@@ -52,40 +52,27 @@ public class FireManagerV1 : MonoBehaviour
         }
 
         EnableGyro();
+        gyroStart = GetGyroRotation().eulerAngles.y; // => 0
     }
     
+    public float increasedRotationSpeed = 10f;
+    public float minMaxGyro = 180;
+
 
     public void Update()
     {
-        // Get the current rotation value from the gyroscope
-        Vector3 currentGyro = GetGyroRotation().eulerAngles;
-
-        // Calculate the rotation amount based on the change in gyro value
-        float rotationAmount = currentGyro.z - gyroStart;
-
-        // Update the gyro start value for the next frame
-        gyroStart = currentGyro.z;
-
-        // Calculate the rotation speed based on the tilt angle
-        float tiltAngle = Mathf.Abs(gyroValue - minMaxOrientation.x);
-        float rotationSpeed = Mathf.Lerp(gyroSpeed, gyroSpeed * 2f, tiltAngle / Mathf.Abs(minMaxOrientation.x - minMaxOrientation.y));
-    
-        //// Apply maximum speed limit
-        //rotationSpeed = Mathf.Clamp(rotationSpeed, gyroSpeed, 20f);
-
-        // Add the rotation amount to the overall gyro value
-        gyroValue += rotationAmount * rotationSpeed * Time.deltaTime;
-
-        // Clamp the gyro value within the specific range
-        gyroValue = Mathf.Clamp(gyroValue, minMaxOrientation.x, minMaxOrientation.y);
-
-        // Apply the gyro rotation to the object
-        layerPoint.transform.rotation = Quaternion.Euler(0f, gyroValue, 0f);
-        woodSupport.transform.rotation = Quaternion.Euler(-90f, gyroValue, 0f);
-
+        //gyroStart = GetGyroRotation().eulerAngles.y; // => 217
+        float currentGyro = GetGyroRotation().eulerAngles.y; // => 210-220
+        float move = currentGyro - gyroStart; // => 210-220
+        gyroValue += move * gyroSpeed; // => 
+        gyroStart = currentGyro;
+        gyroValue = Mathf.Clamp(gyroValue, -minMaxGyro, minMaxGyro);
+        
+        float eulerY = layerPoint.eulerAngles.y;
+        layerPoint.transform.rotation = Quaternion.Euler(0,Mathf.Lerp(eulerY,gyroValue,increasedRotationSpeed * Time.deltaTime),0);
+        Debug.Log("Current Gyro" + currentGyro);
+        Debug.Log("Current Gyro" + gyroValue);
         FillGivenIndex();
-        Debug.Log(gyroValue + "GyroValue");
-        Debug.Log(rotationSpeed  + "Speed");
     }
     
     void FillGivenIndex()
@@ -103,7 +90,20 @@ public class FireManagerV1 : MonoBehaviour
             }
         }
     }
-    
+
+    void LaunchExitMinigame()
+    {
+        foreach (Transform obj in firePoints)
+        {
+            if (obj.GetComponent<FireObject>().currentValue != 0f)
+            {
+                return; // If any object has a non-zero value, exit the method
+            }
+        }
+        
+        Debug.Log("Game Over!");
+    }
+
     bool IsObjectBetweenPoints(Transform objectToCheck)
     {
         if (objectToCheck != null)
