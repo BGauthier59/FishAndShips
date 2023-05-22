@@ -70,13 +70,14 @@ public class StormEvent : RandomEvent
             if (count == fireCount) break;
             randomCooldown = Random.Range(300, 701);
             await UniTask.Delay(randomCooldown);
-            
+
             Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
             int2 coord = targetedTile.GetTilePos();
             ThunderClientRpc(coord.x, coord.y, index);
-            
+
             count++;
         }
+
         Debug.Log("Fire successfully instantiated!");
     }
 
@@ -90,6 +91,8 @@ public class StormEvent : RandomEvent
 
     #endregion
 
+    private Vector4 defaultVector = Vector4.zero;
+
     [ClientRpc]
     private void StartStormEventFeedbackClientRpc()
     {
@@ -99,10 +102,31 @@ public class StormEvent : RandomEvent
         if (volume.profile.TryGet(out shadowsMidtonesHighlights))
         {
             shadowsMidtonesHighlights.active = true;
+
+            saveShadowsValue = shadowsMidtonesHighlights.shadows.value;
+            saveMidtonesValue = shadowsMidtonesHighlights.midtones.value;
+            saveHighlightsValue = shadowsMidtonesHighlights.highlights.value;
+
+            LerpStormTones(defaultVector, saveShadowsValue, shadowsMidtonesHighlights);
+            LerpStormTones(defaultVector, saveMidtonesValue, shadowsMidtonesHighlights);
+            LerpStormTones(defaultVector, saveHighlightsValue, shadowsMidtonesHighlights);
         }
         else Debug.LogWarning("Can't access shadows midtones highlights!");
 
         enterStormEvent?.Invoke();
+    }
+
+    private Vector4 saveShadowsValue, saveMidtonesValue, saveHighlightsValue;
+
+    private async UniTask LerpStormTones(Vector4 from, Vector4 to, ShadowsMidtonesHighlights s)
+    {
+        var timer = 0f;
+        while (timer < 1)
+        {
+            await UniTask.Yield();
+            timer += Time.deltaTime;
+            s.shadows.Interp(from, to, 1 / timer);
+        }
     }
 
     protected override void EndEvent()
@@ -117,8 +141,17 @@ public class StormEvent : RandomEvent
         CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
         exitStormEvent?.Invoke();
 
+        DisableEffect();
+    }
+
+    private async void DisableEffect()
+    {
         if (volume.profile.TryGet(out shadowsMidtonesHighlights))
         {
+            LerpStormTones(saveShadowsValue, defaultVector, shadowsMidtonesHighlights);
+            LerpStormTones(saveMidtonesValue, defaultVector, shadowsMidtonesHighlights);
+            await LerpStormTones(saveHighlightsValue, defaultVector, shadowsMidtonesHighlights);
+
             shadowsMidtonesHighlights.active = false;
         }
         else Debug.LogWarning("Can't access shadows midtones highlights!");
