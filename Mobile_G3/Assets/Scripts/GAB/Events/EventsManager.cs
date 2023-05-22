@@ -14,6 +14,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
     [SerializeField] private ReparationWorkshop[] reparationWorkshops;
     public SeriesWorkshop[] cannonWorkshops;
+    public Workshop[] fireWorkshops;
     public ConnectedWorkshop mapWorkshop;
     public ConnectedWorkshop sailsWorkshop;
 
