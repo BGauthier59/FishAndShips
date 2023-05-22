@@ -112,7 +112,7 @@ public class AudioManager : MonoSingleton<AudioManager>
             if (isFading) return;
             await UniTask.Yield();
             timer += Time.deltaTime;
-            boSource.volume = math.lerp(initVolume, 0, initVolume / timer);
+            boSource.volume = math.lerp(initVolume, 0, 1 / timer);
         }
     }
 
