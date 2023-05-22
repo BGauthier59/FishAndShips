@@ -19,8 +19,7 @@ public class StormEvent : RandomEvent
     [SerializeField] private int2 fireMinMaxCount;
     private int fireCount, count;
 
-    [SerializeField] private Volume volume;
-    private ShadowsMidtonesHighlights shadowsMidtonesHighlights;
+    [SerializeField] private Volume stormyVolume;
 
     #region Main Methods
 
@@ -38,6 +37,8 @@ public class StormEvent : RandomEvent
 
         // Host-side logic
         SetupEvent();
+
+        await UniTask.Delay(2000); // Pour attendre que le fade se fasse
 
         GenerateSailsWorkshop();
         GenerateFireWorkshops();
@@ -91,7 +92,7 @@ public class StormEvent : RandomEvent
 
     #endregion
 
-    private Vector4 defaultVector = Vector4.zero;
+    private Vector4 defaultVector = new Vector4(1f, 1f, 1f, 0f);
 
     [ClientRpc]
     private void StartStormEventFeedbackClientRpc()
@@ -99,34 +100,26 @@ public class StormEvent : RandomEvent
         CameraManager.instance.SetCurrentDeckCameraPosRot(posRotStorm.pos, posRotStorm.rot);
         CameraManager.instance.SetZoomToCurrentCameraPosRot(BoatSide.Deck, 1);
 
-        if (volume.profile.TryGet(out shadowsMidtonesHighlights))
-        {
-            shadowsMidtonesHighlights.active = true;
-
-            saveShadowsValue = shadowsMidtonesHighlights.shadows.value;
-            saveMidtonesValue = shadowsMidtonesHighlights.midtones.value;
-            saveHighlightsValue = shadowsMidtonesHighlights.highlights.value;
-
-            LerpStormTones(defaultVector, saveShadowsValue, shadowsMidtonesHighlights);
-            LerpStormTones(defaultVector, saveMidtonesValue, shadowsMidtonesHighlights);
-            LerpStormTones(defaultVector, saveHighlightsValue, shadowsMidtonesHighlights);
-        }
-        else Debug.LogWarning("Can't access shadows midtones highlights!");
+        stormyVolume.enabled = true;
+        LerpPostProcessEffect(0, 1, 2);
 
         enterStormEvent?.Invoke();
     }
 
-    private Vector4 saveShadowsValue, saveMidtonesValue, saveHighlightsValue;
-
-    private async UniTask LerpStormTones(Vector4 from, Vector4 to, ShadowsMidtonesHighlights s)
+    private async UniTask LerpPostProcessEffect(float from, float to, float duration)
     {
-        var timer = 0f;
-        while (timer < 1)
+        Debug.Log("start lerp");
+        stormyVolume.weight = from;
+
+        float timer = 0;
+        while (timer < duration)
         {
             await UniTask.Yield();
             timer += Time.deltaTime;
-            s.shadows.Interp(from, to, 1 / timer);
+            stormyVolume.weight = Mathf.Lerp(from, to, timer / duration);
         }
+
+        stormyVolume.weight = to;
     }
 
     protected override void EndEvent()
@@ -146,14 +139,7 @@ public class StormEvent : RandomEvent
 
     private async void DisableEffect()
     {
-        if (volume.profile.TryGet(out shadowsMidtonesHighlights))
-        {
-            LerpStormTones(saveShadowsValue, defaultVector, shadowsMidtonesHighlights);
-            LerpStormTones(saveMidtonesValue, defaultVector, shadowsMidtonesHighlights);
-            await LerpStormTones(saveHighlightsValue, defaultVector, shadowsMidtonesHighlights);
-
-            shadowsMidtonesHighlights.active = false;
-        }
-        else Debug.LogWarning("Can't access shadows midtones highlights!");
+        await LerpPostProcessEffect(1, 0, 1);
+        stormyVolume.enabled = false;
     }
 }
