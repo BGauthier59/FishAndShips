@@ -73,6 +73,11 @@ public class StormEvent : RandomEvent
             await UniTask.Delay(randomCooldown);
 
             Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
+            if (targetedTile == null)
+            {
+                Debug.LogWarning("Didn't instantiate any thunder.");
+                continue;
+            }
             int2 coord = targetedTile.GetTilePos();
             ThunderClientRpc(coord.x, coord.y, index);
 

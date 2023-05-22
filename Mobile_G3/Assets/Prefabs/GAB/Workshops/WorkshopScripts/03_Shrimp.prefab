@@ -253,6 +253,21 @@ MonoBehaviour:
   idle3: {fileID: 7400000, guid: 28cd2690866d21a49a1915390cad8f11, type: 2}
   flip: {fileID: 7400000, guid: b6ac0155f82214040ba8c35cdb6c211b, type: 2}
   jump: {fileID: 7400000, guid: 96f5801f0d05d6f41a5782e9a33c4fee, type: 2}
+  moveEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: ShrimpMove
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1001 &1201584319354890889
 PrefabInstance:
   m_ObjectHideFlags: 0

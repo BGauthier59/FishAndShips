@@ -21,7 +21,7 @@ public class MiniGame_Canon_New : MiniGame
     public float gyroStart,gyroSpeed,gyroValue;
     public Transform point;
 
-
+    [SerializeField] private UnityEvent shootEvent;
 
     public override async void StartMiniGame()
     {
@@ -87,6 +87,7 @@ public class MiniGame_Canon_New : MiniGame
     public async void Shoot()
     {
         canonballAnim.Play("CanonShoot");
+        shootEvent?.Invoke();
         await UniTask.Delay(500);
         if (Mathf.Abs(cameraCanon.eulerAngles.y - shipParent.eulerAngles.y) < 7)
         {

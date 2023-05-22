@@ -4,20 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Audio Trigger", order = 4)]
 public class AudioTriggerSO : ScriptableObject
 {
-    private string[] sfx;
-    private string[] musics;
-    
     public void PlaySound(string sound)
     {
-        if (sfx == null)
+        for (int i = 0; i < AudioManager.instance.effects.Length; i++)
         {
-            sfx = Enum.GetNames(typeof(AudioType));
-            Debug.Log("Created array of SFX.");
-        }
-
-        for (int i = 0; i < sfx.Length; i++)
-        {
-            if (sfx[i] != sound) continue;
+            if (AudioManager.instance.effects[i] != sound) continue;
             PlaySound((AudioType) i);
             return;
         }
@@ -27,11 +18,9 @@ public class AudioTriggerSO : ScriptableObject
 
     public void PlayMusic(string music)
     {
-        musics ??= Enum.GetNames(typeof(MusicType));
-
-        for (int i = 0; i < musics.Length; i++)
+        for (int i = 0; i < AudioManager.instance.themes.Length; i++)
         {
-            if (musics[i] != music) continue;
+            if (AudioManager.instance.themes[i] != music) continue;
             PlayMusic((MusicType) i);
             return;
         }
@@ -41,11 +30,9 @@ public class AudioTriggerSO : ScriptableObject
     
     public void PlayMusicNoFading(string music)
     {
-        musics ??= Enum.GetNames(typeof(MusicType));
-
-        for (int i = 0; i < musics.Length; i++)
+        for (int i = 0; i < AudioManager.instance.themes.Length; i++)
         {
-            if (musics[i] != music) continue;
+            if (AudioManager.instance.themes[i] != music) continue;
             PlayMusicNoFading((MusicType) i);
             return;
         }
@@ -98,11 +85,21 @@ public enum AudioType
     SailUp,
     SailDown,
     WaitConnected,
-    
     CannonRotate,
     CannonBulletDrop,
     ShrimpSlash,
     ShrimpTurn,
+    ShrimpMove,
+    Thunder,
+    PressurePlate,
+    PickItem,
+    Move,
+    StartFire,
+    CannonShot,
+    
+    SpawnHole,
+    StartStorm,
+    SetPlank
 }
 
 public enum MusicType

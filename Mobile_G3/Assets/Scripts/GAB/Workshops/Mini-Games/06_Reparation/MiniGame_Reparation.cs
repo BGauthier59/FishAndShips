@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class MiniGame_Reparation : MiniGame
@@ -24,6 +25,8 @@ public class MiniGame_Reparation : MiniGame
     private static readonly int TexHole = Shader.PropertyToID("_Tex_Hole");
 
     private Vector3 plankInitPos;
+
+    [SerializeField] private UnityEvent setPlankEvent;
     
     public override void OnNetworkSpawn()
     {
@@ -51,8 +54,7 @@ public class MiniGame_Reparation : MiniGame
 
     private void CheckPlanks()
     {
-        // Todo - Implement feedbacks
-        
+        setPlankEvent?.Invoke();
         if (CompareTexturesAndGetPercentage() > minimumRateToRepair) WallIsFixed();
     }
 

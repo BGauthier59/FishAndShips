@@ -9,6 +9,9 @@ public class AudioManager : MonoSingleton<AudioManager>
     [SerializeField] private AudioSource soundSource;
     [SerializeField] private AudioSource boSource;
 
+    [HideInInspector] public string[] effects;
+    [HideInInspector] public string[] themes;
+    
     [Serializable]
     public class AudioData
     {
@@ -38,6 +41,8 @@ public class AudioManager : MonoSingleton<AudioManager>
     private void Start()
     {
         SetupDictionaries();
+        effects = Enum.GetNames(typeof(AudioType));
+        themes = Enum.GetNames(typeof(MusicType));
     }
 
     private void OnValidate()

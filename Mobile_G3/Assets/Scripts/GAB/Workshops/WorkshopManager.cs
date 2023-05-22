@@ -5,6 +5,7 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 {
@@ -38,6 +39,8 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     [SerializeField] private GridEntity_InventoryFiller[] bulletsFillers;
     [SerializeField] private GridEntity_InventoryFiller[] plankFillers;
 
+    [SerializeField] private UnityEvent startWorkshopEvent;
+    
     [Serializable]
     public struct MiniGameSwipeIndicatorPoints
     {
@@ -131,6 +134,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         miniGameEnvironmentCamera.gameObject.SetActive(true);
         CanvasManager.instance.DisplayCanvas(CanvasType.None);
 
+        startWorkshopEvent?.Invoke();
         currentMiniGame.TransferDataFromWorkshopWhenMiniGameStarts(currentWorkshop);
         currentMiniGame.StartMiniGame();
     }

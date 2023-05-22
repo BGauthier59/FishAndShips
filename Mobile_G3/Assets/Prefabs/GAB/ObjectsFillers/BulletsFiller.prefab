@@ -50,6 +50,21 @@ MonoBehaviour:
   - {fileID: 5832155986775324690}
   - {fileID: 5832155986102748994}
   - {fileID: 5620977169629595228}
+  pickEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: PickItem
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1995596090257762577
 GameObject:
   m_ObjectHideFlags: 0

@@ -44,7 +44,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     [SerializeField] private GameObject[] allImpacts;
     private PlayerData playerData;
     public int DEBUG_PlayerDataIndex; // Todo - set this value on main menu
-
+    
     private void Start()
     {
         playerName.OnValueChanged += OnNameChanged;

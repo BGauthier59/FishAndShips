@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
 {
     public int positionX;
     public int positionY;
-
+    [SerializeField] private UnityEvent landingEvent;
 
     public void SetPosition(int posX, int posY)
     {
@@ -30,6 +31,7 @@ public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
             player.isGliding = false;
         }
 
+        landingEvent?.Invoke();
         BarrierManager.instance.SwitchBarriers();
     }
 }

@@ -20824,6 +20824,21 @@ MonoBehaviour:
   gyroSpeed: 1.5
   gyroValue: 0
   point: {fileID: 8977505669576350615}
+  shootEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: CannonShot
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &3712915096499458442
 GameObject:
   m_ObjectHideFlags: 0

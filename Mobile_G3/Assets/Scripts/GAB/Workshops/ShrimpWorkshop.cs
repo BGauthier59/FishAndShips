@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class ShrimpWorkshop : Workshop, IUpdateWorkshop
@@ -21,6 +22,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
 
     [SerializeField] private Animation animation;
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
+    [SerializeField] private UnityEvent moveEvent;
 
     private void Awake()
     {
@@ -97,9 +99,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         int2 coord = randomTile.GetTilePos();
 
         MoveClientRpc(coord.x, coord.y);
-
-        // Todo - Add move duration ?
-
+        
         SetNewStationaryDuration();
     }
 
@@ -133,6 +133,7 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         moveTimer = 0;
 
         animation.Play(jump.name);
+        moveEvent?.Invoke();
         
         while (moveTimer < moveDuration)
         {
