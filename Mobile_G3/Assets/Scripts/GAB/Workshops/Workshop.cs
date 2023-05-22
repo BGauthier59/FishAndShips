@@ -152,10 +152,19 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
     protected virtual async void StartActivationDuration()
     {
-        float duration = (int) (1000 * activationDuration);
+        float timer = 0f;
 
-        await UniTask.Delay((int) (duration));
-
+        while (timer < activationDuration)
+        {
+            if (!isActive.Value)
+            {
+                Debug.LogWarning("Deactivate timer");
+                return;
+            }
+            await UniTask.Yield();
+            timer += Time.deltaTime;
+        }
+        
         while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
 
         await UniTask.Delay(100);
@@ -209,6 +218,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         if (victory) winEvent?.Invoke();
         else loseEvent?.Invoke();
+        Debug.Log($"Deactivation for {name}");
         deactivationEvent?.Invoke();
     }
 

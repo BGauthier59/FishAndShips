@@ -162,11 +162,4 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
 
         return Quaternion.identity;
     }
-
-    protected override void RemoveWorkshopFromGrid()
-    {
-        // Called by every client when workshop is over
-        base.RemoveWorkshopFromGrid();
-        
-    }
 }

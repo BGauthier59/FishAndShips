@@ -112,8 +112,10 @@ public class AudioManager : MonoSingleton<AudioManager>
             if (isFading) return;
             await UniTask.Yield();
             timer += Time.deltaTime;
-            boSource.volume = math.lerp(initVolume, 0, 1 / timer);
+            boSource.volume = math.lerp(0, initVolume, 1 / timer);
         }
+        
+        boSource.volume = 1;
     }
 
     public void PlayMusicInstant(MusicType type)
