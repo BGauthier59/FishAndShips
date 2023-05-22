@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class GameManager : NetworkMonoSingleton<GameManager>
@@ -33,7 +34,9 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private int hostReadyForTutorialClientCount;
 
     private NetworkVariable<bool> isGameCancelledBecauseOfDisconnection = new NetworkVariable<bool>();
-    
+
+    [SerializeField] private UnityEvent startTutorialEvent;
+    [SerializeField] private UnityEvent startGameLoopEvent;
 
     #region Start Game Loop
 
@@ -76,13 +79,18 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         if (NetworkManager.Singleton.IsHost)
         {
-            if (tutorials.Length != 0) StartTutorialHostSide(0);
+            if (tutorials.Length != 0)
+            {
+                startTutorialEvent?.Invoke();
+                StartTutorialHostSide(0);
+            }
             else isRunning.Value = true;
         }
 
         while (!isRunning.Value) await UniTask.Yield();
 
         Debug.Log("Start game loop!");
+        startGameLoopEvent?.Invoke();
         GridControlManager.instance.StartGameLoop();
         shipManager.StartGameLoop();
         workshopManager.StartGameLoop();

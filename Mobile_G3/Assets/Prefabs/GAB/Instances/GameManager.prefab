@@ -45,7 +45,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c80aaf7e7fad7744f8ef29ca535989ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRunning: 0
+  mainMenuIndex: 0
+  tutorials: []
+  initPlayerPositions:
+  - x: 0
+    y: 0
+  - x: 0
+    y: 0
+  - x: 0
+    y: 0
+  - x: 0
+    y: 0
+  isTutorialLevel: 0
+  players: []
+  startTutorialEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlayMusicNoFading
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: Tutorial
+          m_BoolArgument: 0
+        m_CallState: 2
+  startGameLoopEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlayMusic
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: InGame
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8300074645917442983
 MonoBehaviour:
   m_ObjectHideFlags: 0
