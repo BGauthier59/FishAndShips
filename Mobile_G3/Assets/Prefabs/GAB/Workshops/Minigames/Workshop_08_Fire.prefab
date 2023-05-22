@@ -111,7 +111,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1477207020422769617
 Transform:
   m_ObjectHideFlags: 0
@@ -972,7 +972,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1477207019811405930}
     - target: {fileID: 3265542836827592564, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -981,7 +981,7 @@ PrefabInstance:
     - target: {fileID: 3265542836827592564, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: MiniGame_Reparation, Assembly-CSharp
+      value: MiniGame_Fire, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
@@ -1479,6 +1479,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: P_Buckett
+      objectReference: {fileID: 0}
+    - target: {fileID: 1112545218815581483, guid: 34850a0d5d05f244da97ba06ee537aaf,
+        type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34850a0d5d05f244da97ba06ee537aaf, type: 3}

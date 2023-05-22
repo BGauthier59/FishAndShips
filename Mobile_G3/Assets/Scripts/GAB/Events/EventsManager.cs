@@ -196,6 +196,27 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
     #endregion
 
+    #region Storm Macro-Management
+
+    public int[] GetFireIndices()
+    {
+        List<int> availables = new List<int>();
+        for (int i = 0; i < fireWorkshops.Length; i++)
+        {
+            if (fireWorkshops[i].isActive.Value) continue;
+            availables.Add(i);
+        }
+
+        return availables.ToArray();
+    }
+
+    public Workshop GetFireWorkshop(int index)
+    {
+        return fireWorkshops[index];
+    }
+
+    #endregion
+
     public GridFloorNotWalkable GetNotWalkable()
     {
         return notWalkable;

@@ -64,6 +64,30 @@ MonoBehaviour:
   activationEvent:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 3688035904907890252}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3049238111037247696}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 2883991023317847762}
         m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
         m_MethodName: Play
@@ -80,6 +104,18 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2883991023317847762}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Stop
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 3049238111037247696}
         m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
         m_MethodName: Stop
         m_Mode: 1
@@ -448,11 +484,28 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorkshopObject_08_Fire
       objectReference: {fileID: 0}
+    - target: {fileID: 8274975009178258673, guid: 15d5cbedb0af51f418457ad13e9e0426,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 15d5cbedb0af51f418457ad13e9e0426, type: 3}
 --- !u!198 &2883991023317847762 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 8107168224052630259, guid: 15d5cbedb0af51f418457ad13e9e0426,
+    type: 3}
+  m_PrefabInstance: {fileID: 6379221352724519969}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &3049238111037247696 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8274975009178258673, guid: 15d5cbedb0af51f418457ad13e9e0426,
+    type: 3}
+  m_PrefabInstance: {fileID: 6379221352724519969}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &3688035904907890252 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7757737434268340845, guid: 15d5cbedb0af51f418457ad13e9e0426,
     type: 3}
   m_PrefabInstance: {fileID: 6379221352724519969}
   m_PrefabAsset: {fileID: 0}

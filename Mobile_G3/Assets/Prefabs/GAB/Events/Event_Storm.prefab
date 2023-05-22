@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fba3c8929fbc5148bbc5f1ba197583b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRunning: 0
   startEventText: You're entering a Storm!
+  stormDuration: 4
   posRotStorm:
     pos: {x: 4.5, y: 14, z: -3.5}
     rot: {x: 62, y: 0, z: 0}
@@ -59,6 +59,7 @@ MonoBehaviour:
   fireMinMaxCount:
     x: 2
     y: 3
+  volume: {fileID: 0}
 --- !u!114 &7111084921478306484
 MonoBehaviour:
   m_ObjectHideFlags: 0
