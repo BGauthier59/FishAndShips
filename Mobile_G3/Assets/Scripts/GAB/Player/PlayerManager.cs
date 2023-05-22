@@ -82,9 +82,11 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         SetInventoryObject(InventoryObject.None);
         
         // Pas propre mais seul moyen actuel d'éviter un pb en début de partie:
+        gridPositionX.OnValueChanged = null;
+        gridPositionY.OnValueChanged = null;
         SetPosition(position.x, -1);
-        gridPositionX.OnValueChanged += OnPositionChanged;
-        gridPositionY.OnValueChanged += OnPositionChanged;
+        gridPositionX.OnValueChanged = OnPositionChanged;
+        gridPositionY.OnValueChanged = OnPositionChanged;
         SetPosition(position.x, position.y);
     }
 
@@ -271,6 +273,13 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             if (!stairexit && !stairenter)
             {
                 previousPos = transform.position;
+                Debug.Log("Debug c'est parti");
+                Debug.Log( "GridManager : " + GridManager.instance);
+                Debug.Log( "Tile : " + GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value));
+                Debug.Log( "Pos : " + gridPositionX.Value + "," + gridPositionY.Value);
+                Debug.Log( "Transform : " + GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform);
+                Debug.Log( "NextPos : " + nextPos);
+                Debug.Log("Debug c'est fini");
                 nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
                           Vector3.up * 0.4f;
                 InitializeBounce(nextPos - previousPos);
