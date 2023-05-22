@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class EventsManager : NetworkMonoSingleton<EventsManager>
@@ -14,6 +15,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     [SerializeField] private ShrimpWorkshop[] shrimpWorkshops;
     [SerializeField] private ReparationWorkshop[] reparationWorkshops;
     public SeriesWorkshop[] cannonWorkshops;
+    public Workshop[] fireWorkshops;
     public ConnectedWorkshop mapWorkshop;
     public ConnectedWorkshop sailsWorkshop;
 
@@ -31,6 +33,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     private bool checkTimer;
 
     [SerializeField] private GridFloorNotWalkable notWalkable;
+    [SerializeField] private UnityEvent startEvent;
 
     public void StartGameLoop()
     {
@@ -113,6 +116,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     private void StartEventFeedbackClientRpc(string message)
     {
         CameraManager.instance.PlayStartEventAnimation(message);
+        startEvent?.Invoke();
     }
 
     #region Shrimp ship Macro-Management
@@ -188,6 +192,27 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     public SeriesWorkshop GetCannonWorkshop(int index)
     {
         return cannonWorkshops[index];
+    }
+
+    #endregion
+
+    #region Storm Macro-Management
+
+    public int[] GetFireIndices()
+    {
+        List<int> availables = new List<int>();
+        for (int i = 0; i < fireWorkshops.Length; i++)
+        {
+            if (fireWorkshops[i].isActive.Value) continue;
+            availables.Add(i);
+        }
+
+        return availables.ToArray();
+    }
+
+    public Workshop GetFireWorkshop(int index)
+    {
+        return fireWorkshops[index];
     }
 
     #endregion

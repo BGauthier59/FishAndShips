@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MiniGame_Cannon_Load : MiniGame
 {
@@ -18,6 +19,9 @@ public class MiniGame_Cannon_Load : MiniGame
     [Header("Environment Data")]
     [SerializeField] private Transform rotatingPart, cannon, muzzle;
     private Vector3 rotatingPartEulerAngles, cannonEulerAngles, cannonPos, muzzleEulerAngles;
+
+    [SerializeField] private UnityEvent rotateEvent;
+    [SerializeField] private UnityEvent filledEvent;
     
     private enum CannonState
     {
@@ -84,6 +88,7 @@ public class MiniGame_Cannon_Load : MiniGame
             case CannonState.Step2:
                 WorkshopManager.instance.swipeManager.Disable();
                 cannonAnim.Play(cannonIsComing.name);
+                rotateEvent?.Invoke();
                 await UniTask.Delay(1000);
                 WorkshopManager.instance.cannonDragAndDropManager.Enable(step2data);
                 WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint = OnBulletWellPlaced;
@@ -91,6 +96,7 @@ public class MiniGame_Cannon_Load : MiniGame
                 break;
             
             case CannonState.Step3:
+                filledEvent?.Invoke();
                 WorkshopManager.instance.cannonDragAndDropManager.Disable();
                 WorkshopManager.instance.swipeManager.Enable(step3data);
                 await UniTask.Delay(100);

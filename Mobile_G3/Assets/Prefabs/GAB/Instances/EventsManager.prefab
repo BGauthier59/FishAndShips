@@ -213,6 +213,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  fireWorkshops: []
   mapWorkshop: {fileID: 0}
   sailsWorkshop: {fileID: 0}
   softEvents:
@@ -223,6 +224,21 @@ MonoBehaviour:
   - {fileID: 4505960945226804444}
   - {fileID: 1062869571861247694}
   notWalkable: {fileID: 3699071092612923195}
+  startEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: StartEvent
+          m_BoolArgument: 0
+        m_CallState: 2
   waitingForInstantiating: 0
 --- !u!114 &2963782024069680162
 MonoBehaviour:

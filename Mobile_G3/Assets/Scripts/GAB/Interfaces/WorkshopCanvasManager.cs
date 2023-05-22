@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WorkshopCanvasManager : MonoSingleton<WorkshopCanvasManager>
 {
     [SerializeField] private GameObject waitingObject;
     [SerializeField] private TMP_Text waitingText;
+    [SerializeField] private UnityEvent waitEvent;
 
     public void DisplayWaitingMessage(string message)
     {
+        waitEvent?.Invoke();
         waitingObject.SetActive(true);
         waitingText.text = message;
     }

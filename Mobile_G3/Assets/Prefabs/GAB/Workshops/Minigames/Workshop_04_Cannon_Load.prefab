@@ -189,7 +189,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7003109991595071310}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3484517412564233930
 GameObject:
@@ -424,7 +424,7 @@ Transform:
   - {fileID: 3770808066438698035}
   - {fileID: 44607962425398498}
   m_Father: {fileID: 7003109991595071310}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6085590422570253517
 GameObject:
@@ -719,7 +719,7 @@ Transform:
   - {fileID: 2320013194988858246}
   - {fileID: 2505597621075847923}
   m_Father: {fileID: 7003109991595071310}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &7003109990190253231
 GameObject:
@@ -1127,7 +1127,7 @@ Transform:
   - {fileID: 7003109990488506639}
   - {fileID: 1252761961038667332}
   m_Father: {fileID: 7003109991595071310}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7003109990747473209
 GameObject:
@@ -1294,6 +1294,60 @@ MonoBehaviour:
   rotatingPart: {fileID: 7003109990067174088}
   cannon: {fileID: 2505597621075847923}
   muzzle: {fileID: 6502812257513285226}
+  rotateEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: CannonRotate
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2790811497518131230}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  filledEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2790811497518131230}
+        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: CannonBulletDrop
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7003109990772616727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1671,6 +1725,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6714889162378215310}
   - {fileID: 7003109990067174088}
   - {fileID: 7003109990552233538}
   - {fileID: 5514696951367991605}
@@ -1726,7 +1781,7 @@ Transform:
   m_Children:
   - {fileID: 6836478099866086815}
   m_Father: {fileID: 7003109991595071310}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &374553829208945806
 PrefabInstance:
@@ -2479,7 +2534,7 @@ PrefabInstance:
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
       propertyPath: m_fontSize
-      value: 39.4
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
@@ -2491,7 +2546,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+      objectReference: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
         type: 2}
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
@@ -2805,6 +2860,87 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3121837721321653340, guid: 63f3c7d247c9f1340941763c7f28e2c4,
     type: 3}
   m_PrefabInstance: {fileID: 4689217273461850418}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5101742785392836345
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 7003109991595071310}
+    m_Modifications:
+    - target: {fileID: 738860880317319795, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_Name
+      value: FilledVFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.500002
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.75000304
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5c0447c25ecb4e34ab914d5d94b23f8c, type: 3}
+--- !u!198 &2790811497518131230 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 6951301958357784295, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+    type: 3}
+  m_PrefabInstance: {fileID: 5101742785392836345}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6714889162378215310 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2016799087997485431, guid: 5c0447c25ecb4e34ab914d5d94b23f8c,
+    type: 3}
+  m_PrefabInstance: {fileID: 5101742785392836345}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5514696951125184696
 PrefabInstance:

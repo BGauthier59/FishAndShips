@@ -11,8 +11,8 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     [SerializeField] private Image boatLifeSlider;
     [SerializeField] private TMP_Text starText;
     [SerializeField] private Image itemImage;
-    [SerializeField] private Sprite plankIcon, bulletIcon;
-    [SerializeField] private TMP_Text debugItemText;
+    [SerializeField] private Sprite plankIcon, bulletIcon, emptyIcon;
+    [SerializeField] private Animation itemAnim;
     private (string minutes, string seconds) currentTimer;
 
     public void SetTimerOnDisplay(float remainingTime)
@@ -49,20 +49,13 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
 
     public void SetItemOnDisplay(InventoryObject item)
     {
+        if (!itemAnim.isPlaying) itemAnim.Play(itemAnim.clip.name);
         itemImage.sprite = item switch
         {
-            InventoryObject.None => null,
+            InventoryObject.None => emptyIcon,
             InventoryObject.Plank => plankIcon,
             InventoryObject.CannonBall => bulletIcon,
             _ => null
-        };
-
-        debugItemText.text = item switch
-        {
-            InventoryObject.None => "None",
-            InventoryObject.Plank => "Planck",
-            InventoryObject.CannonBall => "Bullet",
-            _ => "Error"
         };
     }
 }
