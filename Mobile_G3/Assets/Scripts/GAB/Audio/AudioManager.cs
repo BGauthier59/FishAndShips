@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class AudioManager : MonoSingleton<AudioManager>
@@ -88,11 +90,35 @@ public class AudioManager : MonoSingleton<AudioManager>
         currentMusic = type;
         if (isFading) return;
         isFading = true;
+        var initVolume = boSource.volume;
+        
+        // Fade out
+        float timer = 0f;
+        while (timer < 1)
+        {
+            await UniTask.Yield();
+            timer += Time.deltaTime;
+            boSource.volume = math.lerp(initVolume, 0, 1 / timer);
+        }
 
-        // Fade out & fade in
+        boSource.volume = 0;
+        boSource.clip = bo[currentMusic];
+        isFading = false;
+        
+        // Fade in
+        timer = 0f;
+        while (timer < 1)
+        {
+            if (isFading) return;
+            await UniTask.Yield();
+            timer += Time.deltaTime;
+            boSource.volume = math.lerp(initVolume, 0, 1 / timer);
+        }
+    }
 
-        boSource.PlayOneShot(bo[currentMusic]);
-
-        // Start the current music after the fade
+    public void PlayMusicInstant(MusicType type)
+    {
+        boSource.clip = bo[type];
+        boSource.Play();
     }
 }
