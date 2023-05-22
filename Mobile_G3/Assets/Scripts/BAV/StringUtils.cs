@@ -16,7 +16,7 @@ public static class StringUtils
 
     private static readonly Dictionary<char, char> NumberToLetter = new Dictionary<char, char>()
     {
-        { '1', 'g' }, { '2', 'h' }, { '3', 'i' }, { '4', 'j' }, { '5', 'k' }, { '6', 'l' }, { '7', 'm' }, { '8', 'n' }, { '9', 'o' },
+        { '1', 'g' }, { '2', 'h' }, { '3', 'i' }, { '4', 'j' }, { '5', 'k' }, { '6', 'l' }, { '7', 'm' }, { '8', 'n' }, { '9', 'o' },{'0','p'}
     };
 
     public static string NumberToLetterIP(string inputString)
