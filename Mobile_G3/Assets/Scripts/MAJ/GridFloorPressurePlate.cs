@@ -6,9 +6,8 @@ public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
 {
     public int positionX;
     public int positionY;
-    public GridBarrier[] barriers;
 
-    
+
     public void SetPosition(int posX, int posY)
     {
         positionX = posX;
@@ -31,9 +30,6 @@ public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
             player.isGliding = false;
         }
 
-        foreach (var barrier in barriers)
-        {
-            barrier.isClosed = !barrier.isClosed;
-        }
+        BarrierManager.instance.SwitchBarriers();
     }
 }

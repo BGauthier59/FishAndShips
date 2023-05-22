@@ -11,6 +11,8 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
     public GridBarrier bottomBarrier;
     public GridBarrier leftBarrier;
     public GridBarrier rightBarrier;
+
+    public bool pressurePlate;
     
     public void SetPosition(int posX, int posY)
     {
@@ -69,5 +71,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
             //Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
             player.isGliding = false;
         }
+        
+        if(pressurePlate)BarrierManager.instance.SwitchBarriers();
     }
 }

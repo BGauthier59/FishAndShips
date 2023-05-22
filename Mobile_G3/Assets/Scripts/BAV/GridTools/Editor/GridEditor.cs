@@ -1190,11 +1190,11 @@ public class GridEditor : EditorWindow
             if (tilePressurePlate.floor is GridFloorPressurePlate)
             {
                 _listBarrierOnGrid = _gridBarrier.GetComponent<BarrierList>().barrierData;
-                gridPressurePlate.barriers = new GridBarrier[_listBarrierOnGrid.Count];
+                //gridPressurePlate.barriers = new GridBarrier[_listBarrierOnGrid.Count];
                 for (int i = 0; i < _listBarrierOnGrid.Count; i++)
                 {
                     GridBarrier gridBarrier = _listBarrierOnGrid[i].GetComponent<GridBarrier>();
-                    gridPressurePlate.barriers[i] = gridBarrier;
+                    //gridPressurePlate.barriers[i] = gridBarrier;
                 }
             }
         }

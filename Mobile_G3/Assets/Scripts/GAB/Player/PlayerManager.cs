@@ -18,6 +18,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public NetworkVariable<int> playerDataIndex = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
         NetworkVariableWritePermission.Owner);
+    
+    public NetworkVariable<int> impactDataIndex = new NetworkVariable<int>(0, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Owner);
 
     public int positionX;
     public int positionY;
@@ -38,6 +41,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     private BoatSide currentSide;
 
     [SerializeField] private PlayerData[] allPlayerData;
+    [SerializeField] private GameObject[] allImpacts;
     private PlayerData playerData;
     public int DEBUG_PlayerDataIndex; // Todo - set this value on main menu
 
@@ -63,6 +67,16 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             }
 
             allPlayerData[i].gameObject.SetActive(false);
+        }
+        for (int i = 0; i < allImpacts.Length; i++)
+        {
+            if (i == impactDataIndex.Value)
+            {
+                allImpacts[i].gameObject.SetActive(true);
+                continue;
+            }
+
+            allImpacts[i].gameObject.SetActive(false);
         }
 
         SetInventoryObject(InventoryObject.None);
@@ -94,6 +108,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             Debug.LogWarning("You've been connected!");
             playerName.Value = MainMenuManager.instance.pseudo;
             playerDataIndex.Value = MainMenuManager.instance.skinId;
+            impactDataIndex.Value = MainMenuManager.instance.impactId;
             //SetPosition(positionX, positionY);
         }
 

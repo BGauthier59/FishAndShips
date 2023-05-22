@@ -34,17 +34,18 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition;
-    public TMP_Text textInputName, textInputIP, levelName, levelIndex;
+    public TMP_Text textInputName, textInputIP, levelName, levelIndex,skinText,impactText;
     [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
     [SerializeField] private PlayerFigures[] playerFigures;
     [SerializeField] private GameObject[] customFigure;
+    [SerializeField] private ParticleSystem[] customImpact;
     [SerializeField] private SpriteRenderer[] starsPass;
 
     public string pseudo;
     public int screen;
-    public int skinId;
+    public int skinId,impactId;
     public bool connected;
     public int levelId;
     public int starNb;
@@ -57,7 +58,10 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public float minX,maxX,forcemultiplier,timeOfTap;
     public LayerMask mask;
     public Color starLockedColor,starLinkUnlocked;
-    public Animation mapTransition,shopTransition;
+    public Animation mapTransition,shopTransition,customTransition;
+    public Transform[] buttonsCustomScreen;
+    public string[] skinNames, impactNames;
+    [SerializeField] private PassReward[] rewards;
 
     [Serializable]
     public struct LevelIcon
@@ -67,20 +71,18 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         public Material[] stars;
         public MeshRenderer[] renderers;
     }
+    
+    [Serializable]
+    private struct PassReward
+    {
+        public SpriteRenderer box,arrow;
+        public int starsRequired;
+    }
 
     [Serializable]
     private struct PlayerFigures
     {
         public GameObject[] mapFigures;
-    }
-
-    public enum MenuScreen
-    {
-        TitleScreen,
-        Settings,
-        Shop,
-        Play,
-        Customizing
     }
 
     private void Start()
@@ -103,6 +105,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 cameraMenu.position = camPos[3].position;
                 cameraMenu.rotation = camPos[3].rotation;
                 skinId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value;
+                impactId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value;
                 for (int i = 0; i < customFigure.Length; i++)
                 {
                     if (i == skinId) customFigure[i].SetActive(true);
@@ -116,6 +119,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                     playerFigures[x].mapFigures[value.Value.playerDataIndex.Value].SetActive(true);
                     x++;
                 }
+                skinText.text = skinNames[skinId];
+                impactText.text = impactNames[skinId];
                 SetCurrentScreen(1);
                 slide.SetActive(true);
                 break;
@@ -124,6 +129,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     void SetupStars()
     {
+        starNb = 0;
         for (int i = 1; i < levelButtons.Length; i++)
         {
             for (int j = 0; j < 3; j++)
@@ -133,15 +139,25 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 if (LevelManager.instance.allLevels[i].starCount > j)
                 {
                     levelButtons[i].stars[j].SetColor("_Color",Color.white);
+                    starNb++;
                 }
                 else levelButtons[i].stars[j].SetColor("_Color",starLockedColor);
             }
         }
-
+        
         for (int i = 0; i < starNb; i++)
         {
             starsPass[i].color = Color.white;
             starsPass[i].transform.GetChild(0).GetComponent<SpriteRenderer>().color = starLinkUnlocked;
+        }
+
+        for (int i = 0; i < rewards.Length; i++)
+        {
+            if (starNb >= rewards[i].starsRequired)
+            {
+                rewards[i].arrow.color = Color.white;
+                rewards[i].box.color = Color.white;
+            }
         }
     }
 
@@ -349,8 +365,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
         if (screen == 2 && isDragging)
         {
-            float movement = Input.mousePosition.y - startTouch.y;
-            treasurePass.localPosition = new Vector3(treasurePass.localPosition.x, Mathf.Clamp(startPosPass + (movement / ((float) Screen.height / 2))*0.5f,0,2.45f), treasurePass.localPosition.z);
+            float movement = Input.mousePosition.x - startTouch.x;
+            treasurePass.localPosition = new Vector3(Mathf.Clamp(startPosPass + (movement / ((float) Screen.height / 2))*0.5f,-1.7f,0), treasurePass.localPosition.y, treasurePass.localPosition.z);
         }
     }
 
@@ -412,33 +428,51 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     #region Customisation Screen
 
-    public void OnChangeSkinForward()
+    public async void OnChangeSkinForward()
     {
-        skinId = (skinId + 1) % 3;
+        skinId = (skinId + 1) % 4;
         Debug.Log("SKIN N" + skinId);
         if (connected)
             ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
                 skinId;
+        customTransition.Play("ChangeSkin");
+        await Task.Delay(160);
         for (int i = 0; i < customFigure.Length; i++)
         {
             if (i == skinId) customFigure[i].SetActive(true);
             else customFigure[i].SetActive(false);
         }
+        skinText.text = skinNames[skinId];
     }
     
-    public void OnChangeSkinBackward()
+    public async void OnChangeSkinBackward()
     {
         skinId = skinId - 1;
-        if (skinId < 0) skinId = 2;
+        if (skinId < 0) skinId = 3;
         Debug.Log("SKIN N" + skinId);
         if (connected)
             ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
                 skinId;
+        customTransition.Play("ChangeSkin");
+        await Task.Delay(160);
         for (int i = 0; i < customFigure.Length; i++)
         {
             if (i == skinId) customFigure[i].SetActive(true);
             else customFigure[i].SetActive(false);
         }
+        skinText.text = skinNames[skinId];
+    }
+    
+    public async void OnChangeImpactForward()
+    {
+        impactId = (impactId + 1) % 3;
+        if (connected)
+            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
+                impactId;
+        customTransition.Play("ChangeImpact");
+        await Task.Delay(160);
+        customImpact[impactId].Play();
+        impactText.text = impactNames[impactId];
     }
 
     #endregion
@@ -573,7 +607,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             startTouch = Input.mousePosition;
             isDragging = true;
             startPosLevels = levelsTransform.transform.position.x;
-            startPosPass = treasurePass.transform.localPosition.y;
+            startPosPass = treasurePass.transform.localPosition.x;
             timeOfTap = Time.time;
         }
         else if (ctx.canceled)
@@ -607,6 +641,35 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 {
                     if(startButton == hit.transform) OnStartButton();
                     else if(returnButton == hit.transform) OnReturnButton();
+                }
+            }
+        }
+
+        if (screen == 0)
+        {
+            Ray ray = cam.ScreenPointToRay(startTouch);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, mask))
+            {
+                for (int i = 0; i < buttonsCustomScreen.Length; i++)
+                {
+                    if (buttonsCustomScreen[i] == hit.transform)
+                    {
+                        switch (i)
+                        {
+                            case 0:
+                                OnChangeSkinForward();
+                                break;
+                            case 1:
+                                OnChangeSkinBackward();
+                                break;
+                            case 2:
+                                OnChangeImpactForward();
+                                break;
+                            case 3:
+                                OnChangeImpactForward();
+                                break;
+                        }
+                    }
                 }
             }
         }
