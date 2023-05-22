@@ -8,14 +8,15 @@ public class AudioManager : MonoSingleton<AudioManager>
     [SerializeField] private AudioSource boSource;
 
     [Serializable]
-    public struct AudioData
+    public class AudioData
     {
+        public string DEBUG_name;
         public AudioType type;
         public AudioClip clip;
     }
 
     [Serializable]
-    public struct MusicData
+    public class MusicData
     {
         public MusicType type;
         public AudioClip clip;
@@ -35,6 +36,14 @@ public class AudioManager : MonoSingleton<AudioManager>
     private void Start()
     {
         SetupDictionaries();
+    }
+
+    private void OnValidate()
+    {
+        foreach (var d in data)
+        {
+            d.DEBUG_name = d.type.ToString();
+        }
     }
 
     private void SetupDictionaries()
@@ -67,6 +76,7 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void PlaySound(AudioType type)
     {
+        Debug.Log($"Played {type}, which is {sounds[type].name}");
         soundSource.PlayOneShot(sounds[type]);
     }
 

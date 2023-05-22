@@ -18,7 +18,7 @@ public class MiniGame_Shrimp : MiniGame
 
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
     [SerializeField] private UnityEvent hitFeedback;
-
+    [SerializeField] private UnityEvent turnEvent;
 
     private void Start()
     {
@@ -109,6 +109,7 @@ public class MiniGame_Shrimp : MiniGame
         //WorkshopManager.instance.StopMiniGameTutorial();
 
         animation.Play(flip.name);
+        turnEvent?.Invoke();
         await Task.Delay(160);
         missingSwordNb = Random.Range(0, 6);
         for (int i = 0; i < 6; i++)

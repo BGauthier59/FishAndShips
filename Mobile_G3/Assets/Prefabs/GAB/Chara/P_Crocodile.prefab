@@ -24,7 +24,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8990543873388892271}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -0.25, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
@@ -48,8 +48,7 @@ MonoBehaviour:
   animation: {fileID: 7785952172592476511}
   actionClip: {fileID: 7176209919637214875, guid: ec2c7b893251a254aadde5af4b98980e,
     type: 3}
-  jumpClip: {fileID: 5539831331247536789, guid: ec2c7b893251a254aadde5af4b98980e,
-    type: 3}
+  jumpClip: {fileID: 7400000, guid: 2c2cf240f39764c4db05bffd6749e9a7, type: 2}
   idleClip: {fileID: 1827226128182048838, guid: ec2c7b893251a254aadde5af4b98980e,
     type: 3}
 --- !u!1001 &8275002041052496506
@@ -154,6 +153,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SK_croco
       objectReference: {fileID: 0}
+    - target: {fileID: 2223639932434330405, guid: ec2c7b893251a254aadde5af4b98980e,
+        type: 3}
+      propertyPath: m_Animations.Array.data[1]
+      value: 
+      objectReference: {fileID: 7400000, guid: 2c2cf240f39764c4db05bffd6749e9a7, type: 2}
     - target: {fileID: 2763901166581211052, guid: ec2c7b893251a254aadde5af4b98980e,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

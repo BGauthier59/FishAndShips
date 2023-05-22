@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
@@ -9,6 +10,9 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
     [SerializeField] private GameObject[] hostButtons, clientButtons;
     [SerializeField] private GameObject[] stars;
     [SerializeField] private GameObject[] victoryObjects, defeatObjects;
+
+    [SerializeField] private UnityEvent victoryEvent;
+    [SerializeField] private UnityEvent lostEvent;
 
     public void SetupCanvas(bool isHost, bool victory, int starCount)
     {
@@ -26,11 +30,13 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
         
         if (victory)
         {
+            victoryEvent?.Invoke();
             for (int i = 0; i < starCount; i++)
             {
                 stars[i].SetActive(true);
             }
         }
+        else lostEvent?.Invoke();
 
         // Todo - show titles
     }

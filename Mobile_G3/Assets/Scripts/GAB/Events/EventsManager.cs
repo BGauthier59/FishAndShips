@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 public class EventsManager : NetworkMonoSingleton<EventsManager>
@@ -32,6 +33,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     private bool checkTimer;
 
     [SerializeField] private GridFloorNotWalkable notWalkable;
+    [SerializeField] private UnityEvent startEvent;
 
     public void StartGameLoop()
     {
@@ -114,6 +116,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     private void StartEventFeedbackClientRpc(string message)
     {
         CameraManager.instance.PlayStartEventAnimation(message);
+        startEvent?.Invoke();
     }
 
     #region Shrimp ship Macro-Management

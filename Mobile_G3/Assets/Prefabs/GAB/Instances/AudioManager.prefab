@@ -302,5 +302,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 715a4f6daf2300849b0b85f64f084270, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  source: {fileID: 7770323906811339719}
-  data: []
+  soundSource: {fileID: 7770323906811339719}
+  boSource: {fileID: 244072013749568321}
+  data:
+  - DEBUG_name: WinWorkshop
+    type: 0
+    clip: {fileID: 8300000, guid: 9a27727c9d4a47c4787e74281f5b6872, type: 3}
+  - DEBUG_name: LoseWorkshop
+    type: 1
+    clip: {fileID: 8300000, guid: 940b747ed3afe734bbdc6666695de22b, type: 3}
+  - DEBUG_name: StartEvent
+    type: 2
+    clip: {fileID: 8300000, guid: 4abb9c6cd6879b54596066ffd51029e3, type: 3}
+  - DEBUG_name: StartWorkshop
+    type: 3
+    clip: {fileID: 8300000, guid: 16153cafe5d989e459c8b77bcf3b6b3f, type: 3}
+  - DEBUG_name: WinGame
+    type: 4
+    clip: {fileID: 8300000, guid: 689fbb5308c569a499423c6484244510, type: 3}
+  - DEBUG_name: LoseGame
+    type: 5
+    clip: {fileID: 8300000, guid: 63d0758b1d4780d42806adbca84fc575, type: 3}
+  - DEBUG_name: SailUp
+    type: 6
+    clip: {fileID: 8300000, guid: ec25bd83130c9f942abe28aaa7f5e692, type: 3}
+  - DEBUG_name: SailDown
+    type: 7
+    clip: {fileID: 8300000, guid: 872fefe8506cc4d42b656843e68714b4, type: 3}
+  - DEBUG_name: WaitConnected
+    type: 8
+    clip: {fileID: 8300000, guid: 6ffd3b8ef2d50a54aafe41fbd654e21f, type: 3}
+  - DEBUG_name: CannonRotate
+    type: 9
+    clip: {fileID: 8300000, guid: 54126b0f946483043ba7e186cfcb6252, type: 3}
+  - DEBUG_name: CannonBulletDrop
+    type: 10
+    clip: {fileID: 8300000, guid: 50ae2a8b55217d14e8c4f634ac557107, type: 3}
+  - DEBUG_name: ShrimpSlash
+    type: 11
+    clip: {fileID: 8300000, guid: 9d1865d9f8dbc17498b1e4d8bcf56f02, type: 3}
+  - DEBUG_name: ShrimpTurn
+    type: 12
+    clip: {fileID: 8300000, guid: bcfc8cb38b819af438cf293ee16d676d, type: 3}
+  musics: []

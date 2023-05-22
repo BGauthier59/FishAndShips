@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MiniGame_Sails : MiniGame
 {
@@ -28,6 +29,9 @@ public class MiniGame_Sails : MiniGame
     [SerializeField] private MeshRenderer[] sailsRenderers;
     private bool canSwipe;
     private static readonly int Ratio = Shader.PropertyToID("_Ratio");
+
+    [SerializeField] private UnityEvent sailsDownEvent;
+    [SerializeField] private UnityEvent sailsUpEvent;
 
     public override void AssociatedWorkshopGetActivatedHostSide()
     {
@@ -74,6 +78,10 @@ public class MiniGame_Sails : MiniGame
     private async void SetSailRenderers(float ratioValue, float duration)
     {
         float currentValue = sailsRenderers[0].material.GetFloat(Ratio);
+        bool isGoingDown = currentValue > ratioValue;
+
+        if (isGoingDown) sailsDownEvent?.Invoke();
+        else sailsUpEvent?.Invoke();
         float timer = 0f;
 
         while (timer < duration)
