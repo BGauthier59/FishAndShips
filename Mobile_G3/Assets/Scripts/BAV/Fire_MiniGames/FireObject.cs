@@ -15,6 +15,8 @@ public class FireObject : MonoBehaviour
     public float currentValue;
     public float countdownTimer;
 
+    public MeshRenderer meshRend;
+
     public void Start()
     {
         FireStat();
@@ -38,13 +40,6 @@ public class FireObject : MonoBehaviour
         }
     }
 
-    void SetFireStart()
-    {
-        int randomIndex = Random.Range(0, Enum.GetValues(typeof(FireSize)).Length);
-        fireSize = (FireSize)randomIndex;
-        FireStat();
-    }
-
     void Update()
     {
         if (isFilled)
@@ -54,24 +49,24 @@ public class FireObject : MonoBehaviour
             {
                 currentValue = 0;
                 countdownTimer = 0;
-                GetComponent<MeshRenderer>().material.color = Color.black;
+                meshRend.material.color = Color.black;
                 Debug.Log("Finish");
             }
             else
             {
                 currentValue = Mathf.Lerp(0f, firePowerCount, countdownTimer / firePowerCount);
-                GetComponent<MeshRenderer>().material.color = Color.blue;
+                meshRend.material.color = Color.blue;
             }
         }
         else
         {
             if (currentValue <= 0)
             {
-                GetComponent<MeshRenderer>().material.color = Color.black;
+                meshRend.material.color = Color.black;
             }
             else
             {
-                GetComponent<MeshRenderer>().material.color = Color.red;
+                meshRend.material.color = Color.red;
             }
         }
     }

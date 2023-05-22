@@ -4921,6 +4921,7 @@ MonoBehaviour:
   isFilled: 0
   currentValue: 0
   countdownTimer: 0
+  meshRend: {fileID: 0}
 --- !u!1 &9044330059870843097
 GameObject:
   m_ObjectHideFlags: 0
@@ -4930,7 +4931,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9169051667693499190}
-  - component: {fileID: 2207308297771577286}
   m_Layer: 0
   m_Name: P_Fire
   m_TagString: Untagged
@@ -4954,21 +4954,3 @@ Transform:
   m_Father: {fileID: 5106554584752249881}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2207308297771577286
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9044330059870843097}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef32d25448f74eb459d6701c44b64975, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  firePowerCount: 200
-  fireSize: 0
-  canBeFilled: 0
-  isFilled: 0
-  currentValue: 0
-  countdownTimer: 0
