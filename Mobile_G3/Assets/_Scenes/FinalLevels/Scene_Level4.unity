@@ -481,6 +481,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 2142520481}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 1651981054}
+  pressurePlate: 0
 --- !u!1001 &53120624
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1596,18 +1597,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 150045225}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &150045227 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7535512031026605957, guid: 06f4c8eea46fbf74ea285fc74053dd23,
-    type: 3}
-  m_PrefabInstance: {fileID: 150045225}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6ddabd5b50b3cf7459d3a267c9751451, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &217165171
 GameObject:
   m_ObjectHideFlags: 0
@@ -3302,6 +3291,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 1704688776}
+  pressurePlate: 0
 --- !u!4 &417156327 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2550670783737883655, guid: 7ffebc8e91fa106468bd11b5637dd461,
@@ -4046,6 +4036,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 872994971}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 2052022207}
+  pressurePlate: 0
 --- !u!1 &484491045
 GameObject:
   m_ObjectHideFlags: 0
@@ -4744,6 +4735,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1001 &554632990
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7259,6 +7251,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 953572376}
+  - component: {fileID: 953572377}
   m_Layer: 0
   m_Name: Barriers
   m_TagString: Untagged
@@ -7294,6 +7287,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &953572377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 953572375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1650b0d60eae1b243b58bd699a6cb8ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  barriers:
+  - {fileID: 2142520481}
+  - {fileID: 1651981054}
+  - {fileID: 1704688776}
+  - {fileID: 1725931743}
+  - {fileID: 1725408768}
+  - {fileID: 1817534600}
+  - {fileID: 872994971}
+  - {fileID: 1993544560}
+  - {fileID: 876528867}
+  - {fileID: 2052022207}
 --- !u!1 &972867549
 GameObject:
   m_ObjectHideFlags: 0
@@ -8660,6 +8676,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 1704688776}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1 &1210759030
 GameObject:
   m_ObjectHideFlags: 0
@@ -9040,6 +9057,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 1993544560}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1001 &1296704353
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9463,6 +9481,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 876528867}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1 &1364053989
 GameObject:
   m_ObjectHideFlags: 0
@@ -9914,6 +9933,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 2052022207}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1 &1455231537
 GameObject:
   m_ObjectHideFlags: 0
@@ -13801,6 +13821,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 876528867}
+  pressurePlate: 0
 --- !u!1 &1778214269
 GameObject:
   m_ObjectHideFlags: 0
@@ -14383,6 +14404,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 1817534600}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 0}
+  pressurePlate: 1
 --- !u!1 &1857710988
 GameObject:
   m_ObjectHideFlags: 0
@@ -14795,6 +14817,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 1725408768}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1 &1898623620
 GameObject:
   m_ObjectHideFlags: 0
@@ -14934,6 +14957,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!114 &1929993203 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 187816729783285862, guid: ed7a3d5c5b084484f9b432f1c6dc1ea1,
@@ -15199,6 +15223,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 0}
   leftBarrier: {fileID: 1651981054}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1001 &1992375668
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15826,6 +15851,7 @@ MonoBehaviour:
   bottomBarrier: {fileID: 1725931743}
   leftBarrier: {fileID: 0}
   rightBarrier: {fileID: 0}
+  pressurePlate: 0
 --- !u!1 &2048135492
 GameObject:
   m_ObjectHideFlags: 0
@@ -16486,7 +16512,7 @@ MonoBehaviour:
   - name: Hold 2, 3
     transform: {fileID: 1847631949}
     entity: {fileID: 0}
-    floor: {fileID: 150045227}
+    floor: {fileID: 1847631950}
     coordinates:
       x: 12
       y: 3
