@@ -19,6 +19,8 @@ public class FireObject : MonoBehaviour
         FireStat();
         currentValue = firePowerCount;
         countdownTimer = firePowerCount;
+        //ParticulesSystem
+        firePart[1].gameObject.SetActive(false);
     }
 
     void FireStat()
@@ -72,7 +74,6 @@ public class FireObject : MonoBehaviour
         else
         {
             firePart[0].gameObject.SetActive(true);
-            firePart[0].Play();
         }
     }
 }

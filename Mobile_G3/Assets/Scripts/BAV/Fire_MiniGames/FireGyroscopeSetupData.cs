@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
 public struct FireGyroscopeSetupData
 {
-    public Transform[] fireSizeType;
+    public List<Transform> fireSizeType;
 }
