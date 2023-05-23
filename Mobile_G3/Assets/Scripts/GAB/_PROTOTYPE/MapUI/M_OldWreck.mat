@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_IslandRender
+  m_Name: M_OldWreck
   m_Shader: {fileID: -6465566751694194690, guid: d688e01a1ed065545aa92716ec59c117,
     type: 3}
   m_ValidKeywords: []
@@ -35,7 +35,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Texture2D:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: a5c0e32641387ce4ab7e700d5135eb27, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -61,10 +61,10 @@ Material:
     - _Metallic: 0
     - _NoiseDistance: 0.2
     - _NoiseSpeed: 0.2
-    - _NoiseStrenght: 20
+    - _NoiseStrenght: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Smoothness: 1
+    - _Smoothness: 0
     m_Colors:
-    - _Color: {r: 1, g: 0.6886735, b: 0.0990566, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
