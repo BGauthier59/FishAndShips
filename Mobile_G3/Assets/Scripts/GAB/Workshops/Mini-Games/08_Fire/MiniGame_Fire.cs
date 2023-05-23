@@ -37,7 +37,7 @@ public class MiniGame_Fire : MiniGame
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.gyroscopeManager.Enable(data);
-        gyroStart = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.y;
+        gyroStart = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
         StartExecutingMiniGame();
     }
 
@@ -57,19 +57,20 @@ public class MiniGame_Fire : MiniGame
     }
 
     private float currentGyro;
-    private float move;
+    private float moveGyro;
     private float eulerY;
+    private float speedIncrease = 5f;
 
     public override void ExecuteMiniGame()
     {
-        currentGyro = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.y;
-        move = currentGyro - gyroStart;
-        gyroValue += move * gyroSpeed;
-        gyroStart = currentGyro;
-        gyroValue = Mathf.Clamp(gyroValue, -180, 180);
-
-        eulerY = layerPoint.eulerAngles.y < 180 ? layerPoint.eulerAngles.y : layerPoint.eulerAngles.y - 360;
-        layerPoint.rotation = Quaternion.Euler(0, Mathf.Lerp(eulerY, gyroValue, Time.deltaTime * 5), 0);
+        currentGyro = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
+        if (currentGyro > 180f)
+        {
+            currentGyro = currentGyro - 360f;
+        }
+        currentGyro /= 90f;
+        moveGyro = currentGyro * speedIncrease;
+        layerPoint.transform.Rotate(Vector3.up, moveGyro);
         CheckObjectIsInsideGate();
         LaunchExitMiniGame();
     }

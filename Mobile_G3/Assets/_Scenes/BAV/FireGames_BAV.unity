@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1509,7 +1509,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1477207019446924279
 Transform:
   m_ObjectHideFlags: 0
@@ -1538,7 +1538,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af27ca99a24c3a54f9e161457eb663ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firePrefab: {fileID: 0}
+  firePrefab: {fileID: 5657433430402942776}
   numberOfSpawnPoints: 12
   radius: 1.1
   centerPosition: {x: 0, y: 0.5, z: 0}
@@ -1566,7 +1566,7 @@ MonoBehaviour:
   offsetGizmos: {x: 0, y: 0.5, z: 0}
   positionThreshold: 0.1
   gyroStart: 0
-  gyroSpeed: 4
+  gyroSpeed: 10
   gyroValue: 0
   increasedRotationSpeed: 5
   minMaxGyro: 360
