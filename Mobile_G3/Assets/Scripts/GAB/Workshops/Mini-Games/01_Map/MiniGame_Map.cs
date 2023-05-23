@@ -109,6 +109,7 @@ public class MiniGame_Map : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        if (!isRunning) return;
         WorkshopManager.instance.mapSwipeManager.Disable();
         StopExecutingMiniGame();
         ExitMiniGame(false);

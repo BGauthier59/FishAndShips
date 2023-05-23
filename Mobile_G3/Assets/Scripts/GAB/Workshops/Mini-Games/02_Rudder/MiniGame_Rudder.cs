@@ -48,6 +48,7 @@ public class MiniGame_Rudder : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        if (!isRunning) return;
         StopExecutingMiniGame();
         WorkshopManager.instance.rudderCircularSwipeManager.Disable();
         ExitMiniGame(false);

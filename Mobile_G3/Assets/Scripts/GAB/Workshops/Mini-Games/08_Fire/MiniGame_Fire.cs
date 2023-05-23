@@ -88,6 +88,7 @@ public class MiniGame_Fire : MiniGame
     
     public override void OnLeaveMiniGame()
     {
+        if (!isRunning) return;
         WorkshopManager.instance.gyroscopeManager.Disable();
         StopExecutingMiniGame();
         ExitMiniGame(false);

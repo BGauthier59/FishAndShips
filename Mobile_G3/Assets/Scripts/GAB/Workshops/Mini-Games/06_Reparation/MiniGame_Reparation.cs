@@ -89,6 +89,7 @@ public class MiniGame_Reparation : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        if (!isRunning) return;
         WorkshopManager.instance.reparationDragAndDrop.Disable();
         StopExecutingMiniGame();
         ExitMiniGame(false);

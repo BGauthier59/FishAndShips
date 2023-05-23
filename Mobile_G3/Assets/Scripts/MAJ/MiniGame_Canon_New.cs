@@ -120,6 +120,7 @@ public class MiniGame_Canon_New : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        if (!isRunning) return;
         StopExecutingMiniGame();
         WorkshopManager.instance.shrimpSwipeManager.Disable();
         WorkshopManager.instance.gyroscopeManager.Disable();

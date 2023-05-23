@@ -194,6 +194,7 @@ public class MiniGame_Shrimp : MiniGame
 
     public override void OnLeaveMiniGame()
     {
+        if (!isRunning) return;
         StopExecutingMiniGame();
         WorkshopManager.instance.shrimpSwipeManager.Disable();
         ExitMiniGame(false);
