@@ -16,8 +16,6 @@ public class ReparationWorkshop : Workshop
 
     private void OnSetActive(bool _, bool current)
     {
-        Debug.Log("Set active for reparation");
-
         if (current) WorkshopManager.instance.StartPlankFillersGlow();
         else WorkshopManager.instance.EndPlankFillersGlow();
     }

@@ -83,7 +83,6 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void PlaySound(AudioType type)
     {
-        Debug.Log($"Played {type}, which is {sounds[type].name}");
         soundSource.PlayOneShot(sounds[type]);
     }
 
