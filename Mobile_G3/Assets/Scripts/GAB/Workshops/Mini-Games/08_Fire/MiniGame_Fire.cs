@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MiniGame_Fire : MiniGame
 {
@@ -12,15 +13,24 @@ public class MiniGame_Fire : MiniGame
 
     public Transform basementWood, layerPoint, waterGate1, waterGate2;
 
-    [Header("Setup Start Fire Ring")] public int numberOfSpawnPoints;
+    [Header("Setup Start Fire Ring")] 
+    public bool useRandom;
+    public int numberOfSpawnPoints;
     public float radius;
     public float startingAngle;
     public float positionThreshold;
+    
 
-    [Header("Gyro Value")] public float gyroStart, gyroSpeed, gyroValue;
-    [Header("Gizmos")] public bool enableGizmos;
+    [Header("Gyro Value")] 
+    public float gyroStart;
+    public float gyroSpeed;
+    public float currentGyroValue;
+    [Header("Gizmos")] 
+    public bool enableGizmos;
     public Vector3 offsetGizmos;
     private Vector3 fireInitPos;
+    private int totalPoints;
+    private List<Transform> firePoints = new List<Transform>();
 
     public override void OnNetworkSpawn()
     {
@@ -31,7 +41,7 @@ public class MiniGame_Fire : MiniGame
     {
         base.StartMiniGame();
         SetupFirePlacement();
-        gyroValue = 0;
+        currentGyroValue = 0;
 
         // Enables Gyroscope
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
@@ -44,6 +54,13 @@ public class MiniGame_Fire : MiniGame
     [ContextMenu("Test setup")]
     private void SetupFirePlacement()
     {
+        RandomizeList(fireData.fireSizeType);
+        totalPoints = useRandom ? Random.Range(1, numberOfSpawnPoints) : numberOfSpawnPoints;
+        foreach (Transform fire in fireData.fireSizeType)
+        {
+            fire.gameObject.SetActive(false);
+        }
+        
         for (int i = 0; i < numberOfSpawnPoints; i++)
         {
             float angle = ((360f / numberOfSpawnPoints) * i + startingAngle) * Mathf.Deg2Rad;
@@ -52,24 +69,24 @@ public class MiniGame_Fire : MiniGame
 
             Vector3 spawnPosition = new Vector3(x, 0f, z) + layerPoint.transform.position;
             fireData.fireSizeType[i].position = spawnPosition;
+            fireData.fireSizeType[i].gameObject.SetActive(true);
+            fireData.fireSizeType[i].gameObject.GetComponent<FireObject>().firePart[0].Play();
             fireData.fireSizeType[i].parent = layerPoint.transform;
         }
     }
-
-    private float currentGyro;
+    
     private float moveGyro;
-    private float eulerY;
-    private float speedIncrease = 5f;
 
     public override void ExecuteMiniGame()
     {
-        currentGyro = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
-        if (currentGyro > 180f)
+        currentGyroValue = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
+        currentGyroValue -= gyroStart;
+        if (currentGyroValue > 180f)
         {
-            currentGyro = currentGyro - 360f;
+            currentGyroValue -= 360f;
         }
-        currentGyro /= 90f;
-        moveGyro = currentGyro * speedIncrease;
+        currentGyroValue /= 90f;
+        moveGyro = currentGyroValue * gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
         CheckObjectIsInsideGate();
         LaunchExitMiniGame();
@@ -83,10 +100,8 @@ public class MiniGame_Fire : MiniGame
             fire.GetComponent<FireObject>().ResetFire();
             //fire.gameObject.SetActive(false);
         }
-
         gyroStart = 0;
-        gyroValue = 0;
-        eulerY = 0;
+        currentGyroValue = 0;
     }
     
     public override void OnLeaveMiniGame()
@@ -115,7 +130,21 @@ public class MiniGame_Fire : MiniGame
         ExitMiniGame(true);
     }
 
-    
+    [ContextMenu("Randomize Fire Size List")]
+    private void RandomizeListDebug()
+    {
+        RandomizeList(fireData.fireSizeType);
+    }
+
+    void RandomizeList(List<Transform> list)
+    {
+        int count = list.Count;
+        for (int i = 0; i < count - 1; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(i, count);
+            (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
+        }
+    }
     
     private void CheckObjectIsInsideGate()
     {

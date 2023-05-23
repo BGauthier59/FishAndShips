@@ -25,6 +25,7 @@ public class FireManagerV1 : MonoBehaviour
 
     [Header("Debug")]
     [Range(0, 1)] 
+    public bool useRandom;
     public float debugRotation = 0.5f;
     public Vector3 offsetGizmos;
     
@@ -36,6 +37,7 @@ public class FireManagerV1 : MonoBehaviour
     
     private Gyroscope gyroscope;
     private Quaternion correctionQuaternion;
+    private int totalPoints;
 
     private void Awake()
     {
@@ -48,10 +50,11 @@ public class FireManagerV1 : MonoBehaviour
     void Start()
     {
         ListUtils.RandomizeList(firePoints);
+        totalPoints = (int)(useRandom ? Random.Range(1f, numberOfSpawnPoints) : numberOfSpawnPoints);
         // Instantiate the spawn points
-        for (int i = 0; i < numberOfSpawnPoints; i++)
+        for (int i = 0; i < totalPoints; i++)
         {
-            float angle = ((360f / numberOfSpawnPoints) * i +  startingAngle) * Mathf.Deg2Rad;
+            float angle = ((360f / totalPoints) * i +  startingAngle) * Mathf.Deg2Rad;
             float x = radius * Mathf.Cos(angle);
             float z = radius * Mathf.Sin(angle);
         
