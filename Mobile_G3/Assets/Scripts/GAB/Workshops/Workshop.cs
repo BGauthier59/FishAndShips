@@ -156,11 +156,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
 
         while (timer < activationDuration)
         {
-            if (!isActive.Value)
-            {
-                Debug.LogWarning("Deactivate timer");
-                return;
-            }
+            if (!isActive.Value) return; // Deactivate timer if is won
             await UniTask.Yield();
             timer += Time.deltaTime;
         }
@@ -175,7 +171,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
             return; // Means workshop has been won
         }
 
-        Debug.Log($"You lost {name}");
         ShipManager.instance.TakeDamage(5);
         Deactivate(null, null); // This is not a victory, only means to disable mini-game
     }
@@ -218,7 +213,6 @@ public class Workshop : NetworkBehaviour, IGridEntity
     {
         if (victory) winEvent?.Invoke();
         else loseEvent?.Invoke();
-        Debug.Log($"Deactivation for {name}");
         deactivationEvent?.Invoke();
     }
 
