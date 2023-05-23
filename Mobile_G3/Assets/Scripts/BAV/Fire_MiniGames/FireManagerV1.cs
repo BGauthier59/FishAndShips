@@ -58,20 +58,25 @@ public class FireManagerV1 : MonoBehaviour
     public float increasedRotationSpeed = 10f;
     public float minMaxGyro = 180;
 
-
+    private Vector3 currentGyro;
+    private float currentGyroZ;
+    private float gyroAngle;
+    private float moveGyro;
+    private float speedIncrease = 5f;
     public void Update()
     {
-        //gyroStart = GetGyroRotation().eulerAngles.y; // => 217
-        float currentGyro = GetGyroRotation().eulerAngles.y; // => 210-220
-        float move = currentGyro - gyroStart; // => 210-220
-        gyroValue += move * gyroSpeed; // => 
-        gyroStart = currentGyro;
-        gyroValue = Mathf.Clamp(gyroValue, -minMaxGyro, minMaxGyro);
-        
-        float eulerY = layerPoint.eulerAngles.y;
-        layerPoint.transform.rotation = Quaternion.Euler(0,Mathf.Lerp(eulerY,gyroValue,increasedRotationSpeed * Time.deltaTime),0);
-        Debug.Log("Current Gyro" + currentGyro);
-        Debug.Log("Current Gyro" + gyroValue);
+        currentGyroZ = currentGyro.z;
+        if (currentGyro.z > 180f)
+        {
+            currentGyroZ = currentGyroZ - 360f;
+        }
+        currentGyroZ /= 90f;
+        moveGyro = currentGyroZ * speedIncrease;
+        layerPoint.transform.Rotate(Vector3.up, moveGyro);
+
+        Debug.Log("Actual Gyro" + currentGyro);
+        Debug.Log("Gyro Z" + currentGyroZ);
+        Debug.Log("Move Gyro" +moveGyro);
         FillGivenIndex();
     }
     
