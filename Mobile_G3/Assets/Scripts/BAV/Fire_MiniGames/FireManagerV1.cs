@@ -32,13 +32,22 @@ public class FireManagerV1 : MonoBehaviour
     private Vector3 _midpoint;
     // Set a threshold value to determine if the point has passed the specific position
     public float positionThreshold = 0.1f;
+    public float gyroSpeed = 5f;
     
     private Gyroscope gyroscope;
     private Quaternion correctionQuaternion;
-    public float gyroStart,gyroSpeed,gyroValue;
+
+    private void Awake()
+    {
+        foreach (var firePoint in firePoints)
+        {
+            firePoint.gameObject.SetActive(false);
+        }
+    }
 
     void Start()
     {
+        ListUtils.RandomizeList(firePoints);
         // Instantiate the spawn points
         for (int i = 0; i < numberOfSpawnPoints; i++)
         {
@@ -48,11 +57,11 @@ public class FireManagerV1 : MonoBehaviour
         
             Vector3 spawnPosition = new Vector3(x, 0f, z) + layerPoint.transform.position  + centerPosition;
             firePoints[i].transform.position = spawnPosition;
+            firePoints[i].gameObject.SetActive(true);
             firePoints[i].transform.parent = layerPoint.transform;
         }
 
         EnableGyro();
-        gyroStart = GetGyroRotation().eulerAngles.y; // => 0
     }
     
     public float increasedRotationSpeed = 10f;
@@ -62,7 +71,7 @@ public class FireManagerV1 : MonoBehaviour
     private float currentGyroZ;
     private float gyroAngle;
     private float moveGyro;
-    private float speedIncrease = 5f;
+
     public void Update()
     {
         currentGyroZ = currentGyro.z;
@@ -71,12 +80,8 @@ public class FireManagerV1 : MonoBehaviour
             currentGyroZ = currentGyroZ - 360f;
         }
         currentGyroZ /= 90f;
-        moveGyro = currentGyroZ * speedIncrease;
+        moveGyro = currentGyroZ * gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
-
-        Debug.Log("Actual Gyro" + currentGyro);
-        Debug.Log("Gyro Z" + currentGyroZ);
-        Debug.Log("Move Gyro" +moveGyro);
         FillGivenIndex();
     }
     

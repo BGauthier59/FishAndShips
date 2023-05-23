@@ -115,6 +115,8 @@ public class MiniGame_Fire : MiniGame
         ExitMiniGame(true);
     }
 
+    
+    
     private void CheckObjectIsInsideGate()
     {
         foreach (var fire in fireData.fireSizeType)
