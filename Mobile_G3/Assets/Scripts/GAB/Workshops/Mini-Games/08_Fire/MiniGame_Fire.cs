@@ -41,6 +41,7 @@ public class MiniGame_Fire : MiniGame
         StartExecutingMiniGame();
     }
 
+    [ContextMenu("Test setup")]
     private void SetupFirePlacement()
     {
         for (int i = 0; i < numberOfSpawnPoints; i++)
@@ -78,7 +79,8 @@ public class MiniGame_Fire : MiniGame
         foreach (Transform fire in fireData.fireSizeType)
         {
             fire.position = fireInitPos;
-            fire.gameObject.SetActive(false);
+            fire.GetComponent<FireObject>().ResetFire();
+            //fire.gameObject.SetActive(false);
         }
 
         gyroStart = 0;
