@@ -273,6 +273,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             if (!stairexit && !stairenter)
             {
                 previousPos = transform.position;
+                /*
                 Debug.Log("Debug c'est parti");
                 Debug.Log( "GridManager : " + GridManager.instance);
                 Debug.Log( "Tile : " + GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value));
@@ -280,6 +281,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
                 Debug.Log( "Transform : " + GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform);
                 Debug.Log( "NextPos : " + nextPos);
                 Debug.Log("Debug c'est fini");
+                */
                 nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
                           Vector3.up * 0.4f;
                 InitializeBounce(nextPos - previousPos);

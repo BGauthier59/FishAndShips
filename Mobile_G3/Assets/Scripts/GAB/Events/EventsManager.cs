@@ -53,6 +53,9 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         timer = 0;
         durationBeforeNextEvent = data.timerBetweenEvents +
                                   Random.Range(-data.randomTimerGapBetweenEvents, data.randomTimerGapBetweenEvents);
+
+        durationBeforeNextEvent *=
+            data.eventActivationSpeedCurve.Evaluate(TimerManager.instance.remainingDurationRatio);
         checkTimer = true;
     }
 

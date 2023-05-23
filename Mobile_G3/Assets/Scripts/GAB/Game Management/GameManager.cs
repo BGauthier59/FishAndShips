@@ -26,7 +26,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private TimerManager timerManager;
     private CameraManager cameraManager;
     [SerializeField] private bool isTutorialLevel;
-        
+
     public List<PlayerManager> players = new List<PlayerManager>();
     private int hostReadyClientCount;
 
@@ -97,8 +97,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         if (isTutorialLevel) tutorialEventManager.StartGameLoop();
         else
         {
-            eventsManager.StartGameLoop();
             timerManager.StartGameLoop();
+            eventsManager.StartGameLoop();
         }
     }
 
@@ -108,7 +108,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         {
             players.Add(kvp.Value);
         }
-        
+
         if (isTutorialLevel)
         {
             tutorialEventManager = TutorialEventManager.instance;
@@ -119,6 +119,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             timerManager = TimerManager.instance;
             eventsManager = EventsManager.instance;
         }
+
         workshopManager = WorkshopManager.instance;
         shipManager = ShipManager.instance;
         canvasManager = CanvasManager.instance;
@@ -173,7 +174,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         var starCount = shipManager.EvaluateStarScore();
         if (victory) LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
-        
+
         GameEndsClientRpc(victory, starCount);
     }
 
