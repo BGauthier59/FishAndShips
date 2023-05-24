@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -64,12 +62,10 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
     [ServerRpc(RequireOwnership = false)]
     private void SendPlayerDictionaryServerRpc(uint[] data, ulong id, bool victory, int starCount)
     {
-        Debug.LogWarning($"Host received data from {id}");
         allDictionaries.Add((data, id));
 
         hostReadyClientCount++;
         if (hostReadyClientCount != ConnectionManager.instance.players.Count) return;
-        Debug.LogWarning("Everyone has sent its data");
 
         // Calculate data and determine winners
         //Dictionary<Honorifics, ulong> winners = new Dictionary<Honorifics, ulong>();
@@ -85,7 +81,6 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
         for (int i = 0; i < allHonorifics.Length; i++)
         {
             Honorifics current = allHonorifics[i];
-            Debug.LogWarning($"Checking winner for {current}");
 
             int highest = 0;
             long winnerId = -1;
@@ -99,9 +94,6 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
                     winnerId = (long) couple.Item2;
                 }
             }
-
-            Debug.LogWarning($"winner id is {winnerId} with {highest} points");
-
             winners.Add(winnerId);
         }
 

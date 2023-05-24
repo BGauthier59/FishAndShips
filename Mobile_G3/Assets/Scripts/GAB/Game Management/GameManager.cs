@@ -186,7 +186,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private async void GameEndsFeedback(bool victory, int starCount, long[] honorifics)
     {
-        Debug.Log("Honorifics have been determined!");
         await CinematicCanvasManager.instance.EndCinematic();
 
         canvasManager.DisplayCanvas(CanvasType.EndGame);

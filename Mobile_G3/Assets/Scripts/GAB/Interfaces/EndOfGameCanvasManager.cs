@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
 {
