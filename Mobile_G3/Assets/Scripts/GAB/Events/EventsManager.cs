@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -32,11 +33,18 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
     private bool checkTimer;
 
+    private int currentActivatedWorkshopsCount;
+    [SerializeField] private float maxWorkshops;
+    [SerializeField] private float playerFactor;
+
     [SerializeField] private GridFloorNotWalkable notWalkable;
     [SerializeField] private UnityEvent startEvent;
 
     public void StartGameLoop()
     {
+        // Host only
+        if (!NetworkManager.Singleton.IsHost) return;
+        
         // Récupérer les data du SO
 
         if (!data)
@@ -44,6 +52,16 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
             Debug.LogError("No data found!");
             return;
         }
+
+        int playerCount = ConnectionManager.instance.players.Count;
+        maxWorkshops = playerCount + 1;
+        playerFactor = playerCount switch
+        {
+            2 => data.factorSpeed.p2,
+            3 => data.factorSpeed.p3,
+            4 => data.factorSpeed.p4,
+            _ => 1 // Debug for one player
+        };
 
         SetNewDuration();
     }
@@ -55,12 +73,16 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
                                   Random.Range(-data.randomTimerGapBetweenEvents, data.randomTimerGapBetweenEvents);
 
         durationBeforeNextEvent *=
-            data.eventActivationSpeedCurve.Evaluate(TimerManager.instance.remainingDurationRatio);
+            data.eventActivationSpeedCurve.Evaluate(TimerManager.instance.remainingDurationRatio)
+            * playerFactor;
         checkTimer = true;
     }
 
     public void UpdateGameLoop()
     {
+        // Host only
+        if (!NetworkManager.Singleton.IsHost) return;
+
         if (!checkTimer) return;
 
         if (timer >= durationBeforeNextEvent)
@@ -70,12 +92,24 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         else timer += Time.deltaTime;
     }
 
-    public bool waitingForInstantiating;
+    public void AddWorkshop()
+    {
+        currentActivatedWorkshopsCount++;
+    }
 
+    public void RemoveWorkshop()
+    {
+        currentActivatedWorkshopsCount--;
+    }
+    
     private async void StartNewEvent()
     {
         checkTimer = false;
-        waitingForInstantiating = true;
+
+        while (currentActivatedWorkshopsCount >= maxWorkshops)
+        {
+            await UniTask.Yield();
+        }
 
         RandomEvent nextEvent;
         if (softEventCount == data.hardEventsFrequency)
@@ -108,8 +142,6 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
             lastSoftEvent = nextEvent;
             softEventCount++;
         }
-
-        waitingForInstantiating = false;
 
         nextEvent.StartEvent();
         SetNewDuration();

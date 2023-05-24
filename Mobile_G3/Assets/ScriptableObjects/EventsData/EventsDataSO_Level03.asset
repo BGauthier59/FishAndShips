@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6466001eb84330148adb98d94850e21c, type: 3}
   m_Name: EventsDataSO_Level03
   m_EditorClassIdentifier: 
-  timerBetweenEvents: 4
+  timerBetweenEvents: 10
   randomTimerGapBetweenEvents: 2
-  hardEventsFrequency: 16
+  hardEventsFrequency: 8
   eventActivationSpeedCurve:
     serializedVersion: 2
     m_Curve:
@@ -39,4 +39,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  maxWorkshopsAtTheSameTime: 10
+  factorSpeed:
+    p2: 1.33
+    p3: 1.25
+    p4: 1

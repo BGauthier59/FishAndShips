@@ -80,6 +80,7 @@ public class SeriesWorkshop : Workshop
             SetActiveServerRpc(false);
             GetDeactivatedClientRpc(victory.HasValue);
             SetOccupiedServerRpc(false);
+            EventsManager.instance.RemoveWorkshop();
             return;
         }
 
