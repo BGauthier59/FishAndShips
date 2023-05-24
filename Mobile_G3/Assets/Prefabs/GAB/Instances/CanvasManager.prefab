@@ -4554,6 +4554,8 @@ MonoBehaviour:
           m_StringArgument: LoseGame
           m_BoolArgument: 0
         m_CallState: 2
+  honorificWinnerNameText: {fileID: 8464185818586647387}
+  honorificMessageText: {fileID: 8077269632271676340}
 --- !u!1 &1583286533
 GameObject:
   m_ObjectHideFlags: 0
@@ -6177,7 +6179,7 @@ GameObject:
   - component: {fileID: 7012509542159581108}
   - component: {fileID: 8077269632271676340}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TitleMessage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6196,7 +6198,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8185513855005788698}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6231,8 +6233,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "player 1 has played many workshops...\nlorem ipsum\nles gp sont forts
-    quand m\xEAme"
+  m_text: There was no title to give to anyone...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
   m_sharedMaterial: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
@@ -6644,7 +6645,7 @@ GameObject:
   - component: {fileID: 8126537301972293314}
   - component: {fileID: 8464185818586647387}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: WinnerName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6663,7 +6664,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8185513855005788698}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6698,7 +6699,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: SAILOR
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
   m_sharedMaterial: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
@@ -7160,8 +7161,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1758521308509119644}
   - {fileID: 6211080484392595051}
+  - {fileID: 1758521308509119644}
   m_Father: {fileID: 772056486}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

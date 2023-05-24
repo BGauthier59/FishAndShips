@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -91,6 +90,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         Debug.Log("Start game loop!");
         startGameLoopEvent?.Invoke();
+        HonorificManager.instance.StartGameLoop();
         GridControlManager.instance.StartGameLoop();
         shipManager.StartGameLoop();
         workshopManager.StartGameLoop();
@@ -175,22 +175,22 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         var starCount = shipManager.EvaluateStarScore();
         if (victory) LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
 
-        GameEndsClientRpc(victory, starCount);
+        HonorificManager.instance.InitiateHonorificsResumeClientRpc(victory, starCount);
     }
 
     [ClientRpc]
-    private void GameEndsClientRpc(bool victory, int starCount)
+    public void GameEndsClientRpc(bool victory, int starCount, long[] honorifics)
     {
-        GameEndsFeedback(victory, starCount);
+        GameEndsFeedback(victory, starCount, honorifics);
     }
 
-    private async void GameEndsFeedback(bool victory, int starCount)
+    private async void GameEndsFeedback(bool victory, int starCount, long[] honorifics)
     {
-        Debug.Log("End of game!");
+        Debug.Log("Honorifics have been determined!");
         await CinematicCanvasManager.instance.EndCinematic();
 
         canvasManager.DisplayCanvas(CanvasType.EndGame);
-        EndOfGameCanvasManager.instance.SetupCanvas(NetworkManager.Singleton.IsHost, victory, starCount);
+        EndOfGameCanvasManager.instance.SetupCanvas(NetworkManager.Singleton.IsHost, victory, starCount, honorifics);
     }
 
     #endregion

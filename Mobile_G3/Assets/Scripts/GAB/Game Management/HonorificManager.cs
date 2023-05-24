@@ -10,7 +10,9 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
 
     private List<(uint[], ulong)> allDictionaries = new List<(uint[], ulong)>();
 
-    public void Start()
+    [TextArea(1, 4)] public string[] messages;
+
+    public void StartGameLoop()
     {
         // Might be in game loop after
 
@@ -36,12 +38,13 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
         }
     }
 
-    // A chaque fois qu'une action honorifique est exécutée, on AddHonorific.
-    // AddHonorific incrémente une valeur dans un dictionary
+    [ClientRpc]
+    public void InitiateHonorificsResumeClientRpc(bool victory, int starCount)
+    {
+        SendPlayerDictionaryToHost(victory, starCount);
+    }
 
-    // A la fin, on va comparer les 4 dictionary entre eux
-
-    public void SendPlayerDictionaryToHost()
+    private void SendPlayerDictionaryToHost(bool victory, int starCount)
     {
         uint[] data = new uint[honorificsDictionary.Count];
 
@@ -53,13 +56,13 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
         }
 
         // Data are sent in the same order than enum order
-        SendPlayerDictionaryServerRpc(data, NetworkManager.Singleton.LocalClientId);
+        SendPlayerDictionaryServerRpc(data, NetworkManager.Singleton.LocalClientId, victory, starCount);
     }
 
     private int hostReadyClientCount = 0;
 
     [ServerRpc(RequireOwnership = false)]
-    private void SendPlayerDictionaryServerRpc(uint[] data, ulong id)
+    private void SendPlayerDictionaryServerRpc(uint[] data, ulong id, bool victory, int starCount)
     {
         Debug.LogWarning($"Host received data from {id}");
         allDictionaries.Add((data, id));
@@ -69,7 +72,8 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
         Debug.LogWarning("Everyone has sent its data");
 
         // Calculate data and determine winners
-        Dictionary<Honorifics, ulong> winners = new Dictionary<Honorifics, ulong>();
+        //Dictionary<Honorifics, ulong> winners = new Dictionary<Honorifics, ulong>();
+        List<long> winners = new List<long>();
 
         Honorifics[] allHonorifics = new[]
         {
@@ -77,25 +81,31 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
             Honorifics.Firefighter, Honorifics.Carpenter, Honorifics.TeamSpirit, Honorifics.CardioTrainer,
             Honorifics.Gunner
         };
-        
+
         for (int i = 0; i < allHonorifics.Length; i++)
         {
             Honorifics current = allHonorifics[i];
-            int highest = -1;
-            ulong? winnerId = null;
+            Debug.LogWarning($"Checking winner for {current}");
 
-            for (int j = 0; j < allDictionaries.Count; j++) // Y a 4 dans all dictionaries
+            int highest = 0;
+            long winnerId = -1;
+
+            for (int j = 0; j < allDictionaries.Count; j++)
             {
                 var couple = allDictionaries[j];
-                if (couple.Item1[i] >= highest)
+                if (couple.Item1[i] > highest)
                 {
                     highest = (int) couple.Item1[i];
-                    winnerId = couple.Item2;
+                    winnerId = (long) couple.Item2;
                 }
             }
 
-            if (winnerId.HasValue) winners.Add(current, winnerId.Value);
+            Debug.LogWarning($"winner id is {winnerId} with {highest} points");
+
+            winners.Add(winnerId);
         }
+
+        GameManager.instance.GameEndsClientRpc(victory, starCount, winners.ToArray());
     }
 }
 

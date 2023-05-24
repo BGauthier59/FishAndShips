@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
@@ -14,7 +16,10 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
     [SerializeField] private UnityEvent victoryEvent;
     [SerializeField] private UnityEvent lostEvent;
 
-    public void SetupCanvas(bool isHost, bool victory, int starCount)
+    [SerializeField] private TMP_Text honorificWinnerNameText;
+    [SerializeField] private TMP_Text honorificMessageText;
+
+    public void SetupCanvas(bool isHost, bool victory, int starCount, long[] honorificsData)
     {
         if (isHost)
             foreach (var go in clientButtons)
@@ -22,12 +27,12 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
         else
             foreach (var go in hostButtons)
                 go.SetActive(false);
-        
+
         foreach (var go in victoryObjects) go.SetActive(victory);
         foreach (var go in defeatObjects) go.SetActive(!victory);
-        
+
         foreach (var star in stars) star.SetActive(false);
-        
+
         if (victory)
         {
             victoryEvent?.Invoke();
@@ -38,7 +43,28 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
         }
         else lostEvent?.Invoke();
 
-        // Todo - show titles
+        ShowTitles(honorificsData);
+    }
+
+    private async void ShowTitles(long[] data)
+    {
+        int index = 0;
+        PlayerManager winner;
+        while (true)
+        {
+            if (SceneLoaderManager.instance.GetGlobalSceneState() != SceneLoaderManager.SceneState.InGameLevel) return;
+            if (data[index] != -1)
+            {
+                winner = ConnectionManager.instance.players[(ulong)data[index]];
+                honorificWinnerNameText.text = winner.playerName.Value.ToString();
+                honorificMessageText.text = HonorificManager.instance.messages[index];
+                await UniTask.Delay(4000);
+            }
+
+            await UniTask.Yield();
+            index++;
+            if (index == data.Length) index = 0;
+        }
     }
 
     public void OnContinue()
