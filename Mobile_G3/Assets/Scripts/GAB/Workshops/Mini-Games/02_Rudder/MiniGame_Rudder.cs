@@ -75,7 +75,8 @@ public class MiniGame_Rudder : MiniGame
 
     private async void StartMiniGameNetwork(string name)
     {
-        base.StartMiniGame();
+        miniGameObject.SetActive(true);
+        WorkshopManager.instance.SetGameIndicator(indicatorGame);
 
         questIndicator.text = $"{questStartText} {name}!";
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
@@ -28,8 +29,8 @@ public class MiniGame_Map : MiniGame
     [SerializeField] private Vector4 leftRightBottomTopBorders;
     [SerializeField] private Island[] islands;
     private Island currentIsland;
-    [SerializeField] private float spawnRadius;
-    [SerializeField] private float minDistanceFromPlayer;
+
+    [SerializeField] private Transform[] points;
 
     [Serializable]
     public class Island
@@ -40,9 +41,9 @@ public class MiniGame_Map : MiniGame
 
     public override async void StartMiniGame()
     {
-        base.StartMiniGame();
         await SetupIslandAndRotation();
-
+        
+        base.StartMiniGame();
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.StartMiniGameTutorial(5);
@@ -118,44 +119,27 @@ public class MiniGame_Map : MiniGame
     private async UniTask SetupIslandAndRotation()
     {
         // WARNING! This operation can be very long?
-        posY = miniGameMap.localPosition.y;
-
         currentIsland = islands[Random.Range(0, islands.Length)];
-        Vector3 pos;
-        foreach (var island in islands)
-        {
-            pos = ship.position + Random.insideUnitSphere * spawnRadius;
-            pos.y = ship.position.y;
-            island.transform.position = pos;
-        }
 
-        Vector3 randomPos;
-        float dot;
-        float distance;
-        foreach (var island in islands)
+        posY = miniGameMap.localPosition.y;
+        bool[] availablePoints = new bool[points.Length];
+
+        Vector3 pos;
+        int random;
+        foreach (var t in islands)
         {
             do
             {
-                // Set random position
-                randomPos = Random.insideUnitCircle * spawnRadius;
-                randomPos.z = randomPos.y;
-                randomPos.y = 0;
-                island.transform.position = ship.position + randomPos;
-
-                // Set right direction for current island
-                if (island == currentIsland)
-                    rightDirection = (currentIsland.transform.position - ship.position).normalized;
-
-                // Make sure dot product is not right at the beginning of the game
-                dot = Vector3.Dot(ship.right, rightDirection);
-
-                // Calculate distance between island and ship
-                distance = Vector3.Distance(ship.position, island.transform.position);
-
+                random = Random.Range(0, availablePoints.Length);
                 await UniTask.Yield();
-            } while (distance < minDistanceFromPlayer || (island == currentIsland && dot >= collinearFactorThreshold));
-        }
+            } while (availablePoints[random]);
 
+            availablePoints[random] = true;
+            pos = points[random].position;
+            pos.y = posY;
+            t.transform.position = pos;
+        }
+        
         rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
     }
 

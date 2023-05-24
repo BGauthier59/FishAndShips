@@ -9,7 +9,7 @@ public abstract class MiniGame : NetworkBehaviour
     [SerializeField] protected Vector3 miniGameCameraPosition;
     [SerializeField] protected Vector3 miniGameCameraEulerAngles;
 
-    [SerializeField] private string indicatorGame;
+    [SerializeField] protected string indicatorGame;
 
     public WorkshopManager debugWorkshop;
 
