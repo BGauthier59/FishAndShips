@@ -623,6 +623,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             if (i == skin) playerFigures[idInt].mapFigures[i].SetActive(true);
             else playerFigures[idInt].mapFigures[i].SetActive(false);
         }
+        Debug.Log("C'EST PAS LA CONNARD !!!!!!!!!!!");
     }
 
     #endregion
