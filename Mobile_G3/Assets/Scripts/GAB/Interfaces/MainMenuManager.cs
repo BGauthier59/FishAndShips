@@ -34,7 +34,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition;
-    public TMP_Text textInputName, textInputIP, levelName, levelIndex,skinText,impactText;
+    public TMP_Text textInputName, textInputIP, levelName, levelIndex,skinText,impactText,skinLockedText;
     [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
@@ -42,13 +42,15 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     [SerializeField] private GameObject[] customFigure;
     [SerializeField] private ParticleSystem[] customImpact;
     [SerializeField] private SpriteRenderer[] starsPass;
+    [SerializeField] private SpriteRenderer[] skinIcons;
 
     public string pseudo;
     public int screen;
-    public int skinId,impactId;
+    public int skinId,skinCustId,impactId;
     public bool connected;
     public int levelId;
     public int starNb;
+    public int[] skinRefs;
     
     public Vector3 startTouch;
     public bool isDragging,isOnMap,isOnLevel;
@@ -62,6 +64,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public Transform[] buttonsCustomScreen;
     public string[] skinNames, impactNames;
     [SerializeField] private PassReward[] rewards;
+    public SpriteRenderer skinBox,impactBox;
 
     [Serializable]
     public struct LevelIcon
@@ -77,6 +80,9 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         public SpriteRenderer box,arrow;
         public int starsRequired;
+        public bool skin;
+        public int nb;
+        public float shopPos;
     }
 
     [Serializable]
@@ -428,39 +434,65 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     #region Customisation Screen
 
-    public async void OnChangeSkinForward()
+    public async void OnSkinModification()
     {
-        skinId = (skinId + 1) % 4;
-        Debug.Log("SKIN N" + skinId);
-        if (connected)
-            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
-                skinId;
+        int refs = skinCustId == 3 ? 0 : skinCustId == 4 ? 4 : -1;
         customTransition.Play("ChangeSkin");
         await Task.Delay(160);
+        if (refs != -1 && starNb >= rewards[refs].starsRequired)
+        {
+            skinId = skinCustId;
+            if (connected)
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
+                    skinId;
+            skinLockedText.gameObject.SetActive(false);
+            skinBox.color = Color.white;
+            skinIcons[skinCustId].color = Color.white;
+        }
+        else if(refs != -1)
+        {
+            skinLockedText.gameObject.SetActive(true);
+            skinLockedText.text = "You need "+(rewards[refs].starsRequired - starNb)+" more stars to unlock this Skin";
+            skinBox.color = starLockedColor;
+            skinIcons[skinCustId].color = Color.gray;
+        }
+        else
+        {
+            skinId = skinCustId;
+            skinLockedText.gameObject.SetActive(false);
+            skinBox.color = Color.white;
+            skinIcons[skinCustId].color = Color.white;
+        }
         for (int i = 0; i < customFigure.Length; i++)
         {
-            if (i == skinId) customFigure[i].SetActive(true);
-            else customFigure[i].SetActive(false);
+            if (i == skinCustId)
+            {
+                customFigure[i].SetActive(true);
+                skinIcons[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                customFigure[i].SetActive(false);
+                skinIcons[i].gameObject.SetActive(false);
+            }
         }
-        skinText.text = skinNames[skinId];
+        skinText.text = skinNames[skinCustId];
     }
     
-    public async void OnChangeSkinBackward()
+    
+    
+    public void OnChangeSkinForward()
     {
-        skinId = skinId - 1;
-        if (skinId < 0) skinId = 3;
-        Debug.Log("SKIN N" + skinId);
-        if (connected)
-            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
-                skinId;
-        customTransition.Play("ChangeSkin");
-        await Task.Delay(160);
-        for (int i = 0; i < customFigure.Length; i++)
-        {
-            if (i == skinId) customFigure[i].SetActive(true);
-            else customFigure[i].SetActive(false);
-        }
-        skinText.text = skinNames[skinId];
+        skinCustId = (skinCustId + 1) % 5;
+        OnSkinModification();
+
+    }
+    
+    public void OnChangeSkinBackward()
+    {
+        skinCustId = skinCustId - 1;
+        if (skinCustId < 0) skinCustId = 4;
+        OnSkinModification();
     }
     
     public async void OnChangeImpactForward()
