@@ -30,7 +30,7 @@ public class MiniGame_Fire : MiniGame
     public Vector3 offsetGizmos;
     private Vector3 fireInitPos;
     private int totalPoints;
-    private List<Transform> firePoints = new List<Transform>();
+    private List<Transform> firePointsWorkshop = new List<Transform>();
 
     public override void OnNetworkSpawn()
     {
@@ -47,7 +47,6 @@ public class MiniGame_Fire : MiniGame
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
 
         WorkshopManager.instance.gyroscopeManager.Enable(data);
-        gyroStart = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
         StartExecutingMiniGame();
     }
 
@@ -55,53 +54,59 @@ public class MiniGame_Fire : MiniGame
     private void SetupFirePlacement()
     {
         RandomizeList(fireData.fireSizeType);
-        totalPoints = useRandom ? Random.Range(1, numberOfSpawnPoints) : numberOfSpawnPoints;
         foreach (Transform fire in fireData.fireSizeType)
         {
             fire.gameObject.SetActive(false);
         }
         
-        for (int i = 0; i < numberOfSpawnPoints; i++)
+        totalPoints = useRandom ? Random.Range(1, numberOfSpawnPoints) : numberOfSpawnPoints;
+        for (int i = 0; i < totalPoints; i++)
         {
-            float angle = ((360f / numberOfSpawnPoints) * i + startingAngle) * Mathf.Deg2Rad;
+            firePointsWorkshop.Add(fireData.fireSizeType[i]);
+            float angle = ((360f / totalPoints) * i + startingAngle) * Mathf.Deg2Rad;
             float x = radius * Mathf.Cos(angle);
             float z = radius * Mathf.Sin(angle);
 
             Vector3 spawnPosition = new Vector3(x, 0f, z) + layerPoint.transform.position;
-            fireData.fireSizeType[i].position = spawnPosition;
-            fireData.fireSizeType[i].gameObject.SetActive(true);
-            fireData.fireSizeType[i].gameObject.GetComponent<FireObject>().firePart[0].Play();
-            fireData.fireSizeType[i].parent = layerPoint.transform;
+            firePointsWorkshop[i].position = spawnPosition;
+            firePointsWorkshop[i].gameObject.SetActive(true);
+            firePointsWorkshop[i].gameObject.GetComponent<FireObject>().firePart[0].Play();
+            firePointsWorkshop[i].parent = layerPoint.transform;
         }
     }
     
     private float moveGyro;
+    private float actualGyro;
 
     public override void ExecuteMiniGame()
     {
         currentGyroValue = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
-        currentGyroValue -= gyroStart;
+        actualGyro = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.z;
         if (currentGyroValue > 180f)
         {
             currentGyroValue -= 360f;
         }
-        currentGyroValue /= 90f;
+        currentGyroValue /= 180f;
         moveGyro = currentGyroValue * gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
+        Debug.Log("Current Gyro " +  currentGyroValue);
+        Debug.Log("Gyro Device " +  actualGyro);
+        Debug.Log("Speed Gyro " +  moveGyro);
         CheckObjectIsInsideGate();
         LaunchExitMiniGame();
     }
 
     public override void Reset()
     {
-        foreach (Transform fire in fireData.fireSizeType)
+        foreach (Transform fire in firePointsWorkshop)
         {
             fire.position = fireInitPos;
             fire.GetComponent<FireObject>().ResetFire();
             //fire.gameObject.SetActive(false);
         }
-        gyroStart = 0;
+        firePointsWorkshop.Clear();
         currentGyroValue = 0;
+        moveGyro = 0;
     }
     
     public override void OnLeaveMiniGame()
@@ -114,7 +119,7 @@ public class MiniGame_Fire : MiniGame
 
     private async void LaunchExitMiniGame()
     {
-        foreach (Transform fire in fireData.fireSizeType)
+        foreach (Transform fire in firePointsWorkshop)
         {
             if (fire.GetComponent<FireObject>().currentValue != 0f)
             {

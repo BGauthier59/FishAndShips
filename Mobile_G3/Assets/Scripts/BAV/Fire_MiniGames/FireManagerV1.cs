@@ -82,7 +82,7 @@ public class FireManagerV1 : MonoBehaviour
         {
             currentGyroZ = currentGyroZ - 360f;
         }
-        currentGyroZ /= 90f;
+        currentGyroZ /= 180f;
         moveGyro = currentGyroZ * gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
         FillGivenIndex();
