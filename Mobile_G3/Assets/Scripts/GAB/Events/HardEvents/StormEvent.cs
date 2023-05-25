@@ -21,6 +21,8 @@ public class StormEvent : RandomEvent
 
     [SerializeField] private Volume stormyVolume;
 
+    [SerializeField] private int2[] fireTargetTiles;
+
     #region Main Methods
 
     public override bool CheckConditions()
@@ -72,7 +74,7 @@ public class StormEvent : RandomEvent
             randomCooldown = Random.Range(300, 701);
             await UniTask.Delay(randomCooldown);
 
-            Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
+            Tile targetedTile = GridManager.instance.GetRandomTile(fireTargetTiles);
             if (targetedTile == null)
             {
                 Debug.LogWarning("Didn't instantiate any thunder.");

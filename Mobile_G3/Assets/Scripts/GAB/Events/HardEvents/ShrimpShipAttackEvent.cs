@@ -51,6 +51,9 @@ public class ShrimpShipAttackEvent : RandomEvent
     [SerializeField] private Transform initShrimpParent;
 
     #endregion
+    
+    [SerializeField] private int2[] shrimpTargetTiles;
+    [SerializeField] private int2[] holeTargetTiles;
 
     [Header("Feedbacks")] [SerializeField] private UnityEvent fireEvent;
     [SerializeField] private Transform cannonShootTargetedTile, shrimpTargetedTile;
@@ -191,7 +194,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         }
 
         // Select a tile that is alright
-        Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
+        Tile targetedTile = GridManager.instance.GetRandomTile(holeTargetTiles);
         if (targetedTile == null)
         {
             Debug.Log("Couldn't spawn reparation");
@@ -277,7 +280,7 @@ public class ShrimpShipAttackEvent : RandomEvent
             return false;
         }
 
-        Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
+        Tile targetedTile = GridManager.instance.GetRandomTile(shrimpTargetTiles);
         if (targetedTile == null)
         {
             Debug.Log("Couldn't spawn shrimp");
