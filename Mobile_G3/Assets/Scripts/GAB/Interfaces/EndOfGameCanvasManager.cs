@@ -3,6 +3,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
 {
@@ -13,7 +14,7 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
     [SerializeField] private UnityEvent victoryEvent;
     [SerializeField] private UnityEvent lostEvent;
 
-    [SerializeField] private TMP_Text honorificWinnerNameText;
+    [SerializeField] private Image winnerImage;
     [SerializeField] private TMP_Text honorificMessageText;
 
     public void SetupCanvas(bool isHost, bool victory, int starCount, long[] honorificsData)
@@ -52,9 +53,9 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
             if (SceneLoaderManager.instance.GetGlobalSceneState() != SceneLoaderManager.SceneState.InGameLevel) return;
             if (data[index] != -1)
             {
-                winner = ConnectionManager.instance.players[(ulong)data[index]];
-                honorificWinnerNameText.text = winner.playerName.Value.ToString();
-                honorificMessageText.text = HonorificManager.instance.messages[index];
+                winner = ConnectionManager.instance.players[(ulong) data[index]];
+                winnerImage.sprite = winner.GetPlayerSprite();
+                honorificMessageText.text = $"{winner.playerName.Value} {HonorificManager.instance.messages[index]}";
                 await UniTask.Delay(4000);
             }
 

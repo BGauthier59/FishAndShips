@@ -446,4 +446,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     }
 
     #endregion
+
+    public Sprite GetPlayerSprite()
+    {
+        return playerData.GetSprite();
+    }
 }
