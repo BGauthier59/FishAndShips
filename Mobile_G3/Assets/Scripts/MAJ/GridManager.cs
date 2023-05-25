@@ -67,6 +67,11 @@ public class GridManager : MonoSingleton<GridManager>
         int2 randomCoord;
         int securityCount = 0;
 
+        if (tiles.Length == 0)
+        {
+            Debug.LogWarning("Array is empty. Please don't forget to fill the array.");
+            return null;
+        }
         do
         {
             randomCoord = tiles[Random.Range(0, tiles.Length)];
