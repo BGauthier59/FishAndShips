@@ -316,7 +316,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
         else
         {
-            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
+            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId].player;
             if (localPlayer.previousPosX >= GridManager.instance.xSize)
             {
                 if (previousPosX >= GridManager.instance.xSize)
@@ -404,7 +404,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         int index = 0;
         foreach (var kvp in ConnectionManager.instance.players)
         {
-            if (kvp.Value == this) break;
+            if (kvp.Value.player == this) break;
             index++;
         }
 

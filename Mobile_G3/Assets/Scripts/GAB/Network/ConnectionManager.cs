@@ -13,7 +13,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
 {
     private string hostIp;
     public string code;
-    public Dictionary<ulong, PlayerManager> players = new();
+    public Dictionary<ulong, (PlayerManager player, int id)> players = new ();
     private UnityTransport transport;
     private string ipToConnect;
     public GameState gameState = GameState.Menu;
@@ -134,7 +134,9 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
             return;
         }
 
-        players.Add(playerId, manager);
+        Debug.Log($"Adding {manager}, count is {players.Count}");
+        int count = players.Count;
+        players.Add(playerId, (manager, count));
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
         MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value,
             manager.playerDataIndex.Value);
@@ -156,7 +158,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
     {
         foreach (var kvp in players)
         {
-            if (kvp.Value.IsOwner) return kvp.Value;
+            if (kvp.Value.player.IsOwner) return kvp.Value.player;
         }
 
         Debug.LogWarning("Didn't find your player. This should not happen");

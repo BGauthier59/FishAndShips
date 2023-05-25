@@ -53,7 +53,7 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
             if (SceneLoaderManager.instance.GetGlobalSceneState() != SceneLoaderManager.SceneState.InGameLevel) return;
             if (data[index] != -1)
             {
-                winner = ConnectionManager.instance.players[(ulong) data[index]];
+                winner = ConnectionManager.instance.players[(ulong) data[index]].player;
                 winnerImage.sprite = winner.GetPlayerSprite();
                 honorificMessageText.text = $"{winner.playerName.Value} {HonorificManager.instance.messages[index]}";
                 await UniTask.Delay(4000);

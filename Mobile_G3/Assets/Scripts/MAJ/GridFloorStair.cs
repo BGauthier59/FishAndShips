@@ -47,7 +47,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         }
         else
         {
-            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
+            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId].player;
             if (localPlayer.previousPosX >= GridManager.instance.xSize)
             {
                 if (player.previousPosX >= GridManager.instance.xSize) player.InitializeBounce(dir);
@@ -90,7 +90,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         }
         else
         {
-            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
+            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId].player;
             if (localPlayer.previousPosX >= GridManager.instance.xSize)
             {
                 if (player.previousPosX >= GridManager.instance.xSize) player.InitializeBounce(dir);

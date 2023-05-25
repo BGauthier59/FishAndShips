@@ -110,8 +110,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 ipText.text = $"Code : {ConnectionManager.instance.code}";
                 cameraMenu.position = camPos[3].position;
                 cameraMenu.rotation = camPos[3].rotation;
-                skinId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value;
-                impactId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value;
+                skinId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex.Value;
+                impactId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value;
                 for (int i = 0; i < customFigure.Length; i++)
                 {
                     if (i == skinId) customFigure[i].SetActive(true);
@@ -121,8 +121,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 foreach (var value in ConnectionManager.instance.players)
                 {
                     playerIcons[x].SetActive(true);
-                    playerIcons[x].transform.GetChild(0).GetComponent<TMP_Text>().text = value.Value.playerName.Value.ToString();
-                    playerFigures[x].mapFigures[value.Value.playerDataIndex.Value].SetActive(true);
+                    playerIcons[x].transform.GetChild(0).GetComponent<TMP_Text>().text = value.Value.player.playerName.Value.ToString();
+                    playerFigures[x].mapFigures[value.Value.player.playerDataIndex.Value].SetActive(true);
                     x++;
                 }
                 skinText.text = skinNames[skinId];
@@ -443,7 +443,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             skinId = skinCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex.Value =
                     skinId;
             skinLockedText.gameObject.SetActive(false);
             skinBox.color = Color.white;
@@ -499,7 +499,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         impactId = (impactId + 1) % 3;
         if (connected)
-            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
+            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value =
                 impactId;
         customTransition.Play("ChangeImpact");
         await Task.Delay(160);

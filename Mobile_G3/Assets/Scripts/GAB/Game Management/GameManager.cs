@@ -47,7 +47,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     [ServerRpc(RequireOwnership = false)]
     private void UpdateReadyStateServerRpc(ulong id)
     {
-        if (ConnectionManager.instance.players[id] == null)
+        if (ConnectionManager.instance.players[id].player == null)
         {
             Debug.LogError("This client does not exist.");
             return;
@@ -109,7 +109,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         foreach (var kvp in ConnectionManager.instance.players)
         {
-            players.Add(kvp.Value);
+            players.Add(kvp.Value.player);
         }
 
         if (isTutorialLevel)
@@ -278,7 +278,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     [ServerRpc(RequireOwnership = false)]
     private void UpdateTutorialReadyStateServerRpc(ulong id)
     {
-        if (ConnectionManager.instance.players[id] == null)
+        if (ConnectionManager.instance.players[id].player == null)
         {
             Debug.LogError("This client does not exist.");
             return;
