@@ -79,6 +79,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         // Set Inventory
         SetInventoryObject(InventoryObject.None);
 
+        // Set Camera
+        if (IsOwner) SetBoatSide(position.x >= GridManager.instance.xSize ? BoatSide.Hold : BoatSide.Deck);
+
         // Set Position
         gridPositionX.OnValueChanged = null;
         gridPositionY.OnValueChanged = null;
@@ -88,13 +91,9 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         SetPosition(position.x, position.y);
         previousPosX = position.x;
         previousPosY = position.y;
-        
+
         gridPositionX.OnValueChanged = OnPositionChanged;
         gridPositionY.OnValueChanged = OnPositionChanged;
-
-        // Set Camera
-        if (IsOwner && position.x >= GridManager.instance.xSize) SetBoatSide(BoatSide.Hold);
-        else SetBoatSide(BoatSide.Deck);
     }
 
     #endregion
@@ -158,7 +157,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     #endregion
 
-
     private void Bounce()
     {
         if (bounceTimer > 0)
@@ -213,29 +211,37 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         if ((gridPositionX.Value >= GridManager.instance.xSize) != (previousPosX >= GridManager.instance.xSize))
         {
             InitializeScreenChange();
+            return;
         }
-        else
+
+        GridFloorStair stairExit =
+            GridManager.instance.GetTile(previousPosX, previousPosY).GetFloor() as GridFloorStair;
+        GridFloorStair stairEnter =
+            GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).GetFloor() as GridFloorStair;
+
+        if (!stairExit && !stairEnter)
         {
-            GridFloorStair stairexit =
-                GridManager.instance.GetTile(previousPosX, previousPosY).GetFloor() as GridFloorStair;
-            GridFloorStair stairenter =
-                GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).GetFloor() as GridFloorStair;
-            if (!stairexit && !stairenter)
+            previousPos = transform.position;
+
+            Tile tile = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value);
+            if (tile == null)
             {
-                previousPos = transform.position;
-                nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
-                          Vector3.up * 0.4f;
-                InitializeBounce(nextPos - previousPos);
+                Debug.LogWarning($"Can't move {name}. Pos was X: {gridPositionX.Value}, Y: {gridPositionY.Value}");
+                return;
             }
-            else if (stairenter != null)
+
+            if (tile.transform == null)
             {
-                stairenter.EnterStair(this);
+                Debug.LogWarning($"Transform was null at X: {gridPositionX.Value}, Y: {gridPositionY.Value}");
+                return;
             }
-            else if (stairexit != null)
-            {
-                stairexit.ExitStair(this);
-            }
+
+            nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
+                      Vector3.up * 0.4f;
+            InitializeBounce(nextPos - previousPos);
         }
+        else if (stairEnter != null) stairEnter.EnterStair(this);
+        else if (stairExit != null) stairExit.ExitStair(this);
     }
 
     private Quaternion oldRotation = Quaternion.identity;
@@ -274,7 +280,15 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public void ChangeTileInfos()
     {
-        GridManager.instance.GetTile(previousPosX, previousPosY).SetTile();
+        Tile leftTile = GridManager.instance.GetTile(previousPosX, previousPosY);
+        if (leftTile.GetEntity() != this as IGridEntity)
+        {
+            Debug.LogError(
+                "You reset a tile that was occupied by something different than you. This should never happen.");
+            leftTile.SetTile(leftTile.GetEntity()); // Fixing error that should not happen
+        }
+        else leftTile.SetTile();
+
         previousPosX = gridPositionX.Value;
         previousPosY = gridPositionY.Value;
         GridManager.instance.GetTile(previousPosX, previousPosY).SetTile(this);

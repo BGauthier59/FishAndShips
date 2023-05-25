@@ -80,15 +80,14 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
     {
         isMoving = true;
 
-        var neighbours = GridManager.instance.GetNeighboursTiles(currentTile);
+        Tile[] neighbours = GridManager.instance.GetNeighboursTiles(currentTile);
         if (neighbours.Length == 0)
         {
             Debug.LogError($"{name} has no neighbour and can't move. This should not happen.");
             return;
         }
 
-        var availableTiles = GridManager.instance.FilterTilesNoEntity(neighbours, TileFilter.Walkable);
-
+        Tile[] availableTiles = GridManager.instance.FilterTilesNoEntity(neighbours, TileFilter.Walkable);
         if (availableTiles.Length == 0)
         {
             SetNewStationaryDuration();
@@ -117,14 +116,14 @@ public class ShrimpWorkshop : Workshop, IUpdateWorkshop
         {
             //Debug.Log("This workshop does not have any current tile, then didn't reset last tile");
         }
-        else currentTile.SetTile(null, currentTile.GetFloor());
+        else currentTile.SetTile(null);
 
         base.SetPosition(posX, posY);
     }
 
     protected override async void MoveToNewTile(Vector3 newPosition)
     {
-        currentTile.SetTile(this, currentTile.GetFloor());
+        currentTile.SetTile(this);
 
         Vector3 oldPosition = workshopObject.position;
         Quaternion oldRotation = workshopObject.rotation;

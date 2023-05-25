@@ -89,6 +89,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         while (!isRunning.Value) await UniTask.Yield();
 
+        await UniTask.Yield();
+        
         Debug.Log("Start game loop!");
         startGameLoopEvent?.Invoke();
         HonorificManager.instance.StartGameLoop();

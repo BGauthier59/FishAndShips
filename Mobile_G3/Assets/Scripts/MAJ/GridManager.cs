@@ -88,29 +88,6 @@ public class GridManager : MonoSingleton<GridManager>
                  targetedTile.GetEntity() != null);
 
         return targetedTile;
-
-        /*
-        int randomX, randomY;
-
-        do
-        {
-            randomX = Random.Range(0, xSize);
-            randomY = Random.Range(0, ySize);
-            targetedTile = GetTile(randomX, randomY);
-
-            securityCount++;
-            if (securityCount == 100)
-            {
-                Debug.LogWarning("Didn't find any tile after trying 100 times. Returns null.");
-                return null;
-            }
-        } while (targetedTile == null || 
-                 targetedTile.GetEntity() != null ||
-                 targetedTile.GetFloor() is not GridFloorWalkable ||
-                 !((GridFloorWalkable) targetedTile.GetFloor()).CanBeTargeted());
-
-        return targetedTile;
-        */
     }
 
     public Tile[] GetNeighboursTiles(Tile current)
