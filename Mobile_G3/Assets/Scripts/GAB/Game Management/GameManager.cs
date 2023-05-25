@@ -249,7 +249,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private async void DisplayTutorial(int index)
     {
-        Debug.LogWarning("You can't move any more");
         TutorialSO currentTutorial = tutorials[index];
 
         tutorialMaxIndex = tutorials[index].tutorials.Length;
@@ -284,9 +283,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("This client does not exist.");
             return;
         }
-
-        Debug.LogWarning(ConnectionManager.instance.players.Count);
-
+        
         hostReadyForTutorialClientCount++;
         if (hostReadyForTutorialClientCount != ConnectionManager.instance.players.Count) return;
         FinishTutorial();

@@ -140,7 +140,7 @@ public class MiniGame_Map : MiniGame
             t.transform.position = pos;
         }
 
-        rightDirection = -(currentIsland.transform.position - ship.position);
+        rightDirection = (currentIsland.transform.position - ship.position);
         
         rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
     }

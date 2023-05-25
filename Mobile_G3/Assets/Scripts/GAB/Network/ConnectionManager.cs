@@ -26,7 +26,6 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
 
     public void Setup()
     {
-        Debug.Log("Refresh Connection Manager");
         players.Clear();
         transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport as UnityTransport;
         SetConnectionCallback();
