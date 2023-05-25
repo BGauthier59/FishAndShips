@@ -39,7 +39,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         player.previousPos = player.transform.position;
         player.nextPos = GridManager.instance.GetTile(player.gridPositionX.Value, player.gridPositionY.Value).transform
                              .position +
-                         (player.positionX >= GridManager.instance.xSize ? Vector3.up * 0.8f : Vector3.zero);
+                         (player.previousPosX >= GridManager.instance.xSize ? Vector3.up * 0.8f : Vector3.zero);
         var dir = player.previousPos - player.nextPos;
         if (player.IsOwner)
         {
@@ -48,9 +48,9 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         else
         {
             PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
-            if (localPlayer.positionX >= GridManager.instance.xSize)
+            if (localPlayer.previousPosX >= GridManager.instance.xSize)
             {
-                if (player.positionX >= GridManager.instance.xSize) player.InitializeBounce(dir);
+                if (player.previousPosX >= GridManager.instance.xSize) player.InitializeBounce(dir);
                 else
                 {
                     player.ChangeTileInfos();
@@ -63,7 +63,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
             }
             else
             {
-                if (player.positionX < GridManager.instance.xSize) player.InitializeBounce(dir);
+                if (player.previousPosX < GridManager.instance.xSize) player.InitializeBounce(dir);
                 else
                 {
                     player.ChangeTileInfos();
@@ -91,9 +91,9 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
         else
         {
             PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
-            if (localPlayer.positionX >= GridManager.instance.xSize)
+            if (localPlayer.previousPosX >= GridManager.instance.xSize)
             {
-                if (player.positionX >= GridManager.instance.xSize) player.InitializeBounce(dir);
+                if (player.previousPosX >= GridManager.instance.xSize) player.InitializeBounce(dir);
                 else
                 {
                     player.ChangeTileInfos();
@@ -104,7 +104,7 @@ public class GridFloorStair : MonoBehaviour, IGridFloor
             }
             else
             {
-                if (player.positionX < GridManager.instance.xSize) player.InitializeBounce(dir);
+                if (player.previousPosX < GridManager.instance.xSize) player.InitializeBounce(dir);
                 else
                 {
                     player.ChangeTileInfos();
