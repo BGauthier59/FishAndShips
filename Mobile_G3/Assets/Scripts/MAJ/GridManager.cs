@@ -154,16 +154,6 @@ public class GridManager : MonoSingleton<GridManager>
 
         return filteredTiles.ToArray();
     }
-
-    [ContextMenu("t")]
-    public void resettransform()
-    {
-        foreach (var t in grid)
-        {
-            if (t.GetFloor() is GridFloorWalkable) t.transform = ((GridFloorWalkable) t.GetFloor()).transform;
-            if (t.GetFloor() is GridFloorNotWalkable) t.transform = ((GridFloorNotWalkable) t.GetFloor()).transform;
-        }
-    }
 }
 
 [Serializable]

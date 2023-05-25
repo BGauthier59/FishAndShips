@@ -40,9 +40,15 @@ public class TutorialFireSoftEvent : RandomEvent
                 targetedTile = GridManager.instance.GetTile(otherSpawnTiles[i].x, otherSpawnTiles[i].y);
 
             int2 coord = targetedTile.GetTilePos();
-            Workshop workshop = TutorialEventManager.instance.GetFireWorkshop(i);
-            workshop.SetPosition(coord.x, coord.y);
-            workshop.ActivateServerRpc();
+            GenerateFireWorkshopsClientRpc(coord.x, coord.y, i);
         }
+    }
+
+    [ClientRpc]
+    private void GenerateFireWorkshopsClientRpc(int x, int y, int index)
+    {
+        Workshop workshop = TutorialEventManager.instance.GetFireWorkshop(index);
+        workshop.SetPosition(x, y);
+        if (NetworkManager.Singleton.IsHost)workshop.ActivateServerRpc();
     }
 }
