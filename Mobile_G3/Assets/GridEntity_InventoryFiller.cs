@@ -8,6 +8,7 @@ public class GridEntity_InventoryFiller : MonoBehaviour, IGridEntity
     public InventoryObject filling;
     [SerializeField] private MeshRenderer[] glowyRenderers;
     [SerializeField] private UnityEvent pickEvent;
+    [SerializeField] private Animation anim;
 
     public void OnCollision(IGridEntity entity, int direction)
     {
@@ -16,6 +17,7 @@ public class GridEntity_InventoryFiller : MonoBehaviour, IGridEntity
         {
             pickEvent?.Invoke();
             player.SetInventoryObject(filling);
+            anim.Play("InventoryFillerFill");
         }
     }
 
