@@ -24,14 +24,12 @@ public class CameraManager : MonoSingleton<CameraManager>
 
     public void MoveCamToDeck(PlayerManager player)
     {
-        player.SetBoatSide(BoatSide.Deck);
         camera.transform.position = currentDeckPosRot.pos;
         camera.transform.eulerAngles = currentDeckPosRot.rot;
     }
 
     public void MoveCamToHold(PlayerManager player)
     {
-        player.SetBoatSide(BoatSide.Hold);
         camera.transform.position = currentHoldPosRot.pos;
         camera.transform.eulerAngles = currentHoldPosRot.rot;
     }

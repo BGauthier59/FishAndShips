@@ -49,8 +49,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     {
         playerName.OnValueChanged += OnNameChanged;
         playerDataIndex.OnValueChanged += OnSkinChanged;
-        
-        SetBoatSide(BoatSide.Deck);
     }
 
     public void StartGameLoop(int2 position)
@@ -88,9 +86,10 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         gridPositionX.OnValueChanged = OnPositionChanged;
         gridPositionY.OnValueChanged = OnPositionChanged;
         SetPosition(position.x, position.y);
+        
+        
     }
-
-
+    
     public void UpdateGameLoop()
     {
         Controls();
@@ -103,15 +102,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public override void OnNetworkSpawn()
     {
-        // TODO - Check if can join the room
-
         if (IsOwner)
         {
             Debug.LogWarning("You've been connected!");
             playerName.Value = MainMenuManager.instance.pseudo;
             playerDataIndex.Value = MainMenuManager.instance.skinId;
             impactDataIndex.Value = MainMenuManager.instance.impactId;
-            //SetPosition(positionX, positionY);
         }
 
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
@@ -257,7 +253,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     {
         if (GridManager.instance == null)
         {
-            Debug.LogWarning("No Grid Manager");
+            Debug.LogError("No Grid Manager");
             return;
         }
 
@@ -273,15 +269,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             if (!stairexit && !stairenter)
             {
                 previousPos = transform.position;
-                /*
-                Debug.Log("Debug c'est parti");
-                Debug.Log( "GridManager : " + GridManager.instance);
-                Debug.Log( "Tile : " + GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value));
-                Debug.Log( "Pos : " + gridPositionX.Value + "," + gridPositionY.Value);
-                Debug.Log( "Transform : " + GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform);
-                Debug.Log( "NextPos : " + nextPos);
-                Debug.Log("Debug c'est fini");
-                */
                 nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
                           Vector3.up * 0.4f;
                 InitializeBounce(nextPos - previousPos);
@@ -366,12 +353,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             if (positionX >= GridManager.instance.xSize)
             {
                 nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position + Vector3.up * 0.8f;
-                CameraManager.instance.MoveCamToHold(this);
+                SetBoatSide(BoatSide.Hold);
             }
             else
             {
                 nextPos = GridManager.instance.GetTile(positionX, positionY).transform.position;
-                CameraManager.instance.MoveCamToDeck(this);
+                SetBoatSide(BoatSide.Deck);
             }
 
             transform.position = nextPos;
@@ -401,98 +388,15 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     public void SetBoatSide(BoatSide side)
     {
         currentSide = side;
+        if (side == BoatSide.Deck) CameraManager.instance.MoveCamToDeck(this);
+        else CameraManager.instance.MoveCamToHold(this);
     }
 
     public BoatSide GetBoatSide()
     {
         return currentSide;
     }
-
-    /*public void ExitStair()
-    {
-        previousPos = transform.position;
-        nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position + Vector3.up * 0.4f;
-        if (IsOwner)
-        {
-            InitializeBounce();
-        }
-        else
-        {
-            PlayerManager2 localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
-            if (localPlayer.positionX >= GridManager.instance.xSize)
-            {
-                if (positionX >= GridManager.instance.xSize)InitializeBounce();
-                else
-                {
-                    GridManager.instance.GetTile(positionX, positionY).SetTile();
-                    positionX = gridPositionX.Value;
-                    positionY = gridPositionY.Value;
-                    GridManager.instance.GetTile(positionX, positionY).SetTile(this);
-                    exitScreen = true;
-                    previousPos = transform.position;
-                    nextPos = transform.position + Vector3.up;
-                }
-            }
-            else
-            {
-                if (positionX < GridManager.instance.xSize) InitializeBounce();
-                else
-                {
-                    GridManager.instance.GetTile(positionX, positionY).SetTile();
-                    positionX = gridPositionX.Value;
-                    positionY = gridPositionY.Value;
-                    GridManager.instance.GetTile(positionX, positionY).SetTile(this);
-                    exitScreen = true;
-                    previousPos = transform.position;
-                    nextPos = transform.position - Vector3.up;
-                }
-            }
-        }
-    }*/
-
-    /*public void EnterStair()
-    {
-        previousPos = transform.position;
-        nextPos = GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).transform.position +
-                  (positionX >= GridManager.instance.xSize ? Vector3.up * 0.8f : Vector3.zero);
-        if (IsOwner)
-        {
-            InitializeBounce();
-        }
-        else
-        {
-            PlayerManager2 localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId];
-            if (localPlayer.positionX >= GridManager.instance.xSize)
-            {
-                if (positionX >= GridManager.instance.xSize)InitializeBounce();
-                else
-                {
-                    GridManager.instance.GetTile(positionX, positionY).SetTile();
-                    positionX = gridPositionX.Value;
-                    positionY = gridPositionY.Value;
-                    GridManager.instance.GetTile(positionX, positionY).SetTile(this);
-                    enterScreen = true;
-                    nextPos = GridManager.instance.GetOppositeTile(gridPositionX.Value, gridPositionY.Value).transform.position + Vector3.up * 0.8f;
-                    previousPos = nextPos + Vector3.up;
-                }
-            }
-            else
-            {
-                if (positionX < GridManager.instance.xSize) InitializeBounce();
-                else
-                {
-                    GridManager.instance.GetTile(positionX, positionY).SetTile();
-                    positionX = gridPositionX.Value;
-                    positionY = gridPositionY.Value;
-                    GridManager.instance.GetTile(positionX, positionY).SetTile(this);
-                    enterScreen = true;
-                    nextPos = GridManager.instance.GetOppositeTile(gridPositionX.Value, gridPositionY.Value).transform.position;
-                    previousPos = nextPos - Vector3.up;
-                }
-            }
-        }
-    }*/
-
+    
     public void OnCollision(IGridEntity entity, int direction)
     {
         // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?

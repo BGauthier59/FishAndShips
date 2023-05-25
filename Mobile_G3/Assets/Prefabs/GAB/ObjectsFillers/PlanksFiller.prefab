@@ -154,8 +154,20 @@ MonoBehaviour:
   - {fileID: 7963303557794573980}
   pickEvent:
     m_PersistentCalls:
-      m_Calls: []
-  anim: {fileID: 0}
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: 872491f3ef4af9343a8e8532e66ed8b2, type: 2}
+        m_TargetAssemblyTypeName: AudioTriggerSO, Assembly-CSharp
+        m_MethodName: PlaySound
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: PickItem
+          m_BoolArgument: 0
+        m_CallState: 2
+  anim: {fileID: 1990210523628693298}
 --- !u!1 &8467798729757923021
 GameObject:
   m_ObjectHideFlags: 0

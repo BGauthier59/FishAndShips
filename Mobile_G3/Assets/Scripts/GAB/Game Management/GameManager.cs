@@ -67,6 +67,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private async void StartGameLoop()
     {
         LinkInstance();
+        
         cameraManager.StartGameLoop();
 
         for (int i = 0; i < players.Count; i++)

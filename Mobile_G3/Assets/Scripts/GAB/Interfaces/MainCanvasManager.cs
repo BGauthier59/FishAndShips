@@ -49,7 +49,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
 
     public void SetItemOnDisplay(InventoryObject item)
     {
-        if (!itemAnim.isPlaying) itemAnim.Play(itemAnim.clip.name);
+        if (!itemAnim.isPlaying && item != InventoryObject.None) itemAnim.Play(itemAnim.clip.name);
         itemImage.sprite = item switch
         {
             InventoryObject.None => emptyIcon,
