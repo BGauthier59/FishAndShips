@@ -17,6 +17,7 @@ public class ShrimpSoftEvent : RandomEvent
     [SerializeField] private Animation spawningShrimpAnim;
     [SerializeField] private AnimationClip spawningShrimpJump;
     [SerializeField] private Transform initShrimpParent;
+    [SerializeField] private int2[] shrimpTargetedTiles;
 
     public override bool CheckConditions()
     {
@@ -41,7 +42,7 @@ public class ShrimpSoftEvent : RandomEvent
             return false;
         }
 
-        Tile targetedTile = GridManager.instance.GetRandomWalkableTile();
+        Tile targetedTile = GridManager.instance.GetRandomTile(shrimpTargetedTiles);
         if (targetedTile == null)
         {
             Debug.Log("Couldn't spawn shrimp");

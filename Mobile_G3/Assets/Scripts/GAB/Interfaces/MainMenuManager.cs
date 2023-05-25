@@ -633,8 +633,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     [UsedImplicitly]
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
     {
-        
-        Debug.Log("Oui");
+        //Debug.Log("Oui");
         if (ctx.started)
         {
             startTouch = Input.mousePosition;
