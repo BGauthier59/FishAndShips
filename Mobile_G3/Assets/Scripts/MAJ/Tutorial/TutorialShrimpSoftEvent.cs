@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Unity.Mathematics;
 using Unity.Netcode;
@@ -17,7 +15,7 @@ public class TutorialShrimpSoftEvent : RandomEvent
     [SerializeField] private Animation spawningShrimpAnim;
     [SerializeField] private AnimationClip spawningShrimpJump;
     [SerializeField] private Transform initShrimpParent;
-    [SerializeField] private int2[] spawnTiles,otherSpawnTiles;
+    [SerializeField] private int2[] spawnTiles, otherSpawnTiles;
 
     public override bool CheckConditions()
     {
@@ -26,28 +24,29 @@ public class TutorialShrimpSoftEvent : RandomEvent
 
     public override async void StartEvent()
     {
+        if (!NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogWarning("Host is managing event.");
+            return;
+        }
+        
         if (!await ComeAlongside()) Debug.Log("Failure?!");
         else Debug.Log("Success!");
     }
 
     protected override void EndEvent()
     {
-        
     }
 
     private async UniTask<bool> ComeAlongside()
     {
         for (int i = 0; i < TutorialEventManager.instance.playerNb; i++)
         {
-            Tile targetedTile = GridManager.instance.GetTile(spawnTiles[i].x,spawnTiles[i].y);
-            if(targetedTile.entity != null) targetedTile = GridManager.instance.GetTile(otherSpawnTiles[i].x,otherSpawnTiles[i].y);
-            
-            int? index = TutorialEventManager.instance.GetShrimpWorkshopIndex();
-            if (!index.HasValue)
-            {
-                Debug.LogError("Should not happen. There's no workshop available but still tried to instantiate one.");
-                return false;
-            }
+            Tile targetedTile = GridManager.instance.GetTile(spawnTiles[i].x, spawnTiles[i].y);
+            if (targetedTile.GetEntity() != null)
+                targetedTile = GridManager.instance.GetTile(otherSpawnTiles[i].x, otherSpawnTiles[i].y);
+
+            int index = i;
 
             isSpawningShrimp = true;
 
@@ -58,10 +57,11 @@ public class TutorialShrimpSoftEvent : RandomEvent
             p3 = p4 + Vector3.up * 1;
 
             int2 coord = targetedTile.GetTilePos();
-            SpawnShrimpClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
+            SpawnShrimpClientRpc(p1, p2, p3, p4, coord.x, coord.y, index);
 
             await UniTask.Delay((int) (spawnDuration * 1000));
         }
+
         return true;
     }
 

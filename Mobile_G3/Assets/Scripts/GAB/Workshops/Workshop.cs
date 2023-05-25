@@ -147,8 +147,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
         SetActiveServerRpc(true);
         associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
         GetActivatedClientRpc();
+        
+        // Handle tutorial
         if(activationDuration > 0) StartActivationDuration();
-        EventsManager.instance.AddWorkshop();
+        if(EventsManager.instance != null) EventsManager.instance.AddWorkshop();
     }
 
     protected virtual async void StartActivationDuration()
@@ -207,7 +209,9 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         SetOccupiedServerRpc(false);
-        EventsManager.instance.RemoveWorkshop();
+        
+        // Handle tutorial
+        if(EventsManager.instance != null) EventsManager.instance.RemoveWorkshop();
     }
 
     [ClientRpc]

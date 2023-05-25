@@ -60,7 +60,7 @@ public class GridManager : MonoSingleton<GridManager>
         int index = x >= xSize ? (x - xSize) * ySize + y : (x + xSize) * ySize + y;
         return grid[index];
     }
-    
+
     public Tile GetRandomTile(int2[] tiles)
     {
         Tile targetedTile;
@@ -72,23 +72,23 @@ public class GridManager : MonoSingleton<GridManager>
             Debug.LogWarning("Array is empty. Please don't forget to fill the array.");
             return null;
         }
+
         do
         {
             randomCoord = tiles[Random.Range(0, tiles.Length)];
             targetedTile = GetTile(randomCoord.x, randomCoord.y);
-            
+
             securityCount++;
             if (securityCount == 100)
             {
                 Debug.LogWarning("Didn't find any tile after trying 100 times. Returns null.");
                 return null;
             }
-            
-        } while (targetedTile == null || 
+        } while (targetedTile == null ||
                  targetedTile.GetEntity() != null);
 
         return targetedTile;
-        
+
         /*
         int randomX, randomY;
 
@@ -153,6 +153,16 @@ public class GridManager : MonoSingleton<GridManager>
         }
 
         return filteredTiles.ToArray();
+    }
+
+    [ContextMenu("t")]
+    public void resettransform()
+    {
+        foreach (var t in grid)
+        {
+            if (t.GetFloor() is GridFloorWalkable) t.transform = ((GridFloorWalkable) t.GetFloor()).transform;
+            if (t.GetFloor() is GridFloorNotWalkable) t.transform = ((GridFloorNotWalkable) t.GetFloor()).transform;
+        }
     }
 }
 

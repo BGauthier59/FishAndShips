@@ -6,17 +6,23 @@ public class TutorialCannonSoftEvent : RandomEvent
     {
         return true;
     }
-    
+
     public override void StartEvent()
     {
         // Host-side logic
+
+        if (!Unity.Netcode.NetworkManager.Singleton.IsHost)
+        {
+            Debug.LogWarning("Host is managing event.");
+            return;
+        }
+
         ActivateCannon();
         EndEvent();
     }
 
     protected override void EndEvent()
     {
-        
     }
 
     private void ActivateCannon()
