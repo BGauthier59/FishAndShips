@@ -465,7 +465,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             skinId = skinCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex.Value =
                     skinId;
             skinLockedText.gameObject.SetActive(false);
             skinBox.color = Color.white;
@@ -496,7 +496,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             impactId = impactCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value =
                     impactId;
             skinLockedText.gameObject.SetActive(false);
             impactBox.color = Color.white;
@@ -513,7 +513,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             impactId = impactCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value =
                     impactId;
             skinLockedText.gameObject.SetActive(false);
             impactBox.color = Color.white;
