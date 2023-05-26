@@ -58,6 +58,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             {
                 allPlayerData[i].gameObject.SetActive(true);
                 playerData = allPlayerData[i];
+                playerData.PlayIdleAnimation();
                 continue;
             }
 
