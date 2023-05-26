@@ -45,6 +45,7 @@ public class MiniGame_Fire : MiniGame
 
         // Enables Gyroscope
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         WorkshopManager.instance.gyroscopeManager.Enable(data);
         StartExecutingMiniGame();
@@ -89,9 +90,6 @@ public class MiniGame_Fire : MiniGame
         currentGyroValue /= 180f;
         moveGyro = currentGyroValue * gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
-        Debug.Log("Current Gyro " +  currentGyroValue);
-        Debug.Log("Gyro Device " +  actualGyro);
-        Debug.Log("Speed Gyro " +  moveGyro);
         CheckObjectIsInsideGate();
         LaunchExitMiniGame();
     }
@@ -132,6 +130,8 @@ public class MiniGame_Fire : MiniGame
         HonorificManager.instance.AddHonorific(Honorifics.Firefighter);
         WorkshopManager.instance.SetVictoryIndicator();
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
 

@@ -67,6 +67,7 @@ public class MiniGame_Sails : MiniGame
 
 
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         if (IsFirstPlayer()) WorkshopManager.instance.StartMiniGameTutorial(7);
         else WorkshopManager.instance.StartMiniGameTutorial(8);
@@ -92,6 +93,8 @@ public class MiniGame_Sails : MiniGame
             }
 
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             timer += Time.deltaTime;
         }
 
@@ -137,6 +140,8 @@ public class MiniGame_Sails : MiniGame
         WorkshopManager.instance.SetVictoryIndicator();
         HonorificManager.instance.AddHonorific(Honorifics.TeamSpirit);
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
 

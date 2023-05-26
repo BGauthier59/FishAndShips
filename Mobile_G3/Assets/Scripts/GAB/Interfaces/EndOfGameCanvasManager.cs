@@ -85,6 +85,8 @@ public class EndOfGameCanvasManager : MonoSingleton<EndOfGameCanvasManager>
             return;
         }
 
+        // Disconnect in game, then can reset SceneLoaderManager value
+        //SceneLoaderManager.instance.SetSceneStateBeforeDisconnection();
         GameManager.instance.PlayersGetDisconnected();
         // Should disconnect everyone and go back to main menu
     }

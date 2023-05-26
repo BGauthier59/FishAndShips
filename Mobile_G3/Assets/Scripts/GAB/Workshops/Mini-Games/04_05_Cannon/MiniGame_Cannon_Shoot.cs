@@ -27,6 +27,8 @@ public class MiniGame_Cannon_Shoot : MiniGame
         };
         
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         WorkshopManager.instance.cannonDragAndDropManager.Enable(data);
         WorkshopManager.instance.StartMiniGameTutorial(3);
         StartExecutingMiniGame();
@@ -51,7 +53,8 @@ public class MiniGame_Cannon_Shoot : MiniGame
         
         WorkshopManager.instance.SetVictoryIndicator();
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
-        
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
 

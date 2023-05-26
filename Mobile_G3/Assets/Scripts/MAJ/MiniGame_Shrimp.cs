@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -33,12 +34,14 @@ public class MiniGame_Shrimp : MiniGame
         trueCollisionSize = shrimpCollisionSize * scale;
         trueSwordSize = swordCollisionSize * scale;
 
-        await Task.Delay(500);
+        await UniTask.Delay(500);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         SwitchSwords();
         lifePoints = baseLifePoints;
 
-        await Task.Delay(WorkshopManager.instance.GetIndicatorAnimationLength() - 500);
+        await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength() - 500);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         WorkshopManager.instance.shrimpSwipeManager.Enable(data);
         StartExecutingMiniGame();
@@ -99,7 +102,8 @@ public class MiniGame_Shrimp : MiniGame
         WorkshopManager.instance.SetVictoryIndicator();
         HonorificManager.instance.AddHonorific(Honorifics.HeadChef);
 
-        await Task.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         ExitMiniGame(true);
     }
@@ -110,7 +114,9 @@ public class MiniGame_Shrimp : MiniGame
 
         animation.Play(flip.name);
         turnEvent?.Invoke();
-        await Task.Delay(160);
+        await UniTask.Delay(160);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         missingSwordNb = Random.Range(0, 6);
         for (int i = 0; i < 6; i++)
         {
@@ -119,7 +125,8 @@ public class MiniGame_Shrimp : MiniGame
         }
 
 
-        await Task.Delay(160);
+        await UniTask.Delay(160);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         switch (missingSwordNb)
         {

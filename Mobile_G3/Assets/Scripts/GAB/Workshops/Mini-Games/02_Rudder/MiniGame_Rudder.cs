@@ -81,6 +81,7 @@ public class MiniGame_Rudder : MiniGame
         questIndicator.text = $"{questStartText} {name}!";
 
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         WorkshopManager.instance.StartMiniGameTutorial(6);
         WorkshopManager.instance.rudderCircularSwipeManager.Enable(data);
@@ -115,7 +116,8 @@ public class MiniGame_Rudder : MiniGame
         HonorificManager.instance.AddHonorific(Honorifics.Sailor, Honorifics.TeamSpirit);
 
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
-        
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
 
