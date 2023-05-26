@@ -15,7 +15,8 @@ public class MiniGame_Fire : MiniGame
 
     [Header("Setup Start Fire Ring")] 
     public bool useRandom;
-    public int numberOfSpawnPoints;
+    public int numberOfSpawnPoints = 8;
+    public int numberOfFireToComplete = 3;
     public float radius;
     public float startingAngle;
     public float positionThreshold;
@@ -25,12 +26,16 @@ public class MiniGame_Fire : MiniGame
     public float gyroStart;
     public float gyroSpeed;
     public float currentGyroValue;
+    
     [Header("Gizmos")] 
     public bool enableGizmos;
     public Vector3 offsetGizmos;
     private Vector3 fireInitPos;
     private int totalPoints;
     private List<Transform> firePointsWorkshop = new List<Transform>();
+    public List<Vector3> firePlacement = new List<Vector3>();
+    private Transform currentFireActive;
+    private int currentFireComplete;
 
     public override void OnNetworkSpawn()
     {
@@ -42,6 +47,7 @@ public class MiniGame_Fire : MiniGame
         base.StartMiniGame();
         SetupFirePlacement();
         currentGyroValue = 0;
+        currentFireComplete = 0;
 
         // Enables Gyroscope
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
@@ -68,11 +74,15 @@ public class MiniGame_Fire : MiniGame
             float z = radius * Mathf.Sin(angle);
 
             Vector3 spawnPosition = new Vector3(x, 0f, z) + layerPoint.transform.position;
-            firePointsWorkshop[i].position = spawnPosition;
-            firePointsWorkshop[i].gameObject.SetActive(true);
-            firePointsWorkshop[i].gameObject.GetComponent<FireObject>().firePart[0].Play();
-            firePointsWorkshop[i].parent = layerPoint.transform;
+            firePlacement.Add(spawnPosition);
         }
+        
+        //Set a Fire to a Random Point
+        int randomIndex = Random.Range(0, firePlacement.Count);
+        currentFireActive = firePointsWorkshop[0];
+        currentFireActive.position = firePlacement[randomIndex];
+        currentFireActive.gameObject.SetActive(true);
+        currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
     }
     
     private float moveGyro;
@@ -89,10 +99,9 @@ public class MiniGame_Fire : MiniGame
         currentGyroValue /= 180f;
         moveGyro = currentGyroValue * gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
-        Debug.Log("Current Gyro " +  currentGyroValue);
-        Debug.Log("Gyro Device " +  actualGyro);
-        Debug.Log("Speed Gyro " +  moveGyro);
+        //Debug.Log("Current Gyro " +  currentGyroValue);Debug.Log("Gyro Device " +  actualGyro);Debug.Log("Speed Gyro " +  moveGyro);
         CheckObjectIsInsideGate();
+        CheckIfFireIsComplete();
         LaunchExitMiniGame();
     }
 
@@ -102,11 +111,14 @@ public class MiniGame_Fire : MiniGame
         {
             fire.position = fireInitPos;
             fire.GetComponent<FireObject>().ResetFire();
-            //fire.gameObject.SetActive(false);
         }
-        firePointsWorkshop.Clear();
+        
         currentGyroValue = 0;
+        currentFireComplete = 0;
         moveGyro = 0;
+        layerPoint.transform.eulerAngles = Vector3.zero;
+        firePointsWorkshop.Clear();
+        firePlacement.Clear();
     }
     
     public override void OnLeaveMiniGame()
@@ -119,14 +131,7 @@ public class MiniGame_Fire : MiniGame
 
     private async void LaunchExitMiniGame()
     {
-        foreach (Transform fire in firePointsWorkshop)
-        {
-            if (fire.GetComponent<FireObject>().currentValue != 0f)
-            {
-                return; // If any object has a non-zero value, exit the method
-            }
-        }
-
+        if (currentFireComplete != numberOfFireToComplete) return;
         StopExecutingMiniGame();
         WorkshopManager.instance.gyroscopeManager.Disable();
         HonorificManager.instance.AddHonorific(Honorifics.Firefighter);
@@ -146,24 +151,39 @@ public class MiniGame_Fire : MiniGame
         int count = list.Count;
         for (int i = 0; i < count - 1; i++)
         {
-            int randomIndex = UnityEngine.Random.Range(i, count);
+            int randomIndex = Random.Range(i, count);
             (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
         }
+    }
+
+    private void CheckIfFireIsComplete()
+    {
+        if (currentFireActive.GetComponent<FireObject>().currentValue <= 0)
+        {
+            currentFireComplete += 1;
+            ChangeIndexForTheFlame();
+        }
+    }
+
+    private void ChangeIndexForTheFlame()
+    {
+        int randomIndex = Random.Range(0, firePointsWorkshop.Count);
+        currentFireActive = firePointsWorkshop[1];
+        currentFireActive.position = firePlacement[randomIndex];
+        currentFireActive.gameObject.SetActive(true);
+        currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
     }
     
     private void CheckObjectIsInsideGate()
     {
-        foreach (var fire in fireData.fireSizeType)
+        bool isBetweenPoints = IsObjectBetweenPoints(currentFireActive);
+        if (isBetweenPoints)
         {
-            bool isBetweenPoints = IsObjectBetweenPoints(fire);
-            if (isBetweenPoints)
-            {
-                fire.GetComponent<FireObject>().isFilled = true;
-            }
-            else
-            {
-                fire.GetComponent<FireObject>().isFilled = false;
-            }
+            currentFireActive.GetComponent<FireObject>().isFilled = true;
+        }
+        else
+        {
+            currentFireActive.GetComponent<FireObject>().isFilled = false;
         }
     }
 
