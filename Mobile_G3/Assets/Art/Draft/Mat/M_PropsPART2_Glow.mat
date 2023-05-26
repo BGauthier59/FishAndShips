@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Boulet_Brillant
+  m_Name: M_PropsPART2_Glow
   m_Shader: {fileID: -6465566751694194690, guid: 93c491edcce957d4cabfe87560040cf4,
     type: 3}
   m_ValidKeywords: []
@@ -62,13 +62,13 @@ Material:
     - _CastShadows: 1
     - _Cull: 0
     - _DstBlend: 10
-    - _GLOWING: 0
+    - _GLOWING: 1
     - _Normal_strentgh: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Rougness_max: 1.26
-    - _Rougness_min: 0.37
+    - _Rougness_max: 0
+    - _Rougness_min: 0
     - _SrcBlend: 5
     - _Surface: 1
     - _WorkflowMode: 1
@@ -76,7 +76,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 1
     m_Colors:
-    - _Color: {r: 0.772549, g: 0.7215686, b: 0.5568628, a: 0}
-    - _GlowColor: {r: 1, g: 0.7536871, b: 0, a: 0}
-    - _GlowStrenght: {r: 0, g: 1, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 0}
+    - _GlowColor: {r: 2, g: 0, b: 0, a: 0}
+    - _GlowStrenght: {r: 1.2, g: 0.8, b: 0, a: 0}
   m_BuildTextureStacks: []

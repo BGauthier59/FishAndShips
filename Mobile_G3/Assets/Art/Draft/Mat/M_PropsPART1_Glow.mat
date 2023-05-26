@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_Boulet_Brillant
+  m_Name: M_PropsPART1_Glow
   m_Shader: {fileID: -6465566751694194690, guid: 93c491edcce957d4cabfe87560040cf4,
     type: 3}
   m_ValidKeywords: []
@@ -35,11 +35,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseColor:
-        m_Texture: {fileID: 2800000, guid: f0ac5afba3eba4e41ad441ef6cc10202, type: 3}
+        m_Texture: {fileID: 2800000, guid: a814ea74acfefbb4fb6d42779429b507, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal_R:
-        m_Texture: {fileID: 2800000, guid: 958bc010e94048a4186dccccceba67f5, type: 3}
+        m_Texture: {fileID: 2800000, guid: cf829a6d38e74dd4aa0fb93f08f6807c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -62,13 +62,13 @@ Material:
     - _CastShadows: 1
     - _Cull: 0
     - _DstBlend: 10
-    - _GLOWING: 0
+    - _GLOWING: 1
     - _Normal_strentgh: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Rougness_max: 1.26
-    - _Rougness_min: 0.37
+    - _Rougness_max: 1.29
+    - _Rougness_min: 0.07
     - _SrcBlend: 5
     - _Surface: 1
     - _WorkflowMode: 1
@@ -76,7 +76,7 @@ Material:
     - _ZWrite: 1
     - _ZWriteControl: 1
     m_Colors:
-    - _Color: {r: 0.772549, g: 0.7215686, b: 0.5568628, a: 0}
-    - _GlowColor: {r: 1, g: 0.7536871, b: 0, a: 0}
-    - _GlowStrenght: {r: 0, g: 1, b: 0, a: 0}
+    - _Color: {r: 0.9622642, g: 0.9197267, b: 0.87602353, a: 0}
+    - _GlowColor: {r: 4, g: 0, b: 0, a: 0}
+    - _GlowStrenght: {r: 0.8, g: 1.2, b: 0, a: 0}
   m_BuildTextureStacks: []
