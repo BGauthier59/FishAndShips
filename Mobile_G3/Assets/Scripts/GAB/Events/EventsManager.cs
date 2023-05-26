@@ -109,6 +109,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         while (currentActivatedWorkshopsCount >= maxWorkshops)
         {
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
         }
 
         RandomEvent nextEvent;
@@ -120,6 +121,8 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
             {
                 nextEvent = hardEvents[Random.Range(0, hardEvents.Length)];
                 await UniTask.DelayFrame(0);
+                if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             } while (nextEvent == lastHardEvent || !nextEvent.CheckConditions());
 
             lastHardEvent = nextEvent;
@@ -127,6 +130,8 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
 
             StartEventFeedbackClientRpc(nextEvent.startEventText);
             await UniTask.Delay(2500);
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             if (!GameManager.instance.IsGameRunning()) return;
         }
         else
@@ -137,6 +142,8 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
             {
                 nextEvent = softEvents[Random.Range(0, softEvents.Length)];
                 await UniTask.DelayFrame(0);
+                if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             } while (nextEvent == lastSoftEvent || !nextEvent.CheckConditions());
 
             lastSoftEvent = nextEvent;

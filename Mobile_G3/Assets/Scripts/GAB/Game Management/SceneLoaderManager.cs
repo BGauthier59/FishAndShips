@@ -52,6 +52,11 @@ public class SceneLoaderManager : NetworkMonoSingleton<SceneLoaderManager>
         Debug.Log($"Scene state has been updated to {current.ToString()}");
     }
 
+    public bool CancelTaskInGame()
+    {
+        return GetGlobalSceneState() != SceneState.InGameLevel;
+    }
+
     public enum SceneState
     {
         MainMenuFirstTime,

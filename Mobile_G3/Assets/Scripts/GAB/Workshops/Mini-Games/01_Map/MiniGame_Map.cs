@@ -45,6 +45,7 @@ public class MiniGame_Map : MiniGame
         
         base.StartMiniGame();
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         WorkshopManager.instance.StartMiniGameTutorial(5);
         WorkshopManager.instance.mapSwipeManager.Enable(data);
@@ -132,6 +133,8 @@ public class MiniGame_Map : MiniGame
             {
                 random = Random.Range(0, availablePoints.Length);
                 await UniTask.Yield();
+                if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             } while (availablePoints[random]);
 
             availablePoints[random] = true;
@@ -155,6 +158,8 @@ public class MiniGame_Map : MiniGame
         HonorificManager.instance.AddHonorific(Honorifics.Explorer, Honorifics.TeamSpirit);
 
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
 

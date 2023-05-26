@@ -161,12 +161,16 @@ public class Workshop : NetworkBehaviour, IGridEntity
         {
             if (!isActive.Value) return; // Deactivate timer if is won
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
             timer += Time.deltaTime;
         }
         
         while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         await UniTask.Delay(100);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         //await Task.Delay(100);
         if (!isActive.Value)
         {

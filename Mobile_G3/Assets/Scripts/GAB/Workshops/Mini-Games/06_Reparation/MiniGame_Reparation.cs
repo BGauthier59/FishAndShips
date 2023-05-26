@@ -40,6 +40,7 @@ public class MiniGame_Reparation : MiniGame
         WorkshopManager.instance.reparationDragAndDrop.OnSetPlank = CheckPlanks;
 
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         WorkshopManager.instance.reparationDragAndDrop.Enable(data);
         WorkshopManager.instance.StartMiniGameTutorial(4);
@@ -79,6 +80,8 @@ public class MiniGame_Reparation : MiniGame
         WorkshopManager.instance.SetVictoryIndicator();
         HonorificManager.instance.AddHonorific(Honorifics.Carpenter);
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
 

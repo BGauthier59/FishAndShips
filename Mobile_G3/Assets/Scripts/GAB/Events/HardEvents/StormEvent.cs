@@ -73,6 +73,7 @@ public class StormEvent : RandomEvent
             if (count == fireCount) break;
             randomCooldown = Random.Range(300, 701);
             await UniTask.Delay(randomCooldown);
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
             Tile targetedTile = GridManager.instance.GetRandomTile(fireTargetTiles);
             if (targetedTile == null)
@@ -122,6 +123,8 @@ public class StormEvent : RandomEvent
         while (timer < duration)
         {
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             timer += Time.deltaTime;
             stormyVolume.weight = Mathf.Lerp(from, to, timer / duration);
         }
@@ -147,6 +150,8 @@ public class StormEvent : RandomEvent
     private async void DisableEffect()
     {
         await LerpPostProcessEffect(1, 0, 1);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         stormyVolume.enabled = false;
     }
 }

@@ -49,6 +49,8 @@ public class MiniGame_Cannon_Load : MiniGame
         base.StartMiniGame();
 
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         SwitchState(CannonState.Step1);
     }
     
@@ -90,6 +92,7 @@ public class MiniGame_Cannon_Load : MiniGame
                 cannonAnim.Play(cannonIsComing.name);
                 rotateEvent?.Invoke();
                 await UniTask.Delay(1000);
+                if (SceneLoaderManager.instance.CancelTaskInGame()) return;
                 WorkshopManager.instance.cannonDragAndDropManager.Enable(step2data);
                 WorkshopManager.instance.cannonDragAndDropManager.OnBulletOnTargetPoint = OnBulletWellPlaced;
                 WorkshopManager.instance.StartMiniGameTutorial(1);
@@ -100,6 +103,7 @@ public class MiniGame_Cannon_Load : MiniGame
                 WorkshopManager.instance.cannonDragAndDropManager.Disable();
                 WorkshopManager.instance.swipeManager.Enable(step3data);
                 await UniTask.Delay(100);
+                if (SceneLoaderManager.instance.CancelTaskInGame()) return;
                 WorkshopManager.instance.StartMiniGameTutorial(2);
                 break;
         }
@@ -127,7 +131,8 @@ public class MiniGame_Cannon_Load : MiniGame
         WorkshopManager.instance.SetVictoryIndicator();
 
         await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
-        
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         ExitMiniGame(true);
     }
     

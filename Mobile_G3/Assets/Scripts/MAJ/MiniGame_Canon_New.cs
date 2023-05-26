@@ -30,7 +30,9 @@ public class MiniGame_Canon_New : MiniGame
         canShoot = true;
         enemyShip.transform.rotation = Quaternion.Euler(0,Random.Range(-90f,90f),0);
         gyroValue = 0;
-        await Task.Delay(200);
+        await UniTask.Delay(200);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         WorkshopManager.instance.shrimpSwipeManager.Enable(data);
         WorkshopManager.instance.gyroscopeManager.Enable(gyro);
         gyroStart = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.y;
@@ -89,6 +91,8 @@ public class MiniGame_Canon_New : MiniGame
         canonballAnim.Play("CanonShoot");
         shootEvent?.Invoke();
         await UniTask.Delay(500);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         if (Mathf.Abs(cameraCanon.eulerAngles.y - shipParent.eulerAngles.y) < 7)
         {
             impact.Play();
@@ -97,12 +101,18 @@ public class MiniGame_Canon_New : MiniGame
             WorkshopManager.instance.shrimpSwipeManager.Disable();
             WorkshopManager.instance.gyroscopeManager.Disable();
             await UniTask.Delay(800);
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             WorkshopManager.instance.SetVictoryIndicator();
             HonorificManager.instance.AddHonorific(Honorifics.Gunner);
             await UniTask.Delay(WorkshopManager.instance.GetVictoryAnimationLength());
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             ExitMiniGame(true);
         }
         await UniTask.Delay(200);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         canShoot = true;
     }
 

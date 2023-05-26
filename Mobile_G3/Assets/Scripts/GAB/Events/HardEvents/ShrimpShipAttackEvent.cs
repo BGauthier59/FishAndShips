@@ -79,11 +79,14 @@ public class ShrimpShipAttackEvent : RandomEvent
         SetupWorkshops();
 
         await MoveToWayPoint(wayPoints[0].position, wayPoints[1].position);
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         GenerateReparationWorkshops();
         GenerateShrimpWorkshops();
 
         await WaitForEveryWorkshopInstantiation();
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
         EndEvent();
     }
 
@@ -151,6 +154,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         {
             ship.position = Ex.CubicBezierCurve(start, start, end, end, timer / moveDuration);
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             timer += Time.deltaTime;
         }
 
@@ -175,6 +180,7 @@ public class ShrimpShipAttackEvent : RandomEvent
     {
         if (!NetworkManager.Singleton.IsHost) await MoveToWayPoint(wayPoints[1].position, wayPoints[2].position);
         else await UniTask.Delay((int) (moveDuration * 1000));
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         ship.gameObject.SetActive(false);
         CameraManager.instance.ResetDeckPosRot();
@@ -220,6 +226,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         FireFeedbackClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
 
         await UniTask.Delay((int) (fireAnimationDuration * 1000));
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return false;
 
         return true;
     }
@@ -248,6 +255,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         while (timer < fireAnimationDuration)
         {
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             timer += Time.deltaTime;
             bullet.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / fireAnimationDuration);
         }
@@ -306,6 +315,7 @@ public class ShrimpShipAttackEvent : RandomEvent
         SpawnShrimpClientRpc(p1, p2, p3, p4, coord.x, coord.y, index.Value);
 
         await UniTask.Delay((int) (spawnDuration * 1000));
+        if (SceneLoaderManager.instance.CancelTaskInGame()) return false;
 
         return true;
     }
@@ -334,6 +344,8 @@ public class ShrimpShipAttackEvent : RandomEvent
         while (timer < spawnDuration)
         {
             await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+
             timer += Time.deltaTime;
             spawningShrimp.position = Ex.CubicBezierCurve(p1, p2, p3, p4, timer / spawnDuration);
         }
