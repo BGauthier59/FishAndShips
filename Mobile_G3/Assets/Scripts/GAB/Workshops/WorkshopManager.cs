@@ -14,7 +14,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
 
     public Transform miniGameEnvironmentCamera;
 
-    [SerializeField] private Animation miniGameIndicatorAnim, victoryIndicatorAnimation;
+    [SerializeField] private Animation miniGameIndicatorAnim, victoryIndicatorAnimation, gyroscopeIndicator;
     [SerializeField] private AnimationClip indicatorClip, victoryClip;
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
@@ -40,7 +40,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     [SerializeField] private GridEntity_InventoryFiller[] plankFillers;
 
     [SerializeField] private UnityEvent startWorkshopEvent;
-    
+
     [Serializable]
     public struct MiniGameSwipeIndicatorPoints
     {
@@ -296,7 +296,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         await UniTask.Delay(200);
         swipeIndicatorTransform.gameObject.SetActive(false);
         await UniTask.Delay(1000);
-        
+
         if (askForStopTutorial)
         {
             isShowingTutorial = false;
@@ -356,6 +356,16 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
             currentIndex = index;
             ExecuteMiniGameTutorial();
         }
+    }
+
+    public async void StartMiniGameGyroscopeTutorial()
+    {
+        gyroscopeIndicator.gameObject.SetActive(true);
+        await UniTask.Delay(200);
+        gyroscopeIndicator.Play(gyroscopeIndicator.clip.name);
+        await UniTask.Delay((int) (gyroscopeIndicator.clip.length * 1000));
+        await UniTask.Delay(200);
+        gyroscopeIndicator.gameObject.SetActive(false);
     }
 
     #endregion

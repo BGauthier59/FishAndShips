@@ -154,6 +154,7 @@ public class MiniGame_Cannon_Load : MiniGame
         if (!isRunning) return;
         StopExecutingMiniGame();
         WorkshopManager.instance.swipeManager.Disable();
+        WorkshopManager.instance.cannonDragAndDropManager.Disable();
         ExitMiniGame(false);
     }
 }

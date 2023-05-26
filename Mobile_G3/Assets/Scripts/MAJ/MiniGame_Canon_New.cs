@@ -33,6 +33,7 @@ public class MiniGame_Canon_New : MiniGame
         await UniTask.Delay(200);
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
+        WorkshopManager.instance.StartMiniGameGyroscopeTutorial();
         WorkshopManager.instance.shrimpSwipeManager.Enable(data);
         WorkshopManager.instance.gyroscopeManager.Enable(gyro);
         gyroStart = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.y;

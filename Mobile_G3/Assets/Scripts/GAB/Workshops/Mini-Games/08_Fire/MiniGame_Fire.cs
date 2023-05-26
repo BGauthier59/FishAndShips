@@ -47,6 +47,7 @@ public class MiniGame_Fire : MiniGame
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
+        WorkshopManager.instance.StartMiniGameGyroscopeTutorial();
         WorkshopManager.instance.gyroscopeManager.Enable(data);
         StartExecutingMiniGame();
     }
