@@ -401,14 +401,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
 
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
-        int index = 0;
-        foreach (var kvp in ConnectionManager.instance.players)
-        {
-            if (kvp.Value.player == this) break;
-            index++;
-        }
-
-        colorSprite.color = colors[index];
+        
+        colorSprite.color = colors[ConnectionManager.instance.players[OwnerClientId].id];
     }
 
     public override void OnNetworkDespawn()
