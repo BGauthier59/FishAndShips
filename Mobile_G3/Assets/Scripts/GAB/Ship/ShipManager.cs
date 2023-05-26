@@ -2,24 +2,11 @@ using System;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
     private NetworkVariable<int> currentBoatLife = new NetworkVariable<int>();
     [SerializeField] private int maxLife;
-
-    [SerializeField]
-    private Transform leftTopCannonOrigin, rightTopCannonOrigin, leftBottomCannonOrigin, rightBottomCannonOrigin;
-
-    [SerializeField] private LayerMask shrimpShipLayer;
-
-    private bool canRegenerate;
-    [SerializeField] private int regenerationPerSecond;
-    private float regenerationTimer;
-
-    [SerializeField] private UnityEvent shootEvent;
-    [SerializeField] private Transform shootVfxTransform;
 
     [SerializeField] private int3 starScores;
 
