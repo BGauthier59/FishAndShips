@@ -33,7 +33,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public Transform[] camPos;
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
-    public Transform fadeTransition;
+    public Transform fadeTransition,shopTag,shopPassNames;
     public TMP_Text textInputName, textInputIP, levelName, levelIndex,skinText,impactText,skinLockedText;
     [SerializeField] public LevelIcon[] levelButtons;
 
@@ -43,10 +43,11 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     [SerializeField] private ParticleSystem[] customImpact;
     [SerializeField] private SpriteRenderer[] starsPass;
     [SerializeField] private SpriteRenderer[] skinIcons;
+    [SerializeField] private SpriteRenderer[] impactIcons;
 
     public string pseudo;
     public int screen;
-    public int skinId,skinCustId,impactId;
+    public int skinId,skinCustId,impactId,impactCustId;
     public bool connected;
     public int levelId;
     public int starNb;
@@ -58,7 +59,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public Transform levelsTransform,startButton,returnButton,treasurePass;
     public GameObject levelScreen;
     public float minX,maxX,forcemultiplier,timeOfTap;
-    public LayerMask mask;
+    public LayerMask maskMap,maskCust;
     public Color starLockedColor,starLinkUnlocked;
     public Animation mapTransition,shopTransition,customTransition;
     public Transform[] buttonsCustomScreen;
@@ -171,7 +172,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public async void SetCurrentScreen(int newScreen)
     {
-        if (screen == 2)
+        if (screen == 2 && newScreen != 2)
         {
             shopTransition.Play("ShopCloseTransition");
         }
@@ -201,6 +202,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 ChangeScreenObject(5);
                 await Task.Delay(300);
                 shopTransition.Play("ShopOpenTransition");
+                treasurePass.localPosition = new Vector3(1.09f, treasurePass.localPosition.y, treasurePass.localPosition.z);
+                shopPassNames.localPosition = shopPassNames.parent.InverseTransformPoint(shopTag.position);
                 break;
             case 3:
                 ChangeScreenObject(6);
@@ -372,7 +375,9 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         if (screen == 2 && isDragging)
         {
             float movement = Input.mousePosition.x - startTouch.x;
-            treasurePass.localPosition = new Vector3(Mathf.Clamp(startPosPass + (movement / ((float) Screen.height / 2))*0.5f,-1.7f,0), treasurePass.localPosition.y, treasurePass.localPosition.z);
+            treasurePass.localPosition = new Vector3(Mathf.Clamp(startPosPass + (movement / ((float) Screen.height / 2))*0.5f,-1.7f,1.09f), treasurePass.localPosition.y, treasurePass.localPosition.z);
+            shopPassNames.localPosition = shopPassNames.parent.InverseTransformPoint(shopTag.position);
+            shopPassNames.localPosition = new Vector3(Mathf.Clamp(shopPassNames.localPosition.x, -1.186f, 100),shopPassNames.localPosition.y, shopPassNames.localPosition.z);
         }
     }
 
@@ -459,6 +464,9 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         else
         {
             skinId = skinCustId;
+            if (connected)
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].playerDataIndex.Value =
+                    skinId;
             skinLockedText.gameObject.SetActive(false);
             skinBox.color = Color.white;
             skinIcons[skinCustId].color = Color.white;
@@ -479,6 +487,52 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         skinText.text = skinNames[skinCustId];
     }
     
+    public async void OnImpactModification()
+    {
+        int refs = impactCustId == 1 ? 1 : impactCustId == 2 ? 3 : impactCustId == 3 ? 2 : impactCustId == 4 ? 5 : -1;
+        customTransition.Play("ChangeImpact");
+        await Task.Delay(160);
+        if (refs != -1 && starNb >= rewards[refs].starsRequired)
+        {
+            impactId = impactCustId;
+            if (connected)
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
+                    impactId;
+            skinLockedText.gameObject.SetActive(false);
+            impactBox.color = Color.white;
+            impactIcons[impactCustId].color = Color.white;
+        }
+        else if(refs != -1)
+        {
+            skinLockedText.gameObject.SetActive(true);
+            skinLockedText.text = "You need "+(rewards[refs].starsRequired - starNb)+" more stars to unlock this Impact";
+            impactBox.color = starLockedColor;
+            impactIcons[impactCustId].color = Color.gray;
+        }
+        else
+        {
+            impactId = impactCustId;
+            if (connected)
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
+                    impactId;
+            skinLockedText.gameObject.SetActive(false);
+            impactBox.color = Color.white;
+            impactIcons[impactCustId].color = Color.white;
+        }
+        for (int i = 0; i < impactIcons.Length; i++)
+        {
+            if (i == impactCustId)
+            {
+                impactIcons[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                impactIcons[i].gameObject.SetActive(false);
+            }
+        }
+        customImpact[impactCustId].Play();
+        impactText.text = impactNames[impactCustId];
+    }
     
     
     public void OnChangeSkinForward()
@@ -495,16 +549,17 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         OnSkinModification();
     }
     
-    public async void OnChangeImpactForward()
+    public void OnChangeImpactForward()
     {
-        impactId = (impactId + 1) % 3;
-        if (connected)
-            ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].impactDataIndex.Value =
-                impactId;
-        customTransition.Play("ChangeImpact");
-        await Task.Delay(160);
-        customImpact[impactId].Play();
-        impactText.text = impactNames[impactId];
+        impactCustId = (impactCustId + 1) % 5;
+        OnImpactModification();
+    }
+    
+    public void OnChangeImpactBackward()
+    {
+        impactCustId = impactCustId - 1;
+        if (impactCustId < 0) impactCustId = 4;
+        OnImpactModification();
     }
 
     #endregion
@@ -623,7 +678,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             if (i == skin) playerFigures[idInt].mapFigures[i].SetActive(true);
             else playerFigures[idInt].mapFigures[i].SetActive(false);
         }
-        Debug.Log("C'EST PAS LA CONNARD !!!!!!!!!!!");
     }
 
     #endregion
@@ -633,7 +687,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     [UsedImplicitly]
     public void OnTapOnScreen(InputAction.CallbackContext ctx)
     {
-        //Debug.Log("Oui");
         if (ctx.started)
         {
             startTouch = Input.mousePosition;
@@ -657,7 +710,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         if (connected && screen == 1)
         {
             Ray ray = cam.ScreenPointToRay(startTouch);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, mask))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, maskMap))
             {
                 if (isOnMap)
                 {
@@ -680,7 +733,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         if (screen == 0)
         {
             Ray ray = cam.ScreenPointToRay(startTouch);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, mask))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, maskCust))
             {
                 for (int i = 0; i < buttonsCustomScreen.Length; i++)
                 {
@@ -698,7 +751,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                                 OnChangeImpactForward();
                                 break;
                             case 3:
-                                OnChangeImpactForward();
+                                OnChangeImpactBackward();
                                 break;
                         }
                     }
