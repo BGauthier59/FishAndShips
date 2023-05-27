@@ -44,7 +44,7 @@ public class MapSwipeManager : MiniGameInput<MapSwipeData>
         lastTouch = currentTouch;
         currentTouch = Input.mousePosition;
         
-        var dir = (currentTouch - lastTouch) * (Time.deltaTime * data.sensitivity);
+        var dir = (currentTouch - lastTouch).normalized * (Time.deltaTime * data.sensitivity);
         dir.z = dir.y;
         dir.y = 0;
         

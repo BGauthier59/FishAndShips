@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using Unity.Mathematics;
 using Unity.Netcode;
 using UnityEngine;
@@ -31,18 +32,20 @@ public class MiniGame_Map : MiniGame
     private Island currentIsland;
 
     [SerializeField] private Transform[] points;
+    [SerializeField] private Vector4 bordersLeftRightBottomTop;
 
     [Serializable]
     public class Island
     {
         public Transform transform;
+        public TMP_Text text;
         public string name;
     }
 
     public override async void StartMiniGame()
     {
         await SetupIslandAndRotation();
-        
+
         base.StartMiniGame();
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
@@ -73,9 +76,31 @@ public class MiniGame_Map : MiniGame
 
         miniGameMapPosition.y = posY;
         miniGameMap.localPosition = miniGameMapPosition;
+        UpdateIslandTextColors();
 
         RotateShip();
         if (IsRotationAlright()) SetCorrectRotation();
+    }
+
+    private Color white = Color.white;
+    private Color whiteZeroAlpha = new Color(1, 1, 1, 0);
+
+    private void UpdateIslandTextColors()
+    {
+        foreach (var island in islands)
+        {
+            island.text.color = Color.Lerp(island.text.color,
+                IsIslandTextColorInVisibleArea(island.text.transform.position) ? 
+                    white : whiteZeroAlpha,
+                Time.deltaTime * 5f);
+        }
+    }
+
+    private bool IsIslandTextColorInVisibleArea(Vector3 position)
+    {
+        if (position.x < bordersLeftRightBottomTop.x || position.x > bordersLeftRightBottomTop.y ||
+            position.z < bordersLeftRightBottomTop.z || position.z > bordersLeftRightBottomTop.w) return false;
+        return true;
     }
 
     private void RotateShip()
@@ -134,7 +159,6 @@ public class MiniGame_Map : MiniGame
                 random = Random.Range(0, availablePoints.Length);
                 await UniTask.Yield();
                 if (SceneLoaderManager.instance.CancelTaskInGame()) return;
-
             } while (availablePoints[random]);
 
             availablePoints[random] = true;
@@ -144,7 +168,7 @@ public class MiniGame_Map : MiniGame
         }
 
         rightDirection = (currentIsland.transform.position - ship.position);
-        
+
         rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
     }
 
