@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using Unity.Netcode;
@@ -15,7 +14,7 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
     public Transform miniGameEnvironmentCamera;
 
     [SerializeField] private Animation miniGameIndicatorAnim, victoryIndicatorAnimation, gyroscopeIndicator;
-    [SerializeField] private AnimationClip indicatorClip, victoryClip;
+    [SerializeField] private AnimationClip indicatorClip, victoryClip, gyroscopeFire, gyroscopeCannon;
     [SerializeField] private TMP_Text miniGameIndicatorText;
 
     private List<IUpdateWorkshop> updatedWorkshop = new List<IUpdateWorkshop>();
@@ -358,12 +357,22 @@ public class WorkshopManager : NetworkMonoSingleton<WorkshopManager>
         }
     }
 
-    public async void StartMiniGameGyroscopeTutorial()
+    public async void StartMiniGameGyroscopeFireTutorial()
     {
         gyroscopeIndicator.gameObject.SetActive(true);
         await UniTask.Delay(200);
-        gyroscopeIndicator.Play(gyroscopeIndicator.clip.name);
-        await UniTask.Delay((int) (gyroscopeIndicator.clip.length * 1000));
+        gyroscopeIndicator.Play(gyroscopeFire.name);
+        await UniTask.Delay((int) (gyroscopeFire.length * 1000));
+        await UniTask.Delay(200);
+        gyroscopeIndicator.gameObject.SetActive(false);
+    }
+    
+    public async void StartMiniGameGyroscopeCannonTutorial()
+    {
+        gyroscopeIndicator.gameObject.SetActive(true);
+        await UniTask.Delay(200);
+        gyroscopeIndicator.Play(gyroscopeCannon.name);
+        await UniTask.Delay((int) (gyroscopeCannon.length * 1000));
         await UniTask.Delay(200);
         gyroscopeIndicator.gameObject.SetActive(false);
     }

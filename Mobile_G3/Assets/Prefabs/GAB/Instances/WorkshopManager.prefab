@@ -893,7 +893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 1
@@ -1768,6 +1768,8 @@ MonoBehaviour:
   gyroscopeIndicator: {fileID: 7960910599027715278}
   indicatorClip: {fileID: 7400000, guid: 630b0431ac0697242b30ba49cd2ec9ad, type: 2}
   victoryClip: {fileID: 7400000, guid: 449c40c1aa6cedd4ebf6f2c6681281dd, type: 2}
+  gyroscopeFire: {fileID: 7400000, guid: bb3e83a0d5adb1d4c94617b28302175f, type: 2}
+  gyroscopeCannon: {fileID: 7400000, guid: 2ff06b3b2f30eff418418e73ededae8b, type: 2}
   miniGameIndicatorText: {fileID: 804453599}
   allWorkshops:
   - {fileID: 0}
@@ -2427,7 +2429,7 @@ Transform:
   - {fileID: 7444306574091074392}
   m_Father: {fileID: 1901295941}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -12.320001}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 18.38731}
 --- !u!111 &7960910599027715278
 Animation:
   m_ObjectHideFlags: 0
@@ -2437,9 +2439,10 @@ Animation:
   m_GameObject: {fileID: 6670475048795897031}
   m_Enabled: 1
   serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: bb3e83a0d5adb1d4c94617b28302175f, type: 2}
+  m_Animation: {fileID: 0}
   m_Animations:
   - {fileID: 7400000, guid: bb3e83a0d5adb1d4c94617b28302175f, type: 2}
+  - {fileID: 7400000, guid: 2ff06b3b2f30eff418418e73ededae8b, type: 2}
   m_WrapMode: 0
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0

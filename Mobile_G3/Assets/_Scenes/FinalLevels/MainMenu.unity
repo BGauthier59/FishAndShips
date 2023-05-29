@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44402242, g: 0.49316543, b: 0.5722324, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -438,7 +438,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9253c46c5fafc314bb57b39f1ac3117e, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1236,6 +1236,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 28dce7ee07fbef44f89ff9e03c2460c9,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 28dce7ee07fbef44f89ff9e03c2460c9,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 47fd9e683b0acfe4aaabc71d99e2e0d4, type: 2}
@@ -1243,6 +1248,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SM_MenuPlank_03
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 28dce7ee07fbef44f89ff9e03c2460c9,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 28dce7ee07fbef44f89ff9e03c2460c9, type: 3}
@@ -7487,8 +7497,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -7505,12 +7515,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 100
   m_fontSizeBase: 53.5
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 18
-  m_fontSizeMax: 72
+  m_fontSizeMax: 100
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -8899,6 +8909,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 6c39fdd9729d26d4b89116c9ebf22431,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 6c39fdd9729d26d4b89116c9ebf22431,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 47fd9e683b0acfe4aaabc71d99e2e0d4, type: 2}
@@ -8906,6 +8921,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SM_MenuPlank_01 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6c39fdd9729d26d4b89116c9ebf22431,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6c39fdd9729d26d4b89116c9ebf22431, type: 3}
@@ -10031,6 +10051,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 8e6dc1cad3cbbeb408a27329846ecdda,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8e6dc1cad3cbbeb408a27329846ecdda,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 47fd9e683b0acfe4aaabc71d99e2e0d4, type: 2}
@@ -10038,6 +10063,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SM_MenuRope_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8e6dc1cad3cbbeb408a27329846ecdda,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e6dc1cad3cbbeb408a27329846ecdda, type: 3}
@@ -13446,7 +13476,7 @@ GameObject:
   - component: {fileID: 440858888}
   - component: {fileID: 440858887}
   m_Layer: 0
-  m_Name: Level1 (3)
+  m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -13475,7 +13505,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 440858885}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -13840,7 +13870,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4c470e5928bdd5349abfe945b69696dc, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -14935,7 +14965,7 @@ MonoBehaviour:
   m_text: Proto Level
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
-  m_sharedMaterial: {fileID: 1847499838602395391, guid: 8e238b9d5227af7418931f221b2c4f82,
+  m_sharedMaterial: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -14943,7 +14973,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4286508286
-  m_fontColor: {r: 0.99607843, g: 0.9254902, b: 0.49411765, a: 1}
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -15002,7 +15032,7 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_renderer: {fileID: 471933690}
   m_maskType: 0
 --- !u!23 &471933690
@@ -15025,7 +15055,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1847499838602395391, guid: 8e238b9d5227af7418931f221b2c4f82, type: 2}
+  - {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15977,7 +16007,7 @@ GameObject:
   m_Component:
   - component: {fileID: 509876335}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21074,6 +21104,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 8e6dc1cad3cbbeb408a27329846ecdda,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 8e6dc1cad3cbbeb408a27329846ecdda,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 47fd9e683b0acfe4aaabc71d99e2e0d4, type: 2}
@@ -21081,6 +21116,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SM_MenuRope_01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 8e6dc1cad3cbbeb408a27329846ecdda,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8e6dc1cad3cbbeb408a27329846ecdda, type: 3}
@@ -21276,8 +21316,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 2785017921
-  m_fontColor: {r: 0.254717, g: 0, b: 0, a: 0.6509804}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -21600,7 +21640,7 @@ GameObject:
   - component: {fileID: 674728093}
   - component: {fileID: 674728092}
   m_Layer: 8
-  m_Name: Pseudo (3)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -21656,8 +21696,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -25081,7 +25121,7 @@ GameObject:
   - component: {fileID: 801848089}
   - component: {fileID: 801848088}
   m_Layer: 0
-  m_Name: Level1 (1)
+  m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25110,7 +25150,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 801848086}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -25481,8 +25521,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3791654463
-  m_fontColor: {r: 0.24528301, g: 0.055887263, b: 0, a: 0.8862745}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -25780,7 +25820,7 @@ MonoBehaviour:
   m_text: Testing bay
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
-  m_sharedMaterial: {fileID: 1847499838602395391, guid: 8e238b9d5227af7418931f221b2c4f82,
+  m_sharedMaterial: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -25788,7 +25828,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4286508286
-  m_fontColor: {r: 0.99607843, g: 0.9254902, b: 0.49411765, a: 1}
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -25847,7 +25887,7 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_renderer: {fileID: 831193003}
   m_maskType: 0
 --- !u!23 &831193003
@@ -25870,7 +25910,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1847499838602395391, guid: 8e238b9d5227af7418931f221b2c4f82, type: 2}
+  - {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -26684,7 +26724,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &860312695
 Transform:
@@ -26709,7 +26749,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 860312694}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -43038,7 +43078,7 @@ GameObject:
   - component: {fileID: 1210210901}
   - component: {fileID: 1210210900}
   m_Layer: 8
-  m_Name: Pseudo (2)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43094,8 +43134,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -44026,7 +44066,7 @@ GameObject:
   - component: {fileID: 1232678437}
   - component: {fileID: 1232678436}
   m_Layer: 8
-  m_Name: Pseudo
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44082,8 +44122,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -47967,7 +48007,7 @@ MonoBehaviour:
   m_text: Waiting for Host...
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
-  m_sharedMaterial: {fileID: 1847499838602395391, guid: 8e238b9d5227af7418931f221b2c4f82,
+  m_sharedMaterial: {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -47975,7 +48015,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -48034,7 +48074,7 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_renderer: {fileID: 1366816486}
   m_maskType: 0
 --- !u!23 &1366816486
@@ -48057,7 +48097,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1847499838602395391, guid: 8e238b9d5227af7418931f221b2c4f82, type: 2}
+  - {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -49185,6 +49225,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: d1572bea7471fdb499f6b440420b43a6,
         type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: d1572bea7471fdb499f6b440420b43a6,
+        type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 47fd9e683b0acfe4aaabc71d99e2e0d4, type: 2}
@@ -49192,6 +49237,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SM_MenuPlank_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d1572bea7471fdb499f6b440420b43a6,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1572bea7471fdb499f6b440420b43a6, type: 3}
@@ -52026,7 +52076,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 66f82d2f811085d41bba1933596e7133, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -52501,8 +52551,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4279439973
-  m_fontColor: {r: 0.3962264, g: 0.06915272, b: 0.07518779, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -53375,7 +53425,7 @@ GameObject:
   - component: {fileID: 1554787128}
   - component: {fileID: 1554787127}
   m_Layer: 8
-  m_Name: Pseudo (5)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -53431,8 +53481,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 16777215
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0}
+    rgba: 0
+  m_fontColor: {r: 0, g: 0, b: 0, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -56115,8 +56165,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -57458,8 +57508,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 3791654463
-  m_fontColor: {r: 0.24528301, g: 0.055887263, b: 0, a: 0.8862745}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -60592,7 +60642,7 @@ GameObject:
   - component: {fileID: 1762506150}
   - component: {fileID: 1762506149}
   m_Layer: 8
-  m_Name: Pseudo (1)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60648,8 +60698,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -64486,7 +64536,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 4000
+  far clip plane: 1000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -65017,7 +65067,7 @@ GameObject:
   - component: {fileID: 1908654205}
   - component: {fileID: 1908654204}
   m_Layer: 8
-  m_Name: Pseudo (6)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -65073,8 +65123,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 16777215
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0}
+    rgba: 0
+  m_fontColor: {r: 0, g: 0, b: 0, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -71500,7 +71550,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!114 &2098435717
 MonoBehaviour:
@@ -71524,16 +71574,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: PLAY
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 55cd0c567c7105742b300ee5718da81d, type: 2}
-  m_sharedMaterial: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+  m_fontAsset: {fileID: 11400000, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
+  m_sharedMaterial: {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4279047255
-  m_fontColor: {r: 0.34117648, g: 0.078431375, b: 0.050980393, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -71592,7 +71642,7 @@ MonoBehaviour:
   _SortingLayer: 0
   _SortingLayerID: 0
   _SortingOrder: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_renderer: {fileID: 2098435718}
   m_maskType: 0
 --- !u!23 &2098435718
@@ -71615,7 +71665,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f, type: 2}
+  - {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -72772,7 +72822,7 @@ GameObject:
   - component: {fileID: 2129951732}
   - component: {fileID: 2129951731}
   m_Layer: 0
-  m_Name: Level1 (2)
+  m_Name: Stars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72801,7 +72851,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2129951729}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -72939,7 +72989,7 @@ GameObject:
   - component: {fileID: 2136295737}
   - component: {fileID: 2136295736}
   m_Layer: 8
-  m_Name: Pseudo (4)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72995,8 +73045,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 16777215
-  m_fontColor: {r: 1, g: 1, b: 1, a: 0}
+    rgba: 0
+  m_fontColor: {r: 0, g: 0, b: 0, a: 0}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -93218,7 +93268,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 1
   m_IsActive: 1
 --- !u!4 &4968356708187442337
 Transform:
@@ -102314,7 +102364,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4959138998841176440}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0

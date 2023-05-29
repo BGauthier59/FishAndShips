@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
@@ -26,14 +24,13 @@ public class MiniGame_Canon_New : MiniGame
     public override async void StartMiniGame()
     {
         base.StartMiniGame();
-        float scale = WorkshopManager.instance.GetCanvasFactor();
         canShoot = true;
         enemyShip.transform.rotation = Quaternion.Euler(0,Random.Range(-90f,90f),0);
         gyroValue = 0;
         await UniTask.Delay(200);
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
-        WorkshopManager.instance.StartMiniGameGyroscopeTutorial();
+        WorkshopManager.instance.StartMiniGameGyroscopeCannonTutorial();
         WorkshopManager.instance.shrimpSwipeManager.Enable(data);
         WorkshopManager.instance.gyroscopeManager.Enable(gyro);
         gyroStart = WorkshopManager.instance.gyroscopeManager.GetGyroRotation().eulerAngles.y;
@@ -83,8 +80,6 @@ public class MiniGame_Canon_New : MiniGame
              float eulerY = cameraCanon.eulerAngles.y < 180 ? cameraCanon.eulerAngles.y : cameraCanon.eulerAngles.y - 360;
              cameraCanon.rotation = Quaternion.Euler(0,Mathf.Lerp(eulerY,gyroValue,Time.deltaTime*5),0);
         }
-
-        
     }
 
     public async void Shoot()
