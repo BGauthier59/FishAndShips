@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class BarrierManager : MonoSingleton<BarrierManager>
@@ -7,6 +8,7 @@ public class BarrierManager : MonoSingleton<BarrierManager>
 
     public void StartGameLoop()
     {
+        if (!NetworkManager.Singleton.IsHost) return;
         foreach (var barrier in barriers)
         {
             barrier.Setup();
@@ -23,9 +25,10 @@ public class BarrierManager : MonoSingleton<BarrierManager>
 
     public void SwitchBarriers()
     {
+        if (!NetworkManager.Singleton.IsHost) return;
         for (int i = 0; i < barriers.Count; i++)
         {
-            barriers[i].ToggleServerRpc();
+            barriers[i].Toggle();
         }
     }
 }

@@ -13,7 +13,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
     public GridBarrier rightBarrier;
 
     public bool pressurePlate;
-    
+
     public void SetPosition(int posX, int posY)
     {
         positionX = posX;
@@ -21,7 +21,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
     }
 
     // Quand entity fais l'input vers cette tile
-    public void OnMove(IGridEntity entity,int direction)
+    public void OnMove(IGridEntity entity, int direction)
     {
         switch (direction)
         {
@@ -30,7 +30,8 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
                 {
                     MoveOnClosedBarrier();
                     return;
-                } 
+                }
+
                 break;
             case 1:
                 if (leftBarrier && leftBarrier.isClosed.Value)
@@ -38,6 +39,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
                     MoveOnClosedBarrier();
                     return;
                 }
+
                 break;
             case 2:
                 if (topBarrier && topBarrier.isClosed.Value)
@@ -45,6 +47,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
                     MoveOnClosedBarrier();
                     return;
                 }
+
                 break;
             case 3:
                 if (rightBarrier && rightBarrier.isClosed.Value)
@@ -52,14 +55,15 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
                     MoveOnClosedBarrier();
                     return;
                 }
+
                 break;
         }
+
         entity.SetPosition(positionX, positionY);
     }
 
     void MoveOnClosedBarrier()
     {
-        
     }
 
     // Quand entity a atteint cette tile
@@ -71,7 +75,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
             //Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
             player.isGliding = false;
         }
-        
-        if(pressurePlate)BarrierManager.instance.SwitchBarriers();
+
+        if (pressurePlate) BarrierManager.instance.SwitchBarriers();
     }
 }

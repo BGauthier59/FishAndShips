@@ -11,7 +11,7 @@ public class GridBarrier : NetworkBehaviour
 
     public void Setup()
     {
-        if(isClosedOnStart) ToggleServerRpc();
+        if(isClosedOnStart) Toggle();
     }
     
     public void Refresh()
@@ -19,8 +19,7 @@ public class GridBarrier : NetworkBehaviour
         barrier.position = Vector3.Lerp(barrier.position, isClosed.Value ? closedPos : openPos, 5 * Time.deltaTime);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    public void ToggleServerRpc()
+    public void Toggle() // Host only
     {
         isClosed.Value = !isClosed.Value;
     }
