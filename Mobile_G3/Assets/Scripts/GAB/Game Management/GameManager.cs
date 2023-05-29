@@ -24,6 +24,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private CanvasManager canvasManager;
     private TimerManager timerManager;
     private CameraManager cameraManager;
+    private BarrierManager barrierManager;
     [SerializeField] private bool isTutorialLevel;
 
     public List<PlayerManager> players = new List<PlayerManager>();
@@ -69,6 +70,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         LinkInstance();
         
         cameraManager.StartGameLoop();
+        if(barrierManager) barrierManager.StartGameLoop();
 
         for (int i = 0; i < players.Count; i++)
         {
@@ -127,6 +129,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         shipManager = ShipManager.instance;
         canvasManager = CanvasManager.instance;
         cameraManager = CameraManager.instance;
+        barrierManager = BarrierManager.instance;
     }
 
     #endregion
@@ -143,6 +146,8 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
+        if(barrierManager) barrierManager.UpdateGameLoop();
+
         if (isTutorialLevel) tutorialEventManager.UpdateGameLoop();
         else eventsManager.UpdateGameLoop();
 

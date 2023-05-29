@@ -26,28 +26,28 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
         switch (direction)
         {
             case 0:
-                if (bottomBarrier && bottomBarrier.isClosed)
+                if (bottomBarrier && bottomBarrier.isClosed.Value)
                 {
                     MoveOnClosedBarrier();
                     return;
                 } 
                 break;
             case 1:
-                if (leftBarrier && leftBarrier.isClosed)
+                if (leftBarrier && leftBarrier.isClosed.Value)
                 {
                     MoveOnClosedBarrier();
                     return;
                 }
                 break;
             case 2:
-                if (topBarrier && topBarrier.isClosed)
+                if (topBarrier && topBarrier.isClosed.Value)
                 {
                     MoveOnClosedBarrier();
                     return;
                 }
                 break;
             case 3:
-                if (rightBarrier && rightBarrier.isClosed)
+                if (rightBarrier && rightBarrier.isClosed.Value)
                 {
                     MoveOnClosedBarrier();
                     return;

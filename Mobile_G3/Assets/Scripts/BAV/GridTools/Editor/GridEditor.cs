@@ -1136,9 +1136,9 @@ public class GridEditor : EditorWindow
         if (Handles.Button(buttonPos, buttonRot,
                 cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
         {
-            isOpen = _selectedObject.GetComponent<GridBarrier>().isClosed;
+            isOpen = _selectedObject.GetComponent<GridBarrier>().isClosed.Value;
             isOpen = !isOpen;
-            _selectedObject.GetComponent<GridBarrier>().isClosed = isOpen;
+            _selectedObject.GetComponent<GridBarrier>().isClosed.Value = isOpen;
         }
     }
 
@@ -1155,9 +1155,9 @@ public class GridEditor : EditorWindow
             if (Handles.Button(buttonPos, buttonRot,
                     cellSizeDeck * 0.25f, cellSizeDeck * 0.25f, Handles.RectangleHandleCap))
             {
-                isOpen = barrier.GetComponent<GridBarrier>().isClosed;
+                isOpen = barrier.GetComponent<GridBarrier>().isClosed.Value;
                 isOpen = !isOpen;
-                barrier.GetComponent<GridBarrier>().isClosed = isOpen;
+                barrier.GetComponent<GridBarrier>().isClosed.Value = isOpen;
             }
         }
     }    

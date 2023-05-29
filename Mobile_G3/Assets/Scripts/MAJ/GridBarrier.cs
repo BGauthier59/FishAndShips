@@ -1,25 +1,27 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GridBarrier : MonoBehaviour
+public class GridBarrier : NetworkBehaviour
 {
-    public bool isClosed;
+    public bool isClosedOnStart;
+    public NetworkVariable<bool> isClosed = new NetworkVariable<bool>();
 
     public Transform barrier;
     public Vector3 closedPos, openPos;
-    
-    private void Update()
+
+    public void Setup()
     {
-        if (isClosed)
-        {
-            barrier.position = Vector3.Lerp(barrier.position, closedPos, 5 * Time.deltaTime);
-        }
-        else
-        {
-            barrier.position = Vector3.Lerp(barrier.position, openPos, 5 * Time.deltaTime);
-        }
+        if(isClosedOnStart) ToggleServerRpc();
+    }
+    
+    public void Refresh()
+    {
+        barrier.position = Vector3.Lerp(barrier.position, isClosed.Value ? closedPos : openPos, 5 * Time.deltaTime);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void ToggleServerRpc()
+    {
+        isClosed.Value = !isClosed.Value;
     }
 }
