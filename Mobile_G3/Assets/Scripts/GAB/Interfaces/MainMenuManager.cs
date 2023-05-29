@@ -33,8 +33,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public Transform[] camPos;
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
-    public Transform fadeTransition,shopTag,shopPassNames;
-    public TMP_Text textInputName, textInputIP, levelName, levelIndex,skinText,impactText,skinLockedText;
+    public Transform fadeTransition, shopTag, shopPassNames;
+    public TMP_Text textInputName, textInputIP, levelName, levelIndex, skinText, impactText, skinLockedText;
     [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
@@ -47,25 +47,25 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     public string pseudo;
     public int screen;
-    public int skinId,skinCustId,impactId,impactCustId;
+    public int skinId, skinCustId, impactId, impactCustId;
     public bool connected;
     public int levelId;
     public int starNb;
     public int[] skinRefs;
-    
+
     public Vector3 startTouch;
-    public bool isDragging,isOnMap,isOnLevel;
-    public float startPosLevels,startPosPass;
-    public Transform levelsTransform,startButton,returnButton,treasurePass;
+    public bool isDragging, isOnMap, isOnLevel;
+    public float startPosLevels, startPosPass;
+    public Transform levelsTransform, startButton, returnButton, treasurePass;
     public GameObject levelScreen;
-    public float minX,maxX,forcemultiplier,timeOfTap;
-    public LayerMask maskMap,maskCust;
-    public Color starLockedColor,starLinkUnlocked;
-    public Animation mapTransition,shopTransition,customTransition;
+    public float minX, maxX, forcemultiplier, timeOfTap;
+    public LayerMask maskMap, maskCust;
+    public Color starLockedColor, starLinkUnlocked;
+    public Animation mapTransition, shopTransition, customTransition;
     public Transform[] buttonsCustomScreen;
     public string[] skinNames, impactNames;
     [SerializeField] private PassReward[] rewards;
-    public SpriteRenderer skinBox,impactBox;
+    public SpriteRenderer skinBox, impactBox;
 
     [Serializable]
     public struct LevelIcon
@@ -74,12 +74,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         public TMP_Text text;
         public Material[] stars;
         public MeshRenderer[] renderers;
+        public SpriteRenderer sprite;
     }
-    
+
     [Serializable]
     private struct PassReward
     {
-        public SpriteRenderer box,arrow;
+        public SpriteRenderer box, arrow;
         public int starsRequired;
         public bool skin;
         public int nb;
@@ -97,13 +98,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         // Load data
         SaveManager.instance.SetCurrentData();
         SetupStars();
-        
+
         switch (SceneLoaderManager.instance.GetGlobalSceneState())
         {
             case SceneLoaderManager.SceneState.MainMenuFirstTime:
                 ConnectionManager.instance.Setup();
                 break;
-            
+
             case SceneLoaderManager.SceneState.MainMenuAlreadyConnected:
                 // Set correct scene
                 Debug.Log("We are already connected! Must set scene in the right way!");
@@ -111,21 +112,26 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 ipText.text = $"Code : {ConnectionManager.instance.code}";
                 cameraMenu.position = camPos[3].position;
                 cameraMenu.rotation = camPos[3].rotation;
-                skinId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex.Value;
-                impactId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value;
+                skinId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player
+                    .playerDataIndex.Value;
+                impactId = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player
+                    .impactDataIndex.Value;
                 for (int i = 0; i < customFigure.Length; i++)
                 {
                     if (i == skinId) customFigure[i].SetActive(true);
                     else customFigure[i].SetActive(false);
                 }
+
                 int x = 0;
                 foreach (var value in ConnectionManager.instance.players)
                 {
                     playerIcons[x].SetActive(true);
-                    playerIcons[x].transform.GetChild(0).GetComponent<TMP_Text>().text = value.Value.player.playerName.Value.ToString();
+                    playerIcons[x].transform.GetChild(0).GetComponent<TMP_Text>().text =
+                        value.Value.player.playerName.Value.ToString();
                     playerFigures[x].mapFigures[value.Value.player.playerDataIndex.Value].SetActive(true);
                     x++;
                 }
+
                 skinText.text = skinNames[skinId];
                 impactText.text = impactNames[skinId];
                 SetCurrentScreen(1);
@@ -145,13 +151,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 levelButtons[i].renderers[j].material = levelButtons[i].stars[j];
                 if (LevelManager.instance.allLevels[i].starCount > j)
                 {
-                    levelButtons[i].stars[j].SetColor("_Color",Color.white);
+                    levelButtons[i].stars[j].SetColor("_Color", Color.white);
                     starNb++;
                 }
-                else levelButtons[i].stars[j].SetColor("_Color",starLockedColor);
+                else levelButtons[i].stars[j].SetColor("_Color", starLockedColor);
             }
         }
-        
+
         for (int i = 0; i < starNb; i++)
         {
             starsPass[i].color = Color.white;
@@ -176,6 +182,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             shopTransition.Play("ShopCloseTransition");
         }
+
         screen = newScreen;
         switch (screen)
         {
@@ -194,7 +201,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                     {
                         screenObjects[i].SetActive(false);
                     }
-                    
                 }
 
                 break;
@@ -202,7 +208,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 ChangeScreenObject(5);
                 await Task.Delay(300);
                 shopTransition.Play("ShopOpenTransition");
-                treasurePass.localPosition = new Vector3(1.09f, treasurePass.localPosition.y, treasurePass.localPosition.z);
+                treasurePass.localPosition =
+                    new Vector3(1.09f, treasurePass.localPosition.y, treasurePass.localPosition.z);
                 shopPassNames.localPosition = shopPassNames.parent.InverseTransformPoint(shopTag.position);
                 break;
             case 3:
@@ -248,7 +255,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         StartFade(true, 0.7f);
         await Task.Delay(800);
         ConnectionManager.instance.gameState = GameState.Game;
-        
+
         LevelManager.instance.StartLevel(levelId);
     }
 
@@ -282,6 +289,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
     #endregion
 
+    private Color zero = new Color(0, 0, 0, 0);
     private void Update()
     {
         if (timerMove > 0)
@@ -357,27 +365,39 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             {
                 if (levelButtons[i].button.position.x < 137 || levelButtons[i].button.position.x > 138.9f)
                 {
-                    levelButtons[i].text.color = Color.Lerp(levelButtons[i].text.color,new Color(0, 0, 0, 0),Time.deltaTime*8);
+                    levelButtons[i].text.color = Color.Lerp(levelButtons[i].text.color, zero,
+                        Time.deltaTime * 8);
+                    levelButtons[i].sprite.color = Color.Lerp(levelButtons[i].sprite.color, zero,
+                        Time.deltaTime * 8);
                 }
                 else
                 {
-                    levelButtons[i].text.color = Color.Lerp(levelButtons[i].text.color,Color.white, Time.deltaTime*8);
+                    levelButtons[i].text.color =
+                        Color.Lerp(levelButtons[i].text.color, Color.white, Time.deltaTime * 8);
+                    levelButtons[i].sprite.color =
+                        Color.Lerp(levelButtons[i].sprite.color, Color.white, Time.deltaTime * 8);
                 }
             }
 
             if (isDragging)
             {
                 float movement = Input.mousePosition.x - startTouch.x;
-                levelsTransform.position = new Vector3(Mathf.Clamp(startPosLevels + (movement / ((float) Screen.width / 2))*forcemultiplier,minX,maxX), levelsTransform.position.y, levelsTransform.position.z);
+                levelsTransform.position =
+                    new Vector3(
+                        Mathf.Clamp(startPosLevels + (movement / ((float) Screen.width / 2)) * forcemultiplier, minX,
+                            maxX), levelsTransform.position.y, levelsTransform.position.z);
             }
         }
 
         if (screen == 2 && isDragging)
         {
             float movement = Input.mousePosition.x - startTouch.x;
-            treasurePass.localPosition = new Vector3(Mathf.Clamp(startPosPass + (movement / ((float) Screen.height / 2))*0.5f,-1.7f,1.09f), treasurePass.localPosition.y, treasurePass.localPosition.z);
+            treasurePass.localPosition =
+                new Vector3(Mathf.Clamp(startPosPass + (movement / ((float) Screen.height / 2)) * 0.5f, -1.7f, 1.09f),
+                    treasurePass.localPosition.y, treasurePass.localPosition.z);
             shopPassNames.localPosition = shopPassNames.parent.InverseTransformPoint(shopTag.position);
-            shopPassNames.localPosition = new Vector3(Mathf.Clamp(shopPassNames.localPosition.x, -1.186f, 100),shopPassNames.localPosition.y, shopPassNames.localPosition.z);
+            shopPassNames.localPosition = new Vector3(Mathf.Clamp(shopPassNames.localPosition.x, -1.186f, 100),
+                shopPassNames.localPosition.y, shopPassNames.localPosition.z);
         }
     }
 
@@ -427,7 +447,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     }
 
     #endregion
-    
+
     #region Settings Screen
 
     public void OnBackFromSettings()
@@ -448,16 +468,18 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             skinId = skinCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex
+                        .Value =
                     skinId;
             skinLockedText.gameObject.SetActive(false);
             skinBox.color = Color.white;
             skinIcons[skinCustId].color = Color.white;
         }
-        else if(refs != -1)
+        else if (refs != -1)
         {
             skinLockedText.gameObject.SetActive(true);
-            skinLockedText.text = "You need "+(rewards[refs].starsRequired - starNb)+" more stars to unlock this Skin";
+            skinLockedText.text =
+                "You need " + (rewards[refs].starsRequired - starNb) + " more stars to unlock this Skin";
             skinBox.color = starLockedColor;
             skinIcons[skinCustId].color = Color.gray;
         }
@@ -465,12 +487,14 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             skinId = skinCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.playerDataIndex
+                        .Value =
                     skinId;
             skinLockedText.gameObject.SetActive(false);
             skinBox.color = Color.white;
             skinIcons[skinCustId].color = Color.white;
         }
+
         for (int i = 0; i < customFigure.Length; i++)
         {
             if (i == skinCustId)
@@ -484,9 +508,10 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 skinIcons[i].gameObject.SetActive(false);
             }
         }
+
         skinText.text = skinNames[skinCustId];
     }
-    
+
     public async void OnImpactModification()
     {
         int refs = impactCustId == 1 ? 1 : impactCustId == 2 ? 3 : impactCustId == 3 ? 2 : impactCustId == 4 ? 5 : -1;
@@ -496,16 +521,18 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             impactId = impactCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex
+                        .Value =
                     impactId;
             skinLockedText.gameObject.SetActive(false);
             impactBox.color = Color.white;
             impactIcons[impactCustId].color = Color.white;
         }
-        else if(refs != -1)
+        else if (refs != -1)
         {
             skinLockedText.gameObject.SetActive(true);
-            skinLockedText.text = "You need "+(rewards[refs].starsRequired - starNb)+" more stars to unlock this Impact";
+            skinLockedText.text = "You need " + (rewards[refs].starsRequired - starNb) +
+                                  " more stars to unlock this Impact";
             impactBox.color = starLockedColor;
             impactIcons[impactCustId].color = Color.gray;
         }
@@ -513,12 +540,14 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             impactId = impactCustId;
             if (connected)
-                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex.Value =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClient.ClientId].player.impactDataIndex
+                        .Value =
                     impactId;
             skinLockedText.gameObject.SetActive(false);
             impactBox.color = Color.white;
             impactIcons[impactCustId].color = Color.white;
         }
+
         for (int i = 0; i < impactIcons.Length; i++)
         {
             if (i == impactCustId)
@@ -530,31 +559,31 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 impactIcons[i].gameObject.SetActive(false);
             }
         }
+
         customImpact[impactCustId].Play();
         impactText.text = impactNames[impactCustId];
     }
-    
-    
+
+
     public void OnChangeSkinForward()
     {
         skinCustId = (skinCustId + 1) % 5;
         OnSkinModification();
-
     }
-    
+
     public void OnChangeSkinBackward()
     {
         skinCustId = skinCustId - 1;
         if (skinCustId < 0) skinCustId = 4;
         OnSkinModification();
     }
-    
+
     public void OnChangeImpactForward()
     {
         impactCustId = (impactCustId + 1) % 5;
         OnImpactModification();
     }
-    
+
     public void OnChangeImpactBackward()
     {
         impactCustId = impactCustId - 1;
@@ -585,9 +614,9 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             screenObjects[i].SetActive(false);
         }
-        
+
         connected = true;
-        
+
         ipText.text = $"Code : {ip}";
     }
 
@@ -623,6 +652,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             screenObjects[i].SetActive(false);
         }
+
         ipText.text = $"Code: {ipToConnect}";
     }
 
@@ -640,7 +670,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
 
         PlayTransition();
     }
-    
+
     public async void OnReturnButton()
     {
         isOnLevel = false;
@@ -656,7 +686,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         levelId = level;
         levelIndex.text = LevelManager.instance.allLevels[levelId].so.levelName;
         levelName.text = LevelManager.instance.allLevels[levelId].so.levelDescription;
-        if(NetworkManager.Singleton.IsHost) startButton.gameObject.SetActive(true);
+        if (NetworkManager.Singleton.IsHost) startButton.gameObject.SetActive(true);
         else startButton.gameObject.SetActive(false);
         await Task.Delay(500);
         isOnLevel = true;
@@ -720,12 +750,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                         {
                             OnLevelSelected(i);
                         }
-                    }   
+                    }
                 }
                 else if (isOnLevel)
                 {
-                    if(startButton == hit.transform) OnStartButton();
-                    else if(returnButton == hit.transform) OnReturnButton();
+                    if (startButton == hit.transform) OnStartButton();
+                    else if (returnButton == hit.transform) OnReturnButton();
                 }
             }
         }
@@ -759,7 +789,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             }
         }
     }
-    
 
     #endregion
 }
