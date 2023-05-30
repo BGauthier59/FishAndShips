@@ -1811,7 +1811,7 @@ Transform:
   - {fileID: 5646876395783128339}
   - {fileID: 4816151076824622593}
   m_Father: {fileID: 5646876396148369691}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5646876396145980645
 GameObject:
@@ -1943,7 +1943,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 918589702153342937}
   - {fileID: 5646876396119197589}
   m_Father: {fileID: 8171247368621050295}
   m_RootOrder: 1
@@ -2185,7 +2184,7 @@ MonoBehaviour:
     x: -15
     y: 15
   questIndicator: {fileID: 6799393947599150936}
-  questStartText: Head towards
+  questStartText: Go to
 --- !u!114 &-6231133515431406982
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2296,7 +2295,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f, type: 2}
+  - {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2338,18 +2337,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Head towards Blobfish Island!
+  m_text: Go to Kraken Island!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8960786dc56663b4a8d7ba2e553e469f, type: 2}
-  m_sharedMaterial: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+  m_fontAsset: {fileID: 11400000, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
+  m_sharedMaterial: {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294638330
+  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2366,12 +2365,12 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 1.95
+  m_fontSize: 2.2
   m_fontSizeBase: 2
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 1
-  m_fontSizeMax: 2
+  m_fontSizeMax: 3
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
@@ -2748,7 +2747,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+      objectReference: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
         type: 2}
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
@@ -2762,81 +2761,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 36288200013698910, guid: 667a648fd3738f848b14b48c6c00a93a,
     type: 3}
   m_PrefabInstance: {fileID: 3671958409611508542}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &5646876395108583448
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 5646876396148369691}
-    m_Modifications:
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.516
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.658
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.167
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.8191521
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.5735764
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -70
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4819626062001653698, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-        type: 3}
-      propertyPath: m_Name
-      value: Compas
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 72bc15f1fe2e9ab4295b059af253fae3, type: 3}
---- !u!4 &918589702153342937 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4819626062001653697, guid: 72bc15f1fe2e9ab4295b059af253fae3,
-    type: 3}
-  m_PrefabInstance: {fileID: 5646876395108583448}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6179504118386851605
 PrefabInstance:
