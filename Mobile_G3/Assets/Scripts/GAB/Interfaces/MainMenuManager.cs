@@ -27,7 +27,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition, shopTag, shopPassNames;
-    public TMP_Text textInputName, textInputIP, levelName, levelIndex, skinText, impactText, skinLockedText;
+    public TMP_Text textInputName, textInputIP, levelName, levelIndex, skinText, impactText, skinLockedText, visualButtonText,soundButtonText;
     [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
@@ -46,15 +46,18 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public int starNb;
     public int[] skinRefs;
 
+    public int qualitySetting;
+    public int soundSetting;
+
     public Vector3 startTouch;
     public bool isDragging, isOnMap, isOnLevel;
     public float startPosLevels, startPosPass;
-    public Transform levelsTransform, startButton, returnButton, treasurePass;
+    public Transform levelsTransform, startButton, returnButton, treasurePass,soundButton,visualButton;
     public GameObject levelScreen;
     public float minX, maxX, forcemultiplier, timeOfTap;
     public LayerMask maskMap, maskCust;
     public Color starLockedColor, starLinkUnlocked;
-    public Animation mapTransition, shopTransition, customTransition;
+    public Animation mapTransition, shopTransition, customTransition,optionTransition;
     public Transform[] buttonsCustomScreen;
     public string[] skinNames, impactNames;
     [SerializeField] private PassReward[] rewards;
@@ -175,6 +178,10 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             shopTransition.Play("ShopCloseTransition");
         }
+        if (screen == 3 && newScreen != 3)
+        {
+            optionTransition.Play("ShopCloseTransition");
+        }
 
         screen = newScreen;
         switch (screen)
@@ -207,6 +214,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 break;
             case 3:
                 ChangeScreenObject(6);
+                await UniTask.Delay(300);
+                optionTransition.Play("ShopOpenTransition");
                 break;
         }
     }
@@ -780,6 +789,34 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                                 break;
                         }
                     }
+                }
+            }
+        }
+        
+        if (screen == 3)
+        {
+            Ray ray = cam.ScreenPointToRay(startTouch);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, maskCust))
+            {
+                if (visualButton == hit.transform)
+                {
+                    qualitySetting = (qualitySetting + 1) % 4;
+                    switch (qualitySetting)
+                    {
+                        case 0:
+                            visualButtonText.text = "High";
+                            break;
+                        case 1:
+                            visualButtonText.text = "Medium";
+                            break;
+                        case 2:
+                            visualButtonText.text = "Low";
+                            break;
+                        case 3:
+                            visualButtonText.text = "Very Low";
+                            break;
+                    }
+                    QualitySettings.SetQualityLevel(qualitySetting, false);
                 }
             }
         }
