@@ -230,12 +230,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         await UniTask.Delay(700);
         cameraMenu.position = camPos[3].position;
         cameraMenu.rotation = camPos[3].rotation;
-        screen = 1;
+        screen = 0;
         screenObjects[1].SetActive(true);
         slide.SetActive(true);
         StartFade(false, 0.7f);
         await UniTask.Delay(50);
-        StartMovement(camPos[3], camPos[2], cameraMenu, 0.8f);
+        StartMovement(camPos[3], camPos[10], cameraMenu, 0.8f);
     }
 
     private void ChangeScreenObject(int screenObj)

@@ -121,6 +121,9 @@ MonoBehaviour:
           m_StringArgument: ShrimpTurn
           m_BoolArgument: 0
         m_CallState: 2
+  badHitEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &5697173704008253013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -333,7 +336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5697173705890337778
 Transform:
   m_ObjectHideFlags: 0
@@ -749,7 +752,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 1847499838602395391, guid: 8960786dc56663b4a8d7ba2e553e469f,
+      objectReference: {fileID: 3074843176725999002, guid: 55cd0c567c7105742b300ee5718da81d,
         type: 2}
     - target: {fileID: 3265542836835827032, guid: 667a648fd3738f848b14b48c6c00a93a,
         type: 3}
@@ -866,34 +869,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5697173704319066191}
     m_Modifications:
-    - target: {fileID: 750866520909108007, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 4526738720780031614, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 4905893453079169286, guid: c45af1e16e049584a89c87744f7b27e2,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4905893453079169286, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4905893453079169286, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4905893453079169286, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4905893453079169286, guid: c45af1e16e049584a89c87744f7b27e2,
@@ -946,20 +924,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5338249908181998145, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_Layer
-      value: 7
-      objectReference: {fileID: 0}
     - target: {fileID: 8075331202593703218, guid: c45af1e16e049584a89c87744f7b27e2,
         type: 3}
       propertyPath: m_Name
       value: "D\xE9gat Crevette"
-      objectReference: {fileID: 0}
-    - target: {fileID: 8075331202593703218, guid: c45af1e16e049584a89c87744f7b27e2,
-        type: 3}
-      propertyPath: m_Layer
-      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c45af1e16e049584a89c87744f7b27e2, type: 3}
