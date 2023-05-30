@@ -36,6 +36,8 @@ public class MiniGame_Fire : MiniGame
     public List<Vector3> firePlacement = new List<Vector3>();
     private Transform currentFireActive;
     private int currentFireComplete;
+    private int randomIndex;
+    private int currentFlameIndex;
 
     public override void OnNetworkSpawn()
     {
@@ -78,9 +80,10 @@ public class MiniGame_Fire : MiniGame
         }
         
         //Set a Fire to a Random Point
-        int randomIndex = Random.Range(0, firePlacement.Count);
+        randomIndex = Random.Range(0, firePlacement.Count);
+        currentFlameIndex = randomIndex;
         currentFireActive = firePointsWorkshop[0];
-        currentFireActive.position = firePlacement[randomIndex];
+        currentFireActive.position = firePlacement[currentFlameIndex];
         currentFireActive.gameObject.SetActive(true);
         currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
     }
@@ -116,6 +119,8 @@ public class MiniGame_Fire : MiniGame
         currentGyroValue = 0;
         currentFireComplete = 0;
         moveGyro = 0;
+        currentFlameIndex = 0;
+        randomIndex = 0;
         layerPoint.transform.eulerAngles = Vector3.zero;
         firePointsWorkshop.Clear();
         firePlacement.Clear();
@@ -167,8 +172,13 @@ public class MiniGame_Fire : MiniGame
 
     private void ChangeIndexForTheFlame()
     {
-        int randomIndex = Random.Range(0, firePointsWorkshop.Count);
-        currentFireActive = firePointsWorkshop[1];
+        while (currentFlameIndex == randomIndex)
+        {
+            randomIndex = Random.Range(0, firePointsWorkshop.Count);
+        }
+        currentFlameIndex = randomIndex;
+        Debug.Log("New Current Index" + currentFlameIndex);
+        currentFireActive = firePointsWorkshop[currentFlameIndex];
         currentFireActive.position = firePlacement[randomIndex];
         currentFireActive.gameObject.SetActive(true);
         currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
