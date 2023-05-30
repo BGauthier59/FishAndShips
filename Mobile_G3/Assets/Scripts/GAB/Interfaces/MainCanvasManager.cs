@@ -36,9 +36,9 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
         return (minutes.ToString(), secondString);
     }
 
-    public void SetLifeOnDisplay(int life, int maxLife)
+    public void SetLifeOnDisplay(float life, float maxLife)
     {
-        var ratio = life / (float) maxLife;
+        var ratio = life / maxLife;
         boatLifeSlider.fillAmount = ratio;
     }
 
