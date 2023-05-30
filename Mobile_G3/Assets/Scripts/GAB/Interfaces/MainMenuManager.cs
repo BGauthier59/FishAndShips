@@ -98,6 +98,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         switch (SceneLoaderManager.instance.GetGlobalSceneState())
         {
             case SceneLoaderManager.SceneState.MainMenuFirstTime:
+                QualitySettings.SetQualityLevel(qualitySetting, false);
                 ConnectionManager.instance.Setup();
                 break;
 
@@ -817,6 +818,25 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                             break;
                     }
                     QualitySettings.SetQualityLevel(qualitySetting, false);
+                }
+                else if (soundButton == hit.transform)
+                {
+                    soundSetting = (soundSetting + 1) % 4;
+                    switch (soundSetting)
+                    {
+                        case 0:
+                            soundButtonText.text = "All";
+                            break;
+                        case 1:
+                            soundButtonText.text = "Music Only";
+                            break;
+                        case 2:
+                            soundButtonText.text = "Sounds Only";
+                            break;
+                        case 3:
+                            soundButtonText.text = "None";
+                            break;
+                    }
                 }
             }
         }
