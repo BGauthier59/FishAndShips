@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using TMPro;
 using Unity.Netcode;
@@ -199,7 +199,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 break;
             case 2:
                 ChangeScreenObject(5);
-                await Task.Delay(300);
+                await UniTask.Delay(300);
                 shopTransition.Play("ShopOpenTransition");
                 treasurePass.localPosition =
                     new Vector3(1.09f, treasurePass.localPosition.y, treasurePass.localPosition.z);
@@ -215,16 +215,16 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         screenObjects[0].SetActive(false);
         StartMovement(camPos[0], camPos[1], cameraMenu, 0.7f);
-        await Task.Delay(400);
+        await UniTask.Delay(400);
         StartFade(true, 0.7f);
-        await Task.Delay(700);
+        await UniTask.Delay(700);
         cameraMenu.position = camPos[3].position;
         cameraMenu.rotation = camPos[3].rotation;
         screen = 1;
         screenObjects[1].SetActive(true);
         slide.SetActive(true);
         StartFade(false, 0.7f);
-        await Task.Delay(50);
+        await UniTask.Delay(50);
         StartMovement(camPos[3], camPos[2], cameraMenu, 0.8f);
     }
 
@@ -246,7 +246,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         }
 
         StartFade(true, 0.7f);
-        await Task.Delay(800);
+        await UniTask.Delay(800);
         ConnectionManager.instance.gameState = GameState.Game;
 
         LevelManager.instance.StartLevel(levelId);
@@ -256,13 +256,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         connectionDefaultPart.SetActive(false);
         StartMovement(camPos[6], camPos[7], camPos[4], 0.5f);
-        await Task.Delay(550);
+        await UniTask.Delay(550);
         camPos[4].position = camPos[7].position;
         camPos[5].position = camPos[7].position;
         camPos[4].gameObject.SetActive(false);
         camPos[5].gameObject.SetActive(true);
         StartMovement(camPos[7], camPos[6], camPos[5], 0.5f);
-        await Task.Delay(500);
+        await UniTask.Delay(500);
         connectionClientPart.SetActive(true);
     }
 
@@ -270,13 +270,13 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         connectionClientPart.SetActive(false);
         StartMovement(camPos[6], camPos[7], camPos[5], 0.5f);
-        await Task.Delay(550);
+        await UniTask.Delay(550);
         camPos[5].position = camPos[7].position;
         camPos[4].position = camPos[7].position;
         camPos[5].gameObject.SetActive(false);
         camPos[4].gameObject.SetActive(true);
         StartMovement(camPos[7], camPos[6], camPos[4], 0.5f);
-        await Task.Delay(500);
+        await UniTask.Delay(500);
         connectionDefaultPart.SetActive(true);
     }
 
@@ -456,7 +456,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         int refs = skinCustId == 3 ? 0 : skinCustId == 4 ? 4 : -1;
         customTransition.Play("ChangeSkin");
-        await Task.Delay(160);
+        await UniTask.Delay(160);
         if (refs != -1 && starNb >= rewards[refs].starsRequired)
         {
             skinId = skinCustId;
@@ -509,7 +509,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         int refs = impactCustId == 1 ? 1 : impactCustId == 2 ? 3 : impactCustId == 3 ? 2 : impactCustId == 4 ? 5 : -1;
         customTransition.Play("ChangeImpact");
-        await Task.Delay(160);
+        await UniTask.Delay(160);
         if (refs != -1 && starNb >= rewards[refs].starsRequired)
         {
             impactId = impactCustId;
@@ -660,6 +660,8 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             Debug.LogWarning("The host only can start the game!");
             return;
         }
+        
+        //NetworkManager.Singleton;
 
         PlayTransition();
     }
@@ -668,7 +670,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     {
         isOnLevel = false;
         mapTransition.Play("LevelToMapTransition");
-        await Task.Delay(500);
+        await UniTask.Delay(500);
         isOnMap = true;
     }
 
@@ -681,7 +683,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         levelName.text = LevelManager.instance.allLevels[levelId].so.levelDescription;
         if (NetworkManager.Singleton.IsHost) startButton.gameObject.SetActive(true);
         else startButton.gameObject.SetActive(false);
-        await Task.Delay(500);
+        await UniTask.Delay(500);
         isOnLevel = true;
     }
 
