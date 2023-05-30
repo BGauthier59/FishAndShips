@@ -263,4 +263,9 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     {
         return notWalkable;
     }
+
+    public float GetScoreMultiplicationFactor()
+    {
+        return playerFactor;
+    }
 }
