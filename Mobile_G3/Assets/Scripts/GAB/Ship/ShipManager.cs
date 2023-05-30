@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
-    private NetworkVariable<int> currentBoatLife = new NetworkVariable<int>();
+    private NetworkVariable<float> currentBoatLife = new NetworkVariable<float>();
     [SerializeField] private int maxLife;
 
     [SerializeField] private int3 starScores;
@@ -16,7 +16,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         if (NetworkManager.Singleton.IsHost)
         {
-            SetCurrentLifeServerRpc(maxLife);
+            SetCurrentLifeServerRpc(0);
             //SetStarCountClientRpc(0);
         }
     }
@@ -29,10 +29,29 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
 
     #region Data Setter
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         // Host only
-        SetCurrentLifeServerRpc(currentBoatLife.Value - damage);
+        if (currentBoatLife.Value - damage < 0)
+        {
+            SetCurrentLifeServerRpc(0);
+        }
+        else
+        {
+            SetCurrentLifeServerRpc(currentBoatLife.Value - damage);
+        }
+    }
+    
+    public void GivePoint(float points)
+    {
+        if (currentBoatLife.Value + points > maxLife)
+        {
+            SetCurrentLifeServerRpc(maxLife);
+        }
+        else
+        {
+            SetCurrentLifeServerRpc(currentBoatLife.Value + points);
+        }
     }
 
     #endregion
@@ -40,17 +59,17 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     #region Network
 
     [ServerRpc(RequireOwnership = true)]
-    private void SetCurrentLifeServerRpc(int life)
+    private void SetCurrentLifeServerRpc(float life)
     {
         if (life > maxLife) currentBoatLife.Value = maxLife;
         else currentBoatLife.Value = math.max(0, life);
         SetCurrentLifeClientRpc(currentBoatLife.Value);
-        if (currentBoatLife.Value == 0)
-            GameManager.instance.GameEnds(false);
+        /*if (currentBoatLife.Value == 0)
+            GameManager.instance.GameEnds(false);*/
     }
 
     [ClientRpc]
-    private void SetCurrentLifeClientRpc(int life)
+    private void SetCurrentLifeClientRpc(float life)
     {
         MainCanvasManager.instance.SetLifeOnDisplay(life, maxLife);
     }

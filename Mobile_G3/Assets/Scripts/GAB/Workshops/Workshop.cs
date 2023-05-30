@@ -153,8 +153,10 @@ public class Workshop : NetworkBehaviour, IGridEntity
         if(EventsManager.instance != null) EventsManager.instance.AddWorkshop();
     }
 
+    protected bool isLostDueToTime;
     protected virtual async void StartActivationDuration()
     {
+        isLostDueToTime = false;
         float timer = 0f;
 
         while (timer < activationDuration)
@@ -164,8 +166,13 @@ public class Workshop : NetworkBehaviour, IGridEntity
             if (SceneLoaderManager.instance.CancelTaskInGame()) return;
             timer += Time.deltaTime;
         }
+
+        if (isOccupied.Value)
+        {
+            isLostDueToTime = true;
+        }
         
-        while (isOccupied.Value) await Task.Yield(); // Can't be lost if someone is playing
+        while (isOccupied.Value) await UniTask.Yield(); // Can't be lost if someone is playing
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
         await UniTask.Delay(100);
@@ -178,7 +185,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
             return; // Means workshop has been won
         }
 
-        ShipManager.instance.TakeDamage(5);
+        //ShipManager.instance.TakeDamage(1+0.75f*EventsManager.instance.GetScoreMultiplicationFactor());
         Deactivate(null, null); // This is not a victory, only means to disable mini-game
     }
 
@@ -204,6 +211,14 @@ public class Workshop : NetworkBehaviour, IGridEntity
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
         if (!victory.HasValue || victory.Value) // If victory is null, it means the workshop has been lost because of timer
         {
+            if (victory.HasValue)
+            {
+                ShipManager.instance.GivePoint(3 + 5 /EventsManager.instance.GetScoreMultiplicationFactor() * (isLostDueToTime ? .5f : 1));
+            }
+            else
+            {
+                ShipManager.instance.TakeDamage(1+ 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
+            }
             SetActiveServerRpc(false);
             GetDeactivatedClientRpc(victory.HasValue);
             if (type == WorkshopType.Temporary)

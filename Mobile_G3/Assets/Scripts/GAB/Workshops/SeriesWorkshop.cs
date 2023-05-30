@@ -76,6 +76,14 @@ public class SeriesWorkshop : Workshop
         if (currentMiniGameIndexSafe == nextMiniGames.Length ||
             !victory.HasValue) // If victory is null, it means the workshop has been lost because of timer
         {
+            if (victory.HasValue)
+            {
+                ShipManager.instance.GivePoint(3 + 5 /EventsManager.instance.GetScoreMultiplicationFactor() * (isLostDueToTime ? .5f : 1));
+            }
+            else
+            {
+                ShipManager.instance.TakeDamage(1+ 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
+            }
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
             GetDeactivatedClientRpc(victory.HasValue);
