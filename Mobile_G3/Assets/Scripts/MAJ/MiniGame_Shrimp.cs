@@ -20,6 +20,7 @@ public class MiniGame_Shrimp : MiniGame
     [SerializeField] private AnimationClip idle1, idle2, idle3, flip, jump;
     [SerializeField] private UnityEvent hitFeedback;
     [SerializeField] private UnityEvent turnEvent;
+    [SerializeField] private UnityEvent badHitEvent;
 
     private void Start()
     {
@@ -62,6 +63,10 @@ public class MiniGame_Shrimp : MiniGame
                 if (CompareSwipeAngle((Vector2) Input.mousePosition - lastPos))
                 {
                     DamageDealt();
+                }
+                else
+                {
+                    badHitEvent?.Invoke();
                 }
             }
 
