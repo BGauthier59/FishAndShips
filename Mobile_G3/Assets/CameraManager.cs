@@ -13,6 +13,9 @@ public class CameraManager : MonoSingleton<CameraManager>
     [SerializeField] private Animation startEventAnim;
     [SerializeField] private AnimationClip startEventClip;
     [SerializeField] private TMP_Text startEventText;
+
+    [SerializeField] private Vector3 playerOffset;
+    [SerializeField] private float initMoveDuration;
     
     public void StartGameLoop()
     {
@@ -20,15 +23,45 @@ public class CameraManager : MonoSingleton<CameraManager>
         SetCurrentHoldCameraPosRot(holdTransform.position, holdTransform.eulerAngles);
         defaultDeckPosRot = currentDeckPosRot;
         defaultHoldPosRot = currentHoldPosRot;
+        
+        PlayerManager target = ConnectionManager.instance.GetClientPlayer();
+        camera.transform.position = target.transform.position + playerOffset;
+
     }
 
-    public void MoveCamToDeck(PlayerManager player)
+    public async UniTask PlayCameraAnimation()
+    {
+        Debug.Log("Start playing");
+        PlayerManager target = ConnectionManager.instance.GetClientPlayer();
+        Vector3 p1, p2;
+        p1 = target.transform.position + playerOffset;
+        p2 = target.GetBoatSide() switch
+        {
+            BoatSide.Deck => currentDeckPosRot.pos,
+            BoatSide.Hold => currentHoldPosRot.pos,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+        camera.transform.position = p1;
+
+        float timer = 0;
+        while (timer < initMoveDuration)
+        {
+            await UniTask.Yield();
+            if (SceneLoaderManager.instance.CancelTaskInGame()) return;
+            timer += Time.deltaTime;
+            camera.transform.position = Ex.CubicBezierCurve(p1, p1, p2, p2, timer / initMoveDuration);
+        }
+
+        camera.transform.position = p2;
+    }
+
+    public void MoveCamToDeck()
     {
         camera.transform.position = currentDeckPosRot.pos;
         camera.transform.eulerAngles = currentDeckPosRot.rot;
     }
 
-    public void MoveCamToHold(PlayerManager player)
+    public void MoveCamToHold()
     {
         camera.transform.position = currentHoldPosRot.pos;
         camera.transform.eulerAngles = currentHoldPosRot.rot;

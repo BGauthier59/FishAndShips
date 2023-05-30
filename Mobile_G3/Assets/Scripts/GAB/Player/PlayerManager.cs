@@ -81,7 +81,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         SetInventoryObject(InventoryObject.None);
 
         // Set Camera
-        if (IsOwner) SetBoatSide(position.x >= GridManager.instance.xSize ? BoatSide.Hold : BoatSide.Deck);
+        if (IsOwner) SetBoatSide(position.x >= GridManager.instance.xSize ? BoatSide.Hold : BoatSide.Deck, false);
 
         // Set Position
         gridPositionX.OnValueChanged = null;
@@ -317,7 +317,8 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
         else
         {
-            PlayerManager localPlayer = ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId].player;
+            PlayerManager localPlayer =
+                ConnectionManager.instance.players[NetworkManager.Singleton.LocalClientId].player;
             if (localPlayer.previousPosX >= GridManager.instance.xSize)
             {
                 if (previousPosX >= GridManager.instance.xSize)
@@ -357,11 +358,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     #region Boat Side Management
 
-    private void SetBoatSide(BoatSide side)
+    private void SetBoatSide(BoatSide side, bool moveCamera = true)
     {
         currentSide = side;
-        if (side == BoatSide.Deck) CameraManager.instance.MoveCamToDeck(this);
-        else CameraManager.instance.MoveCamToHold(this);
+        if (!moveCamera) return;
+        if (side == BoatSide.Deck) CameraManager.instance.MoveCamToDeck();
+        else CameraManager.instance.MoveCamToHold();
     }
 
     public BoatSide GetBoatSide()
@@ -402,7 +404,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
 
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
-        
+
         colorSprite.color = colors[ConnectionManager.instance.players[OwnerClientId].id];
     }
 

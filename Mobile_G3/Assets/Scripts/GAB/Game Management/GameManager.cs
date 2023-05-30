@@ -68,16 +68,17 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private async void StartGameLoop()
     {
         LinkInstance();
-        
-        cameraManager.StartGameLoop();
-        if(barrierManager) barrierManager.StartGameLoop();
+
+        if (barrierManager) barrierManager.StartGameLoop();
 
         for (int i = 0; i < players.Count; i++)
         {
             players[i].StartGameLoop(initPlayerPositions[i]);
         }
 
+        cameraManager.StartGameLoop();
         await CinematicCanvasManager.instance.IntroductionCinematic();
+        await cameraManager.PlayCameraAnimation();
 
         if (NetworkManager.Singleton.IsHost)
         {
@@ -92,7 +93,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         while (!isRunning.Value) await UniTask.Yield();
 
         await UniTask.Yield();
-        
+
         Debug.Log("Start game loop!");
         startGameLoopEvent?.Invoke();
         HonorificManager.instance.StartGameLoop();
@@ -146,7 +147,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         shipManager.UpdateGameLoop();
         workshopManager.UpdateGameLoop();
-        if(barrierManager) barrierManager.UpdateGameLoop();
+        if (barrierManager) barrierManager.UpdateGameLoop();
 
         if (isTutorialLevel) tutorialEventManager.UpdateGameLoop();
         else eventsManager.UpdateGameLoop();
@@ -288,7 +289,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("This client does not exist.");
             return;
         }
-        
+
         hostReadyForTutorialClientCount++;
         if (hostReadyForTutorialClientCount != ConnectionManager.instance.players.Count) return;
         FinishTutorial();
