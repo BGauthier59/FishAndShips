@@ -147,13 +147,14 @@ public class Workshop : NetworkBehaviour, IGridEntity
         SetActiveServerRpc(true);
         associatedMiniGame.AssociatedWorkshopGetActivatedHostSide();
         GetActivatedClientRpc();
-        
+
         // Handle tutorial
-        if(activationDuration > 0) StartActivationDuration();
-        if(EventsManager.instance != null) EventsManager.instance.AddWorkshop();
+        if (activationDuration > 0) StartActivationDuration();
+        if (EventsManager.instance != null) EventsManager.instance.AddWorkshop();
     }
 
     protected bool isLostDueToTime;
+
     protected virtual async void StartActivationDuration()
     {
         isLostDueToTime = false;
@@ -171,7 +172,7 @@ public class Workshop : NetworkBehaviour, IGridEntity
         {
             isLostDueToTime = true;
         }
-        
+
         while (isOccupied.Value) await UniTask.Yield(); // Can't be lost if someone is playing
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
@@ -209,16 +210,20 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         associatedMiniGame.AssociatedWorkshopGetDeactivatedHostSide();
-        if (!victory.HasValue || victory.Value) // If victory is null, it means the workshop has been lost because of timer
+        if (!victory.HasValue ||
+            victory.Value) // If victory is null, it means the workshop has been lost because of timer
         {
             if (victory.HasValue)
             {
-                ShipManager.instance.GivePoint(3 + 5 /EventsManager.instance.GetScoreMultiplicationFactor() * (isLostDueToTime ? .5f : 1));
+                if (EventsManager.instance != null)
+                    ShipManager.instance.GivePoint(3 + 5 / EventsManager.instance.GetScoreMultiplicationFactor() *
+                        (isLostDueToTime ? .5f : 1));
             }
             else
             {
-                ShipManager.instance.TakeDamage(1+ 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
+                ShipManager.instance.TakeDamage(1 + 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
             }
+
             SetActiveServerRpc(false);
             GetDeactivatedClientRpc(victory.HasValue);
             if (type == WorkshopType.Temporary)
@@ -228,9 +233,9 @@ public class Workshop : NetworkBehaviour, IGridEntity
         }
 
         SetOccupiedServerRpc(false);
-        
+
         // Handle tutorial
-        if(EventsManager.instance != null) EventsManager.instance.RemoveWorkshop();
+        if (EventsManager.instance != null) EventsManager.instance.RemoveWorkshop();
     }
 
     [ClientRpc]

@@ -32,7 +32,7 @@ public class SeriesWorkshop : Workshop
     private void OnSetActive(bool _, bool current)
     {
         Debug.Log("Set active for cannon");
-        if(current) WorkshopManager.instance.StartBulletFillersGlow();
+        if (current) WorkshopManager.instance.StartBulletFillersGlow();
         else WorkshopManager.instance.EndBulletFillersGlow();
     }
 
@@ -78,17 +78,20 @@ public class SeriesWorkshop : Workshop
         {
             if (victory.HasValue)
             {
-                ShipManager.instance.GivePoint(3 + 5 /EventsManager.instance.GetScoreMultiplicationFactor() * (isLostDueToTime ? .5f : 1));
+                if (EventsManager.instance != null)
+                    ShipManager.instance.GivePoint(3 + 5 / EventsManager.instance.GetScoreMultiplicationFactor() *
+                        (isLostDueToTime ? .5f : 1));
             }
             else
             {
-                ShipManager.instance.TakeDamage(1+ 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
+                ShipManager.instance.TakeDamage(1 + 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
             }
+
             currentMiniGameIndex.Value = -1;
             SetActiveServerRpc(false);
             GetDeactivatedClientRpc(victory.HasValue);
             SetOccupiedServerRpc(false);
-            if(EventsManager.instance != null) EventsManager.instance.RemoveWorkshop();
+            if (EventsManager.instance != null) EventsManager.instance.RemoveWorkshop();
             return;
         }
 

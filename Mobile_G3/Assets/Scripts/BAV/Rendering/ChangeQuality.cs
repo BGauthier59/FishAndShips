@@ -9,6 +9,10 @@ public class ChangeQuality : MonoBehaviour
     
     public void SetQualityLevelDropdown(int index)
     {
-        QualitySettings.SetQualityLevel(index, false);
+        Debug.Log("change dpi");
+        QualitySettings.resolutionScalingFixedDPIFactor = .5f;
+
+        
+        //QualitySettings.SetQualityLevel(index, false);
     }
 }
