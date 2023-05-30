@@ -23,9 +23,6 @@ public class MiniGame_Sails : MiniGame
     [SerializeField] private byte stepNumber;
     private byte currentStep;
 
-    public TMP_Text myStep;
-    public TMP_Text cooldownTimer;
-
     [SerializeField] private MeshRenderer[] sailsRenderers;
     private bool canSwipe;
     private static readonly int Ratio = Shader.PropertyToID("_Ratio");
@@ -114,7 +111,6 @@ public class MiniGame_Sails : MiniGame
         if (WorkshopManager.instance.swipeManager.CalculateSwipe() && currentStep < stepNumber)
         {
             currentStep++;
-            myStep.text = currentStep.ToString();
             canSwipe = false;
             SetSailStateServerRpc(GetOtherPlayerId(), currentStep);
         }
@@ -122,7 +118,6 @@ public class MiniGame_Sails : MiniGame
 
     private void CheckTimer()
     {
-        cooldownTimer.text = timer.ToString("F1");
         if (timer >= cooldown)
         {
             ResetSailServerRpc(NetworkManager.LocalClientId, GetOtherPlayerId());
@@ -184,9 +179,6 @@ public class MiniGame_Sails : MiniGame
     [ClientRpc]
     private void SetSailStateClientRpc(byte step, ClientRpcParams parameters)
     {
-        Debug.Log($"Other is at step {step}. You're at step {currentStep}");
-        myStep.text = currentStep.ToString();
-
         if (step == currentStep)
         {
             SetSailShaderServerRpc(step);
@@ -262,7 +254,6 @@ public class MiniGame_Sails : MiniGame
         // Both players see their sail reset
         currentStep = 0;
         SetSailRenderers(0, .5f);
-        myStep.text = currentStep.ToString();
     }
 
     private void OnCooldownValueChanged(bool previous, bool current)
@@ -271,7 +262,6 @@ public class MiniGame_Sails : MiniGame
         {
             Debug.LogWarning("Timer has been reset! Steps are the same");
             timer = 0;
-            cooldownTimer.text = timer.ToString("F1");
         }
     }
 
