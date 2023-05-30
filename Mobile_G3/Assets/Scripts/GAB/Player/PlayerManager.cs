@@ -425,8 +425,10 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         }
         else
         {
-            // Todo - implement disconnection in menu
-            Debug.LogWarning("Must be implemented soon");
+            if (IsOwner)
+            {
+                SceneLoaderManager.instance.LoadMainMenuScene_FirstTime();
+            }
         }
 
         ConnectionManager.instance.RemovePlayerFromDictionary(OwnerClientId);

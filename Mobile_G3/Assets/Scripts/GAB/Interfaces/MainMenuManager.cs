@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-public class MainMenuManager : MonoSingleton<MainMenuManager>
+public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 {
     [SerializeField] private GameObject[] screenObjects;
     [SerializeField] private GameObject slide;
@@ -27,7 +27,17 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public AnimationCurve camCurve;
     public bool fadeIn, fadeOut;
     public Transform fadeTransition, shopTag, shopPassNames;
-    public TMP_Text textInputName, textInputIP, levelName, levelIndex, skinText, impactText, skinLockedText, visualButtonText,soundButtonText;
+
+    public TMP_Text textInputName,
+        textInputIP,
+        levelName,
+        levelIndex,
+        skinText,
+        impactText,
+        skinLockedText,
+        visualButtonText,
+        soundButtonText;
+
     [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
@@ -44,7 +54,6 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public bool connected;
     public int levelId;
     public int starNb;
-    public int[] skinRefs;
 
     public int qualitySetting;
     public int soundSetting;
@@ -52,12 +61,19 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     public Vector3 startTouch;
     public bool isDragging, isOnMap, isOnLevel;
     public float startPosLevels, startPosPass;
-    public Transform levelsTransform, startButton, returnButton, treasurePass,soundButton,visualButton;
-    public GameObject levelScreen;
+
+    public Transform levelsTransform,
+        startButton,
+        returnButton,
+        treasurePass,
+        soundButton,
+        visualButton,
+        disconnectButton;
+
     public float minX, maxX, forcemultiplier, timeOfTap;
     public LayerMask maskMap, maskCust;
     public Color starLockedColor, starLinkUnlocked;
-    public Animation mapTransition, shopTransition, customTransition,optionTransition;
+    public Animation mapTransition, shopTransition, customTransition, optionTransition;
     public Transform[] buttonsCustomScreen;
     public string[] skinNames, impactNames;
     [SerializeField] private PassReward[] rewards;
@@ -179,6 +195,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
         {
             shopTransition.Play("ShopCloseTransition");
         }
+
         if (screen == 3 && newScreen != 3)
         {
             optionTransition.Play("ShopCloseTransition");
@@ -293,6 +310,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     #endregion
 
     private Color zero = new Color(0, 0, 0, 0);
+
     private void Update()
     {
         if (timerMove > 0)
@@ -670,7 +688,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             Debug.LogWarning("The host only can start the game!");
             return;
         }
-        
+
         //NetworkManager.Singleton;
 
         PlayTransition();
@@ -747,6 +765,12 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
             Ray ray = cam.ScreenPointToRay(startTouch);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, maskMap))
             {
+                if (hit.transform == disconnectButton)
+                {
+                    OnDisconnect();
+                    return;
+                }
+                
                 if (isOnMap)
                 {
                     for (int i = 0; i < levelButtons.Length; i++)
@@ -793,7 +817,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                 }
             }
         }
-        
+
         if (screen == 3)
         {
             Ray ray = cam.ScreenPointToRay(startTouch);
@@ -817,6 +841,7 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
                             visualButtonText.text = "Very Low";
                             break;
                     }
+
                     QualitySettings.SetQualityLevel(qualitySetting, false);
                 }
                 else if (soundButton == hit.transform)
@@ -843,4 +868,10 @@ public class MainMenuManager : MonoSingleton<MainMenuManager>
     }
 
     #endregion
+    
+    public void OnDisconnect()
+    {
+        SceneLoaderManager.instance.LoadMainMenuScene_FirstTime();
+        NetworkManager.Singleton.Shutdown();
+    }
 }

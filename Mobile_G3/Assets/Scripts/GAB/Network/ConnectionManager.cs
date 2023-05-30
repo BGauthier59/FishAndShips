@@ -60,6 +60,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
             await UniTask.Delay(1000); // Pas propre ?
         }
 
+        if (ip == null) return;
         ip = ip.ToLower();
         
         transport.SetConnectionData(StringUtils.LetterToNumberIP(ip), transport.ConnectionData.Port);
