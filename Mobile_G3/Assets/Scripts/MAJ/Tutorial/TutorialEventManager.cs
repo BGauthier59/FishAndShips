@@ -59,7 +59,7 @@ public class TutorialEventManager : NetworkMonoSingleton<TutorialEventManager>
                 instructionText.text = "Repair all holes";
                 break;
             case 3:
-                instructionText.text = "Fire all canons";
+                instructionText.text = "Fire all cannons";
                 break;
         }
     }
