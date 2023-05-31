@@ -27,6 +27,7 @@ public class LevelManager : MonoSingleton<LevelManager>
 
     public void UpdateCurrentLevel(bool unlocked, bool victory, int starCount)
     {
+        Debug.Log("Stars Updated for level " + currentLevel);
         var current = allLevels[currentLevel];
         current.isWon = victory;
 
