@@ -116,7 +116,6 @@ public class StormEvent : RandomEvent
 
     private async UniTask LerpPostProcessEffect(float from, float to, float duration)
     {
-        Debug.Log("start lerp");
         stormyVolume.weight = from;
 
         float timer = 0;
