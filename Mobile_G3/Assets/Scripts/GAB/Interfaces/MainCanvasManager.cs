@@ -14,6 +14,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     [SerializeField] private Sprite plankIcon, bulletIcon, emptyIcon;
     [SerializeField] private Animation itemAnim;
     private (string minutes, string seconds) currentTimer;
+    [SerializeField] private Animation[] starsAnims;
 
     public void SetTimerOnDisplay(float remainingTime)
     {
@@ -42,9 +43,14 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
         boatLifeSlider.fillAmount = ratio;
     }
 
-    public void SetStarOnDisplay(int count)
+    public void GainStar(int count)
     {
-        starText.text = $"{count}/3";
+        starsAnims[count].Play("StarUnlockedInGame");
+    }
+    
+    public void LooseStar(int count)
+    {
+        starsAnims[count].Play("StarLostInGame");
     }
 
     public void SetItemOnDisplay(InventoryObject item)

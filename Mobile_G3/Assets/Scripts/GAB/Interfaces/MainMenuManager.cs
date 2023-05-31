@@ -25,7 +25,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     public Transform[] camPos;
     public AnimationCurve camCurve;
-    public bool fadeIn, fadeOut;
+    public bool fadeIn, fadeOut,playTransition;
     public Transform fadeTransition, shopTag, shopPassNames;
 
     public TMP_Text textInputName,
@@ -272,16 +272,23 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     private async void PlayTransition()
     {
+        playTransition = true;
         for (int i = 0; i < screenObjects.Length; i++)
         {
             screenObjects[i].SetActive(false);
         }
 
-        StartFade(true, 0.7f);
+        TransitionPlayersClientRpc();
         await UniTask.Delay(800);
-        ConnectionManager.instance.gameState = GameState.Game;
 
         LevelManager.instance.StartLevel(levelId);
+    }
+
+    [ClientRpc]
+    private void TransitionPlayersClientRpc()
+    {
+        StartFade(true, 0.7f);
+        ConnectionManager.instance.gameState = GameState.Game;
     }
 
     private async void ConnectionToClientTransition()
@@ -688,6 +695,8 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     public void OnStartButton()
     {
+        if(playTransition)return;
+        
         if (!NetworkManager.Singleton.IsHost)
         {
             Debug.LogWarning("The host only can start the game!");
