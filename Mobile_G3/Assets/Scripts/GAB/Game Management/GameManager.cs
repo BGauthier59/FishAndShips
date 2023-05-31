@@ -35,6 +35,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
     private NetworkVariable<bool> isGameCancelledBecauseOfDisconnection = new NetworkVariable<bool>();
 
+    [SerializeField] private UnityEvent startCameraEvent;
     [SerializeField] private UnityEvent startTutorialEvent;
     [SerializeField] private UnityEvent startGameLoopEvent;
 
@@ -77,6 +78,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         }
 
         cameraManager.StartGameLoop();
+        startCameraEvent?.Invoke();
         await CinematicCanvasManager.instance.IntroductionCinematic();
         await cameraManager.PlayCameraAnimation();
 
@@ -91,6 +93,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         }
 
         while (!isRunning.Value) await UniTask.Yield();
+        TutorialManager.instance.DisableWaitArea();
 
         await UniTask.Yield();
 
@@ -267,6 +270,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             while (needTutorialRefresh) await UniTask.Yield();
         }
 
+        await TutorialManager.instance.DisplayTutorial(currentTutorial, currentTutorialIndex);
         currentTutorialIndex = tutorialMaxIndex;
     }
 
@@ -275,6 +279,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         needToClick = false;
 
         await TutorialManager.instance.DisableTutorial();
+        TutorialManager.instance.DisplayWaitArea();
 
         // Send to server that we're done
         UpdateTutorialReadyStateServerRpc(NetworkManager.Singleton.LocalClientId);
@@ -299,6 +304,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         await UniTask.Delay(500);
         isRunning.Value = true;
     }
+    
 
     public bool IsGameRunning()
     {

@@ -13,9 +13,11 @@ public class TutorialManager : MonoSingleton<TutorialManager>
     [SerializeField] private AnimationClip disableTutorialClip;
 
     [SerializeField] private GameObject[] tutorials;
-
+    [SerializeField] private GameObject waitArea;
+    
     public async UniTask DisplayTutorial(TutorialSO data, int index)
     {
+        waitArea.SetActive(false);
         for (int i = 0; i < tutorials.Length; i++)
         {
             if(i == data.tutorials[index]) tutorials[i].SetActive(true);
@@ -28,10 +30,20 @@ public class TutorialManager : MonoSingleton<TutorialManager>
         await UniTask.Delay((int) (500 * displayTutorialClip.length));
     }
 
+    public void DisplayWaitArea()
+    {
+        waitArea.SetActive(true);
+    }
+    
+    public void DisableWaitArea()
+    {
+        waitArea.SetActive(false);
+    }
+
     public async UniTask DisableTutorial()
     {
         displayTutorialAnim.Play(disableTutorialClip.name);
-        await UniTask.Delay((int) (500 * disableTutorialClip.length));
+        await UniTask.Delay((int) (1000 * disableTutorialClip.length));
 
         displayTutorialAnim.gameObject.SetActive(false);
     }
