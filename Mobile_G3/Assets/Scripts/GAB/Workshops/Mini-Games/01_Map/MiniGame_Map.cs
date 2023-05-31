@@ -130,6 +130,8 @@ public class MiniGame_Map : MiniGame
     {
         isRight = false;
         ship.eulerAngles = Vector3.zero;
+        rightDirection = Vector3.zero;
+        currentRotationPerSecond = 0;
     }
 
     public override void OnLeaveMiniGame()

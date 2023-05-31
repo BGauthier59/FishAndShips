@@ -216,12 +216,12 @@ public class Workshop : NetworkBehaviour, IGridEntity
             if (victory.HasValue)
             {
                 if (EventsManager.instance != null)
-                    ShipManager.instance.GivePoint(2 + 4 / EventsManager.instance.GetScoreMultiplicationFactor() *
+                    ShipManager.instance.GivePoint(1.5f + 3 / EventsManager.instance.GetScoreMultiplicationFactor() *
                         (isLostDueToTime ? .5f : 1));
             }
             else
             {
-                ShipManager.instance.TakeDamage(1 + 0.5f * EventsManager.instance.GetScoreMultiplicationFactor());
+                ShipManager.instance.TakeDamage(1.5f + 0.5f * EventsManager.instance.GetScoreMultiplicationFactor());
             }
 
             SetActiveServerRpc(false);

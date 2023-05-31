@@ -79,12 +79,12 @@ public class SeriesWorkshop : Workshop
             if (victory.HasValue)
             {
                 if (EventsManager.instance != null)
-                    ShipManager.instance.GivePoint(3 + 5 / EventsManager.instance.GetScoreMultiplicationFactor() *
+                    ShipManager.instance.GivePoint(1.5f + 3 / EventsManager.instance.GetScoreMultiplicationFactor() *
                         (isLostDueToTime ? .5f : 1));
             }
             else
             {
-                ShipManager.instance.TakeDamage(1 + 0.25f * EventsManager.instance.GetScoreMultiplicationFactor());
+                ShipManager.instance.TakeDamage(1.5f + 0.5f * EventsManager.instance.GetScoreMultiplicationFactor());
             }
 
             currentMiniGameIndex.Value = -1;
