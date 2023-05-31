@@ -39,6 +39,7 @@ public class HonorificManager : NetworkMonoSingleton<HonorificManager>
     [ClientRpc]
     public void InitiateHonorificsResumeClientRpc(bool victory, int starCount)
     {
+        LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
         SendPlayerDictionaryToHost(victory, starCount);
     }
 

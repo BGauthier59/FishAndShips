@@ -182,7 +182,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         isRunning.Value = false;
 
         var starCount = shipManager.EvaluateStarScore();
-        if (victory) LevelManager.instance.UpdateCurrentLevel(true, true, starCount);
 
         HonorificManager.instance.InitiateHonorificsResumeClientRpc(victory, starCount);
     }
