@@ -6,7 +6,7 @@ using UnityEngine;
 public class ShipManager : NetworkMonoSingleton<ShipManager>
 {
     private NetworkVariable<float> currentBoatLife = new NetworkVariable<float>();
-    [SerializeField] private int maxLife;
+    [SerializeField] private int maxLife,currentStarCount;
 
     [SerializeField] private int3 starScores;
 
@@ -72,6 +72,35 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private void SetCurrentLifeClientRpc(float life)
     {
         MainCanvasManager.instance.SetLifeOnDisplay(life, maxLife);
+        switch (currentStarCount)
+        {
+            case 0:
+                if (life > starScores.x) GainStar();
+                break;
+            case 1:
+                if (life < starScores.x) LooseStar();
+                else if (life > starScores.y) GainStar();
+                break;
+            case 2:
+                if (life < starScores.y) LooseStar();
+                else if (life > starScores.z) GainStar();
+                break;
+            case 3:
+                if (life < starScores.z) LooseStar();
+                break;
+        }
+    }
+
+    private void GainStar()
+    {
+        currentStarCount++;
+        MainCanvasManager.instance.GainStar(currentStarCount);
+    }
+    
+    private void LooseStar()
+    {
+        currentStarCount--;
+        MainCanvasManager.instance.LooseStar(currentStarCount);
     }
 
     #endregion
