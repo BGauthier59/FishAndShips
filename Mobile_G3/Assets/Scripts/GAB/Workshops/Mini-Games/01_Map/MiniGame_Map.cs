@@ -129,6 +129,7 @@ public class MiniGame_Map : MiniGame
     public override void Reset()
     {
         isRight = false;
+        ship.eulerAngles = Vector3.zero;
     }
 
     public override void OnLeaveMiniGame()

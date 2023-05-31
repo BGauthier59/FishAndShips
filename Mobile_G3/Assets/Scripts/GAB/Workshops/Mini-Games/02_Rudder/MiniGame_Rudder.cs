@@ -44,6 +44,8 @@ public class MiniGame_Rudder : MiniGame
     public override void Reset()
     {
         // Should not be reset
+        currentRotation = 0;
+        data.rudder.eulerAngles = Vector3.zero;
     }
 
     public override void OnLeaveMiniGame()
