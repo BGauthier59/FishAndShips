@@ -27,6 +27,11 @@ public class AudioTriggerSO : ScriptableObject
         
         Debug.LogWarning($"Sound not found. Given name is {music}");
     }
+
+    public void StopMusic()
+    {
+        AudioManager.instance.PlayMusic(null);
+    }
     
     public void PlayMusicNoFading(string music)
     {

@@ -270,7 +270,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             while (needTutorialRefresh) await UniTask.Yield();
         }
 
-        await TutorialManager.instance.DisplayTutorial(currentTutorial, currentTutorialIndex);
+        //await TutorialManager.instance.DisplayTutorial(currentTutorial, currentTutorialIndex);
         currentTutorialIndex = tutorialMaxIndex;
     }
 

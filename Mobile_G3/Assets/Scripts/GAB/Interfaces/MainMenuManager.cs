@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -81,6 +82,8 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
     public MeshRenderer[] levelStarsRenderer;
     public Material[] levelStarsMaterials;
 
+    [SerializeField] private UnityEvent startEvent, stopEvent;
+
     [Serializable]
     public struct LevelIcon
     {
@@ -106,6 +109,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     private void Start()
     {
+        startEvent?.Invoke();
         // Retrieve the saved quality level
         int savedQualityLevel = PlayerPrefs.GetInt("SavedQualityLevel");
         qualitySetting = savedQualityLevel;
@@ -295,6 +299,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
     {
         StartFade(true, 0.7f);
         ConnectionManager.instance.gameState = GameState.Game;
+        stopEvent?.Invoke();
     }
 
     private async void ConnectionToClientTransition()

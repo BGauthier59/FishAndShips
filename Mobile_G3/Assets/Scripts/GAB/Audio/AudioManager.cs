@@ -11,7 +11,7 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     [HideInInspector] public string[] effects;
     [HideInInspector] public string[] themes;
-    
+
     [Serializable]
     public class AudioData
     {
@@ -89,26 +89,35 @@ public class AudioManager : MonoSingleton<AudioManager>
     private MusicType currentMusic;
     private bool isFading;
 
-    public async void PlayMusic(MusicType type)
+    public async void PlayMusic(MusicType? type)
     {
-        currentMusic = type;
+        if (type.HasValue) currentMusic = type.Value;
         if (isFading) return;
         isFading = true;
         var initVolume = boSource.volume;
-        
+
         // Fade out
         float timer = 0f;
         while (timer < 1)
         {
             await UniTask.Yield();
             timer += Time.deltaTime;
-            boSource.volume = math.lerp(initVolume, 0, 1 / timer);
+            boSource.volume = math.lerp(initVolume, 0, timer);
         }
 
         boSource.volume = 0;
-        boSource.clip = bo[currentMusic];
         isFading = false;
-        
+        boSource.Stop();
+
+        if (type == null)
+        {
+            boSource.volume = initVolume;
+            return;
+        }
+
+        boSource.clip = bo[currentMusic];
+        boSource.Play();
+
         // Fade in
         timer = 0f;
         while (timer < 1)
@@ -116,10 +125,10 @@ public class AudioManager : MonoSingleton<AudioManager>
             if (isFading) return;
             await UniTask.Yield();
             timer += Time.deltaTime;
-            boSource.volume = math.lerp(0, initVolume, 1 / timer);
+            boSource.volume = math.lerp(0, initVolume, timer);
         }
-        
-        boSource.volume = 1;
+
+        boSource.volume = initVolume;
     }
 
     public void PlayMusicInstant(MusicType type)
