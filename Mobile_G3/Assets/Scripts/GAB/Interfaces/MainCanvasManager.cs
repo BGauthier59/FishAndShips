@@ -13,13 +13,17 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     [SerializeField] private Image itemImage;
     [SerializeField] private Sprite plankIcon, bulletIcon, emptyIcon;
     [SerializeField] private Animation itemAnim;
+    [SerializeField] private Animation timerAnim;
     private (string minutes, string seconds) currentTimer;
     [SerializeField] private Animation[] starsAnims;
+    private bool endgame;
+    
 
     public void SetTimerOnDisplay(float remainingTime)
     {
         currentTimer = ConvertFloatInMinutesAndSeconds(remainingTime);
         timerText.text = $"{currentTimer.minutes}:{currentTimer.seconds}";
+        if (!endgame && remainingTime < 15) SetTimerEndGame();
     }
 
     private static (string, string) ConvertFloatInMinutesAndSeconds(float seconds)
@@ -51,6 +55,13 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     public void LooseStar(int count)
     {
         starsAnims[count].Play("StarLostInGame");
+    }
+    
+    public void SetTimerEndGame()
+    {
+        if(endgame) return;
+        endgame = true;
+        timerAnim.Play("TimerEndGame");
     }
 
     public void SetItemOnDisplay(InventoryObject item)

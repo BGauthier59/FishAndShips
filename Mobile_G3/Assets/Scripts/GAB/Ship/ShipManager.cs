@@ -94,7 +94,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     private void GainStar()
     {
         currentStarCount++;
-        MainCanvasManager.instance.GainStar(currentStarCount);
+        MainCanvasManager.instance.GainStar(currentStarCount-1);
     }
     
     private void LooseStar()

@@ -4661,6 +4661,7 @@ GameObject:
   - component: {fileID: 1612367193}
   - component: {fileID: 1612367195}
   - component: {fileID: 1612367194}
+  - component: {fileID: 2473385042548187205}
   m_Layer: 5
   m_Name: TimerText
   m_TagString: Untagged
@@ -4716,7 +4717,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 5:00
+  m_text: 3:00
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e, type: 2}
   m_sharedMaterial: {fileID: 3074843176725999002, guid: 2b9b206b4d7fdfd4b8de9f67f8afe83e,
@@ -4726,8 +4727,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294638330
-  m_fontColor: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4786,6 +4787,22 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!111 &2473385042548187205
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1612367192}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 0}
+  m_Animations:
+  - {fileID: 7400000, guid: 898914df69cf0ec408e76c7c1873b9f9, type: 2}
+  m_WrapMode: 0
+  m_PlayAutomatically: 1
+  m_AnimatePhysics: 0
+  m_CullingType: 0
 --- !u!1 &1661647958
 GameObject:
   m_ObjectHideFlags: 0
@@ -5856,6 +5873,7 @@ MonoBehaviour:
   bulletIcon: {fileID: 21300000, guid: f0c86289051ad4548bfc238de372582e, type: 3}
   emptyIcon: {fileID: 21300000, guid: 6c6a1563ba3b7d048baae5376a5192d1, type: 3}
   itemAnim: {fileID: 1243827116485112529}
+  timerAnim: {fileID: 2473385042548187205}
   starsAnims:
   - {fileID: 571874846333015839}
   - {fileID: 5819612422514145036}
