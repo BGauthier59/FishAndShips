@@ -78,6 +78,8 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
     public string[] skinNames, impactNames;
     [SerializeField] private PassReward[] rewards;
     public SpriteRenderer skinBox, impactBox;
+    public MeshRenderer[] levelStarsRenderer;
+    public Material[] levelStarsMaterials;
 
     [Serializable]
     public struct LevelIcon
@@ -94,9 +96,6 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
     {
         public SpriteRenderer box, arrow;
         public int starsRequired;
-        public bool skin;
-        public int nb;
-        public float shopPos;
     }
 
     [Serializable]
@@ -175,6 +174,12 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         {
             starsPass[i].color = Color.white;
             starsPass[i].transform.GetChild(0).GetComponent<SpriteRenderer>().color = starLinkUnlocked;
+        }
+
+        for (int i = 0; i < levelStarsRenderer.Length; i++)
+        {
+            levelStarsMaterials[i] = new Material(levelStarsRenderer[i].material);
+            levelStarsRenderer[i].material = levelStarsMaterials[i];
         }
 
         for (int i = 0; i < rewards.Length; i++)
@@ -709,6 +714,20 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         levelId = level;
         levelIndex.text = LevelManager.instance.allLevels[levelId].so.levelName;
         levelName.text = LevelManager.instance.allLevels[levelId].so.levelDescription;
+        for (int i = 0; i < levelStarsRenderer.Length; i++)
+        {
+            if (level == 0)
+            {
+                levelStarsRenderer[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                levelStarsRenderer[i].gameObject.SetActive(true);
+                if(i<LevelManager.instance.allLevels[levelId].starCount)levelStarsMaterials[i].color = Color.white;
+                else levelStarsMaterials[i].color = starLockedColor;   
+            }
+        }
+        
         if (NetworkManager.Singleton.IsHost) startButton.gameObject.SetActive(true);
         else startButton.gameObject.SetActive(false);
         await UniTask.Delay(500);
