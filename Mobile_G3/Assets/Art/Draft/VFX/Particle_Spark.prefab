@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 412699423223019094}
   - component: {fileID: 2451696308987798244}
   - component: {fileID: 8283318615721535716}
-  m_Layer: 0
-  m_Name: Particle_Etincelle
+  m_Layer: 11
+  m_Name: Particle_Spark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2021362790957776664}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 138.742, y: 0.19999993, z: -0.65}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -52,7 +52,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:
@@ -4833,7 +4833,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2642190148807112316}
   - component: {fileID: 4593554870019787644}
-  m_Layer: 7
+  m_Layer: 11
   m_Name: Swipe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4983,7 +4983,7 @@ GameObject:
   - component: {fileID: 3270876219773646809}
   - component: {fileID: 3338619011168056229}
   - component: {fileID: 5429262383172748060}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: DUST IMPACT feu (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5022,7 +5022,7 @@ ParticleSystem:
   emitterVelocityMode: 1
   looping: 1
   prewarm: 0
-  playOnAwake: 0
+  playOnAwake: 1
   useUnscaledTime: 0
   autoRandomSeed: 1
   startDelay:

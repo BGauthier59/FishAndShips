@@ -19,7 +19,6 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     public Workshop[] fireWorkshops;
     public ConnectedWorkshop mapWorkshop;
     public ConnectedWorkshop sailsWorkshop;
-    public Workshop[] holeWorkshops;
 
     private bool isRunning;
 
