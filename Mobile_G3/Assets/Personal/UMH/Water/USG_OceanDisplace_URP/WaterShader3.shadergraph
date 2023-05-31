@@ -41,6 +41,9 @@
         },
         {
             "m_Id": "63051a32bc864152ace35df56aa00544"
+        },
+        {
+            "m_Id": "cbab3393a6dc402b89c7561033f85993"
         }
     ],
     "m_Keywords": [],
@@ -329,6 +332,9 @@
         },
         {
             "m_Id": "cffb5f3eb49640fb86577125155b2eee"
+        },
+        {
+            "m_Id": "832558136ecd442ebec97e78df6bf078"
         }
     ],
     "m_GroupDatas": [
@@ -1102,6 +1108,20 @@
             "m_InputSlot": {
                 "m_Node": {
                     "m_Id": "e41901b7206b440c89425823c8b95951"
+                },
+                "m_SlotId": 1
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "832558136ecd442ebec97e78df6bf078"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "a4df7b5b425545e0b5a03f3633bf8600"
                 },
                 "m_SlotId": 1
             }
@@ -5997,6 +6017,21 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "6578e6f2202a49369d56527dde04c033",
+    "m_Id": 0,
+    "m_DisplayName": "Distance FOAM",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "65d6a69f677e8c80a48e1386bfceb9a6",
     "m_Id": 2,
@@ -7276,6 +7311,41 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "832558136ecd442ebec97e78df6bf078",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -742.0,
+            "y": 1155.0,
+            "width": 156.0,
+            "height": 34.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "6578e6f2202a49369d56527dde04c033"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "cbab3393a6dc402b89c7561033f85993"
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector2MaterialSlot",
     "m_ObjectId": "84198067c81d1d8db4267891928988b2",
     "m_Id": 3,
@@ -7424,6 +7494,9 @@
         },
         {
             "m_Id": "63051a32bc864152ace35df56aa00544"
+        },
+        {
+            "m_Id": "cbab3393a6dc402b89c7561033f85993"
         }
     ]
 }
@@ -8905,10 +8978,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -640.0,
-            "y": 999.9999389648438,
+            "x": -602.0,
+            "y": 1033.0,
             "width": 126.0,
-            "height": 77.00006103515625
+            "height": 77.0
         }
     },
     "m_Slots": [
@@ -10375,6 +10448,33 @@
         "e31": 0.0,
         "e32": 0.0,
         "e33": 1.0
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "cbab3393a6dc402b89c7561033f85993",
+    "m_Guid": {
+        "m_GuidSerialized": "c44682c9-c137-4c38-a6d4-8fd1cd34fc42"
+    },
+    "m_Name": "Distance FOAM",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Distance FOAM",
+    "m_DefaultReferenceName": "_Distance_FOAM",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 1.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 
