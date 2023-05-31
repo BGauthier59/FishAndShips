@@ -15,7 +15,7 @@ public class AudioTriggerSO : ScriptableObject
         
         Debug.LogWarning($"Sound not found. Given name is {sound}");
     }
-
+    
     public void PlayMusic(string music)
     {
         for (int i = 0; i < AudioManager.instance.themes.Length; i++)
@@ -99,7 +99,10 @@ public enum AudioType
     
     SpawnHole,
     StartStorm,
-    SetPlank
+    SetPlank,
+    
+    StartJingle,
+    ActivateWorkshop
 }
 
 public enum MusicType
