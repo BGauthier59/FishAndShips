@@ -16,10 +16,11 @@ public class TimerManager : MonoSingleton<TimerManager>
     public void UpdateGameLoop()
     {
         timer += Time.deltaTime;
-        if (timer >= 1)
+        if (timer >= 1.0f)
         {
-            timer -= 1;
+            timer -= 1.0f;
             currentDuration -= 1;
+            EventsManager.instance.TryCancelWorkshopsActivation(currentDuration);
 
             if (currentDuration <= -1)
             {
@@ -29,6 +30,6 @@ public class TimerManager : MonoSingleton<TimerManager>
             else MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
         }
     }
-
+    
     public float remainingDurationRatio => 1f - (currentDuration / (float)gameDuration);
 }

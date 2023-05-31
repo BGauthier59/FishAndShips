@@ -9,6 +9,7 @@ public class EventDataSO : ScriptableObject
     public uint hardEventsFrequency;
     public AnimationCurve eventActivationSpeedCurve;
     public FactorSpeed factorSpeed;
+    public int stopActivationFromEnd;
 }
 
 [Serializable]

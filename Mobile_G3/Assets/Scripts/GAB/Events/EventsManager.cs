@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = UnityEngine.Random;
@@ -40,11 +36,13 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     [SerializeField] private GridFloorNotWalkable notWalkable;
     [SerializeField] private UnityEvent startEvent;
 
+    private bool running;
+
     public void StartGameLoop()
     {
         // Host only
         if (!NetworkManager.Singleton.IsHost) return;
-        
+
         // Récupérer les data du SO
 
         if (!data)
@@ -63,6 +61,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
             _ => 1 // Debug for one player
         };
 
+        running = true;
         SetNewDuration();
     }
 
@@ -83,6 +82,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
         // Host only
         if (!NetworkManager.Singleton.IsHost) return;
 
+        if (!running) return;
         if (!checkTimer) return;
 
         if (timer >= durationBeforeNextEvent)
@@ -101,7 +101,7 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     {
         currentActivatedWorkshopsCount--;
     }
-    
+
     private async void StartNewEvent()
     {
         checkTimer = false;
@@ -122,7 +122,6 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
                 nextEvent = hardEvents[Random.Range(0, hardEvents.Length)];
                 await UniTask.DelayFrame(0);
                 if (SceneLoaderManager.instance.CancelTaskInGame()) return;
-
             } while (nextEvent == lastHardEvent || !nextEvent.CheckConditions());
 
             lastHardEvent = nextEvent;
@@ -143,7 +142,6 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
                 nextEvent = softEvents[Random.Range(0, softEvents.Length)];
                 await UniTask.DelayFrame(0);
                 if (SceneLoaderManager.instance.CancelTaskInGame()) return;
-
             } while (nextEvent == lastSoftEvent || !nextEvent.CheckConditions());
 
             lastSoftEvent = nextEvent;
@@ -267,5 +265,14 @@ public class EventsManager : NetworkMonoSingleton<EventsManager>
     public float GetScoreMultiplicationFactor()
     {
         return playerFactor;
+    }
+
+    public void TryCancelWorkshopsActivation(int remainingTime)
+    {
+        // To call when timer is almost over
+        // Host only
+        if (!NetworkManager.Singleton.IsHost || !running || remainingTime > data.stopActivationFromEnd) return;
+        Debug.LogWarning("Stop running");
+        running = false;
     }
 }
