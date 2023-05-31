@@ -12,13 +12,15 @@ public class TutorialManager : MonoSingleton<TutorialManager>
     [SerializeField] private AnimationClip displayTutorialClip;
     [SerializeField] private AnimationClip disableTutorialClip;
 
-    [SerializeField] private Image tutorialImage;
-    [SerializeField] private TMP_Text tutorialText;
+    [SerializeField] private GameObject[] tutorials;
 
     public async UniTask DisplayTutorial(TutorialSO data, int index)
     {
-        tutorialImage.sprite = data.tutorials[index].image;
-        tutorialText.text = data.tutorials[index].text;
+        for (int i = 0; i < tutorials.Length; i++)
+        {
+            if(i == data.tutorials[index]) tutorials[i].SetActive(true);
+            else tutorials[i].SetActive(false);
+        }
         
         displayTutorialAnim.gameObject.SetActive(true);
         displayTutorialAnim.Play(displayTutorialClip.name);
