@@ -102,8 +102,9 @@ public class MiniGame_Fire : MiniGame
             currentGyroValue -= 360f;
         }
         currentGyroValue /= 180f;
-        moveGyro = currentGyroValue * gyroSpeed;
+        moveGyro = currentGyroValue * -gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
+        Debug.Log(moveGyro);
         CheckObjectIsInsideGate();
         CheckIfFireIsComplete();
         LaunchExitMiniGame();
