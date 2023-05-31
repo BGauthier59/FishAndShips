@@ -106,6 +106,12 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     private void Start()
     {
+        // Retrieve the saved quality level
+        int savedQualityLevel = PlayerPrefs.GetInt("SavedQualityLevel");
+        qualitySetting = savedQualityLevel;
+        // Apply the saved quality level before killing the process
+        QualitySettings.SetQualityLevel(qualitySetting);    
+        
         // Load data
         SaveManager.instance.SetCurrentData();
         SetupStars();
@@ -871,6 +877,10 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
                     }
 
                     QualitySettings.SetQualityLevel(qualitySetting, false);
+                    PlayerPrefs.SetInt("SavedQualityLevel", qualitySetting);
+                    PlayerPrefs.Save();
+                    
+                    StartCoroutine(RestartPhone());
                 }
                 else if (soundButton == hit.transform)
                 {
@@ -894,6 +904,27 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
             }
         }
     }
+    
+    private System.Collections.IEnumerator RestartPhone()
+    {
+        yield return new WaitForSeconds(1f); // Adjust the delay as needed
+        using (var unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")) {
+            const int kIntent_FLAG_ACTIVITY_CLEAR_TASK = 0x00008000;
+            const int kIntent_FLAG_ACTIVITY_NEW_TASK = 0x10000000;
+
+            var currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            var pm = currentActivity.Call<AndroidJavaObject>("getPackageManager");
+            var intent = pm.Call<AndroidJavaObject>("getLaunchIntentForPackage", Application.identifier);
+
+            intent.Call<AndroidJavaObject>("setFlags", kIntent_FLAG_ACTIVITY_NEW_TASK | kIntent_FLAG_ACTIVITY_CLEAR_TASK);
+            currentActivity.Call("startActivity", intent);
+            currentActivity.Call("finish");
+            var process = new AndroidJavaClass("android.os.Process");
+            int pid = process.CallStatic<int>("myPid");
+            process.CallStatic("killProcess", pid);
+        }
+    }
+
 
     #endregion
     
