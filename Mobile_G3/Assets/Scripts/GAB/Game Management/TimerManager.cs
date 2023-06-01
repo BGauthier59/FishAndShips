@@ -9,6 +9,7 @@ public class TimerManager : MonoSingleton<TimerManager>
 
     public void StartGameLoop()
     {
+        Debug.Log("UpdatedTime");
         currentDuration = gameDuration;
         MainCanvasManager.instance.SetTimerOnDisplay(currentDuration);
     }

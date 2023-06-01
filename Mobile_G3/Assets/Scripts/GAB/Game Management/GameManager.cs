@@ -80,7 +80,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
         cameraManager.StartGameLoop();
         startCameraEvent?.Invoke();
         await CinematicCanvasManager.instance.IntroductionCinematic();
-        await cameraManager.PlayCameraAnimation();
 
         if (NetworkManager.Singleton.IsHost)
         {
@@ -89,7 +88,11 @@ public class GameManager : NetworkMonoSingleton<GameManager>
                 startTutorialEvent?.Invoke();
                 StartTutorialHostSide(0);
             }
-            else isRunning.Value = true;
+            else
+            {
+                await cameraManager.PlayCameraAnimation();
+                isRunning.Value = true;
+            }
         }
 
         while (!isRunning.Value) await UniTask.Yield();
@@ -302,6 +305,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     private async void FinishTutorial()
     {
         await UniTask.Delay(500);
+        await cameraManager.PlayCameraAnimation();
         isRunning.Value = true;
     }
     

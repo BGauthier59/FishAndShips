@@ -27,7 +27,8 @@ public class MiniGame_Reparation : MiniGame
     private Vector3 plankInitPos;
 
     [SerializeField] private UnityEvent setPlankEvent;
-    
+    [SerializeField] private Transform vfxPlankSet;
+
     public override void OnNetworkSpawn()
     {
         plankInitPos = data.draggablePlanks[0].position;
@@ -55,6 +56,7 @@ public class MiniGame_Reparation : MiniGame
 
     private void CheckPlanks()
     {
+        vfxPlankSet.transform.position = WorkshopManager.instance.reparationDragAndDrop.currentPlank.position;
         setPlankEvent?.Invoke();
         if (CompareTexturesAndGetPercentage() > minimumRateToRepair) WallIsFixed();
     }
