@@ -215,6 +215,12 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             return;
         }
 
+        // Check that might cause desynchronisation
+        if (GridManager.instance.GetTile(gridPositionX.Value, gridPositionY.Value).GetEntity() != null)
+        {
+            return;
+        }
+
         GridFloorStair stairExit =
             GridManager.instance.GetTile(previousPosX, previousPosY).GetFloor() as GridFloorStair;
         GridFloorStair stairEnter =
@@ -338,7 +344,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             transform.position = nextPos;
         }
     }
-    
+
     public void OnCollision(IGridEntity entity, int direction)
     {
         // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?
