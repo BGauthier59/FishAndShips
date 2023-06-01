@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -33,7 +34,7 @@ public class MiniGame_Fire : MiniGame
     private Vector3 fireInitPos;
     private int totalPoints;
     public List<Transform> firePlacement;
-    private FireObject currentFireActive;
+    public FireObject currentFireActive;
     private int currentFireComplete;
     private int randomIndex;
     private int currentFlameIndex;
@@ -58,23 +59,17 @@ public class MiniGame_Fire : MiniGame
         WorkshopManager.instance.gyroscopeManager.Enable(data);
         StartExecutingMiniGame();
     }
-
-    [ContextMenu("Test setup")]
+    
     private void SetupFirePlacement()
     {
-        foreach (FireObject fire in fireSizeType)
-        {
-            fire.gameObject.SetActive(false);
-        }
-        
-        
+
+        Debug.Log("C'EST SET");
         //Set a Fire to a Random Point
-        randomIndex = Random.Range(0, firePlacement.Count);
-        currentFlameIndex = randomIndex;
+        randomIndex = Random.Range(0, firePlacement.Count-1);
         currentFireActive = fireSizeType[0];
-        currentFireActive.transform.position = firePlacement[currentFlameIndex].position;
+        currentFireActive.transform.position = firePlacement[randomIndex].position;
         currentFireActive.gameObject.SetActive(true);
-        currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
+        currentFireActive.firePart[0].Play();
     }
     
     private float moveGyro;
@@ -92,8 +87,6 @@ public class MiniGame_Fire : MiniGame
         moveGyro = currentGyroValue * -gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
         CheckObjectIsInsideGate();
-        CheckIfFireIsComplete();
-        LaunchExitMiniGame();
     }
 
     public override void Reset()
@@ -102,8 +95,9 @@ public class MiniGame_Fire : MiniGame
         {
             fire.transform.position = fireInitPos;
             fire.ResetFire();
+            fire.gameObject.SetActive(false);
         }
-        
+
         currentGyroValue = 0;
         currentFireComplete = 0;
         moveGyro = 0;
@@ -122,7 +116,6 @@ public class MiniGame_Fire : MiniGame
 
     private async void LaunchExitMiniGame()
     {
-        if (currentFireComplete != numberOfFireToComplete) return;
         StopExecutingMiniGame();
         WorkshopManager.instance.gyroscopeManager.Disable();
         HonorificManager.instance.AddHonorific(Honorifics.Firefighter);
@@ -133,42 +126,21 @@ public class MiniGame_Fire : MiniGame
         ExitMiniGame(true);
     }
 
-    [ContextMenu("Randomize Fire Size List")]
-    private void RandomizeListDebug()
-    {
-        RandomizeList(fireSizeType);
-    }
-
-    void RandomizeList(List<FireObject> list)
-    {
-        int count = list.Count;
-        for (int i = 0; i < count - 1; i++)
-        {
-            int randomIndex = Random.Range(i, count);
-            (list[randomIndex], list[i]) = (list[i], list[randomIndex]);
-        }
-    }
-
-    private void CheckIfFireIsComplete()
-    {
-        if (currentFireActive.burning == false)
-        {
-            currentFireComplete += 1;
-            ChangeIndexForTheFlame();
-        }
-    }
-
     private void ChangeIndexForTheFlame()
     {
-        while (currentFlameIndex == randomIndex)
+        Debug.Log("CHANGE FLAME");
+        int rng = randomIndex;
+        while (rng == randomIndex)
         {
-            randomIndex = Random.Range(0, fireSizeType.Count);
+            rng = Random.Range(0, firePlacement.Count);
         }
-        Debug.Log(currentFireComplete);
+        Debug.Log(randomIndex + " P / N " +rng);
+        randomIndex = rng;
         currentFireActive = fireSizeType[currentFireComplete];
+        Debug.Log(currentFireComplete);
         currentFireActive.transform.position = firePlacement[randomIndex].position;
         currentFireActive.gameObject.SetActive(true);
-        currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
+        currentFireActive.firePart[0].Play();
     }
     
     private void CheckObjectIsInsideGate()
@@ -177,7 +149,15 @@ public class MiniGame_Fire : MiniGame
         if (isBetweenPoints)
         {
             currentFireActive.ExtinguishFlame();
+            CompleteFire();
         }
+    }
+    
+    private void  CompleteFire()
+    {
+        currentFireComplete += 1;
+        if (currentFireComplete < 3) ChangeIndexForTheFlame();
+        else LaunchExitMiniGame();
     }
 
     bool IsObjectBetweenPoints(Transform objectToCheck)
