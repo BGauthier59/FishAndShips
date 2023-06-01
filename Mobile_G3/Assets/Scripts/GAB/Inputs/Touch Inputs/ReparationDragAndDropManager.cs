@@ -16,7 +16,7 @@ public class ReparationDragAndDropManager : MiniGameInput<ReparationDragAndDropM
     private bool isDraging;
     private int currentPlankIndex;
 
-    private Transform currentPlank;
+    public Transform currentPlank;
 
     public Action OnSetPlank;
 

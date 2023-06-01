@@ -83,6 +83,8 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
     public Material[] levelStarsMaterials;
 
     [SerializeField] private UnityEvent startEvent, stopEvent;
+    
+    [SerializeField] private SpriteRenderer[] qualityButtons;
 
     [Serializable]
     public struct LevelIcon
@@ -109,8 +111,9 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     private void Start()
     {
-        // Check if the saved quality level exists or is null
-        int currentQualityLevel;
+        startEvent?.Invoke();
+        
+        // Retrieve the saved quality level
         if (PlayerPrefs.HasKey("SavedQualityLevel"))
         {
             qualitySetting = PlayerPrefs.GetInt("SavedQualityLevel");
@@ -124,6 +127,13 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         PlayerPrefs.SetInt("SavedQualityLevel", qualitySetting);
         PlayerPrefs.Save();
         
+        // Apply the saved quality level before killing the process
+        QualitySettings.SetQualityLevel(qualitySetting);    
+        for (int j = 0; j < qualityButtons.Length; j++)
+        {
+            if(j != qualitySetting) qualityButtons[j].color = Color.white;
+            else qualityButtons[j].color = Color.gray;
+        }
         // Load data
         SaveManager.instance.SetCurrentData();
         SetupStars();
@@ -513,7 +523,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     public async void OnSkinModification()
     {
-        int refs = skinCustId == 3 ? 0 : skinCustId == 4 ? 4 : -1;
+        int refs = skinCustId == 3 ? 0 : skinCustId == 4 ? 4 : skinCustId == 5 ? 6 : -1;
         customTransition.Play("ChangeSkin");
         await UniTask.Delay(160);
         if (refs != -1 && starNb >= rewards[refs].starsRequired)
@@ -619,14 +629,14 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     public void OnChangeSkinForward()
     {
-        skinCustId = (skinCustId + 1) % 5;
+        skinCustId = (skinCustId + 1) % 6;
         OnSkinModification();
     }
 
     public void OnChangeSkinBackward()
     {
         skinCustId = skinCustId - 1;
-        if (skinCustId < 0) skinCustId = 4;
+        if (skinCustId < 0) skinCustId = 5;
         OnSkinModification();
     }
 
@@ -870,32 +880,25 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
             Ray ray = cam.ScreenPointToRay(startTouch);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, maskCust))
             {
-                if (visualButton == hit.transform)
+                for (int i = 0; i < qualityButtons.Length; i++)
                 {
-                    qualitySetting = (qualitySetting + 1) % 4;
-                    switch (qualitySetting)
+                    if (qualitySetting != i && qualityButtons[i].transform == hit.transform)
                     {
-                        case 0:
-                            visualButtonText.text = "High";
-                            break;
-                        case 1:
-                            visualButtonText.text = "Medium";
-                            break;
-                        case 2:
-                            visualButtonText.text = "Low";
-                            break;
-                        case 3:
-                            visualButtonText.text = "Very Low";
-                            break;
-                    }
+                        qualityButtons[i].color = Color.gray;
+                        qualitySetting = i;
+                        QualitySettings.SetQualityLevel(qualitySetting, false);
+                        PlayerPrefs.SetInt("SavedQualityLevel", qualitySetting);
+                        PlayerPrefs.Save();
+                        
+                        StartCoroutine(RestartPhone());
 
-                    QualitySettings.SetQualityLevel(qualitySetting, false);
-                    PlayerPrefs.SetInt("SavedQualityLevel", qualitySetting);
-                    PlayerPrefs.Save();
-                    
-                    StartCoroutine(RestartPhone());
+                        for (int j = 0; j < qualityButtons.Length; j++)
+                        {
+                            if(j!=i) qualityButtons[j].color = Color.white;
+                        }
+                    }
                 }
-                else if (soundButton == hit.transform)
+                if (soundButton == hit.transform)
                 {
                     soundSetting = (soundSetting + 1) % 4;
                     switch (soundSetting)
