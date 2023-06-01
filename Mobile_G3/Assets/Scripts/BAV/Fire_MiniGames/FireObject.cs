@@ -27,6 +27,5 @@ public class FireObject : MonoBehaviour
     {
         burning = false;
         firePart[0].Stop();
-        firePart[0].gameObject.SetActive(false);
     }
 }
