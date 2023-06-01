@@ -9,9 +9,9 @@ using Random = UnityEngine.Random;
 public class MiniGame_Fire : MiniGame
 {
     [SerializeField] private GyroscopeSetupData data;
-    [SerializeField] private FireGyroscopeSetupData fireData;
+    public List<FireObject> fireSizeType;
 
-    public Transform basementWood, layerPoint, waterGate1, waterGate2;
+    public Transform basementWood, layerPoint, waterGate1;
 
     [Header("Setup Start Fire Ring")] 
     public bool useRandom;
@@ -32,16 +32,15 @@ public class MiniGame_Fire : MiniGame
     public Vector3 offsetGizmos;
     private Vector3 fireInitPos;
     private int totalPoints;
-    private List<Transform> firePointsWorkshop = new List<Transform>();
-    public List<Vector3> firePlacement = new List<Vector3>();
-    private Transform currentFireActive;
+    public List<Transform> firePlacement;
+    private FireObject currentFireActive;
     private int currentFireComplete;
     private int randomIndex;
     private int currentFlameIndex;
 
     public override void OnNetworkSpawn()
     {
-        fireInitPos = fireData.fireSizeType[0].position;
+        fireInitPos = fireSizeType[0].transform.position;
     }
 
     public override async void StartMiniGame()
@@ -63,29 +62,17 @@ public class MiniGame_Fire : MiniGame
     [ContextMenu("Test setup")]
     private void SetupFirePlacement()
     {
-        RandomizeList(fireData.fireSizeType);
-        foreach (Transform fire in fireData.fireSizeType)
+        foreach (FireObject fire in fireSizeType)
         {
             fire.gameObject.SetActive(false);
         }
         
-        totalPoints = useRandom ? Random.Range(1, numberOfSpawnPoints) : numberOfSpawnPoints;
-        for (int i = 0; i < totalPoints; i++)
-        {
-            firePointsWorkshop.Add(fireData.fireSizeType[i]);
-            float angle = ((360f / totalPoints) * i + startingAngle) * Mathf.Deg2Rad;
-            float x = radius * Mathf.Cos(angle);
-            float z = radius * Mathf.Sin(angle);
-
-            Vector3 spawnPosition = new Vector3(x, 0f, z) + layerPoint.transform.position;
-            firePlacement.Add(spawnPosition);
-        }
         
         //Set a Fire to a Random Point
         randomIndex = Random.Range(0, firePlacement.Count);
         currentFlameIndex = randomIndex;
-        currentFireActive = firePointsWorkshop[0];
-        currentFireActive.position = firePlacement[currentFlameIndex];
+        currentFireActive = fireSizeType[0];
+        currentFireActive.transform.position = firePlacement[currentFlameIndex].position;
         currentFireActive.gameObject.SetActive(true);
         currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
     }
@@ -104,7 +91,6 @@ public class MiniGame_Fire : MiniGame
         currentGyroValue /= 180f;
         moveGyro = currentGyroValue * -gyroSpeed;
         layerPoint.transform.Rotate(Vector3.up, moveGyro);
-        Debug.Log(moveGyro);
         CheckObjectIsInsideGate();
         CheckIfFireIsComplete();
         LaunchExitMiniGame();
@@ -112,10 +98,10 @@ public class MiniGame_Fire : MiniGame
 
     public override void Reset()
     {
-        foreach (Transform fire in firePointsWorkshop)
+        foreach (FireObject fire in fireSizeType)
         {
-            fire.position = fireInitPos;
-            fire.GetComponent<FireObject>().ResetFire();
+            fire.transform.position = fireInitPos;
+            fire.ResetFire();
         }
         
         currentGyroValue = 0;
@@ -124,8 +110,6 @@ public class MiniGame_Fire : MiniGame
         currentFlameIndex = 0;
         randomIndex = 0;
         layerPoint.transform.eulerAngles = Vector3.zero;
-        firePointsWorkshop.Clear();
-        firePlacement.Clear();
     }
     
     public override void OnLeaveMiniGame()
@@ -152,10 +136,10 @@ public class MiniGame_Fire : MiniGame
     [ContextMenu("Randomize Fire Size List")]
     private void RandomizeListDebug()
     {
-        RandomizeList(fireData.fireSizeType);
+        RandomizeList(fireSizeType);
     }
 
-    void RandomizeList(List<Transform> list)
+    void RandomizeList(List<FireObject> list)
     {
         int count = list.Count;
         for (int i = 0; i < count - 1; i++)
@@ -167,7 +151,7 @@ public class MiniGame_Fire : MiniGame
 
     private void CheckIfFireIsComplete()
     {
-        if (currentFireActive.GetComponent<FireObject>().currentValue <= 0)
+        if (currentFireActive.burning == false)
         {
             currentFireComplete += 1;
             ChangeIndexForTheFlame();
@@ -178,26 +162,21 @@ public class MiniGame_Fire : MiniGame
     {
         while (currentFlameIndex == randomIndex)
         {
-            randomIndex = Random.Range(0, firePointsWorkshop.Count);
+            randomIndex = Random.Range(0, fireSizeType.Count);
         }
-        currentFlameIndex = randomIndex;
-        Debug.Log("New Current Index" + currentFlameIndex);
-        currentFireActive = firePointsWorkshop[currentFlameIndex];
-        currentFireActive.position = firePlacement[randomIndex];
+        Debug.Log(currentFireComplete);
+        currentFireActive = fireSizeType[currentFireComplete];
+        currentFireActive.transform.position = firePlacement[randomIndex].position;
         currentFireActive.gameObject.SetActive(true);
         currentFireActive.gameObject.GetComponent<FireObject>().firePart[0].Play();
     }
     
     private void CheckObjectIsInsideGate()
     {
-        bool isBetweenPoints = IsObjectBetweenPoints(currentFireActive);
+        bool isBetweenPoints = IsObjectBetweenPoints(currentFireActive.transform);
         if (isBetweenPoints)
         {
-            currentFireActive.GetComponent<FireObject>().isFilled = true;
-        }
-        else
-        {
-            currentFireActive.GetComponent<FireObject>().isFilled = false;
+            currentFireActive.ExtinguishFlame();
         }
     }
 
@@ -205,17 +184,11 @@ public class MiniGame_Fire : MiniGame
     {
         if (objectToCheck != null)
         {
-            Vector3 objectPosition = objectToCheck.transform.position;
-            Vector3 point1Position = waterGate1.position;
-            Vector3 point2Position = waterGate2.position;
-
             // Calculate the distance between the object and the two points
-            float distanceToObject1 = Vector3.Distance(objectPosition, point1Position);
-            float distanceToObject2 = Vector3.Distance(objectPosition, point2Position);
+            float distanceToObject = Vector3.SqrMagnitude(objectToCheck.transform.position - waterGate1.position);
 
             // Check if the object is between the two points
-            if (Math.Abs(distanceToObject1 + distanceToObject2 - Vector3.Distance(point1Position, point2Position)) <
-                positionThreshold)
+            if (distanceToObject < positionThreshold * positionThreshold)
             {
                 return true;
             }
@@ -256,8 +229,6 @@ public class MiniGame_Fire : MiniGame
             //Point Gate Gizmos
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(waterGate1.position, positionThreshold);
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(waterGate2.position, positionThreshold);
         }
     }
 }

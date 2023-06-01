@@ -299,21 +299,23 @@ public class GameManager : NetworkMonoSingleton<GameManager>
 
         hostReadyForTutorialClientCount++;
         if (hostReadyForTutorialClientCount != ConnectionManager.instance.players.Count) return;
-        FinishTutorial();
+        CameraAnimClientRpc();
     }
 
     private async void FinishTutorial()
     {
         await UniTask.Delay(500);
-        CameraAnimClientRpc();
-    }
-
-    [ClientRpc]
-    private async void CameraAnimClientRpc()
-    {
         await cameraManager.PlayCameraAnimation();
         isRunning.Value = true;
     }
+
+    [ClientRpc]
+    private void CameraAnimClientRpc()
+    {
+        FinishTutorial();
+    }
+    
+    
     
 
     public bool IsGameRunning()

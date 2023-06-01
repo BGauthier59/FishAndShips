@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class FireManagerV1 : MonoBehaviour
 {
-    [Header("Manager Spawner")]
+    /*[Header("Manager Spawner")]
     public GameObject firePrefab;
     public int numberOfSpawnPoints;
     public float radius;
@@ -190,5 +190,5 @@ public class FireManagerV1 : MonoBehaviour
     {
         var rotation = new Quaternion(q.x, q.y, -q.z, -q.w);
         return rotation;
-    }
+    }*/
 }
