@@ -31,6 +31,9 @@ public class MiniGame_Map : MiniGame
     [SerializeField] private Transform[] points;
     [SerializeField] private Vector4 bordersLeftRightBottomTop;
 
+    [SerializeField] private MeshRenderer[] trajectoryQuads;
+    [SerializeField] private Color rightDirectionColor;
+
     [Serializable]
     public class Island
     {
@@ -106,6 +109,7 @@ public class MiniGame_Map : MiniGame
     }
 
     private bool isRight;
+    private static readonly int Color1 = Shader.PropertyToID("_Color");
 
     private bool IsRotationAlright()
     {
@@ -119,11 +123,36 @@ public class MiniGame_Map : MiniGame
 
             if (timer >= validationDuration) return true;
             timer += Time.deltaTime;
+            SetTrajectoryQuads(timer);
             return false;
         }
 
-        isRight = false;
+        if (isRight)
+        {
+            ResetTrajectoryQuads();
+            isRight = false;
+        }
         return false;
+    }
+
+    private void SetTrajectoryQuads(float timer)
+    {
+        float step = 0;
+        float stepRatio = validationDuration / trajectoryQuads.Length;
+        for (int i = 0; i < trajectoryQuads.Length; i++)
+        {
+            if (step > timer) return;
+            step += stepRatio;
+            trajectoryQuads[i].material.SetColor(Color1, rightDirectionColor);
+        }
+    }
+
+    private void ResetTrajectoryQuads()
+    {
+        foreach (var quad in trajectoryQuads)
+        {
+            quad.material.SetColor(Color1, Color.grey);
+        }
     }
 
     public override void Reset()
@@ -132,6 +161,8 @@ public class MiniGame_Map : MiniGame
         ship.eulerAngles = Vector3.zero;
         rightDirection = Vector3.zero;
         currentRotationPerSecond = 0;
+        timer = 0;
+        ResetTrajectoryQuads();
     }
 
     public override void OnLeaveMiniGame()
@@ -167,7 +198,7 @@ public class MiniGame_Map : MiniGame
             t.transform.position = pos;
         }
 
-        rightDirection = (currentIsland.transform.position - ship.position);
+        rightDirection = (currentIsland.transform.position - ship.position).normalized;
 
         rudderMiniGame.InitiateStartOfGameServerRpc(GetOtherPlayerId(), currentIsland.name);
     }
