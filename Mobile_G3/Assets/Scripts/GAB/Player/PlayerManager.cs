@@ -338,8 +338,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             transform.position = nextPos;
         }
     }
-
-
+    
     public void OnCollision(IGridEntity entity, int direction)
     {
         // TODO : Que se passe t'il quand quelqu'un collide avec un joueur ?
@@ -351,10 +350,6 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
         gridPositionX.Value = posX;
         gridPositionY.Value = posY;
     }
-
-    #region Move
-
-    #endregion
 
     #region Boat Side Management
 
