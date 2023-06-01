@@ -106,11 +106,20 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
 
     private void Start()
     {
-        // Retrieve the saved quality level
-        int savedQualityLevel = PlayerPrefs.GetInt("SavedQualityLevel");
-        qualitySetting = savedQualityLevel;
-        // Apply the saved quality level before killing the process
-        QualitySettings.SetQualityLevel(qualitySetting);    
+        // Check if the saved quality level exists or is null
+        int currentQualityLevel;
+        if (PlayerPrefs.HasKey("SavedQualityLevel"))
+        {
+            qualitySetting = PlayerPrefs.GetInt("SavedQualityLevel");
+        }
+        else
+        {
+            qualitySetting = 1;
+        }
+
+        // Save the current quality level
+        PlayerPrefs.SetInt("SavedQualityLevel", qualitySetting);
+        PlayerPrefs.Save();
         
         // Load data
         SaveManager.instance.SetCurrentData();
