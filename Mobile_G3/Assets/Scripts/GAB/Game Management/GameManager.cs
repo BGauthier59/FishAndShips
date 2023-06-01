@@ -94,6 +94,13 @@ public class GameManager : NetworkMonoSingleton<GameManager>
                 isRunning.Value = true;
             }
         }
+        else
+        {
+            if (tutorials.Length == 0)
+            {
+                await cameraManager.PlayCameraAnimation();
+            }
+        }
 
         while (!isRunning.Value) await UniTask.Yield();
         TutorialManager.instance.DisableWaitArea();
@@ -296,7 +303,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
             Debug.LogError("This client does not exist.");
             return;
         }
-
+        
         hostReadyForTutorialClientCount++;
         if (hostReadyForTutorialClientCount != ConnectionManager.instance.players.Count) return;
         CameraAnimClientRpc();
@@ -306,7 +313,7 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         await UniTask.Delay(500);
         await cameraManager.PlayCameraAnimation();
-        isRunning.Value = true;
+        if (NetworkManager.Singleton.IsHost) isRunning.Value = true;
     }
 
     [ClientRpc]
@@ -314,9 +321,6 @@ public class GameManager : NetworkMonoSingleton<GameManager>
     {
         FinishTutorial();
     }
-    
-    
-    
 
     public bool IsGameRunning()
     {
