@@ -27,9 +27,9 @@ public class GridEntity_InventoryFiller : MonoBehaviour, IGridEntity
 
     public void SetGlow(bool active)
     {
-        foreach (var rd in glowyRenderers)
+        /*foreach (var rd in glowyRenderers)
         {
             rd.material.SetFloat("_GLOWING", active ? 1 : 0);
-        }
+        }*/
     }
 }
