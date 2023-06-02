@@ -772,21 +772,25 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         isOnLevel = true;
     }
 
-    public void ClientGetConnected(ulong id, string pseudo, int skin)
+    public void ClientGetConnected(int id, string pseudo, int skin)
     {
-        playerIcons[(int) id].SetActive(true);
-        playerIcons[(int) id].transform.GetChild(0).GetComponent<TMP_Text>().text = pseudo;
-        playerFigures[(int) id].mapFigures[skin].SetActive(true);
+        playerIcons[id].SetActive(true);
+        playerIcons[id].transform.GetChild(0).GetComponent<TMP_Text>().text = pseudo;
+        playerFigures[id].mapFigures[skin].SetActive(true);
     }
 
-    public void ClientSkinChanged(ulong id, int skin)
+    public void ClientGetDisconnected(int id)
     {
-        int idInt = (int) id;
-        Debug.Log("Skin Changed for " + idInt + " at Skin " + skin);
-        for (int i = 0; i < playerFigures[idInt].mapFigures.Length; i++)
+        playerIcons[id].SetActive(false);
+    }
+
+    public void ClientSkinChanged(int id, int skin)
+    {
+        Debug.Log("Skin Changed for " + id + " at Skin " + skin);
+        for (int i = 0; i < playerFigures[id].mapFigures.Length; i++)
         {
-            if (i == skin) playerFigures[idInt].mapFigures[i].SetActive(true);
-            else playerFigures[idInt].mapFigures[i].SetActive(false);
+            if (i == skin) playerFigures[id].mapFigures[i].SetActive(true);
+            else playerFigures[id].mapFigures[i].SetActive(false);
         }
     }
 
@@ -905,15 +909,21 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
                     {
                         case 0:
                             soundButtonText.text = "All";
+                            AudioManager.instance.soundSettings = SoundSettings.All;
+                            AudioManager.instance.RestartMusicImmediately();
                             break;
                         case 1:
                             soundButtonText.text = "Music Only";
+                            AudioManager.instance.soundSettings = SoundSettings.MusicOnly;
                             break;
                         case 2:
                             soundButtonText.text = "Sounds Only";
+                            AudioManager.instance.soundSettings = SoundSettings.SoundOnly;
+                            AudioManager.instance.StopMusicImmediately();
                             break;
                         case 3:
                             soundButtonText.text = "None";
+                            AudioManager.instance.soundSettings = SoundSettings.None;
                             break;
                     }
                 }

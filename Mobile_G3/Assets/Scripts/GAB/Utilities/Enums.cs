@@ -51,3 +51,8 @@ public enum EndGameReason
 {
     TimerOver, ShipDestroyed
 }
+
+public enum SoundSettings
+{
+    All, MusicOnly, SoundOnly, None
+}
