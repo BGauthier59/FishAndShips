@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -35,6 +34,7 @@ public class SaveManager : MonoSingleton<SaveManager>
     public void UpdateCurrentLevelData(SaveData.LevelData levelData, int levelIndex)
     {
         currentData.levelsData[levelIndex] = levelData;
+        LevelManager.instance.RefreshLevels(currentData);
     }
     
     public void UpdateCurrentSchemeData(int data)
@@ -91,17 +91,13 @@ public class SaveManager : MonoSingleton<SaveManager>
         SaveData defaultData = new SaveData
         {
             levelsData = new SaveData.LevelData[LevelManager.instance.allLevels.Length],
-            charactersData = new List<int> {0, 1, 2, 3},
-            sailsData = new List<int> {0}
         };
 
         for (int i = 0; i < defaultData.levelsData.Length; i++)
         {
             defaultData.levelsData[i] = new SaveData.LevelData();
         }
-
-        defaultData.levelsData[0].isUnlocked = true;
-
+        
         return defaultData;
     }
 }
@@ -110,8 +106,6 @@ public class SaveManager : MonoSingleton<SaveManager>
 public class SaveData
 {
     public LevelData[] levelsData; // Stands for levels
-    public List<int> charactersData = new(); // Stands for characters index
-    public List<int> sailsData = new(); // Stands for sails index
     public int controls;
     
     [Serializable]
@@ -119,13 +113,9 @@ public class SaveData
     {
         public LevelData()
         {
-            isUnlocked = false;
-            isWon = false;
             starCount = 0;
         }
         
-        public bool isUnlocked = false;
-        public bool isWon = false;
         public int starCount = 0;
     }
 }
