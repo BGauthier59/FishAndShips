@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -62,6 +63,21 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
         if(endgame) return;
         endgame = true;
         timerAnim.Play("TimerEndGame");
+    }
+
+    public void ResetCanvasIfNeeded()
+    {
+        foreach(Animation anim in starsAnims)
+        {
+            if (anim.isPlaying & anim.clip.name == "StarUnlockedInGame")
+            {
+                anim.Stop();
+                Color c = anim.gameObject.GetComponent<Image>().color;
+                c = Color.white;
+                anim.gameObject.GetComponent<Image>().color = c;
+                anim.transform.GetChild(0).gameObject.SetActive(false);
+            }
+        }
     }
 
     public void SetItemOnDisplay(InventoryObject item)
