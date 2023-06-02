@@ -16,8 +16,7 @@ public class ShipManager : NetworkMonoSingleton<ShipManager>
     {
         if (NetworkManager.Singleton.IsHost)
         {
-            SetCurrentLifeServerRpc(0);
-            //SetStarCountClientRpc(0);
+            SetCurrentLifeServerRpc(100);
         }
     }
 

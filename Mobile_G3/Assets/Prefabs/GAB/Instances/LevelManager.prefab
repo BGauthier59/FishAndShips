@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1915791738829455907}
   - component: {fileID: 1915791738829455904}
+  - component: {fileID: 157905688}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -45,11 +46,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   allLevels:
-  - isUnlocked: 0
-    isWon: 0
-    starCount: 0
+  - starCount: 0
     so: {fileID: 11400000, guid: d13500876f2ffaa4a863abfaee6cf77f, type: 2}
-  - isUnlocked: 0
-    isWon: 0
-    starCount: 0
-    so: {fileID: 11400000, guid: d13500876f2ffaa4a863abfaee6cf77f, type: 2}
+  - starCount: 0
+    so: {fileID: 11400000, guid: 201606fc5b9b1d64c9e1bb1d73567ae2, type: 2}
+  - starCount: 0
+    so: {fileID: 11400000, guid: 1e8f425a4fdd2a747af8ee2996b7d403, type: 2}
+  - starCount: 0
+    so: {fileID: 11400000, guid: c159e83cc103da04ea9e9cb36a2927fa, type: 2}
+  - starCount: 0
+    so: {fileID: 11400000, guid: fed293ea5b0029143b5a7efd92e7d100, type: 2}
+  - starCount: 0
+    so: {fileID: 11400000, guid: bc855b4f14b85d640bd3c988c1a233f5, type: 2}
+  - starCount: 0
+    so: {fileID: 11400000, guid: fd34c3e10b2d756418a8cbd1f4db0433, type: 2}
+--- !u!114 &157905688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915791738829455905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1

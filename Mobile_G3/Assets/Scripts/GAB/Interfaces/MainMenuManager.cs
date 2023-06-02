@@ -134,15 +134,14 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
             if(j != qualitySetting) qualityButtons[j].color = Color.white;
             else qualityButtons[j].color = Color.gray;
         }
-        // Load data
-        SaveManager.instance.SetCurrentData();
-        SetupStars();
 
         switch (SceneLoaderManager.instance.GetGlobalSceneState())
         {
             case SceneLoaderManager.SceneState.MainMenuFirstTime:
                 QualitySettings.SetQualityLevel(qualitySetting, false);
                 ConnectionManager.instance.Setup();
+                // Load data for the first time
+                SaveManager.instance.SetCurrentData();
                 break;
 
             case SceneLoaderManager.SceneState.MainMenuAlreadyConnected:
@@ -176,12 +175,19 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
                 impactText.text = impactNames[skinId];
                 SetCurrentScreen(1);
                 slide.SetActive(true);
+                
                 break;
         }
+        
+        SetupStars();
     }
 
     void SetupStars()
     {
+        Debug.Log("Setup stars");
+
+        var data = SaveManager.instance.GetData().levelsData;
+
         starNb = 0;
         for (int i = 1; i < levelButtons.Length; i++)
         {
@@ -189,7 +195,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
             {
                 levelButtons[i].stars[j] = new Material(levelButtons[i].renderers[j].material);
                 levelButtons[i].renderers[j].material = levelButtons[i].stars[j];
-                if (LevelManager.instance.allLevels[i].starCount > j)
+                if (data[i].starCount > j)
                 {
                     levelButtons[i].stars[j].SetColor("_Color", Color.white);
                     starNb++;

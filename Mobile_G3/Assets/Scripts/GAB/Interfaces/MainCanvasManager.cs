@@ -69,7 +69,7 @@ public class MainCanvasManager : MonoSingleton<MainCanvasManager>
     {
         foreach(Animation anim in starsAnims)
         {
-            if (anim.isPlaying & anim.clip.name == "StarUnlockedInGame")
+            if (anim.isPlaying && anim.clip.name == "StarUnlockedInGame")
             {
                 anim.Stop();
                 Color c = anim.gameObject.GetComponent<Image>().color;
