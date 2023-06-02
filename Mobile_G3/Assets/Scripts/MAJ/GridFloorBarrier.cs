@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class GridFloorBarrier : MonoBehaviour, IGridFloor
@@ -76,6 +77,6 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
             player.isGliding = false;
         }
 
-        if (pressurePlate) BarrierManager.instance.SwitchBarriers();
+        if (pressurePlate) BarrierManager.instance.SwitchBarriers(new int2(positionX,positionY));
     }
 }

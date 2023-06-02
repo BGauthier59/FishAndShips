@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -32,6 +33,6 @@ public class GridFloorPressurePlate : MonoBehaviour, IGridFloor
         }
 
         landingEvent?.Invoke();
-        BarrierManager.instance.SwitchBarriers();
+        BarrierManager.instance.SwitchBarriers(new int2(positionX,positionY));
     }
 }
