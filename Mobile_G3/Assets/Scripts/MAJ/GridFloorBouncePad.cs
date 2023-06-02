@@ -34,16 +34,16 @@ public class GridFloorBouncePad : MonoBehaviour, IGridFloor
         switch (bounceDirection)
         {
             case 0:
-                GridManager.instance.GetTile(positionX, positionY+1).OnInteraction(entity,bounceDirection);
+                GridManager.instance.GetTile(positionX, positionY+1).OnInteraction(entity,bounceDirection,true);
                 break;
             case 1:
-                GridManager.instance.GetTile(positionX+1, positionY).OnInteraction(entity,bounceDirection);
+                GridManager.instance.GetTile(positionX+1, positionY).OnInteraction(entity,bounceDirection,true);
                 break;
             case 2:
-                GridManager.instance.GetTile(positionX, positionY-1).OnInteraction(entity,bounceDirection);
+                GridManager.instance.GetTile(positionX, positionY-1).OnInteraction(entity,bounceDirection,true);
                 break;
             case 3:
-                GridManager.instance.GetTile(positionX-1, positionY).OnInteraction(entity,bounceDirection);
+                GridManager.instance.GetTile(positionX-1, positionY).OnInteraction(entity,bounceDirection,true);
                 break;
         }
     }

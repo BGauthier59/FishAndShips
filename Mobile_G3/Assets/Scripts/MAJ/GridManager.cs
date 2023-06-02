@@ -158,9 +158,12 @@ public class Tile
         if (newFloor != null) floor = (Component) newFloor;
     }
 
-    public void OnInteraction(IGridEntity collidingEntity, int direction)
+    public void OnInteraction(IGridEntity collidingEntity, int direction,bool fromIce)
     {
-        if (entity is IGridEntity gridEntity) gridEntity.OnCollision(collidingEntity, direction);
+        if (entity is IGridEntity gridEntity)
+        {
+            if(!fromIce) gridEntity.OnCollision(collidingEntity, direction);
+        }
         else if (floor is IGridFloor gridFloor) gridFloor.OnMove(collidingEntity, direction);
     }
 

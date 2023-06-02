@@ -32,16 +32,16 @@ public class GridFloorIce : MonoBehaviour, IGridFloor
         switch (directionSaved)
         {
             case 0:
-                GridManager.instance.GetTile(positionX, positionY+1).OnInteraction(entity,directionSaved);
+                GridManager.instance.GetTile(positionX, positionY+1).OnInteraction(entity,directionSaved,true);
                 break;
             case 1:
-                GridManager.instance.GetTile(positionX+1, positionY).OnInteraction(entity,directionSaved);
+                GridManager.instance.GetTile(positionX+1, positionY).OnInteraction(entity,directionSaved,true);
                 break;
             case 2:
-                GridManager.instance.GetTile(positionX, positionY-1).OnInteraction(entity,directionSaved);
+                GridManager.instance.GetTile(positionX, positionY-1).OnInteraction(entity,directionSaved,true);
                 break;
             case 3:
-                GridManager.instance.GetTile(positionX-1, positionY).OnInteraction(entity,directionSaved);
+                GridManager.instance.GetTile(positionX-1, positionY).OnInteraction(entity,directionSaved,true);
                 break;
         }
     }
