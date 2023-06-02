@@ -25,7 +25,7 @@ public class MiniGame_Canon_New : MiniGame
     {
         base.StartMiniGame();
         canShoot = true;
-        enemyShip.transform.rotation = Quaternion.Euler(0,Random.Range(-90f,90f),0);
+        shipParent.transform.rotation = Quaternion.Euler(0,Random.Range(-90f,90f),0);
         gyroValue = 0;
         await UniTask.Delay(200);
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
