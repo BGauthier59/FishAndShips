@@ -153,7 +153,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
                 break;
         }
 
-        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this, direction);
+        GridManager.instance.GetTile(xpos, ypos).OnInteraction(this, direction,false);
     }
 
     #endregion
