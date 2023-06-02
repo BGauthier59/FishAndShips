@@ -779,9 +779,10 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         playerFigures[id].mapFigures[skin].SetActive(true);
     }
 
-    public void ClientGetDisconnected(int id)
+    public void ClientGetDisconnected(int id, int skin)
     {
         playerIcons[id].SetActive(false);
+        playerFigures[id].mapFigures[skin].SetActive(false);
     }
 
     public void ClientSkinChanged(int id, int skin)
