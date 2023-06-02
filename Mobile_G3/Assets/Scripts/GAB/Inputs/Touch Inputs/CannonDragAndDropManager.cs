@@ -61,6 +61,7 @@ public class CannonDragAndDropManager : MiniGameInput<CannonDragAndDropData>
         isDraging = false;
         timer = 0;
         data.draggableItem.gameObject.SetActive(false);
+        data.draggableItem.position = Vector3.zero;
 
         if (data.type == CannonDragAndDropData.MiniGameType.Shoot)
         {
