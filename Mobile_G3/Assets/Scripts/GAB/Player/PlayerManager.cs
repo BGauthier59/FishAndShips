@@ -41,6 +41,14 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
     [SerializeField] private GameObject[] allImpacts;
     private PlayerData playerData;
 
+    public NetworkVariable<int> savedId = new NetworkVariable<int>(-1);
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SetSavedIdServerRpc(int value)
+    {
+        savedId.Value = value;
+    }
+    
     #region Setup
 
     private void Start()
@@ -404,7 +412,7 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
             impactDataIndex.Value = MainMenuManager.instance.impactId;
         }
 
-        ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this);
+        ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this, savedId.Value != -1, savedId.Value);
 
         colorSprite.color = colors[ConnectionManager.instance.players[OwnerClientId].id];
     }

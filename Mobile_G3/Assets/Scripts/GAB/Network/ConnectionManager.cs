@@ -129,7 +129,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
 
     #endregion
 
-    public void AddPlayerToDictionary(ulong playerId, PlayerManager manager)
+    public void AddPlayerToDictionary(ulong playerId, PlayerManager manager, bool alreadyHere, int alreadyHereSavedValue)
     {
         if (players.ContainsKey(playerId))
         {
@@ -138,7 +138,42 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
         }
 
         Debug.Log($"Adding {manager}, count is {players.Count}");
-        int count = players.Count;
+        
+        int count = -1;
+
+        if (alreadyHere)
+        {
+            if (alreadyHereSavedValue == -1)
+            {
+                Debug.LogError("Should not happen.");
+                return;
+            }
+            count = alreadyHereSavedValue;
+        }
+        else
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                foreach (var kvp in players)
+                {
+                    if (kvp.Value.id == i)
+                    {
+                        goto exit;
+                    }
+                }
+
+                count = i;
+                
+                manager.SetSavedIdServerRpc(count);
+                
+                goto balise;
+                exit: ;
+            }
+
+            balise: ;
+        }
+
+        
         players.Add(playerId, (manager, count));
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
         MainMenuManager.instance.ClientGetConnected(count, manager.playerName.Value.Value,
