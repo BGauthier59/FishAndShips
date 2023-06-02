@@ -12,6 +12,8 @@ public class AudioManager : MonoSingleton<AudioManager>
     [HideInInspector] public string[] effects;
     [HideInInspector] public string[] themes;
 
+    public SoundSettings soundSettings;
+
     [Serializable]
     public class AudioData
     {
@@ -83,14 +85,28 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void PlaySound(AudioType type)
     {
+        if (soundSettings is SoundSettings.MusicOnly or SoundSettings.None) return;
         soundSource.PlayOneShot(sounds[type]);
     }
 
     private MusicType currentMusic;
     private bool isFading;
 
+    private float initVolumeBo;
+    public void StopMusicImmediately()
+    {
+        initVolumeBo = boSource.volume;
+        boSource.volume = 0;
+    }
+
+    public void RestartMusicImmediately()
+    {
+        boSource.volume = initVolumeBo;
+    }
+
     public async void PlayMusic(MusicType? type)
     {
+        if (soundSettings is SoundSettings.SoundOnly or SoundSettings.None) return;
         if (type.HasValue) currentMusic = type.Value;
         if (isFading) return;
         isFading = true;
@@ -133,6 +149,7 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void PlayMusicInstant(MusicType type)
     {
+        if (soundSettings is SoundSettings.SoundOnly or SoundSettings.None) return;
         boSource.clip = bo[type];
         boSource.Play();
     }

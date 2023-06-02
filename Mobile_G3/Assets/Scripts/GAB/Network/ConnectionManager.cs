@@ -141,7 +141,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
         int count = players.Count;
         players.Add(playerId, (manager, count));
         Debug.Log($"Player with ID {playerId} has been added to dictionary!");
-        MainMenuManager.instance.ClientGetConnected(playerId, manager.playerName.Value.Value,
+        MainMenuManager.instance.ClientGetConnected(count, manager.playerName.Value.Value,
             manager.playerDataIndex.Value);
     }
 
@@ -153,7 +153,9 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
             return;
         }
 
+        MainMenuManager.instance.ClientGetDisconnected(players[playerId].id);
         players.Remove(playerId);
+        
         Debug.Log($"Player with ID {playerId} has been removed from dictionary!");
     }
 
