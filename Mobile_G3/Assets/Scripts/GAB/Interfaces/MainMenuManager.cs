@@ -784,14 +784,13 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         playerIcons[id].SetActive(false);
     }
 
-    public void ClientSkinChanged(ulong id, int skin)
+    public void ClientSkinChanged(int id, int skin)
     {
-        int idInt = (int) id;
-        Debug.Log("Skin Changed for " + idInt + " at Skin " + skin);
-        for (int i = 0; i < playerFigures[idInt].mapFigures.Length; i++)
+        Debug.Log("Skin Changed for " + id + " at Skin " + skin);
+        for (int i = 0; i < playerFigures[id].mapFigures.Length; i++)
         {
-            if (i == skin) playerFigures[idInt].mapFigures[i].SetActive(true);
-            else playerFigures[idInt].mapFigures[i].SetActive(false);
+            if (i == skin) playerFigures[id].mapFigures[i].SetActive(true);
+            else playerFigures[id].mapFigures[i].SetActive(false);
         }
     }
 

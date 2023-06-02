@@ -437,12 +437,14 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     private void OnNameChanged(FixedString32Bytes previousName, FixedString32Bytes newName)
     {
-        MainMenuManager.instance.ClientGetConnected(OwnerClientId, newName.Value, playerDataIndex.Value);
+        int id = ConnectionManager.instance.players[OwnerClientId].id;
+        MainMenuManager.instance.ClientGetConnected(id, newName.Value, playerDataIndex.Value);
     }
 
     private void OnSkinChanged(int previous, int next)
     {
-        MainMenuManager.instance.ClientSkinChanged(OwnerClientId, next);
+        int id = ConnectionManager.instance.players[OwnerClientId].id;
+        MainMenuManager.instance.ClientSkinChanged(id, next);
     }
 
     #endregion
