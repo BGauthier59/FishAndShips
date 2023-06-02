@@ -32,7 +32,7 @@ public class MiniGame_Map : MiniGame
     [SerializeField] private Vector4 bordersLeftRightBottomTop;
 
     [SerializeField] private MeshRenderer[] trajectoryQuads;
-    [SerializeField] private Color rightDirectionColor;
+    [SerializeField] private Color rightDirectionColor,wrongDirectionColor;
 
     [Serializable]
     public class Island
@@ -151,7 +151,7 @@ public class MiniGame_Map : MiniGame
     {
         foreach (var quad in trajectoryQuads)
         {
-            quad.material.SetColor(Color1, Color.grey);
+            quad.material.SetColor(Color1, wrongDirectionColor);
         }
     }
 

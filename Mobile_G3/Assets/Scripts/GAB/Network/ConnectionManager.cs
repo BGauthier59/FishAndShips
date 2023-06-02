@@ -153,7 +153,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
             return;
         }
 
-        MainMenuManager.instance.ClientGetDisconnected(players[playerId].id);
+        MainMenuManager.instance.ClientGetDisconnected(players[playerId].id, players[playerId].player.playerDataIndex.Value);
         players.Remove(playerId);
         
         Debug.Log($"Player with ID {playerId} has been removed from dictionary!");

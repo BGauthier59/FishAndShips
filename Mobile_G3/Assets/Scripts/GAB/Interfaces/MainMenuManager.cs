@@ -36,14 +36,14 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         skinText,
         impactText,
         skinLockedText,
-        visualButtonText,
+        schemeButtonText,
         soundButtonText;
 
     [SerializeField] public LevelIcon[] levelButtons;
 
     [SerializeField] private GameObject[] playerIcons;
     [SerializeField] private PlayerFigures[] playerFigures;
-    [SerializeField] private GameObject[] customFigure;
+    [SerializeField] private GameObject[] customFigure,schemes;
     [SerializeField] private ParticleSystem[] customImpact;
     [SerializeField] private SpriteRenderer[] starsPass;
     [SerializeField] private SpriteRenderer[] skinIcons;
@@ -57,7 +57,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
     public int starNb;
 
     public int qualitySetting;
-    public int soundSetting;
+    public int soundSetting,schemeSetting;
 
     public Vector3 startTouch;
     public bool isDragging, isOnMap, isOnLevel;
@@ -68,7 +68,7 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         returnButton,
         treasurePass,
         soundButton,
-        visualButton,
+        schemeButton,
         disconnectButton;
 
     public float minX, maxX, forcemultiplier, timeOfTap;
@@ -779,19 +779,19 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
         playerFigures[id].mapFigures[skin].SetActive(true);
     }
 
-    public void ClientGetDisconnected(int id)
+    public void ClientGetDisconnected(int id, int skin)
     {
         playerIcons[id].SetActive(false);
+        playerFigures[id].mapFigures[skin].SetActive(false);
     }
 
-    public void ClientSkinChanged(ulong id, int skin)
+    public void ClientSkinChanged(int id, int skin)
     {
-        int idInt = (int) id;
-        Debug.Log("Skin Changed for " + idInt + " at Skin " + skin);
-        for (int i = 0; i < playerFigures[idInt].mapFigures.Length; i++)
+        Debug.Log("Skin Changed for " + id + " at Skin " + skin);
+        for (int i = 0; i < playerFigures[id].mapFigures.Length; i++)
         {
-            if (i == skin) playerFigures[idInt].mapFigures[i].SetActive(true);
-            else playerFigures[idInt].mapFigures[i].SetActive(false);
+            if (i == skin) playerFigures[id].mapFigures[i].SetActive(true);
+            else playerFigures[id].mapFigures[i].SetActive(false);
         }
     }
 
@@ -927,6 +927,30 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
                             AudioManager.instance.soundSettings = SoundSettings.None;
                             break;
                     }
+                }
+                if (schemeButton == hit.transform)
+                {
+                    schemeSetting = (schemeSetting + 1) % 3;
+                    switch (schemeSetting)
+                    {
+                        case 0:
+                            schemeButtonText.text = "Borders";
+                            break;
+                        case 1:
+                            schemeButtonText.text = "Right";
+                            break;
+                        case 2:
+                            schemeButtonText.text = "Left";
+                            break;
+                    }
+
+                    for (int i = 0; i < schemes.Length; i++)
+                    {
+                        if(i==schemeSetting) schemes[i].SetActive(true);
+                        else schemes[i].SetActive(false);
+                    }
+                    SaveManager.instance.UpdateCurrentSchemeData(schemeSetting);
+                    SaveManager.instance.SaveCurrentData();
                 }
             }
         }
