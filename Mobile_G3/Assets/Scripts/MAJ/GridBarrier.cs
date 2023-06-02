@@ -4,7 +4,9 @@ using UnityEngine;
 public class GridBarrier : NetworkBehaviour
 {
     public bool isClosedOnStart;
-    public NetworkVariable<bool> isClosed = new NetworkVariable<bool>();
+
+    public NetworkVariable<bool> isClosed = new NetworkVariable<bool>(false, NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server);
 
     public Transform barrier;
     public Vector3 closedPos, openPos;

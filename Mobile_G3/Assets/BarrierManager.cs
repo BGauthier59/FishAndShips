@@ -19,6 +19,12 @@ public class BarrierManager : MonoSingleton<BarrierManager>
 
     public void UpdateGameLoop()
     {
+        foreach (var barrier in barriers)
+        {
+            barrier.Refresh();
+        }
+        
+        if (!NetworkManager.Singleton.IsHost) return;
         for (int i = 0; i < plates.Count; i++)
         {
             if (GridManager.instance.GetTile(plates[i].x, plates[i].y).entity == null)
@@ -35,19 +41,15 @@ public class BarrierManager : MonoSingleton<BarrierManager>
                 barriers[i].Close();
             }
         }
-        
-        foreach (var barrier in barriers)
-        {
-            barrier.Refresh();
-        }
     }
 
     public void SwitchBarriers(int2 pos)
     {
         if (!NetworkManager.Singleton.IsHost) return;
-        for (int i = 0; i < barriers.Count; i++)
+        Debug.Log("Switch Barrier");
+        foreach (var barrier in barriers)
         {
-            barriers[i].Open();
+            barrier.Open();
         }
         plates.Add(pos);
     }
