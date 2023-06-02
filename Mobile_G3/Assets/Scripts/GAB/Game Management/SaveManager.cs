@@ -27,9 +27,19 @@ public class SaveManager : MonoSingleton<SaveManager>
         LevelManager.instance.RefreshLevels(currentData);
     }
 
+    public SaveData GetData()
+    {
+        return currentData;
+    }
+
     public void UpdateCurrentLevelData(SaveData.LevelData levelData, int levelIndex)
     {
         currentData.levelsData[levelIndex] = levelData;
+    }
+    
+    public void UpdateCurrentSchemeData(int data)
+    {
+        currentData.controls = data;
     }
 
     public void SaveCurrentData()
@@ -102,7 +112,8 @@ public class SaveData
     public LevelData[] levelsData; // Stands for levels
     public List<int> charactersData = new(); // Stands for characters index
     public List<int> sailsData = new(); // Stands for sails index
-
+    public int controls;
+    
     [Serializable]
     public class LevelData
     {
