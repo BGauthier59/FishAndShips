@@ -405,13 +405,15 @@ public class PlayerManager : NetworkBehaviour, IGridEntity
 
     public override void OnNetworkSpawn()
     {
+        int count = ConnectionManager.instance.GetIndex(savedId.Value != -1, savedId.Value) + 1;
+        
         if (IsOwner)
         {
-            playerName.Value = MainMenuManager.instance.pseudo;
+            playerName.Value = MainMenuManager.instance.pseudo.Length > 0 ? MainMenuManager.instance.pseudo : "Pirate " + count;
             playerDataIndex.Value = MainMenuManager.instance.skinId;
             impactDataIndex.Value = MainMenuManager.instance.impactId;
         }
-
+        
         ConnectionManager.instance.AddPlayerToDictionary(OwnerClientId, this, savedId.Value != -1, savedId.Value);
 
         colorSprite.color = colors[ConnectionManager.instance.players[OwnerClientId].id];

@@ -138,7 +138,19 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
         }
 
         Debug.Log($"Adding {manager}, count is {players.Count}");
+
+        int count = GetIndex(alreadyHere, alreadyHereSavedValue);
+
+        manager.SetSavedIdServerRpc(count);
         
+        players.Add(playerId, (manager, count));
+        Debug.Log($"Player with ID {playerId} has been added to dictionary!");
+        MainMenuManager.instance.ClientGetConnected(count, manager.playerName.Value.Value,
+            manager.playerDataIndex.Value);
+    }
+
+    public int GetIndex(bool alreadyHere, int alreadyHereSavedValue)
+    {
         int count = -1;
 
         if (alreadyHere)
@@ -146,7 +158,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
             if (alreadyHereSavedValue == -1)
             {
                 Debug.LogError("Should not happen.");
-                return;
+                return -1;
             }
             count = alreadyHereSavedValue;
         }
@@ -163,9 +175,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
                 }
 
                 count = i;
-                
-                manager.SetSavedIdServerRpc(count);
-                
+
                 goto balise;
                 exit: ;
             }
@@ -173,11 +183,7 @@ public class ConnectionManager : NetworkMonoSingleton<ConnectionManager>
             balise: ;
         }
 
-        
-        players.Add(playerId, (manager, count));
-        Debug.Log($"Player with ID {playerId} has been added to dictionary!");
-        MainMenuManager.instance.ClientGetConnected(count, manager.playerName.Value.Value,
-            manager.playerDataIndex.Value);
+        return count;
     }
 
     public void RemovePlayerFromDictionary(ulong playerId)

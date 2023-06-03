@@ -134,6 +134,28 @@ public class MainMenuManager : NetworkMonoSingleton<MainMenuManager>
             if(j != qualitySetting) qualityButtons[j].color = Color.white;
             else qualityButtons[j].color = Color.gray;
         }
+        
+        var data = SaveManager.instance.GetData().controls;
+        schemeSetting = data;
+        switch (schemeSetting)
+        {
+            case 0:
+                schemeButtonText.text = "Borders";
+                break;
+            case 1:
+                schemeButtonText.text = "Right";
+                break;
+            case 2:
+                schemeButtonText.text = "Left";
+                break;
+        }
+
+        for (int i = 0; i < schemes.Length; i++)
+        {
+            if(i==schemeSetting) schemes[i].SetActive(true);
+            else schemes[i].SetActive(false);
+        }
+        
 
         switch (SceneLoaderManager.instance.GetGlobalSceneState())
         {
