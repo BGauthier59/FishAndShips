@@ -48,7 +48,9 @@ public class MiniGame_Sails : MiniGame
             return;
         }
 
-        if (IsFirstPlayer())
+        bool first = IsFirstPlayer();
+
+        if (first)
         {
             currentData = firstPlayerData;
             currentRope = leftRope;
@@ -66,7 +68,7 @@ public class MiniGame_Sails : MiniGame
         await UniTask.Delay(WorkshopManager.instance.GetIndicatorAnimationLength());
         if (SceneLoaderManager.instance.CancelTaskInGame()) return;
 
-        if (IsFirstPlayer()) WorkshopManager.instance.StartMiniGameTutorial(7);
+        if (first) WorkshopManager.instance.StartMiniGameTutorial(7);
         else WorkshopManager.instance.StartMiniGameTutorial(8);
 
         WorkshopManager.instance.swipeManager.Enable(currentData);
@@ -151,6 +153,8 @@ public class MiniGame_Sails : MiniGame
         SetCooldownServerRpc(false);
         timer = 0;
         currentStep = 0;
+        rightRope.SetActive(true);
+        leftRope.SetActive(true);
     }
 
     public override void OnLeaveMiniGame()
