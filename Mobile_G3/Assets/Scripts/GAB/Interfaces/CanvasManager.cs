@@ -55,7 +55,8 @@ public class CanvasManager : MonoSingleton<CanvasManager>
 
     private void DisableCanvas(CanvasData data)
     {
-        if(data.type == CanvasType.TimerCanvas) data.canvas.transform.parent.GetComponent<MainCanvasManager>().ResetCanvasIfNeeded();
+        // todo - fix bug
+        //if(data.type == CanvasType.TimerCanvas) data.canvas.transform.parent.GetComponent<MainCanvasManager>().ResetCanvasIfNeeded();
         data.canvas.SetActive(false);
     }
 
