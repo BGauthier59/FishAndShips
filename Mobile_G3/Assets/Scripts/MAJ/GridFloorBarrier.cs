@@ -14,6 +14,9 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
     public GridBarrier rightBarrier;
 
     public bool pressurePlate;
+    public bool ice;
+    
+    public int directionSaved;
 
     public void SetPosition(int posX, int posY)
     {
@@ -61,6 +64,7 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
         }
 
         entity.SetPosition(positionX, positionY);
+        if(ice) directionSaved = direction;
     }
 
     void MoveOnClosedBarrier()
@@ -71,10 +75,32 @@ public class GridFloorBarrier : MonoBehaviour, IGridFloor
     public void OnLand(IGridEntity entity)
     {
         PlayerManager player = entity as PlayerManager;
-        if (player)
+        if (!ice)
         {
-            //Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
-            player.isGliding = false;
+            if (player)
+            {
+                //Destroy(Instantiate(player.fxTest, transform.position + Vector3.up * 0.2f, Quaternion.identity), 2);
+                player.isGliding = false;
+            } 
+        }
+        else
+        {
+            if (player != null) player.isGliding = true;
+            switch (directionSaved)
+            {
+                case 0:
+                    GridManager.instance.GetTile(positionX, positionY+1).OnInteraction(entity,directionSaved,true);
+                    break;
+                case 1:
+                    GridManager.instance.GetTile(positionX+1, positionY).OnInteraction(entity,directionSaved,true);
+                    break;
+                case 2:
+                    GridManager.instance.GetTile(positionX, positionY-1).OnInteraction(entity,directionSaved,true);
+                    break;
+                case 3:
+                    GridManager.instance.GetTile(positionX-1, positionY).OnInteraction(entity,directionSaved,true);
+                    break;
+            }
         }
 
         if (pressurePlate) BarrierManager.instance.SwitchBarriers(new int2(positionX,positionY));
