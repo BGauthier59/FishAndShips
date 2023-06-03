@@ -42,6 +42,7 @@ public class MiniGame_Cannon_Load : MiniGame
         cannonEulerAngles = cannon.eulerAngles;
         cannonPos = cannon.position;
         muzzleEulerAngles = muzzle.eulerAngles;
+        step2data.draggableItem.transform.position = Vector3.zero;
     }
 
     public override async void StartMiniGame()
@@ -147,6 +148,7 @@ public class MiniGame_Cannon_Load : MiniGame
         cannon.eulerAngles = cannonEulerAngles;
         cannon.position = cannonPos;
         muzzle.eulerAngles = muzzleEulerAngles;
+        step2data.draggableItem.transform.position = Vector3.zero;
     }
 
     public override void OnLeaveMiniGame()
